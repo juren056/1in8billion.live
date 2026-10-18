@@ -182,7 +182,9 @@
     "share.load": "從連結載入",
     "event.kidDeath": "嬰幼兒夭折",
     "tree.migration": "跨國遷徙",
-    "event.migration": "遷徙到新國家"
+    "event.migration": "遷徙到新國家",
+    "share.export": "匯出生涯 JSON",
+    "share.import": "匯入生涯 JSON"
   },
   "zh-Hans": {
     "title": "选出生地 · 人生模拟",
@@ -367,7 +369,9 @@
     "share.load": "Load from URL",
     "event.kidDeath": "Infant death",
     "tree.migration": "Cross-border migration",
-    "event.migration": "Migrated to new country"
+    "event.migration": "Migrated to new country",
+    "share.export": "Export life JSON",
+    "share.import": "Import life JSON"
   },
   "en": {
     "title": "Born Somewhere · Life Simulator",
@@ -552,7 +556,9 @@
     "share.load": "Load from URL",
     "event.kidDeath": "Infant death",
     "tree.migration": "Cross-border migration",
-    "event.migration": "Migrated to new country"
+    "event.migration": "Migrated to new country",
+    "share.export": "Export life JSON",
+    "share.import": "Import life JSON"
   },
   "ko": {
     "title": "태어난 곳 · 인생 시뮬레이션",
@@ -750,7 +756,9 @@
     "share.load": "Load from URL",
     "event.kidDeath": "Infant death",
     "tree.migration": "Cross-border migration",
-    "event.migration": "Migrated to new country"
+    "event.migration": "Migrated to new country",
+    "share.export": "Export life JSON",
+    "share.import": "Import life JSON"
   },
   "ja": {
     "title": "出生地 · 人生シミュレーション",
@@ -948,7 +956,9 @@
     "share.load": "Load from URL",
     "event.kidDeath": "Infant death",
     "tree.migration": "Cross-border migration",
-    "event.migration": "Migrated to new country"
+    "event.migration": "Migrated to new country",
+    "share.export": "Export life JSON",
+    "share.import": "Import life JSON"
   },
   "vi": {
     "title": "Nơi sinh · Mô phỏng cuộc đời",
@@ -1146,7 +1156,9 @@
     "share.load": "Load from URL",
     "event.kidDeath": "Infant death",
     "tree.migration": "Cross-border migration",
-    "event.migration": "Migrated to new country"
+    "event.migration": "Migrated to new country",
+    "share.export": "Export life JSON",
+    "share.import": "Import life JSON"
   },
   "fr": {
     "title": "Né quelque part · Simulateur de vie",
@@ -1344,7 +1356,9 @@
     "share.load": "Load from URL",
     "event.kidDeath": "Infant death",
     "tree.migration": "Cross-border migration",
-    "event.migration": "Migrated to new country"
+    "event.migration": "Migrated to new country",
+    "share.export": "Export life JSON",
+    "share.import": "Import life JSON"
   },
   "th": {
     "title": "เกิดที่ไหน · จำลองชีวิต",
@@ -1542,7 +1556,9 @@
     "share.load": "Load from URL",
     "event.kidDeath": "Infant death",
     "tree.migration": "Cross-border migration",
-    "event.migration": "Migrated to new country"
+    "event.migration": "Migrated to new country",
+    "share.export": "Export life JSON",
+    "share.import": "Import life JSON"
   },
   "es": {
     "title": "Nacido en algún lugar · Simulador de vida",
@@ -1740,6 +1756,8 @@
     "share.load": "Load from URL",
     "event.kidDeath": "Infant death",
     "tree.migration": "Cross-border migration",
-    "event.migration": "Migrated to new country"
+    "event.migration": "Migrated to new country",
+    "share.export": "Export life JSON",
+    "share.import": "Import life JSON"
   }
 }
