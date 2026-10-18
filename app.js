@@ -614,11 +614,10 @@ function milestoneEvents(life, newAge) {
       setTimeout(() => showPauseQuestion(), 50);
     }
   }
-  // v5.13：18/25/35/50 財務決策
+  // v5.16：18/25/35/50 財務決策 — 改為手動觸發（不自動彈出）
   if ([18, 25, 35, 50].includes(newAge) && !life.financeDecisions?.find(d => d.age === newAge)) {
-    if (!STATE.autoDecide) {
-      setTimeout(() => showFinancialChoice(), 80);
-    }
+    // 只記標記（手動按鈕可觸發），不再自動彈出
+    life.financeAgeAvailable = newAge;
   }
   // v5.14：每年保底事件（其他里程碑未觸發時）
   if (events.length === 0 && newAge >= 4) {
@@ -703,11 +702,8 @@ function tick() {
   }
   renderLife();
   recordTrajectory(STATE.life);
-  // v5.13：年度焦點選擇（每年 6+ 歲自動彈出，除非autoDecide）
-  if (STATE.life.age >= 6 && STATE.life.age < 80 && !STATE.life.focusThisYear) {
-    if (!STATE.autoDecide) setTimeout(() => showFocusChoice(), 30);
-  }
-  STATE.life.focusThisYear = !STATE.life.age % 1 ? null : STATE.life.focusThisYear;  // 重置
+  // v5.16：年度焦點選擇 — 改為手動觸發（不再自動彈出）
+  // v5.13：年度焦點選擇（每年 6+ 歲自動彈出，除非autoDecide）→ 已改為手動
   // 達到當地平均壽命 1.3x 自動死亡
   const maxAge = c.le * 1.35;
   if (STATE.life.age > maxAge) dieNow('自然衰老');
@@ -1104,6 +1100,7 @@ function renderLife() {
   renderCountryStats();
   renderSurvivalCurve();
   renderThisYear();
+  renderManualDecisions();
 }
 
 /* v5.14：本年最重要事件 */
@@ -1201,6 +1198,30 @@ function recordTrajectory(life) {
 }
 
 /* v5.8 新增：4 個狀態條 + 淨資產 */
+/* v5.16：手動決策面板（玩家主動觸發） */
+function renderManualDecisions() {
+  if (!STATE.life) return;
+  const wrap = $('#lifeManualDecisions');
+  if (!wrap) return;
+  const isEn = LANG === 'en';
+  const life = STATE.life;
+  const age = life.age;
+  const financeAges = [18, 25, 35, 50];
+  const financeAvail = financeAges.includes(age) && !life.financeDecisions?.find(d => d.age === age);
+  const financePast = (life.financeDecisions || []).filter(d => financeAges.includes(d.age));
+  // 焦點按鈕永遠可用（玩家可主動選擇今年焦點）
+  wrap.innerHTML = `
+    <h4>🎯 ${isEn ? 'Manual Decisions' : '手動決策'} <span class="muted">${isEn ? '(player chooses when to act)':'（由玩家主動選擇）'}</span></h4>
+    <div class="md-row">
+      <button id="mdFocusBtn" class="md-btn">🎯 ${isEn ? 'Choose this year\'s focus' : '設定本年焦點'} <span class="md-hint">${life.focus ? (isEn?'Now: ':'目前：')+life.focus : (isEn?'(not set)':'（未設定）')}</span></button>
+      ${financeAvail ? `<button id="mdFinanceBtn" class="md-btn">💰 ${isEn?'Make financial decision at age '+age:'決定 ' + age + ' 歲的財務規劃'}</button>` : financePast.length ? `<span class="md-hint">${isEn?'Financial decisions made: ':'已做的財務決策：'} ${financePast.map(d => d.age).join('、')}</span>` : ''}
+    </div>
+  `;
+  // wire
+  $('#mdFocusBtn')?.addEventListener('click', () => showFocusChoice());
+  $('#mdFinanceBtn')?.addEventListener('click', () => showFinancialChoice());
+}
+
 function renderLifeStats() {
   if (!STATE.life) return;
   const s = STATE.life.stats;
