@@ -1462,6 +1462,15 @@ function wire() {
   // 死亡
   const dieBtn = $('#btnDieNow');
   if (dieBtn) dieBtn.addEventListener('click', () => { if (STATE.life && !STATE.life.died) dieNow('自行結束'); });
+  const rebirthBtn = $('#btnRebirth');
+  if (rebirthBtn) rebirthBtn.addEventListener('click', () => {
+    const c = chooseCountry(STATE.birthMode);
+    if (c) {
+      stopTicker();
+      toast(LANG==='en' ? `Reborn in ${c.flag} ${c.name_zh}` : `在 ${c.flag} ${c.name_zh} 重新出生`);
+      startLife(c.id);
+    }
+  });
   // 結束畫面
   const restart = $('#btnRestart');
   if (restart) restart.addEventListener('click', () => setView('intro'));
