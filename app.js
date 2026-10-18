@@ -730,6 +730,58 @@ function renderLife() {
   // 國家資料
   const cInfo = $('#lifeCountryInfo');
   if (cInfo) cInfo.textContent = `${c.flag} ${loc.name} · ${loc.region_name}`;
+  // 家族摘要
+  renderFamilySummary();
+}
+
+function renderFamilySummary() {
+  const wrap = $('#certFamilyBody');
+  const goBtn = $('#certFamilyGo');
+  if (!wrap) return;
+  if (!STATE.life || !STATE.life.family) { wrap.innerHTML = ''; return; }
+  const f = STATE.life.family;
+  const parts = [];
+  // 父母
+  const father = f.parents.find(p => p.sex === 'M');
+  const mother = f.parents.find(p => p.sex === 'F');
+  if (father && mother) parts.push(`👨 ${father.name} · 👩 ${mother.name}`);
+  else if (father) parts.push(`👨 ${father.name}`);
+  else if (mother) parts.push(`👩 ${mother.name}`);
+  else parts.push(`<span class="fam-orphan">${LANG==='en'?'🕯️ Orphan':'🕯️ 孤兒'}</span>`);
+  // 手足
+  if (f.siblings && f.siblings.length) {
+    const liveSib = f.siblings.filter(s => !s.death?.year);
+    const deadSib = f.siblings.filter(s => s.death?.year);
+    let sibText = `👫 ${f.siblings.length} ${LANG==='en'?'siblings':'手足'}`;
+    if (liveSib.length < f.siblings.length) sibText += `（${liveSib.length} ${LANG==='en'?'alive':'存'}，${deadSib.length} †）`;
+    parts.push(sibText);
+  }
+  // 祖父母
+  if (f.grandparents && f.grandparents.length) {
+    parts.push(`👴👵 ${f.grandparents.length} ${LANG==='en'?'grandparents':'祖父母'}`);
+  }
+  // 伴侶
+  if (f.partner) parts.push(`💍 ${f.partner.name}`);
+  // 子女
+  if (f.kids && f.kids.length) {
+    const deadKids = f.kids.filter(k => k.death?.year);
+    let kidText = `👶 ${f.kids.length} ${LANG==='en'?'children':'子女'}`;
+    if (deadKids.length) kidText += `（${deadKids.length} †）`;
+    parts.push(kidText);
+  }
+  // 收養/寄養
+  if (f.fosterCare === 'adopt') parts.push(`<span class="fam-flag">🧩 ${LANG==='en'?'Adopted':'收養家庭'}</span>`);
+  else if (f.fosterCare === 'foster') parts.push(`<span class="fam-flag">🏠 ${LANG==='en'?'Foster':'寄養家庭'}</span>`);
+  // 跨國遷徙
+  if (STATE.life.birthOrigin) {
+    parts.push(`<span class="fam-flag">${STATE.life.birthOrigin.flag}→${c.flag} ${LANG==='en'?'migrated':'遷徙'}</span>`);
+  }
+  wrap.innerHTML = parts.map(p => `<div class="fam-row">${p}</div>`).join('');
+  if (goBtn) {
+    goBtn.onclick = () => {
+      document.querySelectorAll('.navbtn').forEach(b => { if (b.dataset.view === 'tree') b.click(); });
+    };
+  }
 }
 
 function jobLabel(j) {
