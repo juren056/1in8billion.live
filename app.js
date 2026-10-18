@@ -1068,6 +1068,7 @@ function renderLife() {
   if (!STATE.life) return;
   const c = STATE.life.countryData;
   const loc = localize(c);
+  const isEn = LANG === 'en';
   $('#lifeFlag').textContent = c.flag;
   $('#lifeName').textContent = loc.name;
   $('#lifeYear').textContent = STATE.life.year + STATE.life.yearOffset;
@@ -1075,10 +1076,28 @@ function renderLife() {
   $('#lifeName2').textContent = (STATE.life.name.full || STATE.life.name.full_en) || '...';
   $('#lifeLe').textContent = c.le;
   $('#lifeSex').textContent = STATE.life.sex === 'M' ? t('sex.male') : t('sex.female');
-  $('#lifeEduc').textContent = ['—', t('edu.0'), t('edu.1'), t('edu.2'), t('edu.3')][STATE.life.stats.education + 1];
-  $('#lifeJob').textContent = jobLabel(STATE.life.stats.employment);
-  $('#lifePartner').textContent = STATE.life.stats.married ? (STATE.life.stats.partner.name.full || STATE.life.stats.partner.name.full_en || t('partner.yes')) : t('partner.no');
-  $('#lifeKids').textContent = STATE.life.stats.kids.length;
+  // 教育：顯示 0-4 級距 + 已就讀年數
+  const educLabels = ['—', t('edu.0')+'（'+t('edu.pre')+'）', t('edu.1'), t('edu.2'), t('edu.3'), t('edu.4')];
+  $('#lifeEduc').textContent = educLabels[Math.min(STATE.life.stats.education + 1, educLabels.length - 1)];
+  // 工作：顯示 sector + 是否在職
+  $('#lifeJob').textContent = STATE.life.stats.employment === 'employed' ? `${jobLabel('employed')} · ${LANG==='en'?'employed':'在職'}` : jobLabel(STATE.life.stats.employment);
+  // 伴侶：顯示名字 + 年齡
+  if (STATE.life.stats.married && STATE.life.stats.partner) {
+    const p = STATE.life.stats.partner;
+    const pName = p.name?.full || p.name?.full_en || '';
+    const pAge = p.age || ((STATE.life.year + STATE.life.yearOffset) - (p.birth?.year || 0));
+    $('#lifePartner').textContent = `${pName}（${pAge} ${LANG==='en'?'yo':'歲'}）`;
+  } else {
+    $('#lifePartner').textContent = t('partner.no');
+  }
+  // 子女：顯示數量 + 最長子年齡
+  if (STATE.life.stats.kids.length) {
+    const ages = STATE.life.stats.kids.map(k => k.bornAt ? STATE.life.age - k.bornAt : null).filter(a => a !== null);
+    const oldest = ages.length ? Math.max(...ages) : null;
+    $('#lifeKids').textContent = `${STATE.life.stats.kids.length}${LANG==='en'?` (oldest: ${oldest})`:`（最大的 ${oldest} 歲）`}`;
+  } else {
+    $('#lifeKids').textContent = '0';
+  }
   // 進度條
   const pct = Math.min(100, STATE.life.age / c.le * 100);
   $('#lifeBar').style.width = pct + '%';
@@ -1088,9 +1107,12 @@ function renderLife() {
     portrait.className = 'cert-figure';
     portrait.innerHTML = pixelPortraitSVG(STATE.life.countryData, STATE.life.age, STATE.life.sex);
   }
-  // 國家資料
+  // 出生地：rural/urban + 國家 + 地區
   const cInfo = $('#lifeCountryInfo');
-  if (cInfo) cInfo.textContent = `${c.flag} ${loc.name} · ${loc.region_name}`;
+  if (cInfo) {
+    const bpType = STATE.life.stats.birthPlaceType === 'rural' ? (isEn ? '🌾 Rural' : '🌾 鄉村') : (isEn ? '🏙️ Urban' : '🏙️ 城市');
+    cInfo.textContent = `${bpType} · ${c.flag} ${loc.name} · ${loc.region_name}`;
+  }
   // 家族摘要
   renderFamilySummary();
   // v5.8 新增：狀態條 + 家庭背景 + 同伴
