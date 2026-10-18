@@ -620,6 +620,15 @@ function milestoneEvents(life, newAge) {
       setTimeout(() => showFinancialChoice(), 80);
     }
   }
+  // v5.14：每年保底事件（其他里程碑未觸發時）
+  if (events.length === 0 && newAge >= 4) {
+    const evt = generateYearlyEvent(life);
+    if (evt) {
+      const text = (LANG === 'en' ? evt.en : evt.zh);
+      events.push({ age: newAge, kind: 'milestone', icon: evt.icon, text });
+      life.latestEvent = { age: newAge, icon: evt.icon, text };
+    }
+  }
   return events;
 }
 
@@ -861,6 +870,105 @@ function savePauseQuote() {
   resolvePendingDecision();
 }
 
+/* v5.14：每年自動生成事件 — 依年齡/國家/焦點產生有意義的隨機事件 */
+function generateYearlyEvent(life) {
+  const age = life.age;
+  const c = life.countryData;
+  const sex = life.sex;
+  const isEn = LANG === 'en';
+  const focus = life.focusThisYear;
+  // 隨機事件池（依年齡分層）
+  const events = [];
+  if (age < 5) {
+    // 幼兒期
+    events.push({ weight: 30, icon: '👶', en: 'Learned to walk', zh: '學會走路' });
+    events.push({ weight: 20, icon: '🗣️', en: 'First word spoken', zh: '說出第一個字' });
+    events.push({ weight: 15, icon: '🤒', en: 'Had a fever', zh: '發燒了' });
+    events.push({ weight: 10, icon: '👨‍👩‍👧', en: 'Started recognizing family', zh: '開始認得家人' });
+  } else if (age < 13) {
+    // 學齡
+    events.push({ weight: 25, icon: '📚', en: 'Made a new friend', zh: '交了新朋友' });
+    events.push({ weight: 20, icon: '🏆', en: 'Won a small competition', zh: '在小比賽得名次' });
+    events.push({ weight: 15, icon: '🤕', en: 'Got injured playing', zh: '玩耍時受傷' });
+    events.push({ weight: 10, icon: '📖', en: 'Discovered a favorite book', zh: '發現一本喜歡的書' });
+    events.push({ weight: 10, icon: '🤒', en: 'Caught a cold', zh: '感冒了' });
+    if (focus === 'study') events.push({ weight: 30, icon: '📝', en: 'Got good grades', zh: '成績進步了' });
+  } else if (age < 18) {
+    // 青少年
+    events.push({ weight: 25, icon: '🎵', en: 'Discovered favorite music', zh: '發現喜歡的音樂' });
+    events.push({ weight: 20, icon: '💔', en: 'First heartbreak', zh: '初戀破滅' });
+    events.push({ weight: 15, icon: '🎮', en: 'Got into gaming', zh: '迷上電玩' });
+    events.push({ weight: 15, icon: '🚲', en: 'Biked somewhere new', zh: '騎腳踏車去新地方' });
+    events.push({ weight: 10, icon: '🤒', en: 'Got sick for a week', zh: '病了一週' });
+    if (focus === 'study') events.push({ weight: 30, icon: '🎓', en: 'Won academic award', zh: '獲得學業獎' });
+  } else if (age < 30) {
+    // 青年
+    events.push({ weight: 25, icon: '🎓', en: 'Graduated', zh: '畢業了' });
+    events.push({ weight: 20, icon: '💼', en: 'Got first job', zh: '找到第一份工作' });
+    events.push({ weight: 20, icon: '❤️', en: 'Fell in love', zh: '戀愛了' });
+    events.push({ weight: 15, icon: '🏃', en: 'Ran a marathon', zh: '跑了馬拉松' });
+    events.push({ weight: 15, icon: '🚗', en: 'Got driver license', zh: '考了駕照' });
+    events.push({ weight: 10, icon: '🤒', en: 'Had health scare', zh: '健康出了點狀況' });
+    if (focus === 'work') events.push({ weight: 25, icon: '📈', en: 'Got promoted', zh: '升職了' });
+  } else if (age < 50) {
+    // 中年
+    events.push({ weight: 20, icon: '💍', en: 'Got married', zh: '結婚了' });
+    events.push({ weight: 20, icon: '👶', en: 'Had a child', zh: '有了孩子' });
+    events.push({ weight: 15, icon: '🏠', en: 'Bought a home', zh: '買了房子' });
+    events.push({ weight: 15, icon: '📈', en: 'Got big promotion', zh: '大幅晉升' });
+    events.push({ weight: 15, icon: '🚗', en: 'Bought a car', zh: '買了車' });
+    events.push({ weight: 10, icon: '🤒', en: 'Had health issue', zh: '健康出了狀況' });
+    events.push({ weight: 5, icon: '💔', en: 'Got divorced', zh: '離婚了' });
+    if (focus === 'family') events.push({ weight: 25, icon: '👨‍👩‍👧', en: 'Family trip', zh: '家族旅遊' });
+  } else if (age < 65) {
+    // 中老年
+    events.push({ weight: 25, icon: '🎂', en: 'Child graduated', zh: '孩子畢業了' });
+    events.push({ weight: 20, icon: '🏖', en: 'Took vacation', zh: '去度假' });
+    events.push({ weight: 20, icon: '🎉', en: 'Grandchild born', zh: '孫子女出生' });
+    events.push({ weight: 15, icon: '🤒', en: 'Health checkup', zh: '健康檢查' });
+    events.push({ weight: 10, icon: '🎓', en: 'Went back to school', zh: '重返校園' });
+    events.push({ weight: 10, icon: '💔', en: 'Lost a loved one', zh: '失去摯愛' });
+  } else {
+    // 老年
+    events.push({ weight: 25, icon: '👨‍👩‍👧', en: 'Grandchildren visit', zh: '孫子女來訪' });
+    events.push({ weight: 20, icon: '🌳', en: 'Walked in the park', zh: '公園散步' });
+    events.push({ weight: 20, icon: '📖', en: 'Read a great book', zh: '讀了一本好書' });
+    events.push({ weight: 15, icon: '👴', en: 'Saw grandchild grow', zh: '看孫子女長大' });
+    events.push({ weight: 10, icon: '🏥', en: 'Had health check', zh: '做了健康檢查' });
+  }
+  // 加國家特殊事件
+  if (c.wh > 0.5 && Math.random() < c.wh * 0.1) {
+    events.push({ weight: 50, icon: '⚔️', en: 'Affected by local unrest', zh: '受到當地動亂影響' });
+  }
+  // 抽權重
+  const total = events.reduce((s, e) => s + e.weight, 0);
+  let r = Math.random() * total;
+  for (const e of events) {
+    r -= e.weight;
+    if (r <= 0) return e;
+  }
+  return events[0];
+}
+
+/* v5.14：套用事件到狀態條（重要事件才有效果） */
+function applyEventEffects(event, isYearLike) {
+  if (!STATE.life || !STATE.life.stats) return;
+  const s = STATE.life.stats;
+  const txt = (event.text || '').toLowerCase();
+  if (txt.includes('戀愛') || txt.includes('結婚') || txt.includes('度假') || txt.includes('旅遊')) {
+    s.happiness = Math.min(100, s.happiness + 3);
+    s.social = Math.min(100, s.social + 2);
+  } else if (txt.includes('升職') || txt.includes('畢業')) {
+    s.knowledge = Math.min(100, s.knowledge + 3);
+    s.netAssets += 1500;
+  } else if (txt.includes('生病') || txt.includes('受傷') || txt.includes('動亂') || txt.includes('離婚')) {
+    s.health = Math.max(0, s.health - 5);
+    s.happiness = Math.max(0, s.happiness - 3);
+  } else if (txt.includes('孩子') || txt.includes('孫')) {
+    s.happiness = Math.min(100, s.happiness + 5);
+  }
+}
+
 function logLife(text) {
   const el = $('#lifeLog');
   if (!el) return;
@@ -994,6 +1102,24 @@ function renderLife() {
   renderLifeCompanions();
   renderCountryStats();
   renderSurvivalCurve();
+  renderThisYear();
+}
+
+/* v5.14：本年最重要事件 */
+function renderThisYear() {
+  if (!STATE.life) return;
+  const wrap = $('#lifeThisYearBody');
+  if (!wrap) return;
+  const evt = STATE.life.latestEvent;
+  const isEn = LANG === 'en';
+  if (!evt) { wrap.innerHTML = `<span class="muted">${isEn ? '(no major event this year yet)':'（今年尚無重大事件）'}</span>`; return; }
+  wrap.innerHTML = `
+    <div class="ty-event">
+      <span class="ty-icon">${evt.icon}</span>
+      <span class="ty-text">${escapeHtml(evt.text)}</span>
+      <span class="ty-age">${isEn ? `Age ${evt.age}` : `${evt.age} 歲`}</span>
+    </div>
+  `;
 }
 
 /* v5.8 新增：4 個狀態條 + 淨資產 */
