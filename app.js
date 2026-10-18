@@ -2110,6 +2110,7 @@ function renderLifeCompanions() {
   if (!STATE.life || !STATE.life.companions) return;
   const wrap = $('#lifeCompanions');
   if (!wrap) return;
+  const isEn = LANG === 'en';
   // v5.29：渲染場景描述（1in8b.life 風格「與父母和兄弟姊妹X人同住」）
   const sceneEl = $('#lifeScene');
   if (sceneEl) {
@@ -2123,7 +2124,6 @@ function renderLifeCompanions() {
       : `${loc.name} ${place} · ${housing} · 與父母和兄弟姊妹${sibCount}人同住`;
     sceneEl.innerHTML = `<h4>🏡 ${isEn?'Where you live':'你住的地方'}</h4><p class="muted">${familyText}</p>`;
   }
-  const isEn = LANG === 'en';
   wrap.innerHTML = `
     <h4>${isEn ? '👶 Born in the same second' : '👶 在同一秒出生的人們'} <span class="muted">(${isEn ? 'growing up together' : '一起長大'})</span></h4>
     <div class="lc-grid">${STATE.life.companions.map(c => `
