@@ -188,7 +188,9 @@
     "life.familyHead": "家族",
     "life.familyHint": "尚未開始",
     "life.familyGo": "看族譜 →",
-    "lab.countryB": "國家 B（比較用，可選）"
+    "lab.countryB": "國家 B（比較用，可選）",
+    "tree.search": "搜尋名字",
+    "tree.searchPh": "輸入名字..."
   },
   "zh-Hans": {
     "title": "选出生地 · 人生模拟",
@@ -379,7 +381,9 @@
     "life.familyHead": "Family",
     "life.familyHint": "Not started",
     "life.familyGo": "View tree →",
-    "lab.countryB": "Country B (compare, optional)"
+    "lab.countryB": "Country B (compare, optional)",
+    "tree.search": "Search name",
+    "tree.searchPh": "Type name..."
   },
   "en": {
     "title": "Born Somewhere · Life Simulator",
@@ -570,7 +574,9 @@
     "life.familyHead": "Family",
     "life.familyHint": "Not started",
     "life.familyGo": "View tree →",
-    "lab.countryB": "Country B (compare, optional)"
+    "lab.countryB": "Country B (compare, optional)",
+    "tree.search": "Search name",
+    "tree.searchPh": "Type name..."
   },
   "ko": {
     "title": "태어난 곳 · 인생 시뮬레이션",
@@ -774,7 +780,9 @@
     "life.familyHead": "Family",
     "life.familyHint": "Not started",
     "life.familyGo": "View tree →",
-    "lab.countryB": "Country B (compare, optional)"
+    "lab.countryB": "Country B (compare, optional)",
+    "tree.search": "Search name",
+    "tree.searchPh": "Type name..."
   },
   "ja": {
     "title": "出生地 · 人生シミュレーション",
@@ -978,7 +986,9 @@
     "life.familyHead": "Family",
     "life.familyHint": "Not started",
     "life.familyGo": "View tree →",
-    "lab.countryB": "Country B (compare, optional)"
+    "lab.countryB": "Country B (compare, optional)",
+    "tree.search": "Search name",
+    "tree.searchPh": "Type name..."
   },
   "vi": {
     "title": "Nơi sinh · Mô phỏng cuộc đời",
@@ -1182,7 +1192,9 @@
     "life.familyHead": "Family",
     "life.familyHint": "Not started",
     "life.familyGo": "View tree →",
-    "lab.countryB": "Country B (compare, optional)"
+    "lab.countryB": "Country B (compare, optional)",
+    "tree.search": "Search name",
+    "tree.searchPh": "Type name..."
   },
   "fr": {
     "title": "Né quelque part · Simulateur de vie",
@@ -1386,7 +1398,9 @@
     "life.familyHead": "Family",
     "life.familyHint": "Not started",
     "life.familyGo": "View tree →",
-    "lab.countryB": "Country B (compare, optional)"
+    "lab.countryB": "Country B (compare, optional)",
+    "tree.search": "Search name",
+    "tree.searchPh": "Type name..."
   },
   "th": {
     "title": "เกิดที่ไหน · จำลองชีวิต",
@@ -1590,7 +1604,9 @@
     "life.familyHead": "Family",
     "life.familyHint": "Not started",
     "life.familyGo": "View tree →",
-    "lab.countryB": "Country B (compare, optional)"
+    "lab.countryB": "Country B (compare, optional)",
+    "tree.search": "Search name",
+    "tree.searchPh": "Type name..."
   },
   "es": {
     "title": "Nacido en algún lugar · Simulador de vida",
@@ -1794,6 +1810,8 @@
     "life.familyHead": "Family",
     "life.familyHint": "Not started",
     "life.familyGo": "View tree →",
-    "lab.countryB": "Country B (compare, optional)"
+    "lab.countryB": "Country B (compare, optional)",
+    "tree.search": "Search name",
+    "tree.searchPh": "Type name..."
   }
 }
