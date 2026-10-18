@@ -21,7 +21,7 @@ const STATE = {
   life: null,
   paused: false,
   speed: 1,
-  tickMs: 60,
+  tickMs: 500,  // ~1 年/0.5 秒（1in8b.life 風格：時間慢到能看見細節；8× 時約 6 秒跑完一生）
   ticker: null,
   pendingDecision: null,
   pastLives: [],
@@ -305,6 +305,10 @@ function newLife(countryCode) {
   if (!c) return null;
   const sex = Math.random() < 0.5 ? 'M' : 'F';
   const name = randomName(c, sex);
+  // 1in8b.life 風格：出生登記背景
+  const fam = generateFamily(countryCode, sex);
+  const father = fam.parents.find(p => p.sex === 'M');
+  const mother = fam.parents.find(p => p.sex === 'F');
   return {
     country: countryCode,
     countryData: c,
@@ -324,21 +328,86 @@ function newLife(countryCode) {
     quotes: {},
     // 統計
     stats: {
-      education: 0,    // 0-4: 無/小/初中/高中/大學
+      education: 0,
       married: false,
       partner: null,
       kids: [],
       employment: 'none',
       health: 100,
       happiness: 70,
+      knowledge: 50,    // v5.8 新增：知識 0-100
+      social: 60,       // v5.8 新增：人際關係 0-100
+      netAssets: 0,     // v5.8 新增：淨資產（PPP 美元）
+      annualIncome: 0,  // v5.8 新增：年收入
+      // 1in8b.life 風格：家境、宗教、出生地類型
+      incomeQuartile: 1 + Math.floor(Math.random() * 4),  // 1-4 分位
+      religion: pickReligion(c),
+      birthPlaceType: Math.random() < 0.55 ? 'rural' : 'urban',  // 55% 鄉村、45% 城市
     },
+    // 父母詳細（v5.8 新增）
+    fatherDetail: father ? { age: 20 + Math.floor(Math.random()*25), job: pickParentJob(c, 'M') } : null,
+    motherDetail: mother ? { age: 18 + Math.floor(Math.random()*22), job: pickParentJob(c, 'F') } : null,
+    // 同伴（v5.8 新增）：4 個同時出生的隨機人物
+    companions: generateCompanions(countryCode, 4),
+    // 1in8b.life 風格：出生登記編號
+    regNumber: `${countryCode}-${(STATE.era==='past'?'1990':STATE.era==='future'?'2080':'2024')}-${Math.floor(Math.random()*9000000)+1000000}`,
     // 死亡
     died: false,
     cause: null,
     deathAge: null,
-    // 族譜（出生時即生成雙親 + 1-2 位手足）
-    family: generateFamily(countryCode, sex),
+    // 族譜
+    family: fam,
   };
+}
+
+/* ==== v5.8 新增：宗教 + 父母工作池 ==== */
+function pickReligion(c) {
+  const r = c.region || 'eap';
+  const map = {
+    'eap': ['佛教', '民間信仰', '基督新教', '天主教', '無信仰'],
+    'sa': ['印度教', '伊斯蘭', '錫克教', '基督教', '佛教'],
+    'eca': ['基督新教', '天主教', '東正教', '伊斯蘭', '無信仰'],
+    'mena': ['伊斯蘭', '基督宗教', '德魯茲派'],
+    'ssa': ['基督新教', '天主教', '伊斯蘭', '非洲傳統宗教'],
+    'lac': ['天主教', '基督新教', '無信仰'],
+    'na': ['基督新教', '天主教', '無信仰'],
+  };
+  return pick(map[r] || ['無信仰']);
+}
+function pickParentJob(c, sex) {
+  const r = c.region || 'eap';
+  const mJobs = ['農夫', '工人', '計程車司機', '建築工', '漁民', '牧民', '汽車維修技師', '技工', '小販', '搬運工', '保全'];
+  const fJobs = ['農夫', '工人', '教師', '護理師', '家庭主婦', '小販', '裁縫', '清潔工', '幫傭', '小吃店老闆'];
+  const urbanJobs = sex === 'M' ? ['工程師', '教師', '銀行員', '銷售員', '公務員'] : ['教師', '護理師', '銷售員', '公務員', '服務業'];
+  // 55% 鄉村 → 農業；45% 城市 → 多元工作
+  const isRural = Math.random() < 0.55;
+  return isRural ? pick(mJobs) : pick(urbanJobs);
+}
+
+/* ==== v5.8 新增：4 位同伴（同時出生的隨機人物） ==== */
+function generateCompanions(selfCountry, n) {
+  const allCountries = ['USA','CHN','IND','JPN','KOR','BRA','RUS','DEU','GBR','FRA','MEX','IDN','TUR','SAU','ITA','EGY','PAK','BGD','NGA','VNM','PHL','ETH','IRN','COD','MMR','THA','ZAF','TZA','KEN','UKR','POL','CAN','AUS','ARG','KAZ','NPL','CUB'];
+  const companions = [];
+  for (let i = 0; i < n; i++) {
+    let cCode;
+    do { cCode = pick(allCountries); } while (cCode === selfCountry);
+    const c = countryById(cCode);
+    const sex = Math.random() < 0.5 ? 'M' : 'F';
+    const nm = randomName(c, sex);
+    companions.push({
+      id: 'comp_' + i,
+      name: nm.full || nm.full_en,
+      nameEn: nm.full_en || '',
+      sex, country: cCode,
+      countryData: c,
+      flag: c.flag,
+      // 每人也是 80 歲預期壽命起點
+      lifeExpectancy: c.le,
+      // 家境也分位
+      incomeQuartile: 1 + Math.floor(Math.random()*4),
+    });
+  }
+  return companions;
 }
 
 /* ==== 族譜：家族生成 ==== */
@@ -580,6 +649,11 @@ function tick() {
     dieNow();
     return;
   }
+  // v5.8 新增：狀態自然衰減/成長
+  if (STATE.life.age > 60) STATE.life.stats.health = Math.max(0, STATE.life.stats.health - 0.3);
+  if (STATE.life.stats.employment === 'employed') STATE.life.stats.netAssets += STATE.life.stats.annualIncome || 0;
+  // 知識隨教育成長
+  if (STATE.life.stats.education >= 2 && STATE.life.stats.knowledge < 90) STATE.life.stats.knowledge = Math.min(100, STATE.life.stats.knowledge + 0.5);
   // 事件
   const events = milestoneEvents(STATE.life, STATE.life.age);
   for (const e of events) {
@@ -732,6 +806,77 @@ function renderLife() {
   if (cInfo) cInfo.textContent = `${c.flag} ${loc.name} · ${loc.region_name}`;
   // 家族摘要
   renderFamilySummary();
+  // v5.8 新增：狀態條 + 家庭背景 + 同伴
+  renderLifeStats();
+  renderLifeFamilyDetail();
+  renderLifeCompanions();
+}
+
+/* v5.8 新增：4 個狀態條 + 淨資產 */
+function renderLifeStats() {
+  if (!STATE.life) return;
+  const s = STATE.life.stats;
+  const set = (valEl, barEl, v) => {
+    if (!valEl || !barEl) return;
+    valEl.textContent = Math.round(v);
+    barEl.style.width = Math.max(0, Math.min(100, v)) + '%';
+  };
+  set($('#stateHealthVal'), $('#stateHealth'), s.health);
+  set($('#stateHappyVal'), $('#stateHappy'), s.happiness);
+  set($('#stateKnowledgeVal'), $('#stateKnowledge'), s.knowledge);
+  set($('#stateSocialVal'), $('#stateSocial'), s.social);
+  // 淨資產（PPP 美元）
+  const na = $('#netAssets');
+  if (na) na.textContent = 'US$' + Math.round(s.netAssets || 0).toLocaleString();
+}
+
+/* v5.8 新增：1in8b.life 風格家庭背景卡 */
+function renderLifeFamilyDetail() {
+  if (!STATE.life) return;
+  const life = STATE.life;
+  const wrap = $('#lifeFamilyDetail');
+  if (!wrap) return;
+  const isEn = LANG === 'en';
+  const fd = life.fatherDetail || {};
+  const md = life.motherDetail || {};
+  wrap.innerHTML = `
+    <h4>${isEn ? '👪 Family Background' : '👪 出身家庭'}</h4>
+    <div class="fd-row">
+      <div class="fd-cell">
+        <div class="fd-role">${isEn ? 'Father' : '父親'} · ${life.stats.incomeQuartile ? `Q${life.stats.incomeQuartile}` : 'Q?'}</div>
+        <div class="fd-name">${isEn ? (life.family?.parents?.find(p=>p.sex==='M')?.name || '—') : (life.family?.parents?.find(p=>p.sex==='M')?.name || '—')}</div>
+        <div class="fd-detail">${fd.age ? (fd.age + (isEn ? ' years old' : '歲')) : ''} ${fd.job ? '· ' + fd.job : ''}</div>
+      </div>
+      <div class="fd-cell">
+        <div class="fd-role">${isEn ? 'Mother' : '母親'}</div>
+        <div class="fd-name">${life.family?.parents?.find(p=>p.sex==='F')?.name || '—'}</div>
+        <div class="fd-detail">${md.age ? (md.age + (isEn ? ' years old' : '歲')) : ''} ${md.job ? '· ' + md.job : ''}</div>
+      </div>
+      <div class="fd-cell">
+        <div class="fd-role">${isEn ? 'Religion' : '宗教'} · ${isEn ? 'Place' : '出生地'}</div>
+        <div class="fd-name" style="font-size:13px;font-weight:500">${life.stats.religion || '—'}</div>
+        <div class="fd-detail">${life.stats.birthPlaceType === 'rural' ? (isEn ? '🌾 Rural' : '🌾 鄉村') : (isEn ? '🏙️ Urban' : '🏙️ 城市')}</div>
+      </div>
+    </div>
+  `;
+}
+
+/* v5.8 新增：4 位同伴（同時出生的人） */
+function renderLifeCompanions() {
+  if (!STATE.life || !STATE.life.companions) return;
+  const wrap = $('#lifeCompanions');
+  if (!wrap) return;
+  const isEn = LANG === 'en';
+  wrap.innerHTML = `
+    <h4>${isEn ? '👶 Born in the same second' : '👶 在同一秒出生的人們'} <span class="muted">(${isEn ? 'growing up together' : '一起長大'})</span></h4>
+    <div class="lc-grid">${STATE.life.companions.map(c => `
+      <div class="lc-cell">
+        <div class="lc-flag">${c.flag}</div>
+        <div class="lc-name">${c.name}</div>
+        <div class="lc-meta">${c.countryData?.name_zh || c.country} · ${c.sex === 'M' ? (isEn?'♂':'男') : (isEn?'♀':'女')} · ${c.lifeExpectancy ? c.lifeExpectancy + (isEn?' yrs':'歲') : ''}</div>
+      </div>
+    `).join('')}</div>
+  `;
 }
 
 function renderFamilySummary() {
