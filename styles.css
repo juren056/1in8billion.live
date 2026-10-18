@@ -1910,3 +1910,5 @@ body.theme-sepia .muted { color: #8b7355; }
 }
 .spend-btn:hover { background: var(--bg); border-color: var(--accent); transform: translateY(-1px); }
 .spend-btn small { font-size: 11px; color: var(--ink-3); }
+/* v5.26 兄弟姊妹列 */
+.fd-sib { padding-top: 10px; margin-top: 8px; border-top: 1px dashed var(--line); font-size: 13px; color: var(--ink-2); }
