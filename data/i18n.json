@@ -402,7 +402,8 @@
     "spend.travel": "旅行",
     "spend.travel.desc": "見識+5 幸福+8 健康-3",
     "spend.donate": "捐款",
-    "spend.donate.desc": "幸福+10 健康+2 知識+2"
+    "spend.donate.desc": "幸福+10 健康+2 知識+2",
+    "life.feed": "人生紀錄"
   },
   "zh-Hans": {
     "title": "选出生地 · 人生模拟",
@@ -807,7 +808,8 @@
     "spend.travel": "Travel",
     "spend.travel.desc": "experience+5 happy+8 health-3",
     "spend.donate": "Donate",
-    "spend.donate.desc": "happy+10 health+2 knowledge+2"
+    "spend.donate.desc": "happy+10 health+2 knowledge+2",
+    "life.feed": "Life Record"
   },
   "en": {
     "title": "Born Somewhere · Life Simulator",
@@ -1212,7 +1214,8 @@
     "spend.travel": "Travel",
     "spend.travel.desc": "experience+5 happy+8 health-3",
     "spend.donate": "Donate",
-    "spend.donate.desc": "happy+10 health+2 knowledge+2"
+    "spend.donate.desc": "happy+10 health+2 knowledge+2",
+    "life.feed": "Life Record"
   },
   "ko": {
     "title": "태어난 곳 · 인생 시뮬레이션",
@@ -1628,7 +1631,8 @@
     "spend.travel": "Travel",
     "spend.travel.desc": "experience+5 happy+8 health-3",
     "spend.donate": "Donate",
-    "spend.donate.desc": "happy+10 health+2 knowledge+2"
+    "spend.donate.desc": "happy+10 health+2 knowledge+2",
+    "life.feed": "Life Record"
   },
   "ja": {
     "title": "出生地 · 人生シミュレーション",
@@ -2044,7 +2048,8 @@
     "spend.travel": "Travel",
     "spend.travel.desc": "experience+5 happy+8 health-3",
     "spend.donate": "Donate",
-    "spend.donate.desc": "happy+10 health+2 knowledge+2"
+    "spend.donate.desc": "happy+10 health+2 knowledge+2",
+    "life.feed": "Life Record"
   },
   "vi": {
     "title": "Nơi sinh · Mô phỏng cuộc đời",
@@ -2460,7 +2465,8 @@
     "spend.travel": "Travel",
     "spend.travel.desc": "experience+5 happy+8 health-3",
     "spend.donate": "Donate",
-    "spend.donate.desc": "happy+10 health+2 knowledge+2"
+    "spend.donate.desc": "happy+10 health+2 knowledge+2",
+    "life.feed": "Life Record"
   },
   "fr": {
     "title": "Né quelque part · Simulateur de vie",
@@ -2876,7 +2882,8 @@
     "spend.travel": "Travel",
     "spend.travel.desc": "experience+5 happy+8 health-3",
     "spend.donate": "Donate",
-    "spend.donate.desc": "happy+10 health+2 knowledge+2"
+    "spend.donate.desc": "happy+10 health+2 knowledge+2",
+    "life.feed": "Life Record"
   },
   "th": {
     "title": "เกิดที่ไหน · จำลองชีวิต",
@@ -3292,7 +3299,8 @@
     "spend.travel": "Travel",
     "spend.travel.desc": "experience+5 happy+8 health-3",
     "spend.donate": "Donate",
-    "spend.donate.desc": "happy+10 health+2 knowledge+2"
+    "spend.donate.desc": "happy+10 health+2 knowledge+2",
+    "life.feed": "Life Record"
   },
   "es": {
     "title": "Nacido en algún lugar · Simulador de vida",
@@ -3708,6 +3716,7 @@
     "spend.travel": "Travel",
     "spend.travel.desc": "experience+5 happy+8 health-3",
     "spend.donate": "Donate",
-    "spend.donate.desc": "happy+10 health+2 knowledge+2"
+    "spend.donate.desc": "happy+10 health+2 knowledge+2",
+    "life.feed": "Life Record"
   }
 }
