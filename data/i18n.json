@@ -184,7 +184,10 @@
     "tree.migration": "跨國遷徙",
     "event.migration": "遷徙到新國家",
     "share.export": "匯出生涯 JSON",
-    "share.import": "匯入生涯 JSON"
+    "share.import": "匯入生涯 JSON",
+    "life.familyHead": "家族",
+    "life.familyHint": "尚未開始",
+    "life.familyGo": "看族譜 →"
   },
   "zh-Hans": {
     "title": "选出生地 · 人生模拟",
@@ -371,7 +374,10 @@
     "tree.migration": "Cross-border migration",
     "event.migration": "Migrated to new country",
     "share.export": "Export life JSON",
-    "share.import": "Import life JSON"
+    "share.import": "Import life JSON",
+    "life.familyHead": "Family",
+    "life.familyHint": "Not started",
+    "life.familyGo": "View tree →"
   },
   "en": {
     "title": "Born Somewhere · Life Simulator",
@@ -558,7 +564,10 @@
     "tree.migration": "Cross-border migration",
     "event.migration": "Migrated to new country",
     "share.export": "Export life JSON",
-    "share.import": "Import life JSON"
+    "share.import": "Import life JSON",
+    "life.familyHead": "Family",
+    "life.familyHint": "Not started",
+    "life.familyGo": "View tree →"
   },
   "ko": {
     "title": "태어난 곳 · 인생 시뮬레이션",
@@ -758,7 +767,10 @@
     "tree.migration": "Cross-border migration",
     "event.migration": "Migrated to new country",
     "share.export": "Export life JSON",
-    "share.import": "Import life JSON"
+    "share.import": "Import life JSON",
+    "life.familyHead": "Family",
+    "life.familyHint": "Not started",
+    "life.familyGo": "View tree →"
   },
   "ja": {
     "title": "出生地 · 人生シミュレーション",
@@ -958,7 +970,10 @@
     "tree.migration": "Cross-border migration",
     "event.migration": "Migrated to new country",
     "share.export": "Export life JSON",
-    "share.import": "Import life JSON"
+    "share.import": "Import life JSON",
+    "life.familyHead": "Family",
+    "life.familyHint": "Not started",
+    "life.familyGo": "View tree →"
   },
   "vi": {
     "title": "Nơi sinh · Mô phỏng cuộc đời",
@@ -1158,7 +1173,10 @@
     "tree.migration": "Cross-border migration",
     "event.migration": "Migrated to new country",
     "share.export": "Export life JSON",
-    "share.import": "Import life JSON"
+    "share.import": "Import life JSON",
+    "life.familyHead": "Family",
+    "life.familyHint": "Not started",
+    "life.familyGo": "View tree →"
   },
   "fr": {
     "title": "Né quelque part · Simulateur de vie",
@@ -1358,7 +1376,10 @@
     "tree.migration": "Cross-border migration",
     "event.migration": "Migrated to new country",
     "share.export": "Export life JSON",
-    "share.import": "Import life JSON"
+    "share.import": "Import life JSON",
+    "life.familyHead": "Family",
+    "life.familyHint": "Not started",
+    "life.familyGo": "View tree →"
   },
   "th": {
     "title": "เกิดที่ไหน · จำลองชีวิต",
@@ -1558,7 +1579,10 @@
     "tree.migration": "Cross-border migration",
     "event.migration": "Migrated to new country",
     "share.export": "Export life JSON",
-    "share.import": "Import life JSON"
+    "share.import": "Import life JSON",
+    "life.familyHead": "Family",
+    "life.familyHint": "Not started",
+    "life.familyGo": "View tree →"
   },
   "es": {
     "title": "Nacido en algún lugar · Simulador de vida",
@@ -1758,6 +1782,9 @@
     "tree.migration": "Cross-border migration",
     "event.migration": "Migrated to new country",
     "share.export": "Export life JSON",
-    "share.import": "Import life JSON"
+    "share.import": "Import life JSON",
+    "life.familyHead": "Family",
+    "life.familyHint": "Not started",
+    "life.familyGo": "View tree →"
   }
 }
