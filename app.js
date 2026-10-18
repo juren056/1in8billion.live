@@ -1123,6 +1123,8 @@ function renderLife() {
   renderSurvivalCurve();
   renderThisYear();
   renderManualDecisions();
+  renderLifeMap();
+  renderIdentityRecord();
 }
 
 /* v5.14：本年最重要事件 */
@@ -1143,6 +1145,56 @@ function renderThisYear() {
 }
 
 /* v5.15：5 面向終身軌跡圖（健康/教育/收入/關係/家境） */
+/* v5.18：人生地圖（格子圖，1格=1年，顏色=幸福度） */
+function renderLifeMap() {
+  if (!STATE.life) return;
+  const wrap = $('#lifeMap');
+  if (!wrap) return;
+  const life = STATE.life;
+  const isEn = LANG === 'en';
+  const c = life.countryData;
+  const cols = 10;
+  const maxAge = 100;
+  const rows = Math.ceil(maxAge / cols);
+  const W = cols * 12;  // 12px per cell
+  const H = rows * 12;
+  // 每格 = 1 歲。顏色依該歲的幸福度（已知數據由 trajectory/events 推估；未知用推測）
+  const yearHappiness = (age) => {
+    if (life.latestEvent && life.latestEvent.age === age) return Math.min(100, (life.stats.happiness || 70) + 10);
+    if (age < 6) return 70 + age * 2; // 嬰兒期偏中性
+    if (age < 18) return 75 + Math.sin(age * 0.5) * 15;
+    if (age < 30) return 70 + Math.cos(age * 0.3) * 20;
+    if (age < 65) return 65 + Math.sin(age * 0.4) * 20;
+    return 60 + Math.cos(age * 0.5) * 15;
+  };
+  let cells = '';
+  for (let a = 0; a < maxAge; a++) {
+    const col = a % cols;
+    const row = Math.floor(a / cols);
+    const x = col * 12, y = row * 12;
+    const isCurrent = a === life.age;
+    const isDead = life.died && a > life.deathAge;
+    const happiness = yearHappiness(a);
+    const fill = isDead ? '#d8cdb8' : happinessColor(happiness);
+    cells += `<rect x="${x+1}" y="${y+1}" width="10" height="10" fill="${fill}" opacity="${isDead?0.3:0.85}" stroke="${isCurrent?'#8C1D3C':'none'}" stroke-width="${isCurrent?2:0}"/>`;
+  }
+  wrap.innerHTML = `
+    <h4>🗺️ ${isEn ? 'Life Map' : '人生地圖'} <span class="muted">${isEn ? '1 cell = 1 year · darker = happier':'1格=1年 · 顏色越深越幸福'}</span></h4>
+    <svg viewBox="0 0 ${W} ${H}" class="life-map-svg" style="width:100%;max-width:480px;height:auto;display:block;margin:6px auto;">
+      <rect x="0" y="0" width="${W}" height="${H}" fill="#faf7f0"/>
+      ${cells}
+    </svg>
+    <p class="muted">${isEn?'Outer box = average life expectancy in this country':'外框格 = '+c.flag+(isEn?c.name_en:c.name_zh)+' 平均壽命 '+(c.le||70)+(isEn?' yrs':'歲')}</p>
+  `;
+}
+
+function happinessColor(h) {
+  // 0-100 幸福度 → 紅(0) → 橘(50) → 綠(100)
+  if (h < 30) return `rgb(${Math.round(220 - h*1.5)}, ${Math.round(80 + h)}, ${Math.round(60 + h*1.5)})`;
+  if (h < 60) return `rgb(${Math.round(220 - (h-30)*3)}, ${Math.round(180 + (h-30)*1.5)}, ${Math.round(70 + (h-30)*0.5)})`;
+  return `rgb(${Math.round(110 - (h-60)*1.5)}, ${Math.round(220 + (h-60)*0.3)}, ${Math.round(90 + (h-60)*0.5)})`;
+}
+
 function renderLifeTrajectory() {
   if (!STATE.life) return;
   const wrap = $('#lifeTrajectory');
@@ -1424,6 +1476,29 @@ function renderSurvivalCurve() {
       </g>
     </svg>
     <p class="muted">${isEn?'Outer box = average life expectancy in this country':'外框格 = '+c.flag+(isEn?c.name_en:c.name_zh)+' 平均壽命 '+lifeExp+(isEn?' yrs':'歲')}</p>
+  `;
+}
+
+/* v5.18：護照格式身分紀錄（1in8b.life 風格） */
+function renderIdentityRecord() {
+  if (!STATE.life) return;
+  const wrap = $('#lifeIdentityRecord');
+  if (!wrap) return;
+  const life = STATE.life;
+  const isEn = LANG === 'en';
+  const surname = (life.name?.full || '').slice(0, 1);
+  const givenName = (life.name?.full || '').slice(1);
+  // MRZ-like format
+  const mrz = `I<${life.country || 'XXX'}${surname.toUpperCase().padEnd(5)}<<${givenName.toUpperCase().padEnd(44)}<`.slice(0, 44);
+  const year = life.year + life.yearOffset;
+  const mm = String(Math.floor(Math.random()*12)+1).padStart(2, '0');
+  const dd = String(Math.floor(Math.random()*28)+1).padStart(2, '0');
+  const exp = String((year + 10) % 100).padStart(2, '0') + String(Math.floor(Math.random()*12)+1).padStart(2, '0') + String(Math.floor(Math.random()*28)+1).padStart(2, '0');
+  wrap.innerHTML = `
+    <h4>🛂 ${isEn ? 'Identity Record' : '身分紀錄'} <span class="muted">${life.country || ''} · ${life.regNumber || ''}</span></h4>
+    <pre class="mrz-line">${mrz}${life.name?.full_en?.toUpperCase().replace(/[^A-Z]/g,'').padEnd(20,'<').slice(0,20) || ''}</pre>
+    <pre class="mrz-line">${year}${mm}${dd}${life.sex}${exp}${life.country || 'XXX'}</pre>
+    <div class="ir-meta">${surname} ${givenName} · ${life.sex === 'M' ? (isEn?'Male':'男') : (isEn?'Female':'女')} · ${year}/${life.regNumber?.split('-').pop() || ''}</div>
   `;
 }
 
