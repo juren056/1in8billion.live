@@ -458,6 +458,20 @@ function milestoneEvents(life, newAge) {
     const sex = Math.random() < 0.5 ? 'M' : 'F';
     const child = { sex, bornAt: newAge };
     life.stats.kids.push(child);
+    if (life.family) {
+      life.family.kids = life.family.kids || [];
+      const childBirth = { year: (life.year + life.yearOffset) };
+      const childNode = {
+        id: 'k_' + Math.random().toString(36).slice(2,8),
+        name: randomName(life.countryData, sex).full || randomName(life.countryData, sex).full_en || '?',
+        sex, country: life.country, countryData: life.countryData,
+        birth: childBirth,
+        // 依 country.im 機率夭折（5 歲以下死亡率）
+        death: chance((life.countryData.im || 5) / 1000 * 0.3) ? { year: childBirth.year + Math.floor(Math.random() * 5) } : null
+      };
+      life.family.kids.push(childNode);
+      if (childNode.death) events.push({ age: newAge, kind: 'heavy', icon: '🕯️', text: LANG === 'en' ? `${childNode.name} died as an infant.` : `${childNode.name} 在嬰幼兒時期夭折了。` });
+    }
     events.push({ age: newAge, kind: 'milestone', icon: '👶', text: t('event.baby', life.stats.kids.length) });
   }
   if (newAge === 60 && life.stats.employment !== 'none') {
@@ -1105,7 +1119,41 @@ function runLab(countryCode, era, sexMode, N) {
   deaths.sort((a, b) => a - b);
   const avg = deaths.reduce((a, b) => a + b, 0) / deaths.length;
   const median = deaths[Math.floor(deaths.length / 2)];
-  return { deaths, causes, avg, median, country, N, era: adjustEra };
+  // 家族統計
+  const famStats = runFamilyLab(countryCode, Math.min(N, 200));
+  return { deaths, causes, avg, median, country, N, era: adjustEra, famStats };
+}
+
+/* ==== Lab 家族統計：批次產生 N 個家族，看孤兒率/手足數/收養率 ==== */
+function runFamilyLab(countryCode, N) {
+  const c = countryById(countryCode);
+  if (!c) return null;
+  let adopted = 0, fostered = 0, orphan = 0, withFather = 0, withMother = 0, twoParents = 0;
+  let sibTotal = 0, gpTotal = 0;
+  for (let i = 0; i < N; i++) {
+    const f = generateFamily(countryCode, Math.random() < 0.5 ? 'M' : 'F');
+    if (f.fosterCare === 'adopt') adopted++;
+    if (f.fosterCare === 'foster') fostered++;
+    if (f.parents.length === 0) orphan++;
+    const hasFather = f.parents.some(p => p.sex === 'M');
+    const hasMother = f.parents.some(p => p.sex === 'F');
+    if (hasFather) withFather++;
+    if (hasMother) withMother++;
+    if (hasFather && hasMother) twoParents++;
+    sibTotal += f.siblings.length;
+    gpTotal += (f.grandparents || []).length;
+  }
+  return {
+    N,
+    adoptedPct: (adopted / N * 100).toFixed(1),
+    fosteredPct: (fostered / N * 100).toFixed(1),
+    orphanPct: (orphan / N * 100).toFixed(1),
+    twoParentsPct: (twoParents / N * 100).toFixed(1),
+    withFatherPct: (withFather / N * 100).toFixed(1),
+    withMotherPct: (withMother / N * 100).toFixed(1),
+    avgSib: (sibTotal / N).toFixed(2),
+    avgGP: (gpTotal / N).toFixed(2)
+  };
 }
 
 function renderLab() {
@@ -1170,6 +1218,18 @@ function displayLabResults(result) {
     html += `<div class="lab-cause"><span class="nm">${cause}</span><span class="bg"><span class="fi" style="width:${width}%"></span></span><span class="ct">${count} (${pct}%)</span></div>`;
   }
   html += `</div></div>`;
+  // 家族統計
+  if (result.famStats) {
+    const fs = result.famStats;
+    html += `<div class="lab-section"><h3>${t('lab.familyStats')}</h3><div class="fam-stats-grid">
+      <div class="lab-stat"><div class="k">${t('lab.famOrphan')}</div><div class="v">${fs.orphanPct}%</div><div class="sub">${fs.N} 個家族</div></div>
+      <div class="lab-stat"><div class="k">${t('lab.famTwoParents')}</div><div class="v">${fs.twoParentsPct}%</div><div class="sub">${t('lab.famFull')}</div></div>
+      <div class="lab-stat"><div class="k">${t('lab.famAdopted')}</div><div class="v">${fs.adoptedPct}%</div><div class="sub">${t('lab.famAdoptedHint')}</div></div>
+      <div class="lab-stat"><div class="k">${t('lab.famAvgSib')}</div><div class="v">${fs.avgSib}</div><div class="sub">${t('lab.famAvgSibHint')}</div></div>
+      <div class="lab-stat"><div class="k">${t('lab.famAvgGP')}</div><div class="v">${fs.avgGP}</div><div class="sub">${t('lab.famAvgGPHint')}</div></div>
+      <div class="lab-stat"><div class="k">${t('lab.famFostered')}</div><div class="v">${fs.fosteredPct}%</div><div class="sub">${t('lab.famFosteredHint')}</div></div>
+    </div></div>`;
+  }
   target.innerHTML = html;
 }
 
@@ -1250,6 +1310,56 @@ function wire() {
     }
   });
   $('#treeExport')?.addEventListener('click', exportGEDCOM);
+  $('#treeShare')?.addEventListener('click', shareTreeLink);
+
+/* ==== URL hash 分享：序列化 life 到 LZ-string-ish JSON base64 ==== */
+function shareTreeLink() {
+  if (!STATE.life) { toast(LANG === 'en' ? 'Start a life first' : '請先開始一段人生'); return; }
+  const { people, edges } = treePeopleGraph();
+  const payload = {
+    meta: { title: '族譜 · ' + (STATE.life.name.full || 'born-somewhere'), ts: Date.now() },
+    people: Object.values(people).map(p => ({
+      id: p.id, name: p.name, sex: p.sex, country: p.country,
+      birth: p.birth, death: p.death, note: p.note, family: p.family
+    })),
+    edges
+  };
+  const json = JSON.stringify(payload);
+  const b64 = btoa(unescape(encodeURIComponent(json)));
+  const url = `${location.origin}${location.pathname}#tree=${b64}`;
+  navigator.clipboard?.writeText(url).then(() => {
+    toast(t('share.copied') || '已複製');
+  }, () => {
+    prompt(LANG === 'en' ? 'Copy this URL:' : '複製此連結：', url);
+  });
+}
+
+function loadFromHash() {
+  const m = location.hash.match(/#tree=([^&]+)/);
+  if (!m) return false;
+  try {
+    const json = decodeURIComponent(escape(atob(m[1])));
+    const payload = JSON.parse(json);
+    if (!payload.people || !payload.people.length) return false;
+    STATE.importedFamily = { _meta: payload.meta, people: {} };
+    payload.people.forEach(p => { STATE.importedFamily.people[p.id] = p; });
+    const self = payload.people.find(p => p.id === 'self') || payload.people[0];
+    STATE.life = {
+      country: self.country || 'TWN',
+      countryData: countryById(self.country || 'TWN'),
+      name: { full: self.name, full_en: self.nameEn || '' },
+      sex: self.sex || 'U',
+      age: 30, year: new Date().getFullYear(),
+      yearOffset: 0,
+      family: { parents: [], siblings: [], grandparents: [], partner: null, kids: [] }
+    };
+    TREE_STATE.rootId = 'self';
+    setView('tree');
+    renderTree();
+    toast(LANG === 'en' ? 'Loaded from URL' : '已從連結載入');
+    return true;
+  } catch (e) { console.error(e); return false; }
+}
   $('#treeImport')?.addEventListener('change', e => {
     const file = e.target.files[0];
     if (!file) return;
@@ -1257,46 +1367,31 @@ function wire() {
     reader.onload = () => {
       try {
         const text = reader.result;
-        const parsed = parseGEDCOM(text);
+        const parsed = window.Gedcom.import(text);
+        STATE.importedFamily = parsed;  // 存到 STATE 供 GEDCOM.parse 之後用
         if (!STATE.life) {
           toast(LANG === 'en' ? 'Start a life first, then import GEDCOM' : '請先開始一段人生，再匯入 GEDCOM');
           return;
         }
-        // 把 GEDCOM 解析的「祖上」灌進 family，但保留 self / partner / kids 不變
         const f = STATE.life.family;
         f.parents = [];
         f.grandparents = [];
         f.siblings = [];
-        // 找 self 的父母
-        const selfParents = (parsed.families || []).filter(fam => fam.children && fam.children.includes('self')).map(fam => ({husb: fam.husb, wife: fam.wife}));
-        const selfFamily = selfParents[0];
-        if (selfFamily) {
-          if (selfFamily.husb && parsed.indis[selfFamily.husb]) {
-            const p = parsed.indis[selfFamily.husb];
-            f.parents.push({ id: 'f_' + Math.random().toString(36).slice(2,8), name: p.name, sex: 'M', country: p.birthPlace || STATE.life.country, countryData: countryById(p.birthPlace) || STATE.life.countryData, birth: { year: p.birthYear }, death: p.deathYear ? { year: p.deathYear } : null });
-          }
-          if (selfFamily.wife && parsed.indis[selfFamily.wife]) {
-            const p = parsed.indis[selfFamily.wife];
-            f.parents.push({ id: 'm_' + Math.random().toString(36).slice(2,8), name: p.name, sex: 'F', country: p.birthPlace || STATE.life.country, countryData: countryById(p.birthPlace) || STATE.life.countryData, birth: { year: p.birthYear }, death: p.deathYear ? { year: p.deathYear } : null });
-          }
+        // 自動找 self：用 @self@ xref 或姓名/出生年匹配現有 self
+        const selfP = findSelfInGedcom(parsed);
+        if (!selfP) {
+          toast(LANG === 'en' ? 'GEDCOM imported — pick a person from Tree dropdown' : '已匯入 GEDCOM，請從族譜中心人物選擇');
+        } else {
+          // 灌入 self 的家族
+          const fMembers = buildFamilyAround(selfP, parsed);
+          f.parents = fMembers.parents;
+          f.siblings = fMembers.siblings;
+          f.grandparents = fMembers.grandparents;
         }
-        // 祖父母：找父母的父母
-        f.parents.forEach(par => {
-          const parFam = (parsed.families || []).find(fam => fam.children && fam.children.includes(par.id));
-          if (parFam) {
-            if (parFam.husb && parsed.indis[parFam.husb]) {
-              const gp = parsed.indis[parFam.husb];
-              f.grandparents.push({ id: 'gf_'+Math.random().toString(36).slice(2,8), name: gp.name, sex: 'M', country: gp.birthPlace || par.country, countryData: countryById(gp.birthPlace) || par.countryData, birth:{year: gp.birthYear}, death: gp.deathYear ? { year: gp.deathYear } : null });
-            }
-            if (parFam.wife && parsed.indis[parFam.wife]) {
-              const gp = parsed.indis[parFam.wife];
-              f.grandparents.push({ id: 'gm_'+Math.random().toString(36).slice(2,8), name: gp.name, sex: 'F', country: gp.birthPlace || par.country, countryData: countryById(gp.birthPlace) || par.countryData, birth:{year: gp.birthYear}, death: gp.deathYear ? { year: gp.deathYear } : null });
-            }
-          }
-        });
-        TREE_STATE.rootId = 'self';
+        TREE_STATE.rootId = selfP ? 'self' : Object.keys(parsed.people)[0];
         renderTree();
-        toast(t('io.imported', Object.keys(parsed.indis).length));
+        const n = Object.keys(parsed.people).length;
+        toast(t('io.imported', n));
       } catch (err) {
         console.error(err);
         toast(LANG === 'en' ? 'GEDCOM parse failed: ' + err.message : 'GEDCOM 解析失敗：' + err.message);
@@ -1306,50 +1401,84 @@ function wire() {
   });
 }
 
-/* GEDCOM 5.5.1 簡化解析器
-   支援：HEAD / INDI / FAM / TRLR；只讀 NAME / SEX / BIRT-DATE / DEAT-DATE / PLAC / HUSB / WIFE / CHIL */
-function parseGEDCOM(text) {
-  const lines = text.split(/\r?\n/);
-  const indis = {};
-  const families = [];
-  let curIndi = null, curFam = null, curTag = null, curSub = null;
-  for (let i = 0; i < lines.length; i++) {
-    const line = lines[i];
-    const m = line.match(/^(\d+)\s+(@[^@]+@)?\s*(\w*)(?:\s+(.*))?$/);
-    if (!m) continue;
-    const [, level, xref, tag, val] = m;
-    const lv = +level;
-    if (tag === 'INDI' && xref) {
-      curIndi = { id: xref, name: '', sex: '', birthYear: null, deathYear: null, birthPlace: null };
-      indis[xref] = curIndi;
-      curFam = null;
-    } else if (tag === 'FAM' && xref) {
-      curFam = { id: xref, husb: null, wife: null, children: [] };
-      families.push(curFam);
-      curIndi = null;
-    } else if (tag === 'TRLR') { break; }
-    else if (curIndi && lv === 1) {
-      if (tag === 'NAME') curIndi.name = (val || '').replace(/\//g, '').trim();
-      else if (tag === 'SEX') curIndi.sex = val;
-    } else if (curIndi && lv === 2) {
-      if (curTag === 'BIRT' && tag === 'DATE') {
-        const y = (val || '').match(/(\d{4})/);
-        if (y) curIndi.birthYear = +y[1];
-      } else if (curTag === 'DEAT' && tag === 'DATE') {
-        const y = (val || '').match(/(\d{4})/);
-        if (y) curIndi.deathYear = +y[1];
-      } else if (tag === 'PLAC') {
-        if (curSub === 'BIRT') curIndi.birthPlace = val;
-      }
-    } else if (curFam && lv === 1) {
-      if (tag === 'HUSB') curFam.husb = val;
-      else if (tag === 'WIFE') curFam.wife = val;
-      else if (tag === 'CHIL') curFam.children.push(val);
+/* 從 zu-pu/gedcom.js 解析結果找 self：
+   1) 先看有沒有 xref "@self@" 標記的
+   2) 否則用 STATE.life 的名字 + 出生年匹配 */
+function findSelfInGedcom(parsed) {
+  const ps = Object.values(parsed.people);
+  const selfTagged = ps.find(p => p.notes && p.notes.includes('@self@'));
+  if (selfTagged) return selfTagged;
+  if (!STATE.life) return ps[0];
+  const lifeName = STATE.life.name.full || STATE.life.name.full_en || '';
+  const lifeYear = STATE.life.year + STATE.life.yearOffset - STATE.life.age;
+  return ps.find(p => p.name === lifeName && p.birth && p.birth.year === lifeYear) || ps[0];
+}
+
+function buildFamilyAround(selfP, parsed) {
+  const ps = parsed.people;
+  const parents = (selfP.parents || []).map(pid => ps[pid]).filter(Boolean);
+  const siblings = [];
+  // 同父母的其他人 = 手足
+  parents.forEach(par => {
+    (par.spouses || []).forEach(spid => {
+      // 找所有 children of FAM(parents)
+    });
+  });
+  // 直接從 parents 的 children 找
+  const allSibs = new Set();
+  ps[parents[0]?.id] && (ps[parents[0].id].spouses || []).forEach(spid => {
+    // 這對配偶的 FAM 的 children
+  });
+  // 簡化：找自我以外的所有人，其 parents 包含自我任一 parent
+  Object.values(ps).forEach(p => {
+    if (p.id === selfP.id) return;
+    if ((p.parents || []).some(pid => parents.find(par => par.id === pid))) {
+      siblings.push(p);
     }
-    if (lv === 1) { curTag = tag; curSub = null; }
-    if (lv === 2) curSub = curTag;
-  }
-  return { indis, families };
+  });
+  const grandparents = [];
+  parents.forEach(par => {
+    (par.parents || []).forEach(gpid => {
+      const gp = ps[gpid];
+      if (gp && !grandparents.find(g => g.id === gp.id)) grandparents.push(gp);
+    });
+  });
+  // 轉成 born-somewhere family 格式
+  return {
+    parents: parents.map(p => ({
+      id: 'g_' + p.id,
+      name: p.name || p.nameEn || '?',
+      sex: p.gender === 'F' ? 'F' : 'M',
+      country: p.birthPlace || STATE.life.country,
+      countryData: countryById(p.birthPlace) || STATE.life.countryData,
+      birth: p.birth ? { year: p.birth.year } : null,
+      death: p.death ? { year: p.death.year } : null,
+      note: null,
+      sourceGedcomId: p.id
+    })),
+    siblings: siblings.map(p => ({
+      id: 'g_' + p.id,
+      name: p.name || p.nameEn || '?',
+      sex: p.gender === 'F' ? 'F' : 'M',
+      country: p.birthPlace || STATE.life.country,
+      countryData: countryById(p.birthPlace) || STATE.life.countryData,
+      birth: p.birth ? { year: p.birth.year } : null,
+      death: p.death ? { year: p.death.year } : null,
+      note: null,
+      sourceGedcomId: p.id
+    })),
+    grandparents: grandparents.map(p => ({
+      id: 'g_' + p.id,
+      name: p.name || p.nameEn || '?',
+      sex: p.gender === 'F' ? 'F' : 'M',
+      country: p.birthPlace || STATE.life.country,
+      countryData: countryById(p.birthPlace) || STATE.life.countryData,
+      birth: p.birth ? { year: p.birth.year } : null,
+      death: p.death ? { year: p.death.year } : null,
+      note: null,
+      sourceGedcomId: p.id
+    }))
+  };
 }
 
 async function init() {
@@ -1357,6 +1486,7 @@ async function init() {
   document.documentElement.lang = LANG;
   wire();
   renderAll();
+  if (location.hash.includes('tree=')) loadFromHash();
 }
 init();
 
@@ -1368,6 +1498,7 @@ const TREE_STATE = { rootId: null, mode: 'ancestor', depth: 3 };
 function treePeopleGraph() {
   if (!STATE.life || !STATE.life.family) return { people: {}, edges: [] };
   const f = STATE.life.family;
+  const selfCaste = STATE.life.country === 'IND' ? STATE.life.name.caste : null;
   const self = {
     id: 'self',
     name: STATE.life.name.full || STATE.life.name.full_en || 'You',
@@ -1377,13 +1508,26 @@ function treePeopleGraph() {
     countryData: STATE.life.countryData,
     birth: { year: STATE.life.year + STATE.life.yearOffset - STATE.life.age },
     death: STATE.life.died ? { year: (STATE.life.year + STATE.life.yearOffset - STATE.life.age) + STATE.life.deathAge } : null,
-    family: STATE.life.country === 'IND' ? STATE.life.name.caste : null
+    family: selfCaste
   };
   const people = { [self.id]: self };
-  f.parents.forEach(p => { people[p.id] = p; });
-  f.siblings.forEach(p => { people[p.id] = p; });
-  (f.grandparents||[]).forEach(p => { people[p.id] = p; });
+  f.parents.forEach(p => { 
+    if (selfCaste && p.country === 'IND' && !p.family) p.family = selfCaste;
+    people[p.id] = p; 
+  });
+  f.siblings.forEach(p => { 
+    if (selfCaste && !p.family) p.family = selfCaste;
+    people[p.id] = p; 
+  });
+  (f.grandparents||[]).forEach(p => { 
+    if (selfCaste && p.country === 'IND' && !p.family) p.family = selfCaste;
+    people[p.id] = p; 
+  });
   if (f.partner) people[f.partner.id] = f.partner;
+  (f.kids || []).forEach(p => { 
+    if (selfCaste && !p.family) p.family = selfCaste;
+    people[p.id] = p; 
+  });
   const edges = [];
   if (f.parents[0]) edges.push({ parentId: f.parents[0].id, childId: 'self', kind: 'parent' });
   if (f.parents[1]) edges.push({ parentId: f.parents[1].id, childId: 'self', kind: 'parent' });
@@ -1395,8 +1539,11 @@ function treePeopleGraph() {
     const par = f.parents.find(p => p.sex === gp.sex && Math.abs((p.birth?.year||0) - (gp.birth?.year||0)) < 35);
     if (par) edges.push({ parentId: gp.id, childId: par.id, kind: 'parent' });
   });
-  // 伴侶邊：spouse 不是父子關係，標 kind: spouse
   if (f.partner) edges.push({ parentId: 'self', childId: f.partner.id, kind: 'spouse' });
+  (f.kids || []).forEach(k => {
+    edges.push({ parentId: 'self', childId: k.id, kind: 'parent' });
+    if (f.partner) edges.push({ parentId: f.partner.id, childId: k.id, kind: 'parent' });
+  });
   return { people, edges };
 }
 
@@ -1588,6 +1735,13 @@ function drawPersonNode(svg, p, x, y, w, h, selected) {
     const m = svgEl('text', { x: w - 14, y: h - 4, 'font-size': 11, fill: '#8C1D3C', 'text-anchor': 'end' }, g);
     m.textContent = '🏠';
   }
+  // 印度種姓標記（依 p.family 或 self.country='IND' + 隨機 caste）
+  if (p.family || p._caste) {
+    const caste = p.family || p._caste;
+    const cw = svgEl('rect', { class: 'caste-marker caste-' + caste, x: 70, y: h - 22, width: 50, height: 12, rx: 3 }, g);
+    const ct = svgEl('text', { x: 95, y: h - 12, 'font-size': 9, fill: 'white', 'text-anchor': 'middle', 'font-weight': 600 }, g);
+    ct.textContent = t('tree.caste.' + caste);
+  }
 }
 
 /* ==== 生命交叉事件計算 ==== */
@@ -1719,46 +1873,26 @@ function computeAge(p) {
 /* ==== GEDCOM 5.5.1 簡易版（只匯出） ==== */
 function exportGEDCOM() {
   const { people, edges } = treePeopleGraph();
-  const lines = ['0 HEAD','1 SOUR born-somewhere','2 VERS 4','1 GEDC','2 VERS 5.5.1','2 FORM LINEAGE-LINKED','1 CHAR UTF-8'];
-  const idMap = {};
-  let i = 1;
-  for (const id of Object.keys(people)) idMap[id] = 'I' + (i++);
+  // 轉成 zu-pu/gedcom.js 的 DB 格式
+  const DB = { _meta: { title: '族譜 · ' + (STATE.life?.name?.full || 'born-somewhere') }, people: {} };
   for (const id of Object.keys(people)) {
     const p = people[id];
-    const gid = idMap[id];
-    lines.push(`0 ${gid} INDI`);
-    lines.push(`1 NAME ${p.name || '?'}`);
-    if (p.sex) lines.push(`1 SEX ${p.sex}`);
-    if (p.birth?.year) {
-      lines.push(`1 BIRT`);
-      lines.push(`2 DATE ${p.birth.year}`);
-      if (p.country) lines.push(`2 PLAC ${p.country}`);
-    }
-    if (p.death?.year) {
-      lines.push(`1 DEAT`);
-      lines.push(`2 DATE ${p.death.year}`);
-    }
+    DB.people[id] = {
+      id,
+      name: p.name || '',
+      nameEn: p.nameEn || '',
+      gender: p.sex || 'U',
+      birth: p.birth ? { year: p.birth.year, month: p.birth.month, day: p.birth.day } : null,
+      death: p.death ? { year: p.death.year } : null,
+      birthPlace: p.country || '',
+      deathPlace: '',
+      notes: id === 'self' ? '@self@' : (p.note || ''),
+      parents: edges.filter(e => e.childId === id && e.kind !== 'spouse').map(e => e.parentId),
+      spouses: edges.filter(e => (e.childId === id || e.parentId === id) && e.kind === 'spouse').map(e => e.parentId === id ? e.childId : e.parentId)
+    };
   }
-  // families
-  let famI = 1;
-  const famIds = [];
-  const parents = {};
-  edges.forEach(e => {
-    if (!parents[e.childId]) parents[e.childId] = [];
-    parents[e.childId].push(e.parentId);
-  });
-  const seenFamilies = new Set();
-  for (const childId of Object.keys(parents)) {
-    const key = [...parents[childId]].sort().join('+') + '>' + childId;
-    if (seenFamilies.has(key)) continue;
-    seenFamilies.add(key);
-    const fid = 'F' + (famI++);
-    famIds.push(fid);
-    parents[childId].forEach(pid => lines.push(`1 ${parents[childId].indexOf(pid)===0?'HUSB':'WIFE'} ${idMap[pid]}`));
-    lines.push(`1 CHIL ${idMap[childId]}`);
-  }
-  lines.push('0 TRLR');
-  const blob = new Blob([lines.join('\r\n')], { type: 'text/plain' });
+  const ged = window.Gedcom.export(DB);
+  const blob = new Blob([ged], { type: 'text/plain' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url; a.download = `born-somewhere-${Date.now()}.ged`;
