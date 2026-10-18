@@ -820,9 +820,13 @@ function renderShelf() {
   if (!shelf) return;
   const lives = loadPastLives();
   shelf.innerHTML = '';
-  if (lives.length === 0) {
-    shelf.innerHTML = `<div class="shelf-empty">${t('shelf.empty')}</div>`;
-    return;
+  // 頂部加「家族全景圖」按鈕
+  if (lives.length > 1) {
+    const btn = document.createElement('div');
+    btn.className = 'shelf-panorama';
+    btn.innerHTML = `<button class="primary" id="shelfPanoramaBtn">🌐 ${t('shelf.panorama') || '家族全景圖'}</button><p class="muted">${t('shelf.panoramaSub') || '合併 ' + lives.length + ' 段人生，找出共同親屬'}</p>`;
+    shelf.appendChild(btn);
+    btn.querySelector('#shelfPanoramaBtn').addEventListener('click', () => renderPanorama(lives));
   }
   for (const life of lives) {
     const c = countryById(life.country);
@@ -835,16 +839,223 @@ function renderShelf() {
         <div class="shelf-spine"></div>
         <div class="shelf-info">
           <div class="shelf-name">${life.name || '—'}</div>
-          <div class="shelf-meta">${life.age} 歲</div>
+          <div class="shelf-meta">${life.age} 歲 · ${flag}</div>
         </div>
       </div>
     `;
     book.title = `${life.name} · ${life.cause}`;
-    book.addEventListener('click', () => {
-      alert(`${life.name}\n${life.age} 歲 · ${life.cause}`);
-    });
+    book.addEventListener('click', () => showLifeModal(life));
     shelf.appendChild(book);
   }
+}
+
+function showLifeModal(life) {
+  // 移除舊的
+  document.querySelector('#lifeModal')?.remove();
+  const c = countryById(life.country);
+  const modal = document.createElement('div');
+  modal.id = 'lifeModal';
+  modal.className = 'life-modal';
+  modal.innerHTML = `
+    <div class="life-modal-card">
+      <button class="lm-close" onclick="document.getElementById('lifeModal').remove()">×</button>
+      <h2 class="lm-title">${c?.flag || ''} ${escapeHtml(life.name)}</h2>
+      <div class="lm-meta">
+        <span>${life.year || ''} → ${life.year + life.yearOffset || ''}</span>
+        <span>·</span>
+        <span>${life.age} ${t('unit.years')}</span>
+        <span>·</span>
+        <span>${escapeHtml(life.cause || '')}</span>
+        ${life.family?.fosterCare ? `<span class="badge badge-foster">🏠 ${t('tree.noteFoster')}</span>` : ''}
+        ${life.family?.adoptedFrom ? `<span class="badge badge-adopt">🧩 ${t('tree.noteAdoptive')}</span>` : ''}
+      </div>
+      <div id="lifeTree" class="life-tree"></div>
+    </div>
+  `;
+  document.body.appendChild(modal);
+  modal.addEventListener('click', e => { if (e.target === modal) modal.remove(); });
+  // 渲染該生命的 tree（如果 family 存在）
+  if (life.family) {
+    renderLifeTreeInto(life, $('#lifeTree'));
+  }
+}
+
+function renderLifeTreeInto(life, container) {
+  if (!container) return;
+  const f = life.family;
+  // 重建 people + edges（用該 life 為中心）
+  const self = {
+    id: 'self_life',
+    name: life.name,
+    sex: life.sex,
+    country: life.country,
+    countryData: countryById(life.country),
+    birth: { year: life.year },
+    death: life.died ? { year: life.year + life.yearOffset } : null
+  };
+  const people = { [self.id]: self };
+  (f.parents || []).forEach(p => { people[p.id] = p; });
+  (f.siblings || []).forEach(p => { people[p.id] = p; });
+  (f.grandparents || []).forEach(p => { people[p.id] = p; });
+  const edges = [];
+  (f.parents || []).forEach((p, idx) => {
+    if (idx === 0) edges.push({ parentId: p.id, childId: self.id });
+    else if (idx === 1) edges.push({ parentId: p.id, childId: self.id });
+  });
+  (f.siblings || []).forEach(s => {
+    f.parents.forEach(p => edges.push({ parentId: p.id, childId: s.id }));
+  });
+  (f.grandparents || []).forEach(gp => {
+    const par = (f.parents || []).find(p => p.sex === gp.sex && Math.abs((p.birth?.year||0) - (gp.birth?.year||0)) < 35);
+    if (par) edges.push({ parentId: gp.id, childId: par.id });
+  });
+  // 簡化版：只渲染祖上 1 層（父母 + 祖父母），避免 modal 太大
+  renderMiniTree(container, self.id, 2, people, edges);
+}
+
+function renderMiniTree(container, rootId, maxGen, people, edges) {
+  container.innerHTML = '';
+  const nodes = [];
+  const links = [];
+  function recurse(id, gen, xSlot) {
+    if (!id || !people[id]) return;
+    if (gen > maxGen) return;
+    if (nodes.find(n => n.id === id)) return;
+    nodes.push({ id, gen, xSlot });
+    if (gen < maxGen) {
+      const parents = edges.filter(e => e.childId === id).map(e => e.parentId);
+      const slotW = Math.pow(2, maxGen - gen - 1);
+      recurse(parents[0], gen + 1, xSlot);
+      if (parents[1]) recurse(parents[1], gen + 1, xSlot + slotW);
+      else recurse(parents[0], gen + 1, xSlot);
+      const slotW2 = Math.pow(2, maxGen - gen - 1);
+      if (parents[0]) links.push({ from: { gen: gen+1, xSlot }, to: { gen, xSlot } });
+      if (parents[1]) links.push({ from: { gen: gen+1, xSlot: xSlot + slotW2 }, to: { gen, xSlot } });
+    }
+  }
+  recurse(rootId, 0, Math.pow(2, maxGen) / 2 - 0.5);
+  const slotW = 200, rowH = 110, marginX = 30, marginY = 30;
+  const totalSlots = Math.pow(2, maxGen);
+  const w = marginX * 2 + totalSlots * slotW;
+  const h = marginY * 2 + (maxGen + 1) * rowH;
+  const svg = svgEl('svg', { width: w, height: h, viewBox: `0 0 ${w} ${h}`, preserveAspectRatio: 'xMidYMid meet', style:'max-width:100%;height:auto;' });
+  for (const { from, to } of links) {
+    const fn = nodes.find(n => n.xSlot === from.xSlot && n.gen === from.gen);
+    const tn = nodes.find(n => n.xSlot === to.xSlot && n.gen === to.gen);
+    if (!fn || !tn) continue;
+    const fx = marginX + fn.xSlot * slotW + slotW/2;
+    const fy = marginY + fn.gen * rowH + 40;
+    const tx = marginX + tn.xSlot * slotW + slotW/2;
+    const ty = marginY + tn.gen * rowH + 80;
+    svgEl('path', { d: `M ${fx} ${fy} L ${fx} ${fy + (ty-fy)/2} L ${tx} ${fy + (ty-fy)/2} L ${tx} ${ty}`, class: 'tree-link' }, svg);
+  }
+  for (const n of nodes) {
+    drawPersonNode(svg, people[n.id], marginX + n.xSlot * slotW, marginY + n.gen * rowH, slotW - 12, 70, n.id === rootId);
+  }
+  container.appendChild(svg);
+}
+
+function renderPanorama(lives) {
+  // 合併多段人生的 family，找出共同祖先
+  // 合併邏輯：同一個人以 name+birthYear+deathYear 為 key
+  const allPeople = {};
+  const allEdges = [];
+  const selfNodes = [];
+  function keyOf(p) {
+    return `${p.name}|${p.birth?.year || '?'}|${p.death?.year || ''}|${p.sex || ''}|${p.country || ''}`;
+  }
+  const idMap = {};
+  for (const life of lives) {
+    if (!life.family) continue;
+    const f = life.family;
+    const selfId = 'self_' + Math.random().toString(36).slice(2,9);
+    const selfNode = {
+      id: selfId,
+      name: life.name,
+      sex: life.sex,
+      country: life.country,
+      countryData: countryById(life.country),
+      birth: { year: life.year },
+      death: life.died ? { year: life.year + life.yearOffset } : null,
+      isSelf: true,
+      lifeAge: life.age,
+      lifeCause: life.cause
+    };
+    allPeople[selfId] = selfNode;
+    selfNodes.push(selfNode);
+    const upsertPerson = (p) => {
+      const k = keyOf(p);
+      if (idMap[k]) return idMap[k];
+      const newId = 'p_' + Math.random().toString(36).slice(2,9);
+      idMap[k] = newId;
+      allPeople[newId] = { ...p, id: newId };
+      return newId;
+    };
+    (f.parents || []).forEach(p => {
+      const pid = upsertPerson(p);
+      allEdges.push({ parentId: pid, childId: selfId });
+    });
+    (f.siblings || []).forEach(s => {
+      const sid = upsertPerson(s);
+      (f.parents || []).forEach(p => {
+        const pid = upsertPerson(p);
+        allEdges.push({ parentId: pid, childId: sid });
+      });
+    });
+    (f.grandparents || []).forEach(gp => {
+      const gpid = upsertPerson(gp);
+      const par = (f.parents || []).find(p => p.sex === gp.sex && Math.abs((p.birth?.year||0) - (gp.birth?.year||0)) < 35);
+      if (par) {
+        const pid = upsertPerson(par);
+        allEdges.push({ parentId: gpid, childId: pid });
+      }
+    });
+  }
+  const commonAncestors = findCommonAncestors(selfNodes, allEdges, allPeople);
+  const modal = document.createElement('div');
+  modal.id = 'lifeModal';
+  modal.className = 'life-modal';
+  modal.innerHTML = `
+    <div class="life-modal-card life-modal-wide">
+      <button class="lm-close" onclick="document.getElementById('lifeModal').remove()">×</button>
+      <h2 class="lm-title">🌐 ${t('shelf.panorama') || '家族全景圖'}</h2>
+      <p class="muted">${t('shelf.panoramaSub') || '合併 ' + lives.length + ' 段人生的族譜。共同祖先以紅框標示。'}</p>
+      ${commonAncestors.length ? `<div class="panorama-common"><b>${t('shelf.commonAncestors') || '共同親屬'}：</b> ${commonAncestors.map(c => escapeHtml(c.name)).join('、')}</div>` : `<div class="panorama-common"><span class="muted">${t('shelf.noCommon') || '無共同親屬'}</span></div>`}
+      <div id="lifeTree" class="life-tree"></div>
+    </div>
+  `;
+  document.body.appendChild(modal);
+  modal.addEventListener('click', e => { if (e.target === modal) modal.remove(); });
+  renderMiniTree($('#lifeTree'), selfNodes[0].id, 2, allPeople, allEdges);
+  setTimeout(() => {
+    document.querySelectorAll('#lifeTree .tree-node').forEach(n => {
+      const name = n.querySelector('.node-name')?.textContent;
+      if (commonAncestors.some(c => c.name === name)) {
+        n.querySelector('.node-rect')?.setAttribute('stroke', '#a04040');
+        n.querySelector('.node-rect')?.setAttribute('stroke-width', '3');
+      }
+    });
+  }, 100);
+}
+
+function findCommonAncestors(selfNodes, edges, allPeople) {
+  // 共同親屬：直接出現在 ≥2 個 self 的「家族清單」（parents + grandparents + siblings）
+  // 注意：不要走 parent-of-parent 路徑，因為那會把 A 的祖父錯算成 B 的祖父（除非 B 也明確收錄）
+  const counts = new Map();
+  for (const self of selfNodes) {
+    const ancestors = edges.filter(e => e.childId === self.id).map(e => e.parentId);
+    ancestors.forEach(a => {
+      if (!counts.has(a)) counts.set(a, new Set());
+      counts.get(a).add(self.id);
+    });
+  }
+  const common = [];
+  counts.forEach((selves, pid) => {
+    if (selves.size >= 2 && allPeople[pid] && !allPeople[pid].isSelf) {
+      common.push({ id: pid, name: allPeople[pid].name, count: selves.size });
+    }
+  });
+  return common;
 }
 
 function renderSpeedBtns() {
