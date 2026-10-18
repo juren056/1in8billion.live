@@ -1494,6 +1494,7 @@ function wire() {
   $('#treeRoot')?.addEventListener('change', e => { TREE_STATE.rootId = e.target.value; renderTree(); });
   $('#treeMode')?.addEventListener('change', e => { TREE_STATE.mode = e.target.value; renderTree(); });
   $('#treeDepth')?.addEventListener('change', e => { TREE_STATE.depth = +e.target.value; renderTree(); });
+  $('#treeSearch')?.addEventListener('input', e => highlightTreeSearch(e.target.value));
   $('#treeRefresh')?.addEventListener('click', () => {
     if (STATE.life) {
       STATE.life.family = generateFamily(STATE.life.country, STATE.life.sex);
@@ -2111,6 +2112,30 @@ function deceasedMark(p) {
 
 function escapeHtml(s) {
   return String(s || '').replace(/[<>&"']/g, c => ({'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+function highlightTreeSearch(query) {
+  const q = (query || '').trim().toLowerCase();
+  const all = document.querySelectorAll('#treeCanvas .tree-node');
+  let hits = 0;
+  all.forEach(node => {
+    const name = node.querySelector('.node-name')?.textContent || '';
+    const en = node.querySelector('.node-en')?.textContent || '';
+    const match = q && (name.toLowerCase().includes(q) || en.toLowerCase().includes(q));
+    const rect = node.querySelector('.node-rect');
+    if (rect) {
+      if (match) {
+        rect.setAttribute('stroke', '#ff8800');
+        rect.setAttribute('stroke-width', '3');
+        hits++;
+      } else {
+        rect.setAttribute('stroke', rect.getAttribute('data-orig-stroke') || rect.getAttribute('stroke'));
+        rect.setAttribute('stroke-width', '1.5');
+      }
+    }
+  });
+  const hint = $('#treeSearchHint');
+  if (hint) hint.textContent = q ? (LANG==='en' ? `${hits} matches` : `${hits} 個符合`) : '';
 }
 
 function svgEl(tag, attrs, parent) {
