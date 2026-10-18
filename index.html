@@ -16,6 +16,7 @@
     <button class="navbtn" data-view="life" data-t="nav.life">人生</button>
     <button class="navbtn" data-view="end" data-t="nav.end">訃聞</button>
     <button class="navbtn" data-view="lab" data-t="lab.title">Lab</button>
+    <button class="navbtn" data-view="tree" data-t="nav.tree">族譜</button>
     <button class="navbtn" data-view="shelf" data-t="nav.shelf">書架</button>
   </nav>
   <div class="topright">
@@ -113,7 +114,7 @@
 
   <section class="about">
     <h3 data-t="intro.about">關於本作品</h3>
-    <p data-t="intro.about.text">8 億分之 1 原作（1in8b.life）由 Jin's Earth 與 Claude 合作，以真實的公開統計為基礎。本版本以原作精神重新實作，重點放在 172 國真實生命表、死亡原因分布、出生證書、過去生命書架。本地端儲存，不上傳任何資料。</p>
+    <p data-t="intro.about.text">8 億分之 1 原作（1in8b.life）由 Jin's Earth 與 Claude 合作，以真實的公開統計為基礎。本版本以原作精神重新實作，重點放在 172 國真實生命表、死亡原因分布、出生證書、過去生命書架、族譜。本地端儲存，不上傳任何資料。</p>
   </section>
 </section>
 
@@ -185,6 +186,48 @@
     </div>
     <p class="cert-note" data-t="end.notes">死亡、暴力、自殺等沉重事件，照真實統計發生。沒描寫畫面。如果你正在低潮，請聯絡身邊的人或當地的求助專線（衛福部 1925、安心專線 0800-788-995、生命線 1995、張老師 1980）。</p>
   </div>
+</section>
+
+<!-- TREE (族譜) -->
+<section id="view-tree" class="view">
+  <h2 class="tree-title" data-t="tree.title">族譜</h2>
+  <p class="tree-hint" data-t="tree.hint">你出生在一個怎樣的家庭？這裡是依統計與文化脈絡生成的家族圖。</p>
+
+  <div class="tree-controls">
+    <label><span data-t="tree.root">中心人物</span>
+      <select id="treeRoot"></select>
+    </label>
+    <label><span data-t="tree.mode">方向</span>
+      <select id="treeMode">
+        <option value="ancestor" data-t="tree.ancestor">祖上</option>
+        <option value="descendant" data-t="tree.descendant">子孫</option>
+        <option value="both" data-t="tree.both">雙向</option>
+      </select>
+    </label>
+    <label><span data-t="tree.depth">世代</span>
+      <select id="treeDepth">
+        <option value="2" data-t="tree.g2">2 世代</option>
+        <option value="3" selected data-t="tree.g3">3 世代</option>
+        <option value="4" data-t="tree.g4">4 世代</option>
+      </select>
+    </label>
+    <button id="treeRefresh" class="primary" data-t="tree.refresh">換一個家族</button>
+    <button id="treeExport" class="ghost" data-t="io.export">匯出 GEDCOM</button>
+    <label class="ghost" style="display:inline-block;cursor:pointer;">
+      <span data-t="io.import">匯入 GEDCOM</span>
+      <input id="treeImport" type="file" accept=".ged" style="display:none">
+    </label>
+  </div>
+
+  <div id="treeCanvas" class="tree-canvas"></div>
+
+  <div class="tree-legend">
+    <span><span class="lg-swatch swatch-m"></span><span data-t="sex.male">男</span></span>
+    <span><span class="lg-swatch swatch-f"></span><span data-t="sex.female">女</span></span>
+    <span><span class="lg-swatch swatch-d"></span><span data-t="legend.d">已歿</span></span>
+  </div>
+
+  <div class="tree-about" data-t="family.generated"></div>
 </section>
 
 <!-- SHELF -->
