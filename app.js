@@ -991,6 +991,35 @@ function hideMapTooltip() {
   if (_mapTooltip) { _mapTooltip.remove(); _mapTooltip = null; }
 }
 
+function showShortcutsModal() {
+  document.querySelector('#shortcutsModal')?.remove();
+  const isEn = LANG === 'en';
+  const rows = [
+    ['Space', isEn ? 'Pause / Resume life' : '暫停 / 繼續'],
+    ['1 / 2 / 4 / 8', isEn ? 'Speed 1× / 2× / 4× / 8×' : '速度 1× / 2× / 4× / 8×'],
+    ['I / L / S / T / E', isEn ? 'Switch tab: Intro / Lab / Shelf / Tree / End' : '切換 tab：開始 / Lab / 書架 / 族譜 / 訃聞'],
+    ['R', isEn ? 'Rebirth (new country)' : '重新出生（換國家）'],
+    ['?', isEn ? 'This shortcuts modal' : '本快捷鍵說明']
+  ];
+  const html = `
+    <div id="shortcutsModal" class="life-modal">
+      <div class="life-modal-card shortcuts-card">
+        <button class="lm-close" onclick="document.getElementById('shortcutsModal').remove()">×</button>
+        <h2 class="lm-title">⌨️ ${isEn ? 'Keyboard shortcuts' : '鍵盤快捷鍵'}</h2>
+        <table class="shortcuts-table">
+          <thead><tr><th>${isEn ? 'Key' : '按鍵'}</th><th>${isEn ? 'Action' : '動作'}</th></tr></thead>
+          <tbody>${rows.map(r => `<tr><td><kbd>${r[0]}</kbd></td><td>${r[1]}</td></tr>`).join('')}</tbody>
+        </table>
+        <p class="muted" style="margin-top:12px;">${isEn ? 'Press <kbd>?</kbd> anytime to toggle this. Shortcuts skip when typing in inputs.' : '隨時按 <kbd>?</kbd> 切換本說明。在輸入框中會自動跳過。'}</p>
+      </div>
+    </div>`;
+  const wrap = document.createElement('div');
+  wrap.innerHTML = html;
+  document.body.appendChild(wrap.firstElementChild);
+  const modal = document.querySelector('#shortcutsModal');
+  modal.addEventListener('click', e => { if (e.target === modal) modal.remove(); });
+}
+
 function showLifeModal(life) {
   // 移除舊的
   document.querySelector('#lifeModal')?.remove();
@@ -1506,6 +1535,12 @@ function wire() {
         $('#btnRebirth')?.click();
         e.preventDefault();
       }
+      return;
+    }
+    // ? = 快捷鍵說明
+    if (k === '?' || (k === '/' && e.shiftKey)) {
+      showShortcutsModal();
+      e.preventDefault();
     }
   });
   // Lab
