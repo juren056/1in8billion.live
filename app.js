@@ -1801,9 +1801,20 @@ async function init() {
   document.documentElement.lang = LANG;
   wire();
   renderAll();
+  injectHelpFab();
   if (location.hash.includes('tree=')) loadFromHash();
 }
 init();
+
+function injectHelpFab() {
+  if (document.querySelector('.help-fab')) return;
+  const btn = document.createElement('button');
+  btn.className = 'help-fab';
+  btn.title = LANG === 'en' ? 'Keyboard shortcuts (?)' : '鍵盤快捷鍵 (?)';
+  btn.textContent = '?';
+  btn.addEventListener('click', showShortcutsModal);
+  document.body.appendChild(btn);
+}
 
 /* =====================================================================
    族譜模組 (zu-pu 移植)：以目前人生為中心，產生祖上/子孫 SVG 樹
