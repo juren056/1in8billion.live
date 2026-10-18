@@ -109,6 +109,13 @@
         </div>
       </div>
       <button id="btnStartSelected" class="ghost" data-t="intro.pick.cta">以此地出生</button>
+      <label class="seg-block"><span data-t="intro.duration">這一生的長度</span>
+        <select id="lifeDuration">
+          <option value="30min" data-t="intro.dur.30">約 30 分鐘</option>
+          <option value="1hr" selected data-t="intro.dur.60">約 1 小時</option>
+          <option value="90min" data-t="intro.dur.90">約 1 小時 30 分鐘</option>
+        </select>
+      </label>
     </div>
   </div>
 
@@ -525,6 +532,21 @@
 <script src="gedcom.js"></script>
 <script src="data/world-coords.js"></script>
 <script src="app.js"></script>
+
+<!-- v5.25：花錢 modal（1in8b.life 風格） -->
+<div id="spendModal" class="modal" hidden>
+  <div class="modal-card focus-card">
+    <button class="lm-close" onclick="document.getElementById('spendModal').setAttribute('hidden','')">×</button>
+    <h2 class="modal-q" data-t="spend.title">花錢</h2>
+    <p class="modal-help muted" data-t="spend.lifestyle.desc">日常·年花3%淨資產</p>
+    <div class="spend-grid">
+      <button class="spend-btn" data-act="gifts">🎁 <span data-t="spend.gifts">聚餐·送禮</span><small data-t="spend.gifts.desc">人際+4 幸福+2</small></button>
+      <button class="spend-btn" data-act="lifestyle">🏠 <span data-t="spend.lifestyle">生活方式</span><small data-t="spend.lifestyle.desc">日常·3%/年</small></button>
+      <button class="spend-btn" data-act="travel">✈️ <span data-t="spend.travel">旅行</span><small data-t="spend.travel.desc">見識+5 幸福+8 健康-3</small></button>
+      <button class="spend-btn" data-act="donate">❤️ <span data-t="spend.donate">捐款</span><small data-t="spend.donate.desc">幸福+10 健康+2</small></button>
+    </div>
+  </div>
+</div>
 
 <!-- v5.24：提供意見 modal（真實表單） -->
 <div id="feedbackModal" class="modal" hidden>
