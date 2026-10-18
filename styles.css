@@ -1929,3 +1929,16 @@ body.theme-sepia .muted { color: #8b7355; }
 /* v5.28 國家 link */
 .lef-country-link { color: var(--accent); text-decoration: none; border-bottom: 1px dashed var(--accent); }
 .lef-country-link:hover { color: var(--accent-2, #0F6E68); border-bottom-style: solid; }
+
+/* v5.29 場景 + feed header + 星 */
+.life-scene { background: var(--paper); border: 1px solid var(--line); border-radius: 10px; padding: 10px 14px; margin: 12px 0; text-align: left; }
+.life-scene h4 { margin: 0 0 4px; font-size: 13px; color: var(--accent); }
+.life-scene p { margin: 0; font-size: 13px; }
+.lef-header { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 6px; padding-bottom: 8px; margin-bottom: 8px; border-bottom: 1px dashed var(--line); }
+.lef-meta { font-size: 11px; color: var(--ink-3); }
+.lef-more-btn { font-size: 11px; padding: 2px 8px; background: var(--bg); border: 1px solid var(--line); border-radius: 4px; cursor: pointer; }
+.lef-star { cursor: pointer; font-size: 14px; margin-left: auto; opacity: 0.6; transition: opacity 0.15s, transform 0.15s; padding: 0 4px; }
+.lef-star:hover { opacity: 1; transform: scale(1.2); }
+.lef-row { display: flex; gap: 10px; padding: 5px 8px; border-bottom: 1px solid var(--line); font-size: 13px; align-items: flex-start; }
+.lef-row.kind-birth, .lef-row.kind-finance, .lef-row.kind-death, .lef-row.kind-focus { background: rgba(0,0,0,0.02); }
+.lef-row:last-child { border-bottom: none; }
