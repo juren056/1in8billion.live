@@ -158,6 +158,7 @@
         <button class="speed-btn" data-speed="8" title="8×">8×</button>
         <button class="ctl ctl-danger" id="btnDieNow" title="End now">↺</button>
         <button class="ctl" id="btnRebirth" title="Restart">🔄</button>
+        <button class="ctl" id="btnShareCard" title="Share birth card">📤</button>
         <button class="ctl" id="btnSkip" title="Skip to next decision">⏭</button>
         <button class="ctl" id="btnAuto" title="Auto-decide">▶ 自動</button>
         <button class="ctl" id="btnThoughts" title="Write thoughts at pauses">✎</button>
@@ -351,6 +352,24 @@
       <button class="ghost" id="pauseSkip" data-t="pause.skip">略過</button>
       <button class="primary" id="pauseSave" data-t="pause.save">留下這句話</button>
     </div>
+  </div>
+</div>
+
+<!-- v5.13：年度焦點 modal -->
+<div id="focusModal" class="modal" hidden>
+  <div class="modal-card focus-card">
+    <h2 class="modal-q" id="focusQuestion">這一年你想把重心放在哪？</h2>
+    <p class="modal-help" data-t="focus.placeholder">選一個會影響你的狀態條與淨資產。</p>
+    <div id="focusBody" class="focus-body"></div>
+  </div>
+</div>
+
+<!-- v5.13：財務決策 modal -->
+<div id="financeModal" class="modal" hidden>
+  <div class="modal-card focus-card">
+    <h2 class="modal-q" id="financeQuestion">你要怎麼處理你的錢？</h2>
+    <p class="modal-help" data-t="finance.placeholder">選一項會影響淨資產與狀態。</p>
+    <div id="financeBody" class="focus-body"></div>
   </div>
 </div>
 
