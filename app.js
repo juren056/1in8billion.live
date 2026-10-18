@@ -26,6 +26,7 @@ const STATE = {
   pendingDecision: null,
   autoDecide: false,  // v5.9 新增：自動抉擇模式
   fastForward: false, // v5.9 新增：快轉到下一個抉擇
+  thoughtsEnabled: true, // v5.10：✎ 寫下想法 啟用（5/15/30/50/70 暫停時彈出 modal）
   pastLives: [],
   modal: null,
 };
@@ -609,6 +610,9 @@ function milestoneEvents(life, newAge) {
   // 5/15/30/50/70 暫停問題
   if ([5, 15, 30, 50, 70].includes(newAge) && !life.quotes[newAge]) {
     STATE.pendingDecision = { age: newAge, type: 'pause' };
+    if (STATE.thoughtsEnabled && !STATE.autoDecide && STATE.view === 'life') {
+      setTimeout(() => showPauseQuestion(), 50);
+    }
   }
   return events;
 }
@@ -704,12 +708,35 @@ function resolvePendingDecision() {
   const dec = STATE.pendingDecision;
   if (!dec) return;
   if (dec.type === 'pause') {
-    // 自動模式：存一句簡短 quote
     if (!STATE.life.quotes[dec.age]) {
       STATE.life.quotes[dec.age] = STATE.autoDecide ? '（自動抉擇）' : '';
     }
   }
   STATE.pendingDecision = null;
+}
+
+/* v5.10：顯示暫停問題 modal（✎ 寫下想法） */
+function showPauseQuestion() {
+  if (!STATE.pendingDecision || STATE.pendingDecision.type !== 'pause') return;
+  const age = STATE.pendingDecision.age;
+  STATE.paused = true;
+  const modal = $('#pauseModal');
+  if (!modal) return;
+  const q = $('#pauseQuestion');
+  if (q) q.textContent = LANG === 'en' ? `If ${age}-year-old you could remember one thing...` : `如果 ${age} 歲的你能記得一件事⋯`;
+  const input = $('#pauseInput');
+  if (input) input.value = STATE.life.quotes[age] || '';
+  modal.removeAttribute('hidden');
+  setTimeout(() => input?.focus(), 100);
+}
+function savePauseQuote() {
+  const age = STATE.pendingDecision?.age;
+  const input = $('#pauseInput');
+  const txt = input?.value?.trim() || '';
+  if (age != null) STATE.life.quotes[age] = txt || '（隱蔽）';
+  $('#pauseModal')?.setAttribute('hidden', '');
+  STATE.paused = false;
+  resolvePendingDecision();
 }
 
 function logLife(text) {
@@ -1721,6 +1748,20 @@ function wire() {
   if (skipBtn) skipBtn.addEventListener('click', () => {
     if (STATE.pendingDecision) { resolvePendingDecision(); return; }
     STATE.fastForward = true;
+  });
+  // v5.10：✎ 寫下想法 modal 啟用開關 + 暫停問題
+  const thoughtsBtn = $('#btnThoughts');
+  if (thoughtsBtn) thoughtsBtn.addEventListener('click', () => {
+    STATE.thoughtsEnabled = !STATE.thoughtsEnabled;
+    thoughtsBtn.classList.toggle('active', STATE.thoughtsEnabled);
+    if (STATE.thoughtsEnabled && STATE.pendingDecision) showPauseQuestion();
+  });
+  const pauseSave = $('#pauseSave');
+  if (pauseSave) pauseSave.addEventListener('click', savePauseQuote);
+  const pauseSkip = $('#pauseSkip');
+  if (pauseSkip) pauseSkip.addEventListener('click', () => {
+    resolvePendingDecision();
+    $('#pauseModal')?.setAttribute('hidden', '');
   });
   // 死亡
   const dieBtn = $('#btnDieNow');
