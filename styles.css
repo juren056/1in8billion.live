@@ -721,3 +721,19 @@ input, select, textarea { font: inherit; color: inherit; }
 .cs-k { color: var(--ink-3); padding: 5px 8px; }
 .cs-v { color: var(--ink); padding: 5px 8px; text-align: right; font-weight: 600; }
 .cs-source { font-size: 11px; margin-top: 10px; line-height: 1.5; }
+
+/* v5.11 存活曲線 */
+.life-survival-curve {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 12px 16px;
+  margin: 12px 0;
+  text-align: left;
+}
+.life-survival-curve h4 {
+  margin: 0 0 8px;
+  font-size: 13px; color: var(--accent);
+  text-transform: uppercase; letter-spacing: 0.1em;
+}
+.survival-svg { display: block; margin: 0 auto; }
