@@ -1485,7 +1485,7 @@ function exportLifeJSON() {
   const blob = new Blob([json], { type: 'application/json' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
-  const safeName = (STATE.life.name?.full || STATE.life.name?.full_en || 'life').replace(/[^\w]/g, '_');
+  const safeName = (STATE.life.name?.full || STATE.life.name?.full_en || 'life').replace(/[\/\\<>:"|?*\u0000-\u001f]/g, '_');
   a.href = url; a.download = `born-somewhere-${safeName}-${Date.now()}.json`;
   document.body.appendChild(a); a.click(); a.remove();
   setTimeout(() => URL.revokeObjectURL(url), 1000);
@@ -1998,6 +1998,12 @@ function showPersonDetail(p) {
   const age = computeAge(p);
   const rel = relationLabel(p);
   const crossEvents = computeCrossLifeEvents(p);
+  // self 的事件（從 STATE.life.log 摘要）
+  let ownEventsHtml = '';
+  if (p.id === 'self' && STATE.life && STATE.life.log) {
+    const recent = STATE.life.log.filter(e => e.kind !== 'log').slice(-8);
+    ownEventsHtml = recent.length ? `<div class="pd-cross"><h4>${LANG==='en'?'Life milestones':'生命里程碑'}</h4>${recent.map(e => `<div class="pd-cross-row"><span class="pd-cross-icon">${e.icon||'·'}</span><span>${escapeHtml(e.text)}</span></div>`).join('')}</div>` : '';
+  }
   panel.innerHTML = `
     <div class="pd-head">
       <div class="pd-portrait">${pixelPortraitSVG(p.countryData, age, p.sex)}</div>
@@ -2005,10 +2011,11 @@ function showPersonDetail(p) {
         <h3 class="pd-name">${escapeHtml(p.name || '?')} ${deceasedMark(p)}</h3>
         <div class="pd-relation"><span class="badge">${rel}</span> ${p.note === 'adoptive' ? `<span class="badge badge-adopt">🧩 ${t('tree.noteAdoptive')}</span>` : p.note === 'foster' ? `<span class="badge badge-foster">🏠 ${t('tree.noteFoster')}</span>` : ''}</div>
         <div class="pd-life">${p.birth?.year || '?'} – ${p.death?.year || t('legend.m')}</div>
-        <div class="pd-country">${p.countryData?.flag || ''} ${p.country || ''}</div>
+        <div class="pd-country">${p.countryData?.flag || ''} ${p.country || ''}${p.birthOrigin ? ' <span class="fam-flag">' + p.birthOrigin.flag + '→</span>' : ''}</div>
       </div>
       <button class="pd-close" onclick="document.getElementById('personDetail').remove()">×</button>
     </div>
+    ${ownEventsHtml}
     ${crossEvents.length ? `<div class="pd-cross"><h4>${t('person.cross')}</h4>${crossEvents.map(e => `<div class="pd-cross-row kind-${e.kind||''}"><span class="pd-cross-icon">${e.icon}</span><span>${escapeHtml(e.text)}</span></div>`).join('')}</div>` : ''}
   `;
   // 高亮選中
