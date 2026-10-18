@@ -1925,3 +1925,7 @@ body.theme-sepia .muted { color: #8b7355; }
 .lef-row.kind-death { background: rgba(140,29,60,0.05); }
 .lef-row.kind-birth { background: rgba(15,110,104,0.05); }
 .lef-row.kind-focus { background: rgba(168,85,247,0.05); }
+
+/* v5.28 國家 link */
+.lef-country-link { color: var(--accent); text-decoration: none; border-bottom: 1px dashed var(--accent); }
+.lef-country-link:hover { color: var(--accent-2, #0F6E68); border-bottom-style: solid; }
