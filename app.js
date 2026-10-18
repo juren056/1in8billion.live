@@ -2031,6 +2031,10 @@ function renderLifeFamilyDetail() {
         <div class="fd-detail">${life.stats.birthPlaceType === 'rural' ? (isEn ? '🌾 Rural' : '🌾 鄉村') : (isEn ? '🏙️ Urban' : '🏙️ 城市')}</div>
       </div>
     </div>
+    ${life.family?.siblings?.length ? `<div class="fd-sib"><strong>${isEn ? 'Siblings' : '兄弟姊妹'}：</strong> ${life.family.siblings.map(s => {
+      const sAge = life.age - (s.birth?.year || life.year);
+      return `${s.name}（${sAge}${isEn?'yo':'歲'}）`;
+    }).join('、')}</div>` : ''}
   `;
 }
 
