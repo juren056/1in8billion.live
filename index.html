@@ -160,6 +160,40 @@
         <button class="ctl" id="btnRebirth" title="Restart">🔄</button>
       </div>
     </div>
+
+    <!-- v5.8 新增：4 個狀態條 + 淨資產 + 家庭背景 + 同伴 -->
+    <div class="life-stats" id="lifeStats">
+      <h4 data-t="life.states">⚖️ 狀態 0-100</h4>
+      <div class="state-row">
+        <span class="state-label" data-t="life.health">健康</span>
+        <div class="state-bar"><i id="stateHealth"></i></div>
+        <span class="state-val" id="stateHealthVal">—</span>
+      </div>
+      <div class="state-row">
+        <span class="state-label" data-t="life.happiness">幸福</span>
+        <div class="state-bar"><i id="stateHappy"></i></div>
+        <span class="state-val" id="stateHappyVal">—</span>
+      </div>
+      <div class="state-row">
+        <span class="state-label" data-t="life.knowledge">知識</span>
+        <div class="state-bar"><i id="stateKnowledge"></i></div>
+        <span class="state-val" id="stateKnowledgeVal">—</span>
+      </div>
+      <div class="state-row">
+        <span class="state-label" data-t="life.social">人際</span>
+        <div class="state-bar"><i id="stateSocial"></i></div>
+        <span class="state-val" id="stateSocialVal">—</span>
+      </div>
+      <div class="state-assets">
+        <span data-t="life.netAssets">淨資產（PPP）</span>
+        <b id="netAssets">US$0</b>
+      </div>
+    </div>
+
+    <div class="life-family-detail" id="lifeFamilyDetail"></div>
+
+    <div class="life-companions" id="lifeCompanions"></div>
+
     <div class="cert-log-wrap">
       <h4 data-t="life.events">事件記錄</h4>
       <div class="cert-log" id="lifeLog"></div>
