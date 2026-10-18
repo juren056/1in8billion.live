@@ -1837,3 +1837,41 @@ input, select, textarea { font: inherit; color: inherit; }
 .fin-auto { margin-top: 12px; padding-top: 12px; border-top: 1px dashed var(--line); }
 .fin-auto button { background: var(--accent); color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 13px; }
 .fin-auto button.active { background: #0F6E68; }
+
+/* v5.22 主題切換 + 貨幣切換 */
+.life-meta-controls {
+  display: flex; gap: 8px; margin: 10px 0;
+  justify-content: flex-end;
+}
+.meta-btn {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 6px 12px;
+  cursor: pointer;
+  font-size: 13px;
+  color: var(--ink);
+  transition: all 0.15s;
+}
+.meta-btn:hover { background: var(--bg); border-color: var(--accent); }
+
+/* 主題：dark */
+body.theme-dark { background: #1a1a1a; color: #e5e5e5; }
+body.theme-dark .paper, body.theme-dark .meta-btn, body.theme-dark .life-stats, body.theme-dark .life-country-stats,
+body.theme-dark .life-family-detail, body.theme-dark .life-this-year, body.theme-dark .life-survival-curve, body.theme-dark .life-trajectory, body.theme-dark .life-identity-record, body.theme-dark .life-manual-decisions {
+  background: #2a2a2a; color: #e5e5e5; border-color: #444;
+}
+body.theme-dark .cs-table td, body.theme-dark .cs-table tr { border-color: #444; }
+body.theme-dark .muted { color: #888; }
+body.theme-dark #focusBody .focus-btn, body.theme-dark #financeBody .finance-btn, body.theme-dark #treeCanvas svg {
+  background: #2a2a2a; color: #e5e5e5;
+}
+body.theme-dark .cs-k { color: #999; }
+
+/* 主題：sepia */
+body.theme-sepia { background: #f4ecd8; color: #5b4636; }
+body.theme-sepia .paper, body.theme-sepia .meta-btn, body.theme-sepia .life-stats, body.theme-sepia .life-country-stats,
+body.theme-sepia .life-family-detail, body.theme-sepia .life-this-year, body.theme-sepia .life-survival-curve, body.theme-sepia .life-trajectory, body.theme-sepia .life-identity-record, body.theme-sepia .life-manual-decisions {
+  background: #ebe1cc; color: #5b4636; border-color: #b8a585;
+}
+body.theme-sepia .muted { color: #8b7355; }
