@@ -1322,6 +1322,13 @@ function wire() {
   });
   $('#treeExport')?.addEventListener('click', exportGEDCOM);
   $('#treeShare')?.addEventListener('click', shareTreeLink);
+  $('#lifeExport')?.addEventListener('click', exportLifeJSON);
+  $('#lifeImport')?.addEventListener('change', e => {
+    const file = e.target.files[0];
+    if (file) importLifeJSON(file);
+    e.target.value = '';
+  });
+}
 
 /* ==== URL hash 分享：序列化 life 到 LZ-string-ish JSON base64 ==== */
 function shareTreeLink() {
@@ -1343,6 +1350,53 @@ function shareTreeLink() {
   }, () => {
     prompt(LANG === 'en' ? 'Copy this URL:' : '複製此連結：', url);
   });
+}
+
+/* ==== 完整生涯 JSON 匯出/匯入 ==== */
+function exportLifeJSON() {
+  if (!STATE.life) { toast(LANG === 'en' ? 'Start a life first' : '請先開始一段人生'); return; }
+  const payload = {
+    type: 'born-somewhere-life',
+    version: 1,
+    exportedAt: new Date().toISOString(),
+    state: {
+      life: STATE.life,
+      pastLives: loadPastLives(),
+      importedFamily: STATE.importedFamily || null
+    }
+  };
+  const json = JSON.stringify(payload, null, 2);
+  const blob = new Blob([json], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  const safeName = (STATE.life.name?.full || STATE.life.name?.full_en || 'life').replace(/[^\w]/g, '_');
+  a.href = url; a.download = `born-somewhere-${safeName}-${Date.now()}.json`;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+  toast(LANG === 'en' ? 'Life exported' : '已匯出生涯');
+}
+
+function importLifeJSON(file) {
+  const reader = new FileReader();
+  reader.onload = () => {
+    try {
+      const payload = JSON.parse(reader.result);
+      if (payload.type !== 'born-somewhere-life') throw new Error(LANG === 'en' ? 'Invalid format' : '格式不正確');
+      if (payload.state?.life) {
+        STATE.life = payload.state.life;
+        if (payload.state.pastLives) localStorage.setItem(STORAGE_KEY + ':past', JSON.stringify(payload.state.pastLives));
+        if (payload.state.importedFamily) STATE.importedFamily = payload.state.importedFamily;
+        stopTicker();
+        setView('life');
+        renderAll();
+        toast(LANG === 'en' ? 'Life imported — press ⏸/▶ to resume' : '已匯入生涯，按 ⏸/▶ 繼續');
+      } else { throw new Error('No life data'); }
+    } catch (e) {
+      console.error(e);
+      toast(LANG === 'en' ? 'Import failed: ' + e.message : '匯入失敗：' + e.message);
+    }
+  };
+  reader.readAsText(file);
 }
 
 function loadFromHash() {
@@ -1410,7 +1464,6 @@ function loadFromHash() {
     };
     reader.readAsText(file);
   });
-}
 
 /* 從 zu-pu/gedcom.js 解析結果找 self：
    1) 先看有沒有 xref "@self@" 標記的
