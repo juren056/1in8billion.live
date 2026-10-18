@@ -24,6 +24,8 @@ const STATE = {
   tickMs: 500,  // ~1 年/0.5 秒（1in8b.life 風格：時間慢到能看見細節；8× 時約 6 秒跑完一生）
   ticker: null,
   pendingDecision: null,
+  autoDecide: false,  // v5.9 新增：自動抉擇模式
+  fastForward: false, // v5.9 新增：快轉到下一個抉擇
   pastLives: [],
   modal: null,
 };
@@ -640,10 +642,28 @@ function setSpeed(sp) {
 function tick() {
   if (!STATE.life || STATE.life.died || STATE.paused) return;
   if (STATE.pendingDecision) return; // 暫停等決策
-  STATE.life.age += 1;
-  STATE.life.yearOffset += 1;
   const c = STATE.life.countryData;
   const sex = STATE.life.sex;
+  // v5.9：快轉到下一個抉擇 — 跳過直到遇到 pause decision
+  if (STATE.fastForward) {
+    STATE.fastForward = false;
+    let tries = 0;
+    while (tries++ < 500) {
+      if (STATE.life.died || STATE.paused || STATE.pendingDecision) break;
+      STATE.life.age += 1;
+      STATE.life.yearOffset += 1;
+      if (Math.random() < pDie(STATE.life.age, c, sex)) { dieNow(); break; }
+      if ([5,15,30,50,70].includes(STATE.life.age)) {
+        STATE.pendingDecision = { age: STATE.life.age, type: 'pause' };
+        if (STATE.autoDecide) resolvePendingDecision();
+        break;
+      }
+    }
+    renderAll();
+    return;
+  }
+  STATE.life.age += 1;
+  STATE.life.yearOffset += 1;
   // 死亡判定
   if (Math.random() < pDie(STATE.life.age, c, sex)) {
     dieNow();
@@ -679,6 +699,19 @@ function dieNow(forcedCause) {
   STATE.view = 'end';
   renderAll();
 }
+/* v5.9 新增：解析暫停決策（自動套預設值） */
+function resolvePendingDecision() {
+  const dec = STATE.pendingDecision;
+  if (!dec) return;
+  if (dec.type === 'pause') {
+    // 自動模式：存一句簡短 quote
+    if (!STATE.life.quotes[dec.age]) {
+      STATE.life.quotes[dec.age] = STATE.autoDecide ? '（自動抉擇）' : '';
+    }
+  }
+  STATE.pendingDecision = null;
+}
+
 function logLife(text) {
   const el = $('#lifeLog');
   if (!el) return;
@@ -810,6 +843,7 @@ function renderLife() {
   renderLifeStats();
   renderLifeFamilyDetail();
   renderLifeCompanions();
+  renderCountryStats();
 }
 
 /* v5.8 新增：4 個狀態條 + 淨資產 */
@@ -876,6 +910,47 @@ function renderLifeCompanions() {
         <div class="lc-meta">${c.countryData?.name_zh || c.country} · ${c.sex === 'M' ? (isEn?'♂':'男') : (isEn?'♀':'女')} · ${c.lifeExpectancy ? c.lifeExpectancy + (isEn?' yrs':'歲') : ''}</div>
       </div>
     `).join('')}</div>
+  `;
+}
+
+/* v5.9 新增：完整國家統計面板（16 個關鍵指標） */
+function renderCountryStats() {
+  if (!STATE.life) return;
+  const c = STATE.life.countryData;
+  if (!c) return;
+  const wrap = $('#lifeCountryStats');
+  if (!wrap) return;
+  const isEn = LANG === 'en';
+  const sex = STATE.life.sex;
+  // 16 個統計指標（依國家資料）
+  const rows = [
+    [isEn?'Annual births':'每年出生人數', Math.round(c.births || 240000).toLocaleString() + (isEn?' people':'人')],
+    [isEn?'Population':'人口', ((c.pop || 5000000)/1000000).toFixed(1) + (isEn?'M people':'百萬人')],
+    [isEn?'Life expectancy F/M':'平均壽命 女/男', ((c.le || 70) + (isEn?'/':'/') + Math.max(0,(c.le||70) - 4)) + (isEn?' yrs':'歲')],
+    [isEn?'Under-5 mortality':'5歲以下死亡率', ((c.u5 || 25) / 1000 * 100).toFixed(1) + '%'],
+    [isEn?'GDP per capita (PPP)':'人均GDP（PPP）', '$' + Math.round(c.ppp || 10000).toLocaleString()],
+    [isEn?'Gini coefficient':'所得吉尼係數', (c.gi || 0.35).toFixed(2)],
+    [isEn?'Urban population %':'都市人口比例', Math.round(c.urb || 50) + '%'],
+    [isEn?'Agricultural workforce':'從事農業', Math.round(c.agr || 30) + '%'],
+    [isEn?'Expected education years':'預期受教育年數', (c.eys || 12).toFixed(1) + (isEn?' yrs':'年')],
+    [isEn?'Higher education rate':'高等教育粗在學率', Math.round(c.ter || 30) + '%'],
+    [isEn?'Internet usage':'網路使用率', Math.round(c.net || 60) + '%'],
+    [isEn?'Total fertility rate':'總生育率', (c.tfr || 2).toFixed(2) + (isEn?' children':'人')],
+    [isEn?'Maternal mortality':'孕產婦死亡率（每10萬活產）', Math.round(c.mmr || 50)],
+    [isEn?'HIV prevalence 15-49':'HIV 盛行率（15-49歲）', (c.hiv || 1).toFixed(2) + '%'],
+    [isEn?'Homicide rate':'兇殺率（每10萬人）', Math.round(c.hom || 5) + (isEn?'/100k':'/10萬')],
+    [isEn?'Traffic fatality':'交通事故死亡（每10萬人）', Math.round(c.road || 15) + (isEn?'/100k':'/10萬')],
+    [isEn?'Tobacco use M/F':'菸草使用 男/女', (Math.round(c.sm * 0.8)) + '% / ' + (Math.round(c.sm * 0.1)) + '%'],
+    [isEn?'Out-of-pocket health':'醫療費用自付比例', Math.round(c.oop || 30) + '%'],
+    [isEn?'Child marriage (F)':'18歲前結婚（女性）', Math.round(c.cm || 20) + '%'],
+    [isEn?'Life satisfaction (0-10)':'生活滿意度（0-10）', (c.ls || 5.5).toFixed(2)]
+  ];
+  wrap.innerHTML = `
+    <h4>🌍 ${c.flag} ${isEn ? c.name_en : c.name_zh} <span class="muted">(${isEn?'20 key stats':'20 個關鍵統計'})</span></h4>
+    <table class="cs-table">
+      <tbody>${rows.map(r => `<tr><td class="cs-k">${r[0]}</td><td class="cs-v">${r[1]}</td></tr>`).join('')}</tbody>
+    </table>
+    <p class="muted cs-source">${isEn?'Sources: UN WPP 2024, WB WDI, WHO, UNESCO UIS, UNDP HDR, ILO, UNAIDS, UNODC, UNICEF, World Happiness Report 2024':'資料來源：聯合國《世界人口展望2024》、世界銀行WDI、WHO、UNESCO UIS、UNDP HDR、ILO、UNAIDS、UNODC、UNICEF、生活滿意度報告2024'}</p>
   `;
 }
 
@@ -1633,6 +1708,20 @@ function wire() {
     pauseBtn.textContent = STATE.paused ? '▶' : '⏸';
   });
   $$('.speed-btn').forEach(b => b.addEventListener('click', () => setSpeed(+b.dataset.speed)));
+  // v5.9：自動抉擇模式
+  const autoBtn = $('#btnAuto');
+  if (autoBtn) autoBtn.addEventListener('click', () => {
+    STATE.autoDecide = !STATE.autoDecide;
+    autoBtn.classList.toggle('active', STATE.autoDecide);
+    autoBtn.textContent = STATE.autoDecide ? '⏸ 停止自動' : '▶ 自動抉擇';
+    if (STATE.autoDecide && STATE.pendingDecision) resolvePendingDecision();
+  });
+  // v5.9：快轉到下一個抉擇
+  const skipBtn = $('#btnSkip');
+  if (skipBtn) skipBtn.addEventListener('click', () => {
+    if (STATE.pendingDecision) { resolvePendingDecision(); return; }
+    STATE.fastForward = true;
+  });
   // 死亡
   const dieBtn = $('#btnDieNow');
   if (dieBtn) dieBtn.addEventListener('click', () => { if (STATE.life && !STATE.life.died) dieNow('自行結束'); });
