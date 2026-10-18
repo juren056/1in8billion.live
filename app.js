@@ -1344,6 +1344,12 @@ function drawPersonNode(svg, p, x, y, w, h, selected) {
   svgEl('rect', { class: 'node-rect ' + (p.sex === 'M' ? 'node-m' : p.sex === 'F' ? 'node-f' : 'node-u'),
     x: 0, y: 0, width: w, height: h, rx: 8, ry: 8,
     fill: '#faf7f0', stroke: genderColor, 'stroke-width': selected ? 2.5 : 1.5, 'stroke-dasharray': dash, opacity: op }, g);
+  // 點擊開 detail panel
+  g.style.cursor = 'pointer';
+  g.addEventListener('click', () => {
+    TREE_STATE.selectedId = p.id;
+    showPersonDetail(p);
+  });
   // head
   const portrait = svgEl('svg', { x: 6, y: 4, width: 56, height: 70, viewBox: '0 0 200 200' }, g);
   portrait.innerHTML = pixelPortraitSVG(p.countryData, computeAge(p), p.sex).match(/<svg[^>]*>(.*)<\/svg>/)?.[1] || '';
@@ -1364,14 +1370,121 @@ function drawPersonNode(svg, p, x, y, w, h, selected) {
     const c = svgEl('text', { x: w - 12, y: 16, 'font-size': 14, fill: '#a04040', 'text-anchor': 'end' }, g);
     c.textContent = '†';
   }
-  // 寄養 / 收養 / 孤兒 marker
   if (p.note === 'adoptive') {
     const m = svgEl('text', { x: w - 14, y: h - 4, 'font-size': 11, fill: '#0F6E68', 'text-anchor': 'end' }, g);
-    m.textContent = '🧩';  // 收養
+    m.textContent = '🧩';
   } else if (p.note === 'foster') {
     const m = svgEl('text', { x: w - 14, y: h - 4, 'font-size': 11, fill: '#8C1D3C', 'text-anchor': 'end' }, g);
-    m.textContent = '🏠';  // 寄養
+    m.textContent = '🏠';
   }
+}
+
+/* ==== 生命交叉事件計算 ==== */
+function computeCrossLifeEvents(p) {
+  if (!STATE.life || p.id === 'self') return [];
+  const self = STATE.life;
+  const events = [];
+  const selfBirthYear = self.year + self.yearOffset - self.age;
+  const selfAgeAt = (year) => Math.max(0, year - selfBirthYear);
+  // 他出生時我幾歲
+  if (p.birth?.year) {
+    const myAge = selfAgeAt(p.birth.year);
+    const sexTerm = LANG === 'en' ? (p.sex === 'M' ? 'your brother/brother-in-law' : 'your sister/sister-in-law')
+                  : (p.sex === 'M' ? '兄弟/手足' : '姊妹/手足');
+    events.push({
+      icon: '👶',
+      text: LANG === 'en' ? `${p.name} was born when you were ${myAge}.` : `${p.name}出生時，你 ${myAge} 歲。`
+    });
+  }
+  // 他去世時我幾歲
+  if (p.death?.year) {
+    const myAge = selfAgeAt(p.death.year);
+    if (myAge >= 0 && myAge <= self.age) {
+      events.push({
+        icon: '🕯️',
+        text: LANG === 'en' ? `${p.name} passed away when you were ${myAge}.` : `${p.name} 過世時，你 ${myAge} 歲。`,
+        kind: 'heavy'
+      });
+    } else if (myAge > self.age) {
+      events.push({
+        icon: '🕯️',
+        text: LANG === 'en' ? `${p.name} would have been ${p.death.year - selfBirthYear} years older than you.` : `${p.name} 將在你 ${myAge} 歲時離世（在你身後）。`,
+        kind: 'forecast'
+      });
+    }
+  }
+  // 他出生時自己幾歲（年齡差）
+  if (p.birth?.year && selfBirthYear) {
+    const diff = p.birth.year - selfBirthYear;
+    if (diff > 0 && diff < 30 && p.id !== 'self') {
+      const role = p.sex === 'M' ? (LANG === 'en' ? 'elder brother' : '兄長') : (LANG === 'en' ? 'elder sister' : '姊姊');
+      events.push({
+        icon: '👫',
+        text: LANG === 'en' ? `${p.name} is ${diff} years older than you (${role}).` : `${p.name} 比你大 ${diff} 歲（${role}）。`
+      });
+    } else if (diff < 0 && diff > -30) {
+      const role = p.sex === 'M' ? (LANG === 'en' ? 'younger brother' : '弟弟') : (LANG === 'en' ? 'younger sister' : '妹妹');
+      events.push({
+        icon: '👫',
+        text: LANG === 'en' ? `${p.name} is ${-diff} years younger than you (${role}).` : `${p.name} 比你小 ${-diff} 歲（${role}）。`
+      });
+    }
+  }
+  return events;
+}
+
+function showPersonDetail(p) {
+  let panel = $('#personDetail');
+  if (!panel) {
+    panel = document.createElement('div');
+    panel.id = 'personDetail';
+    panel.className = 'person-detail';
+    document.querySelector('.tree-canvas')?.parentNode.insertBefore(panel, document.querySelector('#treeCanvas').nextSibling);
+  }
+  const age = computeAge(p);
+  const rel = relationLabel(p);
+  const crossEvents = computeCrossLifeEvents(p);
+  panel.innerHTML = `
+    <div class="pd-head">
+      <div class="pd-portrait">${pixelPortraitSVG(p.countryData, age, p.sex)}</div>
+      <div class="pd-meta">
+        <h3 class="pd-name">${escapeHtml(p.name || '?')} ${deceasedMark(p)}</h3>
+        <div class="pd-relation"><span class="badge">${rel}</span> ${p.note === 'adoptive' ? `<span class="badge badge-adopt">🧩 ${t('tree.noteAdoptive')}</span>` : p.note === 'foster' ? `<span class="badge badge-foster">🏠 ${t('tree.noteFoster')}</span>` : ''}</div>
+        <div class="pd-life">${p.birth?.year || '?'} – ${p.death?.year || t('legend.m')}</div>
+        <div class="pd-country">${p.countryData?.flag || ''} ${p.country || ''}</div>
+      </div>
+      <button class="pd-close" onclick="document.getElementById('personDetail').remove()">×</button>
+    </div>
+    ${crossEvents.length ? `<div class="pd-cross"><h4>${t('person.cross')}</h4>${crossEvents.map(e => `<div class="pd-cross-row kind-${e.kind||''}"><span class="pd-cross-icon">${e.icon}</span><span>${escapeHtml(e.text)}</span></div>`).join('')}</div>` : ''}
+  `;
+  // 高亮選中
+  document.querySelectorAll('.tree-node').forEach(n => n.classList.remove('selected'));
+  document.querySelectorAll('.tree-node').forEach(n => {
+    if (n.querySelector('.node-name')?.textContent === (p.name || '?')) n.classList.add('selected');
+  });
+}
+
+function relationLabel(p) {
+  if (!STATE.life || !STATE.life.family) return '';
+  const f = STATE.life.family;
+  if (f.parents && f.parents.includes(p)) return t('relation.' + (p.sex === 'M' ? 'father' : 'mother'));
+  if (f.siblings && f.siblings.includes(p)) {
+    const diff = (p.birth?.year || 0) - (STATE.life.year + STATE.life.yearOffset - STATE.life.age);
+    if (diff > 0) return t('relation.' + (p.sex === 'M' ? 'uncle' : 'aunt'));
+    return t('relation.' + (p.sex === 'M' ? 'sibling' : 'sibling'));
+  }
+  if (f.grandparents && f.grandparents.includes(p)) return t('relation.' + (p.sex === 'M' ? 'grandfather' : 'grandmother'));
+  if (f.partner === p) return t('relation.' + (p.sex === 'M' ? 'spouse' : 'spouse.f'));
+  if (f.kids && f.kids.includes(p)) return t('relation.' + (p.sex === 'M' ? 'child' : 'child.f'));
+  return '';
+}
+
+function deceasedMark(p) {
+  return (p.death && p.death.year) ? '<span class="pd-deceased">†</span>' : '';
+}
+
+function escapeHtml(s) {
+  return String(s || '').replace(/[<>&"']/g, c => ({'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;',"'":'&#39;'}[c]));
 }
 
 function svgEl(tag, attrs, parent) {
