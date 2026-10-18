@@ -518,8 +518,19 @@ function milestoneEvents(life, newAge) {
   // 國際收養（韓/中/越/柬/泰/印）
   if (['KOR','CHN','VNM','KHM','THA','IND'].includes(life.country) && newAge === 0 && chance(0.005)) {
     life.fc = { in: 1, system: 'international', type: 'adopt' };
+    const oldCountry = life.country;
+    const oldFlag = life.countryData?.flag || '';
     life.family = generateFamily(life.country, life.sex, { type: 'adopt' });
-    events.push({ age: 0, kind: 'social', icon: '🌍', text: LANG === 'en' ? 'You are adopted by a foreign family and grow up in another country.' : '你被一對外國夫婦收養，離開出生地到另一個國家長大。' });
+    // 遷徙：實際上 self 現在在收養國家
+    const newCountry = life.family.parents[0]?.country || 'USA';
+    const newCountryData = countryById(newCountry);
+    const newFlag = newCountryData?.flag || '🏳️';
+    life.country = newCountry;
+    life.countryData = newCountryData;
+    life.birthOrigin = { country: oldCountry, flag: oldFlag };  // 記錄出生國家
+    events.push({ age: 0, kind: 'social', icon: '🌍', text: LANG === 'en' ? `You are adopted by a foreign family (${oldFlag} → ${newFlag}) and grow up in another country.` : `你被一對外國夫婦收養 ${oldFlag} → ${newFlag}，離開出生地到另一個國家長大。` });
+    // 遷徙動畫 toast
+    setTimeout(() => toast(`${oldFlag} → ${newFlag}  ${LANG==='en'?'Migration':'遷徙'}`), 200);
   }
   if (life.country === 'IND' && life.name.caste === 'SC' && newAge >= 18 && chance(0.05)) {
     events.push({ age: newAge, kind: 'social', icon: '📋', text: t('event.caste.form') });
@@ -1506,6 +1517,7 @@ function treePeopleGraph() {
     sex: STATE.life.sex,
     country: STATE.life.country,
     countryData: STATE.life.countryData,
+    birthOrigin: STATE.life.birthOrigin,
     birth: { year: STATE.life.year + STATE.life.yearOffset - STATE.life.age },
     death: STATE.life.died ? { year: (STATE.life.year + STATE.life.yearOffset - STATE.life.age) + STATE.life.deathAge } : null,
     family: selfCaste
@@ -1734,6 +1746,14 @@ function drawPersonNode(svg, p, x, y, w, h, selected) {
   } else if (p.note === 'foster') {
     const m = svgEl('text', { x: w - 14, y: h - 4, 'font-size': 11, fill: '#8C1D3C', 'text-anchor': 'end' }, g);
     m.textContent = '🏠';
+  }
+  // 跨國遷徙：顯示原國旗
+  if (p.birthOrigin) {
+    const ob = svgEl('text', { x: 4, y: 14, 'font-size': 12 }, g);
+    ob.textContent = p.birthOrigin.flag + '→';
+    ob.setAttribute('fill', '#a04040');
+    const c = svgEl('text', { x: 32, y: 14, 'font-size': 12 }, g);
+    c.textContent = (p.countryData?.flag || '🏳️');
   }
   // 印度種姓標記（依 p.family 或 self.country='IND' + 隨機 caste）
   if (p.family || p._caste) {
