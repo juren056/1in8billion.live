@@ -2390,9 +2390,98 @@ function renderShelf() {
     let clickTime = 0;
     book.addEventListener('dblclick', () => continueOldLife(life));
   }
+  // v5.23：整理紀錄按鈕 + 音樂 toggle + PWA badges
+  const manageWrap = document.createElement('div');
+  manageWrap.className = 'shelf-manage';
+  manageWrap.style.cssText = 'grid-column:1/-1;text-align:center;margin-top:12px;';
+  manageWrap.innerHTML = `<button class="ghost" id="manageRecordsBtn">📋 ${LANG==='en'?'Manage records':'整理紀錄'}</button> <button class="ghost" id="toggleMusicBtn" style="margin-left:6px;">♪ ${LANG==='en'?'Music':'音樂'}</button>`;
+  shelf.appendChild(manageWrap);
+  $('#manageRecordsBtn')?.addEventListener('click', showManageRecordsModal);
+  $('#toggleMusicBtn')?.addEventListener('click', toggleBackgroundMusic);
   // v5.20：追思館（Memorial Wall） + 大家分享的人生
   renderMemorialWall(lives);
   renderSharedLives(lives);
+}
+
+/* v5.23：整理紀錄 modal — 列出 / 刪除 / 重新展開 */
+function showManageRecordsModal() {
+  const lives = loadPastLives();
+  document.querySelector('#manageModal')?.remove();
+  const isEn = LANG === 'en';
+  const modal = document.createElement('div');
+  modal.id = 'manageModal';
+  modal.className = 'life-modal';
+  modal.innerHTML = `
+    <div class="life-modal-card" style="max-width:520px;">
+      <button class="lm-close" onclick="document.getElementById('manageModal').remove()">×</button>
+      <h2 class="lm-title">📋 ${isEn ? 'Manage Records' : '紀錄整理'}</h2>
+      <p class="muted" style="font-size:12px;">${isEn ? 'Show or delete each past life.':'可逐本檢視或刪除過去的人生。'}</p>
+      <div class="manage-list">
+        ${lives.length === 0 ? '<span class="muted">—</span>' : lives.map((l, i) => `
+          <div class="manage-row">
+            <div class="manage-info">
+              <strong>${l.name || '—'}</strong>
+              <span class="muted">${l.year || '?'} – ${l.year + l.yearOffset} · ${l.age}${isEn?'yo':'歲'} · ${l.cause || ''}</span>
+            </div>
+            <div class="manage-actions">
+              <button class="ghost" data-act="show" data-i="${i}">${isEn?'Show':'檢視'}</button>
+              <button class="ghost" data-act="del" data-i="${i}">🗑️</button>
+            </div>
+          </div>
+        `).join('')}
+      </div>
+      ${lives.length > 0 ? `<button class="ghost" id="manageClearAll" style="margin-top:8px;">🗑️ ${isEn?'Delete all':'全部刪除'}</button>` : ''}
+    </div>
+  `;
+  document.body.appendChild(modal);
+  modal.addEventListener('click', e => { if (e.target === modal) modal.remove(); });
+  modal.querySelectorAll('button[data-act]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const idx = +btn.dataset.i;
+      const act = btn.dataset.act;
+      const ls = loadPastLives();
+      if (act === 'show') showLifeModal(ls[idx]);
+      else if (act === 'del') {
+        ls.splice(idx, 1);
+        localStorage.setItem(STORAGE_KEY + ':past', JSON.stringify(ls));
+        modal.remove();
+        renderShelf();
+        toast(isEn ? 'Life deleted' : '已刪除');
+      }
+    });
+  });
+  $('#manageClearAll')?.addEventListener('click', () => {
+    if (confirm(isEn ? 'Delete all past lives?' : '刪除所有過去的人生？')) {
+      localStorage.setItem(STORAGE_KEY + ':past', '[]');
+      modal.remove();
+      renderShelf();
+      toast(isEn ? 'All deleted' : '已全部刪除');
+    }
+  });
+}
+
+/* v5.23：背景音樂（Web Audio API 簡單環境音） */
+let bgMusic = null;
+function toggleBackgroundMusic() {
+  if (!bgMusic) {
+    const isEn = LANG === 'en';
+    try {
+      const ctx = new (window.AudioContext || window.webkitAudioContext)();
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.value = 220;  // A1
+      gain.gain.value = 0.02;
+      osc.connect(gain).connect(ctx.destination);
+      osc.start();
+      bgMusic = { ctx, osc, gain };
+      toast(isEn ? '♪ Music on' : '♪ 音樂已開啟');
+    } catch (e) { toast('Audio not supported'); }
+  } else {
+    try { bgMusic.osc.stop(); bgMusic.ctx.close(); } catch (e) {}
+    bgMusic = null;
+    toast(LANG === 'en' ? '♪ Music off' : '♪ 音樂已關閉');
+  }
 }
 
 /* ==== Shelf 世界地圖 ==== */
@@ -2908,6 +2997,7 @@ function showShortcutsModal() {
 function showLifeModal(life) {
   // 移除舊的
   document.querySelector('#lifeModal')?.remove();
+  const isEn = LANG === 'en';
   const c = countryById(life.country);
   const modal = document.createElement('div');
   modal.id = 'lifeModal';
@@ -2926,6 +3016,10 @@ function showLifeModal(life) {
         ${life.family?.adoptedFrom ? `<span class="badge badge-adopt">🧩 ${t('tree.noteAdoptive')}</span>` : ''}
       </div>
       <div id="lifeTree" class="life-tree"></div>
+      <div class="life-quotes">
+        <h4>${isEn ? 'Memorable moments' : '☆ 值得記住的時刻'}</h4>
+        <div class="lq-list">${Object.entries(life.quotes || {}).map(([age, q]) => `<div class="ql-row"><span class="ql-age">${age} ${isEn?'yo':'歲'}</span><span class="ql-text">${escapeHtml(q)}</span></div>`).join('') || '<span class="muted">—</span>'}</div>
+      </div>
     </div>
   `;
   document.body.appendChild(modal);
