@@ -585,3 +585,12 @@ input, select, textarea { font: inherit; color: inherit; }
   box-shadow: 0 2px 8px rgba(0,0,0,0.3);
   line-height: 1.4;
 }
+
+/* Tree search input */
+.tree-controls input[type="text"] {
+  border: 1px solid var(--line); border-radius: 6px;
+  padding: 4px 10px; font-size: 13px; min-width: 140px;
+  background: white;
+}
+.tree-controls input[type="text"]:focus { outline: none; border-color: var(--accent); }
+#treeSearchHint { font-size: 11px; color: var(--ink-3); margin-left: 4px; }
