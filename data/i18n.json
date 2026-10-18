@@ -187,7 +187,8 @@
     "share.import": "匯入生涯 JSON",
     "life.familyHead": "家族",
     "life.familyHint": "尚未開始",
-    "life.familyGo": "看族譜 →"
+    "life.familyGo": "看族譜 →",
+    "lab.countryB": "國家 B（比較用，可選）"
   },
   "zh-Hans": {
     "title": "选出生地 · 人生模拟",
@@ -377,7 +378,8 @@
     "share.import": "Import life JSON",
     "life.familyHead": "Family",
     "life.familyHint": "Not started",
-    "life.familyGo": "View tree →"
+    "life.familyGo": "View tree →",
+    "lab.countryB": "Country B (compare, optional)"
   },
   "en": {
     "title": "Born Somewhere · Life Simulator",
@@ -567,7 +569,8 @@
     "share.import": "Import life JSON",
     "life.familyHead": "Family",
     "life.familyHint": "Not started",
-    "life.familyGo": "View tree →"
+    "life.familyGo": "View tree →",
+    "lab.countryB": "Country B (compare, optional)"
   },
   "ko": {
     "title": "태어난 곳 · 인생 시뮬레이션",
@@ -770,7 +773,8 @@
     "share.import": "Import life JSON",
     "life.familyHead": "Family",
     "life.familyHint": "Not started",
-    "life.familyGo": "View tree →"
+    "life.familyGo": "View tree →",
+    "lab.countryB": "Country B (compare, optional)"
   },
   "ja": {
     "title": "出生地 · 人生シミュレーション",
@@ -973,7 +977,8 @@
     "share.import": "Import life JSON",
     "life.familyHead": "Family",
     "life.familyHint": "Not started",
-    "life.familyGo": "View tree →"
+    "life.familyGo": "View tree →",
+    "lab.countryB": "Country B (compare, optional)"
   },
   "vi": {
     "title": "Nơi sinh · Mô phỏng cuộc đời",
@@ -1176,7 +1181,8 @@
     "share.import": "Import life JSON",
     "life.familyHead": "Family",
     "life.familyHint": "Not started",
-    "life.familyGo": "View tree →"
+    "life.familyGo": "View tree →",
+    "lab.countryB": "Country B (compare, optional)"
   },
   "fr": {
     "title": "Né quelque part · Simulateur de vie",
@@ -1379,7 +1385,8 @@
     "share.import": "Import life JSON",
     "life.familyHead": "Family",
     "life.familyHint": "Not started",
-    "life.familyGo": "View tree →"
+    "life.familyGo": "View tree →",
+    "lab.countryB": "Country B (compare, optional)"
   },
   "th": {
     "title": "เกิดที่ไหน · จำลองชีวิต",
@@ -1582,7 +1589,8 @@
     "share.import": "Import life JSON",
     "life.familyHead": "Family",
     "life.familyHint": "Not started",
-    "life.familyGo": "View tree →"
+    "life.familyGo": "View tree →",
+    "lab.countryB": "Country B (compare, optional)"
   },
   "es": {
     "title": "Nacido en algún lugar · Simulador de vida",
@@ -1785,6 +1793,7 @@
     "share.import": "Import life JSON",
     "life.familyHead": "Family",
     "life.familyHint": "Not started",
-    "life.familyGo": "View tree →"
+    "life.familyGo": "View tree →",
+    "lab.countryB": "Country B (compare, optional)"
   }
 }
