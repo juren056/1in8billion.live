@@ -21,7 +21,7 @@ const STATE = {
   life: null,
   paused: false,
   speed: 1,
-  tickMs: 500,  // ~1 年/0.5 秒（1in8b.life 風格：時間慢到能看見細節；8× 時約 6 秒跑完一生）
+  tickMs: 1500,  // v5.13：1 年 ≈ 1.5 秒（慢到能讀事件；8× 時約 15 秒跑完一生）
   ticker: null,
   pendingDecision: null,
   autoDecide: false,  // v5.9 新增：自動抉擇模式
@@ -614,6 +614,12 @@ function milestoneEvents(life, newAge) {
       setTimeout(() => showPauseQuestion(), 50);
     }
   }
+  // v5.13：18/25/35/50 財務決策
+  if ([18, 25, 35, 50].includes(newAge) && !life.financeDecisions?.find(d => d.age === newAge)) {
+    if (!STATE.autoDecide) {
+      setTimeout(() => showFinancialChoice(), 80);
+    }
+  }
   return events;
 }
 
@@ -687,6 +693,11 @@ function tick() {
     }
   }
   renderLife();
+  // v5.13：年度焦點選擇（每年 6+ 歲自動彈出，除非autoDecide）
+  if (STATE.life.age >= 6 && STATE.life.age < 80 && !STATE.life.focusThisYear) {
+    if (!STATE.autoDecide) setTimeout(() => showFocusChoice(), 30);
+  }
+  STATE.life.focusThisYear = !STATE.life.age % 1 ? null : STATE.life.focusThisYear;  // 重置
   // 達到當地平均壽命 1.3x 自動死亡
   const maxAge = c.le * 1.35;
   if (STATE.life.age > maxAge) dieNow('自然衰老');
@@ -728,6 +739,117 @@ function showPauseQuestion() {
   if (input) input.value = STATE.life.quotes[age] || '';
   modal.removeAttribute('hidden');
   setTimeout(() => input?.focus(), 100);
+}
+
+/* v5.13：年度焦點選擇（每年 6+ 歲彈出） */
+function showFocusChoice() {
+  if (!STATE.life) return;
+  STATE.paused = true;
+  const age = STATE.life.age;
+  const isEn = LANG === 'en';
+  const modal = $('#focusModal');
+  if (!modal) return;
+  // 5 種焦點（依年齡變化選項）
+  const focusOpts = age >= 65 ? [
+    { id:'health', icon:'🧘', en:'Stay healthy', zh:'養生保健' },
+    { id:'family', icon:'👨‍👩‍👧', en:'Family time', zh:'陪伴家人' },
+    { id:'rest', icon:'🌳', en:'Rest & enjoy', zh:'退休生活' },
+  ] : age >= 22 ? [
+    { id:'work', icon:'💼', en:'Career growth', zh:'職場發展' },
+    { id:'family', icon:'👨‍👩‍👧', en:'Start a family', zh:'建立家庭' },
+    { id:'health', icon:'🏃', en:'Health & fitness', zh:'健康管理' },
+    { id:'study', icon:'📚', en:'Self-study', zh:'自我進修' },
+  ] : [
+    { id:'study', icon:'📚', en:'Study hard', zh:'努力讀書' },
+    { id:'play', icon:'⚽', en:'Play & explore', zh:'玩耍探索' },
+    { id:'family', icon:'👪', en:'Help family', zh:'幫忙家裡' },
+    { id:'health', icon:'🏃', en:'Stay active', zh:'保持活力' },
+  ];
+  const q = $('#focusQuestion');
+  if (q) q.textContent = isEn ? `Age ${age} — What do you want to focus on this year?` : `${age} 歲——這一年你想把重心放在哪？`;
+  const body = $('#focusBody');
+  if (body) body.innerHTML = focusOpts.map(o => `<button class="focus-btn" data-focus="${o.id}">${o.icon} ${isEn ? o.en : o.zh}</button>`).join('');
+  body.querySelectorAll('.focus-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const focus = btn.dataset.focus;
+      STATE.life.focus = focus;
+      const opt = focusOpts.find(o=>o.id===focus);
+      STATE.life.log.push({ age, kind:'focus', icon: opt?.icon || '·', text: `${isEn?'Focus':'重心'}：${opt?(isEn?opt.en:opt.zh):focus}` });
+      logLife(isEn ? `Focus: ${opt?.en}` : `這一年焦點：${opt?.zh}`);
+      applyFocusEffects(focus);
+      modal.setAttribute('hidden', '');
+      STATE.paused = false;
+    });
+  });
+  modal.removeAttribute('hidden');
+}
+
+function applyFocusEffects(focus) {
+  if (!STATE.life || !STATE.life.stats) return;
+  const s = STATE.life.stats;
+  if (focus === 'study') s.knowledge = Math.min(100, s.knowledge + 3);
+  else if (focus === 'work') s.netAssets += 2000;
+  else if (focus === 'family') { s.social = Math.min(100, s.social + 4); s.happiness = Math.min(100, s.happiness + 3); }
+  else if (focus === 'health') s.health = Math.min(100, s.health + 4);
+  else if (focus === 'play' || focus === 'rest') s.happiness = Math.min(100, s.happiness + 3);
+  renderLifeStats();
+}
+
+/* v5.13：財務決策（18/25/35/50 歲彈出） */
+function showFinancialChoice() {
+  if (!STATE.life) return;
+  STATE.paused = true;
+  const age = STATE.life.age;
+  const isEn = LANG === 'en';
+  const modal = $('#financeModal');
+  if (!modal) return;
+  const choices = age === 18 ? [
+    { id:'study_loan', text: isEn?'Take student loan to study':'學生貸款升學', delta:{net:-5000, knowledge:+10} },
+    { id:'work', text: isEn?'Start working immediately':'直接工作', delta:{net:+3000} },
+    { id:'trade', text: isEn?'Learn a trade':'學手藝', delta:{net:+1000, knowledge:+5} },
+  ] : age === 25 ? [
+    { id:'save', text: isEn?'Save aggressively':'積極儲蓄', delta:{net:+8000, happiness:-5} },
+    { id:'travel', text: isEn?'Travel the world':'環遊世界', delta:{net:-6000, happiness:+10, social:+5} },
+    { id:'invest', text: isEn?'Start investing':'開始投資', delta:{net:+5000, knowledge:+3} },
+  ] : age === 35 ? [
+    { id:'house', text: isEn?'Buy a house':'買房', delta:{net:-50000, happiness:+5} },
+    { id:'kids', text: isEn?'Have children':'生孩子', delta:{net:-10000, happiness:+10, social:+5} },
+    { id:'career', text: isEn?'Focus on career':'衝刺事業', delta:{net:+20000} },
+  ] : [
+    { id:'retire', text: isEn?'Save for retirement':'為退休儲蓄', delta:{net:+50000} },
+    { id:'enjoy', text: isEn?'Enjoy life now':'及時行樂', delta:{net:-10000, happiness:+10} },
+    { id:'give_back', text: isEn?'Donate to charity':'慈善捐贈', delta:{net:-15000, happiness:+15} },
+  ];
+  const q = $('#financeQuestion');
+  if (q) q.textContent = isEn ? `Age ${age} — How do you want to handle your money?` : `${age} 歲——你要怎麼處理你的錢？`;
+  const body = $('#financeBody');
+  if (body) body.innerHTML = choices.map((c, i) => {
+    const d = c.delta;
+    const tags = [];
+    if (d.net > 0) tags.push(`<span class="fin-pos">+$${d.net.toLocaleString()}</span>`);
+    else if (d.net < 0) tags.push(`<span class="fin-neg">−$${Math.abs(d.net).toLocaleString()}</span>`);
+    if (d.knowledge) tags.push(`<span class="fin-stat">+${d.knowledge} 📚</span>`);
+    if (d.happiness) tags.push(`<span class="fin-stat">${d.happiness > 0 ? '+' : ''}${d.happiness} 😊</span>`);
+    if (d.social) tags.push(`<span class="fin-stat">${d.social > 0 ? '+' : ''}${d.social} 👥</span>`);
+    return `<button class="finance-btn" data-idx="${i}"><span class="fin-text">${c.text}</span><span class="fin-tags">${tags.join(' ')}</span></button>`;
+  }).join('');
+  body.querySelectorAll('.finance-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const idx = +btn.dataset.idx;
+      const choice = choices[idx];
+      const d = choice.delta;
+      STATE.life.stats.netAssets = Math.max(-100000, (STATE.life.stats.netAssets || 0) + (d.net || 0));
+      if (d.knowledge) STATE.life.stats.knowledge = Math.min(100, Math.max(0, STATE.life.stats.knowledge + d.knowledge));
+      if (d.happiness) STATE.life.stats.happiness = Math.min(100, Math.max(0, STATE.life.stats.happiness + d.happiness));
+      if (d.social) STATE.life.stats.social = Math.min(100, Math.max(0, STATE.life.stats.social + d.social));
+      STATE.life.log.push({ age: STATE.life.age, kind:'finance', icon:'💰', text: (isEn?'Money: ':'理財：') + choice.text });
+      logLife('💰 ' + choice.text);
+      renderLifeStats();
+      modal.setAttribute('hidden', '');
+      STATE.paused = false;
+    });
+  });
+  modal.removeAttribute('hidden');
 }
 function savePauseQuote() {
   const age = STATE.pendingDecision?.age;
@@ -1851,6 +1973,9 @@ function wire() {
       startLife(c.id);
     }
   });
+  // v5.12：分享出生卡
+  const shareCardBtn = $('#btnShareCard');
+  if (shareCardBtn) shareCardBtn.addEventListener('click', downloadBirthCardPNG);
   // 結束畫面
   const restart = $('#btnRestart');
   if (restart) restart.addEventListener('click', () => setView('intro'));
@@ -2695,6 +2820,96 @@ function downloadLifeCertPNG() {
   img.onerror = () => {
     URL.revokeObjectURL(url);
     toast(LANG==='en'?'Image conversion failed':'圖片轉換失敗');
+  };
+  img.src = url;
+}
+
+/* v5.12：分享出生卡（1in8b.life 風格登記證） */
+function downloadBirthCardPNG() {
+  if (!STATE.life) return;
+  const life = STATE.life;
+  const c = life.countryData;
+  if (!c) return;
+  const loc = localize(c);
+  const isEn = LANG === 'en';
+  const W = 800, H = 520;
+  const parts = [];
+  parts.push(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}">`);
+  // 背景
+  parts.push(`<rect width="${W}" height="${H}" fill="#faf7f0"/>`);
+  // guilloche
+  for (let r = 40; r < W; r += 24) {
+    parts.push(`<ellipse cx="${W/2}" cy="${H/2}" rx="${r}" ry="${r*0.5}" fill="none" stroke="#8C1D3C" stroke-width="0.4" opacity="0.15"/>`);
+  }
+  // 邊框
+  parts.push(`<rect x="6" y="6" width="${W-12}" height="${H-12}" fill="none" stroke="#8C1D3C" stroke-width="2.5" rx="10"/>`);
+  parts.push(`<rect x="14" y="14" width="${W-28}" height="${H-28}" fill="none" stroke="#0F6E68" stroke-width="1" rx="8"/>`);
+  // 標題
+  parts.push(`<rect x="20" y="30" width="${W-40}" height="60" fill="#8C1D3C"/>`);
+  parts.push(`<text x="36" y="68" font-size="22" fill="white" font-weight="bold">${c.flag} ${escapeHtml(loc.name)}</text>`);
+  parts.push(`<text x="${W-36}" y="68" font-size="18" fill="white" text-anchor="end">${life.year + life.yearOffset}</text>`);
+  // 註冊編號
+  parts.push(`<text x="${W/2}" y="120" font-size="11" fill="#8C1D3C" text-anchor="middle" font-weight="bold" letter-spacing="0.1em">${isEn?'BIRTH REGISTRATION':'出生登記'} · ${escapeHtml(life.regNumber || '')}</text>`);
+  // 名字
+  parts.push(`<text x="${W/2}" y="170" font-size="40" fill="#8C1D3C" text-anchor="middle" font-weight="bold">${escapeHtml(life.name?.full || '?')}</text>`);
+  if (life.name?.full_en && life.name.full_en !== life.name.full) {
+    parts.push(`<text x="${W/2}" y="195" font-size="14" fill="#7a6a5a" text-anchor="middle" font-style="italic">${escapeHtml(life.name.full_en)}</text>`);
+  }
+  // 大字年齡
+  parts.push(`<text x="${W/2}" y="270" font-size="56" fill="#1a1a1a" text-anchor="middle" font-weight="bold">${life.age} ${isEn?'yrs':'歲'}</text>`);
+  // 副標題
+  parts.push(`<text x="${W/2}" y="305" font-size="14" fill="#5a4a3a" text-anchor="middle">${isEn?'Life expectancy':'預期壽命'} ${c.le} ${isEn?'yrs':'歲'} · ${isEn?'Born in':'出生於'} ${escapeHtml(loc.name)}</text>`);
+  // 家庭背景
+  const fd = life.fatherDetail || {};
+  const md = life.motherDetail || {};
+  parts.push(`<line x1="60" y1="335" x2="${W-60}" y2="335" stroke="#d8cdb8" stroke-width="1"/>`);
+  parts.push(`<text x="${W/2}" y="362" font-size="13" fill="#8C1D3C" text-anchor="middle" font-weight="bold">${isEn?'👪 Family Background':'👪 出身家庭'}</text>`);
+  const fRows = [
+    [isEn?'Father':'父親', `${(life.family?.parents||[]).find(p=>p.sex==='M')?.name || '—'} · ${fd.age ? fd.age + (isEn?' yo':'歲') : ''}${fd.job ? ' · ' + fd.job : ''}`],
+    [isEn?'Mother':'母親', `${(life.family?.parents||[]).find(p=>p.sex==='F')?.name || '—'} · ${md.age ? md.age + (isEn?' yo':'歲') : ''}${md.job ? ' · ' + md.job : ''}`],
+    [isEn?'Religion · Place':'宗教 · 出生地', `${life.stats.religion || '—'} · ${life.stats.birthPlaceType === 'rural' ? (isEn?'🌾 Rural':'🌾 鄉村') : (isEn?'🏙️ Urban':'🏙️ 城市')}`]
+  ];
+  fRows.forEach((r, i) => {
+    const yy = 392 + i * 24;
+    parts.push(`<text x="60" y="${yy}" font-size="12" fill="#7a6a5a">${r[0]}</text>`);
+    parts.push(`<text x="160" y="${yy}" font-size="12" fill="#1a1a1a">${r[1]}</text>`);
+  });
+  // 底部 — 同伴
+  if (life.companions && life.companions.length) {
+    parts.push(`<text x="${W/2}" y="475" font-size="11" fill="#5a4a3a" text-anchor="middle">${isEn?'Born in the same second: ':'同一秒出生：'}${' '}${life.companions.slice(0,4).map(c=>c.flag + ' ' + (isEn?(c.nameEn||c.name):c.name)).join(' · ')}</text>`);
+  }
+  // 章戳
+  parts.push(`<circle cx="${W-110}" cy="${H-25}" r="20" fill="none" stroke="#8C1D3C" stroke-width="1.5" opacity="0.7"/>`);
+  parts.push(`<text x="${W-110}" y="${H-22}" font-size="8" fill="#8C1D3C" text-anchor="middle" font-weight="bold">BORN-SOMEWHERE</text>`);
+  parts.push(`<text x="${W-110}" y="${H-12}" font-size="7" fill="#8C1D3C" text-anchor="middle">EST. 2024</text>`);
+  // 底部 watermark
+  parts.push(`<text x="40" y="${H-12}" font-size="8" fill="#9a8a7a">${isEn?'Birth certificate · born-somewhere v5.12':'出生登記 · born-somewhere v5.12'} · ${isEn?'Real statistics':'真實統計'}</text>`);
+  parts.push(`</svg>`);
+  const svgStr = parts.join('');
+  const blob = new Blob([svgStr], { type: 'image/svg+xml;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const img = new Image();
+  img.onload = () => {
+    const scale = 2;
+    const canvas = document.createElement('canvas');
+    canvas.width = W * scale;
+    canvas.height = H * scale;
+    const ctx = canvas.getContext('2d');
+    ctx.scale(scale, scale);
+    ctx.drawImage(img, 0, 0);
+    canvas.toBlob(pngBlob => {
+      const pngUrl = URL.createObjectURL(pngBlob);
+      const a = document.createElement('a');
+      const safeName = (life.name?.full || life.name?.full_en || 'life').replace(/[\/\\<>:"|?*\u0000-\u001f]/g, '_');
+      a.href = pngUrl; a.download = `${safeName}-${isEn?'birth-card':'出生卡'}-${Date.now()}.png`;
+      document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(() => { URL.revokeObjectURL(url); URL.revokeObjectURL(pngUrl); }, 1000);
+      toast(isEn ? 'Birth card downloaded' : '出生卡已下載');
+    }, 'image/png');
+  };
+  img.onerror = () => {
+    URL.revokeObjectURL(url);
+    toast(isEn ? 'Image conversion failed' : '圖片轉換失敗');
   };
   img.src = url;
 }
