@@ -702,6 +702,7 @@ function tick() {
     }
   }
   renderLife();
+  recordTrajectory(STATE.life);
   // v5.13：年度焦點選擇（每年 6+ 歲自動彈出，除非autoDecide）
   if (STATE.life.age >= 6 && STATE.life.age < 80 && !STATE.life.focusThisYear) {
     if (!STATE.autoDecide) setTimeout(() => showFocusChoice(), 30);
@@ -1122,6 +1123,83 @@ function renderThisYear() {
   `;
 }
 
+/* v5.15：5 面向終身軌跡圖（健康/教育/收入/關係/家境） */
+function renderLifeTrajectory() {
+  if (!STATE.life) return;
+  const wrap = $('#lifeTrajectory');
+  if (!wrap) return;
+  const life = STATE.life;
+  const isEn = LANG === 'en';
+  const traj = life.trajectory || [];
+  const W = 600, H = 220;
+  const maxAge = Math.max(life.age, 20);
+  const projX = (a) => 40 + (a / maxAge) * (W - 60);
+  const projY = (v) => H - 30 - (v / 100) * (H - 50);
+  const lines = [
+    { key:'health', color:'#22c55e', en:'Health', zh:'健康' },
+    { key:'knowledge', color:'#3b82f6', en:'Education', zh:'教育' },
+    { key:'income', color:'#eab308', en:'Income', zh:'收入' },
+    { key:'relationship', color:'#a855f7', en:'Relationship', zh:'關係' }
+  ];
+  // income 標準化：netAssets / 50 (cap 100)
+  const norm = (k, v) => k === 'income' ? Math.min(100, Math.max(0, v / 80)) : Math.max(0, Math.min(100, v));
+  let paths = '';
+  lines.forEach(L => {
+    const pts = traj.filter(p => p[L.key] != null).map(p => `${projX(p.age)},${projY(norm(L.key, p[L.key]))}`).join(' L ');
+    if (pts) paths += `<path d="M ${pts}" fill="none" stroke="${L.color}" stroke-width="2"/>`;
+  });
+  // 家境：水平虛線（基本不改變）
+  const familyY = projY(norm('relationship', life.stats.incomeQuartile * 25));  // 簡化顯示
+  const familyPath = traj.length ? `M ${projX(0)} ${familyY} L ${projX(maxAge)} ${familyY}` : '';
+  // 自己位置
+  const myAge = life.age;
+  let lifeAtAge = traj.find(p => p.age === myAge);
+  const myPoints = lines.map(L => {
+    const v = L.key === 'health' ? life.stats.health : L.key === 'knowledge' ? life.stats.knowledge : L.key === 'income' ? Math.min(100, life.stats.netAssets / 80) : L.key === 'relationship' ? life.stats.social : 50;
+    return `<circle cx="${projX(myAge)}" cy="${projY(norm(L.key, v))}" r="3" fill="${L.color}" stroke="white" stroke-width="1"/>`;
+  }).join('');
+  wrap.innerHTML = `
+    <h4>📊 ${isEn ? '5 Life Dimensions Over Time' : '5 個面向終身軌跡'} <span class="muted">(${isEn ? 'past → present':'過去→現在'})</span></h4>
+    <svg viewBox="0 0 ${W} ${H}" class="trajectory-svg" style="width:100%;height:auto;">
+      <rect x="0" y="0" width="${W}" height="${H}" fill="#faf7f0"/>
+      <line x1="40" y1="${H-30}" x2="${W-10}" y2="${H-30}" stroke="#999" stroke-width="1"/>
+      <line x1="40" y1="20" x2="40" y2="${H-30}" stroke="#999" stroke-width="1"/>
+      <text x="32" y="22" font-size="9" fill="#666" text-anchor="end">100</text>
+      <text x="32" y="${H-32}" font-size="9" fill="#666" text-anchor="end">0</text>
+      ${familyPath ? `<path d="${familyPath}" fill="none" stroke="#a16207" stroke-width="1.5" stroke-dasharray="6 4"/>` : ''}
+      ${paths}
+      ${myPoints}
+      <text x="42" y="${H-15}" font-size="8" fill="#999">0</text>
+      <text x="${W-12}" y="${H-15}" font-size="8" fill="#999" text-anchor="end">${maxAge}</text>
+      <text x="${W/2}" y="${H-15}" font-size="8" fill="#999" text-anchor="middle">${isEn?'Age':'年齡'}</text>
+      <g font-size="9" font-weight="600" transform="translate(${W-150}, 8)">
+        <rect x="0" y="0" width="140" height="74" fill="white" stroke="#d8cdb8" rx="4"/>
+        ${lines.map((L, i) => `<line x1="6" y1="${14 + i*15}" x2="20" y2="${14 + i*15}" stroke="${L.color}" stroke-width="2"/><text x="24" y="${17 + i*15}" fill="#5a4a3a">${isEn?L.en:L.zh}</text>`).join('')}
+        <line x1="6" y1="${14 + 4*15}" x2="20" y2="${14 + 4*15}" stroke="#a16207" stroke-width="1.5" stroke-dasharray="4 2"/><text x="24" y="${17 + 4*15}" fill="#5a4a3a">${isEn?'Family BG':'家境'}</text>
+      </g>
+    </svg>
+    <p class="muted">${isEn?'Current values: ':'當前數值：'}🟢 ${isEn?'Health':'健康'} ${Math.round(life.stats.health)} · 🔵 ${isEn?'Education':'教育'} ${Math.round(life.stats.knowledge)} · 🟡 ${isEn?'Income':'收入'} PPP $${Math.round(life.stats.netAssets).toLocaleString()} · 🟣 ${isEn?'Relationship':'關係'} ${Math.round(life.stats.social)}</p>
+  `;
+}
+
+/* v5.15：在 tick 內記錄 5 面向狀態（每 5 年取樣） */
+function recordTrajectory(life) {
+  if (!life) return;
+  if (!life.trajectory) life.trajectory = [];
+  const age = life.age;
+  const s = life.stats;
+  const last = life.trajectory[life.trajectory.length - 1];
+  // 每 5 歲或重大事件記錄一次
+  if (age % 5 !== 0 && (!last || age - last.age < 5)) return;
+  life.trajectory.push({
+    age,
+    health: s.health,
+    knowledge: s.knowledge,
+    income: Math.min(100, Math.round(s.netAssets / 80)),
+    relationship: s.social
+  });
+}
+
 /* v5.8 新增：4 個狀態條 + 淨資產 */
 function renderLifeStats() {
   if (!STATE.life) return;
@@ -1230,6 +1308,7 @@ function renderCountryStats() {
   `;
   // v5.11：存活曲線圖
   renderSurvivalCurve();
+  renderLifeTrajectory();
 }
 
 /* v5.11：存活曲線圖（國家 vs 世界平均 vs 自己年齡點） */
