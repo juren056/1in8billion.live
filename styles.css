@@ -554,3 +554,11 @@ input, select, textarea { font: inherit; color: inherit; }
   cursor: pointer;
 }
 .cert-family-go:hover { background: var(--accent); color: white; }
+
+/* Lab country compare */
+.lab-compare { width: 100%; border-collapse: collapse; margin-top: 8px; font-size: 13px; }
+.lab-compare th, .lab-compare td { padding: 6px 10px; border-bottom: 1px solid var(--line); text-align: left; }
+.lab-compare thead th { background: var(--bg); font-weight: 600; }
+.lab-compare tbody tr:hover { background: var(--bg); }
+.lab-compare-causes { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 8px; }
+.lab-compare-causes h4 { margin: 0 0 6px; font-size: 13px; color: var(--accent); }
