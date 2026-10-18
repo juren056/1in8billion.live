@@ -871,6 +871,7 @@ function renderLife() {
   renderLifeFamilyDetail();
   renderLifeCompanions();
   renderCountryStats();
+  renderSurvivalCurve();
 }
 
 /* v5.8 新增：4 個狀態條 + 淨資產 */
@@ -978,6 +979,81 @@ function renderCountryStats() {
       <tbody>${rows.map(r => `<tr><td class="cs-k">${r[0]}</td><td class="cs-v">${r[1]}</td></tr>`).join('')}</tbody>
     </table>
     <p class="muted cs-source">${isEn?'Sources: UN WPP 2024, WB WDI, WHO, UNESCO UIS, UNDP HDR, ILO, UNAIDS, UNODC, UNICEF, World Happiness Report 2024':'資料來源：聯合國《世界人口展望2024》、世界銀行WDI、WHO、UNESCO UIS、UNDP HDR、ILO、UNAIDS、UNODC、UNICEF、生活滿意度報告2024'}</p>
+  `;
+  // v5.11：存活曲線圖
+  renderSurvivalCurve();
+}
+
+/* v5.11：存活曲線圖（國家 vs 世界平均 vs 自己年齡點） */
+function renderSurvivalCurve() {
+  if (!STATE.life) return;
+  const wrap = $('#lifeSurvivalCurve');
+  if (!wrap) return;
+  const c = STATE.life.countryData;
+  if (!c) return;
+  const isEn = LANG === 'en';
+  const sex = STATE.life.sex;
+  const lifeExp = c.le || 70;
+  // 計算國家男性的存活曲線（簡化 Gompertz）
+  const lt = lifeTable(c, sex);
+  const W = 500, H = 180;
+  const maxAge = 100;
+  const points = [];
+  let surv = 1.0;
+  for (let a = 0; a <= maxAge; a += 2) {
+    points.push([a, surv]);
+    surv *= (1 - lt.q[Math.min(a, 110)]);
+  }
+  const worldPoints = [];
+  let wsurv = 1.0;
+  // 世界平均：使用通用生命表 (UN WPP world)
+  for (let a = 0; a <= maxAge; a += 2) {
+    // 簡化世界 Gompertz：平均壽命 73 歲
+    const wq = Math.exp(-Math.exp(0.1 * (a - 75))) * 0.0008;
+    wsurv *= (1 - Math.min(0.5, wq));
+    worldPoints.push([a, wsurv]);
+  }
+  // 縮放 + 平移
+  const proj = (a, s) => [40 + (a/maxAge) * (W-50), H-30 - s * (H-50)];
+  let path = `M ${proj(points[0][0], points[0][1])[0]} ${proj(points[0][0], points[0][1])[1]}`;
+  for (let i = 1; i < points.length; i++) {
+    path += ` L ${proj(points[i][0], points[i][1])[0]} ${proj(points[i][0], points[i][1])[1]}`;
+  }
+  let worldPath = `M ${proj(worldPoints[0][0], worldPoints[0][1])[0]} ${proj(worldPoints[0][0], worldPoints[0][1])[1]}`;
+  for (let i = 1; i < worldPoints.length; i++) {
+    worldPath += ` L ${proj(worldPoints[i][0], worldPoints[i][1])[0]} ${proj(worldPoints[i][0], worldPoints[i][1])[1]}`;
+  }
+  // 自己的位置
+  const myAge = STATE.life.age;
+  let mySurv = 1;
+  for (let a = 0; a < Math.min(myAge, 110); a++) mySurv *= (1 - lt.q[a]);
+  const myPos = proj(myAge, mySurv);
+  const avgPoint = proj(lifeExp, 0.5);
+  wrap.innerHTML = `
+    <h4>📉 ${isEn ? 'Survival curve' : '存活曲線'} <span class="muted">${isEn ? '% still alive at each age' : '同年出生的人當中仍存活的比例'}</span></h4>
+    <svg viewBox="0 0 ${W} ${H}" class="survival-svg" style="width:100%;height:auto;">
+      <rect x="0" y="0" width="${W}" height="${H}" fill="#faf7f0"/>
+      <line x1="40" y1="${H-30}" x2="${W-10}" y2="${H-30}" stroke="#999" stroke-width="1"/>
+      <line x1="40" y1="20" x2="40" y2="${H-30}" stroke="#999" stroke-width="1"/>
+      <text x="${W-12}" y="${H-32}" font-size="9" fill="#666" text-anchor="end">${isEn ? 'Age':'年齡'}</text>
+      <text x="32" y="22" font-size="9" fill="#666" text-anchor="end">100%</text>
+      <text x="32" y="${H-32}" font-size="9" fill="#666" text-anchor="end">0%</text>
+      <text x="42" y="${H-15}" font-size="8" fill="#999">0</text>
+      <text x="${W/2}" y="${H-15}" font-size="8" fill="#999" text-anchor="middle">${Math.round(maxAge/2)}</text>
+      <text x="${W-12}" y="${H-15}" font-size="8" fill="#999" text-anchor="end">${maxAge}</text>
+      <path d="${worldPath}" fill="none" stroke="#999" stroke-width="1.5" stroke-dasharray="4 3"/>
+      <path d="${path}" fill="none" stroke="var(--accent)" stroke-width="2"/>
+      ${myAge <= maxAge ? `<circle cx="${myPos[0]}" cy="${myPos[1]}" r="5" fill="#ff8800" stroke="white" stroke-width="2"/>` : ''}
+      <circle cx="${avgPoint[0]}" cy="${avgPoint[1]}" r="4" fill="white" stroke="#666" stroke-width="1.5"/>
+      <g font-size="9" fill="#5a4a3a">
+        <rect x="${W-130}" y="6" width="120" height="36" fill="white" stroke="#d8cdb8"/>
+        <line x1="${W-122}" y1="16" x2="${W-110}" y2="16" stroke="var(--accent)" stroke-width="2"/>
+        <text x="${W-105}" y="19">${c.flag} ${isEn ? c.name_en : c.name_zh}</text>
+        <line x1="${W-122}" y1="28" x2="${W-110}" y2="28" stroke="#999" stroke-width="1.5" stroke-dasharray="3 2"/>
+        <text x="${W-105}" y="31">🌐 ${isEn?'World avg':'世界平均'}</text>
+      </g>
+    </svg>
+    <p class="muted">${isEn?'Outer box = average life expectancy in this country':'外框格 = '+c.flag+(isEn?c.name_en:c.name_zh)+' 平均壽命 '+lifeExp+(isEn?' yrs':'歲')}</p>
   `;
 }
 
