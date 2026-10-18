@@ -4,7 +4,13 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
 <meta name="theme-color" content="#0a0a0a" />
+<meta name="description" content="選一個出生地，從 0 歲活到當地平均壽命。172 國真實生命表、死亡原因分布、出生證書、過去生命書架。本地端儲存，不上傳任何資料。" />
 <title data-t="title">選出生地 · 人生模擬</title>
+<link rel="manifest" href="manifest.json" />
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%238C1D3C'/%3E%3Ctext x='50%25' y='58%25' font-size='38' text-anchor='middle' fill='%23faf7f0' font-family='serif'%3E生%3C/text%3E%3C/svg%3E" />
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%238C1D3C'/%3E%3Ctext x='50%25' y='58%25' font-size='38' text-anchor='middle' fill='%23faf7f0' font-family='serif'%3E生%3C/text%3E%3C/svg%3E" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
 <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
@@ -42,8 +48,16 @@
     <h1 class="hero-title">
       <span class="kicker" data-t="intro.kicker">8 億 分 之 1</span>
       <span data-t-html="intro.title">選一個<br/>出<span class="accent">生</span>地</span>
+      <span id="eduBadge" class="edu-badge" hidden data-t="edu.badge">教學版</span>
     </h1>
     <p class="hero-sub" data-t-html="intro.sub">在 8 億分之 1 原作裡，出生地由人口比例隨機抽出。<br/>這版交給你決定——挑一個國家，從 0 歲活到當地平均壽命。<br/>每一段人生依真實統計：嬰兒死亡率、人均 GDP、所受教育、自殺率、兇殺率⋯⋯</p>
+
+    <!-- v5.19：今日主題 -->
+    <div class="daily-theme-row">
+      <span class="dt-label" data-t="intro.theme.label">今日主題</span>
+      <span class="dt-sep">·</span>
+      <span class="dt-word" id="dailyTheme">家人</span>
+    </div>
 
     <div class="mode-block">
       <div class="seg-group">
@@ -98,23 +112,58 @@
     </div>
   </div>
 
+  <!-- v5.19：即時計數器（自頁面載入起算） -->
+  <section class="rt-counters">
+    <h3 data-t="intro.rt.title">你打開這個頁面之後⋯⋯</h3>
+    <div class="rt-row">
+      <div class="rt-cell rt-birth">
+        <div class="rt-icon">👶</div>
+        <div class="rt-num" id="counterBorn">0</div>
+        <div class="rt-l" data-t="intro.rt.born">個嬰兒出生</div>
+      </div>
+      <div class="rt-cell rt-die">
+        <div class="rt-icon">🕯️</div>
+        <div class="rt-num" id="counterDied">0</div>
+        <div class="rt-l" data-t="intro.rt.died">人在同一段時間裡離世</div>
+      </div>
+    </div>
+    <p class="muted rt-note" data-t="intro.rt.note">依聯合國《世界人口展望 2024》估算：全球每秒約出生 4.3 人、死亡 1.8 人。</p>
+  </section>
+
+  <!-- v5.19：如果你此刻出生：你 vs 隨機 -->
+  <section class="cmp-block" id="countryCompare">
+    <!-- 由 renderCountryCompare 填入 -->
+  </section>
+
   <section class="odds-block">
     <h3 data-t="intro.odds.title">你會在哪裡出生？</h3>
     <div class="odds">
       <div class="odd">
-        <div class="odd-v">4</div>
-        <div class="odd-l" data-t="intro.odds.baby">此刻有 4 個嬰兒正在誕生</div>
+        <div class="odd-v" id="realTimeBirths">87</div>
+        <div class="odd-l" data-t="intro.odds.baby">打開這個頁面後出生的嬰兒</div>
       </div>
       <div class="odd">
-        <div class="odd-v">8,000,000,000</div>
-        <div class="odd-l" data-t="intro.odds.all">全球 80 億人</div>
+        <div class="odd-v" id="realTimeDeaths">40</div>
+        <div class="odd-l" data-t="intro.odds.all">同一段時間裡離世的人</div>
       </div>
     </div>
+  </section>
+
+  <!-- v5.19：出生機率分布 top 10 -->
+  <section class="odds-block prob-block" id="probTable">
+    <!-- 由 renderProbTable 填入 -->
   </section>
 
   <section class="about">
     <h3 data-t="intro.about">關於本作品</h3>
     <p data-t="intro.about.text">8 億分之 1 原作（1in8b.life）由 Jin's Earth 與 Claude 合作，以真實的公開統計為基礎。本版本以原作精神重新實作，重點放在 172 國真實生命表、死亡原因分布、出生證書、過去生命書架。本地端儲存，不上傳任何資料。</p>
+  </section>
+
+  <section class="players-map-block">
+    <h3 data-t="intro.players.title">現在居住的地方</h3>
+    <p class="muted" data-t="intro.players.subtitle">這個模擬裡目前還活著的人，散布在世界地圖上。</p>
+    <div id="introPlayersMap"></div>
+    <p class="muted players-legend" data-t="intro.players.legend">一個點代表一位進行中的人生</p>
   </section>
 </section>
 
@@ -141,6 +190,7 @@
         <div class="meta-row"><span data-t="life.work">工作</span><b id="lifeJob">—</b></div>
         <div class="meta-row"><span data-t="life.partner">伴侶</span><b id="lifePartner">—</b></div>
         <div class="meta-row"><span data-t="life.children">子女</span><b id="lifeKids">—</b></div>
+        <div class="meta-row"><span data-t="life.survival">當年存活率</span><b id="lifeSurvival">—</b></div>
         <div class="meta-row"><span data-t="life.country.info">出生地</span><b id="lifeCountryInfo">—</b></div>
       </div>
       <div class="cert-family" id="certFamily">
@@ -167,7 +217,13 @@
 
     <!-- v5.8 新增：4 個狀態條 + 淨資產 + 家庭背景 + 同伴 -->
     <div class="life-stats" id="lifeStats">
-      <h4 data-t="life.states">⚖️ 狀態 0-100</h4>
+      <h4>
+        <span data-t="life.states">⚖️ 狀態 0-100</span>
+        <!-- v5.19：ℹ️ 展開說明 -->
+        <button id="btnStateInfo" class="state-info-btn" title="狀態代表什麼？">ℹ️</button>
+      </h4>
+      <!-- v5.19：狀態說明可展開面板 -->
+      <div id="stateInfoPanel" class="state-info-panel" hidden></div>
       <div class="state-row">
         <span class="state-label" data-t="life.health">健康</span>
         <div class="state-bar"><i id="stateHealth"></i></div>
@@ -202,6 +258,9 @@
 
     <div class="life-survival-curve" id="lifeSurvivalCurve"></div>
 
+    <!-- v5.19：「如果你現在出生」vs 隨機國家 比較表 -->
+    <div class="life-actual-vs-random" id="lifeActualVsRandom"></div>
+
     <div class="life-this-year" id="lifeThisYear">
       <h4>📌 今年的你 <span class="muted">（這一年最重要的事）</span></h4>
       <div id="lifeThisYearBody" class="ty-body"></div>
@@ -214,6 +273,8 @@
     <div class="life-identity-record" id="lifeIdentityRecord"></div>
 
     <div class="life-map" id="lifeMap"></div>
+
+    <div class="life-cause-this-year" id="lifeCauseThisYear"></div>
 
     <div class="cert-log-wrap">
       <h4 data-t="life.events">事件記錄</h4>
@@ -242,6 +303,8 @@
         <div class="id-row"><span data-t="end.born">國家</span><b id="endCountry">—</b></div>
       </div>
     </div>
+
+    <div class="end-cause-analysis" id="endCauseAnalysis"></div>
     <div class="cert-actions">
       <button id="btnDownloadCert" class="ghost" data-t="end.download">下載證書 PNG</button>
       <button id="btnRestart" class="ghost" data-t="end.again">再活一次</button>
@@ -308,6 +371,36 @@
   <h2 class="shelf-title" data-t="shelf.title">過去生命的書架</h2>
   <p class="shelf-hint" data-t="shelf.click">點書本看細節</p>
   <div id="shelfGrid" class="shelf-grid"></div>
+
+  <div class="memorial-wall" id="memorialWall">
+    <h3 class="memorial-title" data-t="memorial.title">追思館</h3>
+    <p class="memorial-subtitle" data-t="memorial.subtitle">在這裡為過去活過的人生點一盞燈。</p>
+    <div class="memorial-empty" data-t="memorial.empty" hidden>還沒有可追思的人生。</div>
+    <div class="memorial-content" id="memorialContent" hidden>
+      <div class="memorial-nav">
+        <button class="ghost memorial-prev" id="memorialPrev">‹ <span data-t="memorial.prev">上一個追思館</span></button>
+        <span class="memorial-counter" id="memorialCounter">—</span>
+        <button class="ghost memorial-next" id="memorialNext"><span data-t="memorial.next">下一個追思館</span> ›</button>
+      </div>
+      <div class="memorial-card" id="memorialCard"></div>
+      <div class="memorial-actions">
+        <button class="ghost memorial-candle" id="memorialCandle">🕯️ <span data-t="memorial.candle">點一支蠟燭</span></button>
+        <button class="ghost memorial-heart" id="memorialHeart">🤍 <span data-t="memorial.heart">記在心裡</span></button>
+        <button class="ghost memorial-visit" id="memorialVisit">👁 <span data-t="memorial.visit">參觀追思館</span></button>
+        <button class="ghost memorial-random" id="memorialRandom">🎲 <span data-t="memorial.random">隨機遇見一段人生</span></button>
+      </div>
+      <div class="memorial-counters">
+        <span class="memorial-candles" id="memorialCandles"></span>
+        <span class="memorial-hearts" id="memorialHearts"></span>
+      </div>
+    </div>
+  </div>
+
+  <div class="shared-feed" id="sharedFeed" hidden>
+    <h3 class="shared-title" data-t="shared.title">大家分享的人生</h3>
+    <p class="shared-subtitle" data-t="shared.subtitle">每一個生命都真實活過。看看其他人的人生。</p>
+    <div class="shared-list" id="sharedList"></div>
+  </div>
 </section>
 
 <!-- LAB -->
@@ -355,6 +448,19 @@
 
 </main>
 
+<!-- v5.19：footer + utility -->
+<footer id="appFooter" class="app-footer" hidden>
+  <div class="footer-inner">
+    <button id="btnFeedback" class="footer-btn" data-t="footer.feedback">提供意見</button>
+    <button id="btnChangelog" class="footer-btn" data-t="footer.changelog">更新說明</button>
+    <button id="btnInstall" class="footer-btn" data-t="footer.install" hidden>加入主畫面</button>
+    <a href="#" id="btnPrivacy" class="footer-link" data-t="footer.privacy">隱私權政策</a>
+    <a href="#" id="btnTerms" class="footer-link" data-t="footer.terms">使用須知</a>
+    <a href="mailto:contact@born-somewhere.app" id="btnContact" class="footer-link" data-t="footer.contact">聯絡我們</a>
+    <span class="footer-ver">v5.19 · <span data-t="footer.copyright">CC BY 4.0 · 開放源</span></span>
+  </div>
+</footer>
+
 <!-- 暫停問題 modal -->
 <div id="pauseModal" class="modal" hidden>
   <div class="modal-card">
@@ -383,6 +489,22 @@
     <h2 class="modal-q" id="financeQuestion">你要怎麼處理你的錢？</h2>
     <p class="modal-help" data-t="finance.placeholder">選一項會影響淨資產與狀態。</p>
     <div id="financeBody" class="focus-body"></div>
+  </div>
+</div>
+
+<!-- v5.19：出生登記卡 modal（1in8b.life 風格） -->
+<div id="birthCertModal" class="modal bc-modal" hidden>
+  <div class="modal-card bc-card">
+    <div class="bc-toolbar">
+      <button id="birthCertCancel" class="ghost bc-close" data-t="intro.bc.cancel">取消</button>
+    </div>
+    <div id="birthCertBody" class="bc-body">
+      <!-- 由 buildBirthCertCard() 填入 -->
+    </div>
+    <div class="bc-actions">
+      <button id="birthCertReroll" class="ghost" data-t="intro.bc.reroll">🎲 換一個國家</button>
+      <button id="birthCertConfirm" class="primary" data-t="intro.bc.confirm">開始這段人生 →</button>
+    </div>
   </div>
 </div>
 
