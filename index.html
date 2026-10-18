@@ -4,225 +4,205 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
 <meta name="theme-color" content="#0a0a0a" />
-<title>選出生地 · 人生模擬 · 在哪裡由你決定</title>
+<title data-t="title">選出生地 · 人生模擬</title>
 <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
 
 <header class="topbar">
-  <div class="topbar-left">
-    <a class="brand" href="#">選出生地</a>
-    <span class="tagline">根據 50+ 個國家與地區的真實統計</span>
-  </div>
-  <div class="topbar-right">
-    <button class="iconbtn" id="btnSettings" title="設定">⚙</button>
-    <button class="iconbtn" id="btnShare" title="分享" hidden>↗</button>
+  <a class="brand" href="#" data-t="brand">選出生地</a>
+  <nav class="topnav">
+    <button class="navbtn active" data-view="intro" data-t="nav.intro">開始</button>
+    <button class="navbtn" data-view="life" data-t="nav.life">人生</button>
+    <button class="navbtn" data-view="end" data-t="nav.end">訃聞</button>
+    <button class="navbtn" data-view="shelf" data-t="nav.shelf">書架</button>
+  </nav>
+  <div class="topright">
+    <select id="langSwitcher" class="lang-select" title="Language">
+      <option value="zh-Hant">繁體</option>
+      <option value="zh-Hans">简体</option>
+      <option value="en">EN</option>
+    </select>
   </div>
 </header>
 
-<main id="screenHome" class="screen screen-home active">
-  <section class="hero">
-    <h1 class="hero-title">選一個<br/>出<span class="accent">生</span>地</h1>
-    <p class="hero-sub">
-      在「80億分之1」原作裡，出生地由人口比例隨機抽出。<br/>
-      這版交給你決定——挑一個國家，從 0 歲活到當地平均壽命。<br/>
-      每一段人生依真實統計：嬰兒死亡率、人均GDP、所受教育、自殺率、兇殺率⋯⋯
-    </p>
-  </section>
+<main class="main">
 
-  <section class="pickers">
-    <div class="picker">
-      <h2 class="picker-h">出生的世界</h2>
-      <div class="seg" data-group="era">
-        <button class="seg-btn active" data-val="now">現在的世界</button>
-        <button class="seg-btn" data-val="past">過去的世界</button>
-        <button class="seg-btn" data-val="future">未來的世界</button>
-        <button class="seg-btn" data-val="any">哪個世界都好</button>
+<!-- INTRO -->
+<section id="view-intro" class="view active">
+  <div class="hero">
+    <h1 class="hero-title">
+      <span class="kicker" data-t="intro.kicker">8 億 分 之 1</span>
+      <span data-t-html="intro.title">選一個<br/>出<span class="accent">生</span>地</span>
+    </h1>
+    <p class="hero-sub" data-t-html="intro.sub">在 8 億分之 1 原作裡，出生地由人口比例隨機抽出。<br/>這版交給你決定——挑一個國家，從 0 歲活到當地平均壽命。<br/>每一段人生依真實統計：嬰兒死亡率、人均 GDP、所受教育、自殺率、兇殺率⋯⋯</p>
+
+    <div class="mode-block">
+      <div class="seg-group">
+        <span class="seg-label" data-t="intro.mode">出生池</span>
+        <div class="seg">
+          <button class="seg-btn active" data-birth-mode="baby" data-t="intro.mode.baby">此刻出生</button>
+          <button class="seg-btn" data-birth-mode="all" data-t="intro.mode.all">80 億人活口</button>
+        </div>
       </div>
-      <p class="picker-help">現在用 2023 統計；過去用當年；未來用聯合國推估。</p>
-    </div>
-
-    <div class="picker">
-      <h2 class="picker-h">一段人生的長度</h2>
-      <div class="seg" data-group="pace">
-        <button class="seg-btn" data-val="30">約 30 分鐘</button>
-        <button class="seg-btn active" data-val="60">約 1 小時</button>
-        <button class="seg-btn" data-val="90">約 1.5 小時</button>
-      </div>
-      <p class="picker-help">1 小時 = 1 年約 40–60 秒，可暫停或加速。</p>
-    </div>
-
-    <div class="picker">
-      <h2 class="picker-h">性別（影響壽命、收入、菸酒統計）</h2>
-      <div class="seg" data-group="gender">
-        <button class="seg-btn active" data-val="random">隨機</button>
-        <button class="seg-btn" data-val="M">男</button>
-        <button class="seg-btn" data-val="F">女</button>
-      </div>
-    </div>
-  </section>
-
-  <section class="country">
-    <div class="country-head">
-      <h2 class="picker-h">選出生地</h2>
-      <div class="country-tools">
-        <input id="countrySearch" class="search" type="search" placeholder="搜尋國家、地區…" autocomplete="off" />
-        <div class="region-tabs" id="regionTabs">
-          <button class="region-tab active" data-region="all">全部</button>
-          <button class="region-tab" data-region="Asia">亞洲</button>
-          <button class="region-tab" data-region="Middle East">中東</button>
-          <button class="region-tab" data-region="Europe">歐洲</button>
-          <button class="region-tab" data-region="Americas">美洲</button>
-          <button class="region-tab" data-region="Africa">非洲</button>
-          <button class="region-tab" data-region="Oceania">大洋洲</button>
+      <div class="seg-group">
+        <span class="seg-label" data-t="intro.era">出生的世界</span>
+        <div class="seg">
+          <button class="seg-btn active" data-era="now" data-t="intro.era.now">現在</button>
+          <button class="seg-btn" data-era="past" data-t="intro.era.past">過去</button>
+          <button class="seg-btn" data-era="future" data-t="intro.era.future">未來</button>
+          <button class="seg-btn" data-era="any" data-t="intro.era.any">哪個都好</button>
         </div>
       </div>
     </div>
-    <div id="countryGrid" class="country-grid"></div>
-  </section>
 
-  <section class="cta">
-    <button id="btnBorn" class="cta-btn">出 生</button>
-    <p class="cta-hint">設定不用改，直接出生也沒關係；不選國家就隨機抽一個。</p>
+    <div class="cta-row">
+      <button id="btnStart" class="cta-btn" data-t="intro.cta">出 生</button>
+      <p class="cta-hint" data-t="intro.cta.hint">設定不用改，直接出生也沒關係；不選國家就依人口比例隨機抽一個。</p>
+    </div>
+
+    <div class="pick-block">
+      <h3 data-t="intro.pick">或者選一個國家：</h3>
+      <select id="countrySelect" class="country-pick"></select>
+      <div class="country-info" id="countryInfo">
+        <div class="ci-row">
+          <div class="ci-label" data-t="intro.country.region">地區</div>
+          <div class="ci-val" id="introCountryRegion">—</div>
+        </div>
+        <div class="ci-row">
+          <div class="ci-label" data-t="intro.country.le">平均壽命</div>
+          <div class="ci-val" id="introCountryLe">—</div>
+        </div>
+        <div class="ci-row">
+          <div class="ci-label" data-t="intro.country.im">嬰兒死亡率</div>
+          <div class="ci-val" id="introCountryIm">—</div>
+        </div>
+        <div class="ci-row">
+          <div class="ci-label" data-t="intro.country.u5">5 歲以下死亡率</div>
+          <div class="ci-val" id="introCountryU5">—</div>
+        </div>
+        <div class="ci-row">
+          <div class="ci-label" data-t="intro.country.ppp">人均 GDP（PPP）</div>
+          <div class="ci-val" id="introCountryPpp">—</div>
+        </div>
+      </div>
+      <button id="btnStartSelected" class="ghost" data-t="intro.pick.cta">以此地出生</button>
+    </div>
+  </div>
+
+  <section class="odds-block">
+    <h3 data-t="intro.odds.title">你會在哪裡出生？</h3>
+    <div class="odds">
+      <div class="odd">
+        <div class="odd-v">4</div>
+        <div class="odd-l" data-t="intro.odds.baby">此刻有 4 個嬰兒正在誕生</div>
+      </div>
+      <div class="odd">
+        <div class="odd-v">8,000,000,000</div>
+        <div class="odd-l" data-t="intro.odds.all">全球 80 億人</div>
+      </div>
+    </div>
   </section>
 
   <section class="about">
-    <h3>哪些是真實資料</h3>
-    <p>出生人數、男女平均壽命、嬰兒與 5 歲以下兒童死亡率、人均 GDP（PPP）、吉尼係數、平均受教育年數、大學就學率、農業就業比例、生育率、孕產婦死亡率、HIV 盛行率、兇殺率、自殺率、吸菸率、醫療自付比例、童婚率、生活滿意度。死亡時間依各國家分性別的生命表，死因依 WHO 與 GBD 模式分布。沉重事件照實際統計發生，<b>不描寫畫面</b>，並附上求助資訊。</p>
-    <p class="small">資料來源：World Bank、UN WPP 2024、WHO GBD、UNDP。數字為公開統計概值，僅作模擬用途，不構成預測或建議。這是根據 1in8b.life 原作的二次創作，<b>主動選擇出生地</b>是本版的唯一差異。</p>
+    <h3 data-t="intro.about">關於本作品</h3>
+    <p data-t="intro.about.text">8 億分之 1 原作（1in8b.life）由 Jin's Earth 與 Claude 合作，以真實的公開統計為基礎。本版本以原作精神重新實作，重點放在 172 國真實生命表、死亡原因分布、出生證書、過去生命書架。本地端儲存，不上傳任何資料。</p>
   </section>
-</main>
+</section>
 
-<main id="screenLife" class="screen screen-life">
-  <div class="life-meta">
-    <div class="life-meta-name">
-      <span id="lifeFlag" class="life-flag">🇹🇼</span>
-      <span id="lifeName">台灣</span>
-      <span id="lifeYear" class="life-year">2024</span>
+<!-- LIFE -->
+<section id="view-life" class="view">
+  <div class="life-cert" id="lifeCert">
+    <div class="cert-band" id="lifeCertBand">
+      <span class="cert-flag" id="lifeFlag">🇹🇼</span>
+      <span class="cert-name" id="lifeName">—</span>
+      <span class="cert-year" id="lifeYear">2024</span>
     </div>
-    <div class="life-progress">
-      <div class="life-age" id="lifeAge">0 歲</div>
-      <div class="life-age-of" id="lifeAgeOf">預期壽命 <b id="lifeExpect">80</b></div>
-      <div class="life-bar"><div class="life-bar-fill" id="lifeBarFill"></div></div>
+    <div class="cert-body">
+      <div class="cert-figure" id="lifePortrait">👶</div>
+      <h2 class="cert-name-main" id="lifeName2">—</h2>
+      <div class="cert-age-row">
+        <div class="cert-age" id="lifeAge">0 歲</div>
+        <div class="cert-le" data-t="life.expectancy">預期壽命</div>
+        <div class="cert-le-val" id="lifeLe">80</div>
+      </div>
+      <div class="cert-bar"><div class="cert-bar-fill" id="lifeBar"></div></div>
+      <div class="cert-meta">
+        <div class="meta-row"><span data-t="life.sex">性別</span><b id="lifeSex">—</b></div>
+        <div class="meta-row"><span data-t="life.education">學歷</span><b id="lifeEduc">—</b></div>
+        <div class="meta-row"><span data-t="life.work">工作</span><b id="lifeJob">—</b></div>
+        <div class="meta-row"><span data-t="life.partner">伴侶</span><b id="lifePartner">—</b></div>
+        <div class="meta-row"><span data-t="life.children">子女</span><b id="lifeKids">—</b></div>
+        <div class="meta-row"><span data-t="life.country.info">出生地</span><b id="lifeCountryInfo">—</b></div>
+      </div>
+      <div class="cert-controls">
+        <button class="ctl" id="btnPause" title="Pause">⏸</button>
+        <button class="speed-btn" data-speed="1" title="1×">1×</button>
+        <button class="speed-btn" data-speed="2" title="2×">2×</button>
+        <button class="speed-btn" data-speed="4" title="4×">4×</button>
+        <button class="speed-btn" data-speed="8" title="8×">8×</button>
+        <button class="ctl ctl-danger" id="btnDieNow" title="End now">↺</button>
+      </div>
     </div>
-    <div class="life-controls">
-      <button class="ctl" id="btnPause" title="暫停/繼續">⏸</button>
-      <button class="ctl" id="btnFaster" title="加速">»</button>
-      <button class="ctl ctl-danger" id="btnRestart" title="重新開始">↺</button>
+    <div class="cert-log-wrap">
+      <h4 data-t="life.events">事件記錄</h4>
+      <div class="cert-log" id="lifeLog"></div>
     </div>
   </div>
+</section>
 
-  <div class="life-body">
-    <aside class="life-side">
-      <div class="card">
-        <h4>家境</h4>
-        <div id="sideFamily" class="side-body"></div>
-      </div>
-      <div class="card">
-        <h4>健康</h4>
-        <div id="sideHealth" class="side-body"></div>
-      </div>
-      <div class="card">
-        <h4>教育</h4>
-        <div id="sideEdu" class="side-body"></div>
-      </div>
-      <div class="card">
-        <h4>工作與收入</h4>
-        <div id="sideWork" class="side-body"></div>
-      </div>
-      <div class="card">
-        <h4>關係</h4>
-        <div id="sideRel" class="side-body"></div>
-      </div>
-    </aside>
-
-    <section class="life-main">
-      <div class="log" id="lifeLog"></div>
-    </section>
-  </div>
-</main>
-
-<main id="screenMemorial" class="screen screen-memorial">
-  <div class="memorial-wrap">
-    <h1 class="memorial-h">這一段人生走完了。</h1>
-    <p class="memorial-sub" id="memorialSub"></p>
-    <div class="memorial-card">
-      <div class="memorial-row"><span>出生地</span><b id="mPlace"></b></div>
-      <div class="memorial-row"><span>年份</span><b id="mYears"></b></div>
-      <div class="memorial-row"><span>享年</span><b id="mAge"></b></div>
-      <div class="memorial-row"><span>離開原因</span><b id="mCause"></b></div>
-      <div class="memorial-row"><span>受教育</span><b id="mEdu"></b></div>
-      <div class="memorial-row"><span>主要工作</span><b id="mWork"></b></div>
-      <div class="memorial-row"><span>伴侶</span><b id="mPartner"></b></div>
-      <div class="memorial-row"><span>孩子</span><b id="mKids"></b></div>
-      <div class="memorial-row"><span>移居</span><b id="mMove"></b></div>
+<!-- END -->
+<section id="view-end" class="view">
+  <div class="end-cert" id="endCert">
+    <canvas id="certCanvas"></canvas>
+    <div class="cert-band">
+      <span class="cert-title" data-t="end.cert_title">這一段人生走完了。</span>
+      <span class="cert-date" id="endYears">2024</span>
     </div>
-    <div class="memorial-quotes" id="mQuotes"></div>
-    <div class="memorial-actions">
-      <button class="ghost" id="btnAgain">再活一次</button>
-      <button class="ghost" id="btnNewCountry">換個出生地</button>
-      <button class="ghost" id="btnCopy">複製這一段</button>
+    <div class="cert-body">
+      <div class="cert-figure" id="endPortrait">👶</div>
+      <h2 class="cert-name-main" id="endName">—</h2>
+      <div class="cert-id">
+        <div class="id-row"><span data-t="end.born">出生</span><b id="endBorn">—</b></div>
+        <div class="id-row"><span data-t="end.died">逝世</span><b id="endAge">—</b></div>
+        <div class="id-row"><span data-t="end.cause">原因</span><b id="endCause">—</b></div>
+        <div class="id-row"><span data-t="end.lifespan">享年</span><b id="endLe">—</b></div>
+        <div class="id-row"><span data-t="end.past_count">你活過幾段人生</span><b id="endPastCount">—</b></div>
+        <div class="id-row"><span data-t="end.born">國家</span><b id="endCountry">—</b></div>
+      </div>
     </div>
-    <p class="memorial-help small">死亡、暴力、自殺等沉重事件，照真實統計發生。沒描寫畫面。如果你正在低潮，請聯絡身邊的人或當地的求助專線（衛福部 1925、安心專線 0800-788-995、生命線 1995、張老師專線 1980）。</p>
+    <div class="cert-actions">
+      <button id="btnRestart" class="ghost" data-t="end.again">再活一次</button>
+      <button id="btnNewLife" class="primary" data-t="end.new_country">換個出生地</button>
+      <button class="navbtn" data-view="shelf" data-t="end.to_shelf">到書架看看</button>
+    </div>
+    <p class="cert-note" data-t="end.notes">死亡、暴力、自殺等沉重事件，照真實統計發生。沒描寫畫面。如果你正在低潮，請聯絡身邊的人或當地的求助專線（衛福部 1925、安心專線 0800-788-995、生命線 1995、張老師 1980）。</p>
   </div>
+</section>
+
+<!-- SHELF -->
+<section id="view-shelf" class="view">
+  <h2 class="shelf-title" data-t="shelf.title">過去生命的書架</h2>
+  <p class="shelf-hint" data-t="shelf.click">點書本看細節</p>
+  <div id="shelfGrid" class="shelf-grid"></div>
+</section>
+
 </main>
 
 <!-- 暫停問題 modal -->
-<div id="modal" class="modal" hidden>
+<div id="pauseModal" class="modal" hidden>
   <div class="modal-card">
-    <div class="modal-meta" id="modalMeta"></div>
-    <h2 class="modal-q" id="modalQ"></h2>
-    <p class="modal-help" id="modalHelp"></p>
-    <textarea id="modalInput" class="modal-input" rows="3" placeholder="不寫也可以，這段會留在你腦海。"></textarea>
+    <h2 class="modal-q" id="pauseQuestion">如果 15 歲的你能記得一件事⋯</h2>
+    <p class="modal-help" data-t="pause.placeholder">不寫也可以，這段會留在你腦海。</p>
+    <textarea id="pauseInput" class="modal-input" rows="3"></textarea>
     <div class="modal-actions">
-      <button class="ghost" id="modalSkip">略過</button>
-      <button class="primary" id="modalSubmit">留下這句話</button>
+      <button class="ghost" id="pauseSkip" data-t="pause.skip">略過</button>
+      <button class="primary" id="pauseSave" data-t="pause.save">留下這句話</button>
     </div>
   </div>
 </div>
 
-<!-- 沉重事件 modal -->
-<div id="heavyModal" class="modal" hidden>
-  <div class="modal-card">
-    <h2 class="modal-q" id="heavyTitle">一段沉重的事發生了</h2>
-    <p class="modal-help" id="heavyBody"></p>
-    <div class="modal-actions">
-      <button class="primary" id="heavyClose">我知道了</button>
-    </div>
-  </div>
-</div>
-
-<!-- 設定 modal -->
-<div id="settingsModal" class="modal" hidden>
-  <div class="modal-card">
-    <h2 class="modal-q">顯示設定</h2>
-    <div class="settings-row">
-      <label>金額</label>
-      <select id="setCurrency">
-        <option value="auto">依出生地</option>
-        <option value="TWD">新臺幣</option>
-        <option value="HKD">港幣</option>
-        <option value="CNY">人民幣</option>
-        <option value="USD">美元</option>
-      </select>
-    </div>
-    <div class="settings-row">
-      <label>音樂</label>
-      <label class="switch"><input id="setMusic" type="checkbox" /><span>♪ 輕柔音樂</span></label>
-    </div>
-    <div class="settings-row">
-      <label>自動抉擇</label>
-      <label class="switch"><input id="setAuto" type="checkbox" /><span>所有選擇自動</span></label>
-    </div>
-    <div class="modal-actions">
-      <button class="primary" id="settingsClose">完成</button>
-    </div>
-  </div>
-</div>
-
-<audio id="bgm" loop preload="none">
-  <source src="data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQAAAAA=" type="audio/wav" />
-</audio>
+<div id="toast" class="toast" hidden></div>
 
 <script src="app.js"></script>
 </body>
