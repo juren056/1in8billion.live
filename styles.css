@@ -1942,3 +1942,18 @@ body.theme-sepia .muted { color: #8b7355; }
 .lef-row { display: flex; gap: 10px; padding: 5px 8px; border-bottom: 1px solid var(--line); font-size: 13px; align-items: flex-start; }
 .lef-row.kind-birth, .lef-row.kind-finance, .lef-row.kind-death, .lef-row.kind-focus { background: rgba(0,0,0,0.02); }
 .lef-row:last-child { border-bottom: none; }
+
+/* v5.31 前世紀錄面板 */
+.end-past-records { background: var(--bg); border: 1px solid var(--line); border-radius: 8px; padding: 12px 16px; margin: 12px 0; text-align: left; }
+.end-past-records h4 { margin: 0 0 8px; font-size: 14px; color: var(--accent); }
+.end-past-note { font-size: 12px; margin: 0 0 10px; }
+.pr-row { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 6px 0; border-bottom: 1px dashed var(--line); font-size: 13px; }
+.pr-row:last-child { border-bottom: none; }
+.pr-info { flex: 1; display: flex; flex-direction: column; gap: 2px; }
+.pr-info strong { color: var(--ink); }
+.pr-info .muted { font-size: 11px; }
+.pr-actions { display: flex; gap: 4px; }
+.pr-actions button { font-size: 11px; padding: 3px 8px; }
+.end-past-actions { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 10px; }
+.end-past-actions button { font-size: 12px; padding: 5px 10px; }
+.end-past-actions .danger { color: #a04040; border-color: #a04040; }
