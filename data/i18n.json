@@ -143,7 +143,14 @@
     "io.exported": "已匯出 {n} 人",
     "family.generated": "依你的出生地統計與文化脈絡生成的家族。",
     "label.center": "中心人物",
-    "legend.d": "已歿"
+    "legend.d": "已歿",
+    "family.foster": "寄養家庭",
+    "family.adoptive": "收養家庭",
+    "family.orphan": "戰區孤兒",
+    "tree.spouse": "伴侶",
+    "tree.spouseLink": "綠色虛線＝伴侶關係",
+    "tree.noteAdoptive": "收養",
+    "tree.noteFoster": "寄養"
   },
   "zh-Hans": {
     "title": "选出生地 · 人生模拟",
@@ -289,7 +296,14 @@
     "io.exported": "已匯出 {n} 人",
     "family.generated": "依你的出生地統計與文化脈絡生成的家族。",
     "label.center": "中心人物",
-    "legend.d": "已歿"
+    "legend.d": "已歿",
+    "family.foster": "Foster family",
+    "family.adoptive": "Adoptive family",
+    "family.orphan": "War-zone orphan",
+    "tree.spouse": "Spouse",
+    "tree.spouseLink": "Green dashed = spouse",
+    "tree.noteAdoptive": "Adoptive",
+    "tree.noteFoster": "Foster"
   },
   "en": {
     "title": "Born Somewhere · Life Simulator",
@@ -435,7 +449,14 @@
     "io.exported": "Exported {n} people",
     "family.generated": "Family generated from your birth-country context.",
     "label.center": "Center person",
-    "legend.d": "Deceased"
+    "legend.d": "Deceased",
+    "family.foster": "Foster family",
+    "family.adoptive": "Adoptive family",
+    "family.orphan": "War-zone orphan",
+    "tree.spouse": "Spouse",
+    "tree.spouseLink": "Green dashed = spouse",
+    "tree.noteAdoptive": "Adoptive",
+    "tree.noteFoster": "Foster"
   },
   "ko": {
     "title": "태어난 곳 · 인생 시뮬레이션",
@@ -594,7 +615,14 @@
     "io.exported": "Exported {n} people",
     "family.generated": "Family generated from your birth-country context.",
     "label.center": "Center person",
-    "legend.d": "Deceased"
+    "legend.d": "Deceased",
+    "family.foster": "Foster family",
+    "family.adoptive": "Adoptive family",
+    "family.orphan": "War-zone orphan",
+    "tree.spouse": "Spouse",
+    "tree.spouseLink": "Green dashed = spouse",
+    "tree.noteAdoptive": "Adoptive",
+    "tree.noteFoster": "Foster"
   },
   "ja": {
     "title": "出生地 · 人生シミュレーション",
@@ -753,7 +781,14 @@
     "io.exported": "Exported {n} people",
     "family.generated": "Family generated from your birth-country context.",
     "label.center": "Center person",
-    "legend.d": "Deceased"
+    "legend.d": "Deceased",
+    "family.foster": "Foster family",
+    "family.adoptive": "Adoptive family",
+    "family.orphan": "War-zone orphan",
+    "tree.spouse": "Spouse",
+    "tree.spouseLink": "Green dashed = spouse",
+    "tree.noteAdoptive": "Adoptive",
+    "tree.noteFoster": "Foster"
   },
   "vi": {
     "title": "Nơi sinh · Mô phỏng cuộc đời",
@@ -912,7 +947,14 @@
     "io.exported": "Exported {n} people",
     "family.generated": "Family generated from your birth-country context.",
     "label.center": "Center person",
-    "legend.d": "Deceased"
+    "legend.d": "Deceased",
+    "family.foster": "Foster family",
+    "family.adoptive": "Adoptive family",
+    "family.orphan": "War-zone orphan",
+    "tree.spouse": "Spouse",
+    "tree.spouseLink": "Green dashed = spouse",
+    "tree.noteAdoptive": "Adoptive",
+    "tree.noteFoster": "Foster"
   },
   "fr": {
     "title": "Né quelque part · Simulateur de vie",
@@ -1071,7 +1113,14 @@
     "io.exported": "Exported {n} people",
     "family.generated": "Family generated from your birth-country context.",
     "label.center": "Center person",
-    "legend.d": "Deceased"
+    "legend.d": "Deceased",
+    "family.foster": "Foster family",
+    "family.adoptive": "Adoptive family",
+    "family.orphan": "War-zone orphan",
+    "tree.spouse": "Spouse",
+    "tree.spouseLink": "Green dashed = spouse",
+    "tree.noteAdoptive": "Adoptive",
+    "tree.noteFoster": "Foster"
   },
   "th": {
     "title": "เกิดที่ไหน · จำลองชีวิต",
@@ -1230,7 +1279,14 @@
     "io.exported": "Exported {n} people",
     "family.generated": "Family generated from your birth-country context.",
     "label.center": "Center person",
-    "legend.d": "Deceased"
+    "legend.d": "Deceased",
+    "family.foster": "Foster family",
+    "family.adoptive": "Adoptive family",
+    "family.orphan": "War-zone orphan",
+    "tree.spouse": "Spouse",
+    "tree.spouseLink": "Green dashed = spouse",
+    "tree.noteAdoptive": "Adoptive",
+    "tree.noteFoster": "Foster"
   },
   "es": {
     "title": "Nacido en algún lugar · Simulador de vida",
@@ -1389,6 +1445,13 @@
     "io.exported": "Exported {n} people",
     "family.generated": "Family generated from your birth-country context.",
     "label.center": "Center person",
-    "legend.d": "Deceased"
+    "legend.d": "Deceased",
+    "family.foster": "Foster family",
+    "family.adoptive": "Adoptive family",
+    "family.orphan": "War-zone orphan",
+    "tree.spouse": "Spouse",
+    "tree.spouseLink": "Green dashed = spouse",
+    "tree.noteAdoptive": "Adoptive",
+    "tree.noteFoster": "Foster"
   }
 }
