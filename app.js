@@ -1479,6 +1479,8 @@ function wire() {
     const c = chooseCountry(STATE.birthMode);
     if (c) startLife(c.id);
   });
+  const downloadCert = $('#btnDownloadCert');
+  if (downloadCert) downloadCert.addEventListener('click', downloadLifeCertPNG);
   // esc 關閉
   document.addEventListener('keydown', e => {
     if (e.key === ' ') { if (STATE.view === 'life') $('#btnPause')?.click(); e.preventDefault(); }
@@ -2194,6 +2196,87 @@ function exportGEDCOM() {
   document.body.appendChild(a); a.click(); a.remove();
   setTimeout(() => URL.revokeObjectURL(url), 1000);
   toast(t('io.exported', Object.keys(people).length));
+}
+
+/* ==== 生命證書下載為 PNG ==== */
+function downloadLifeCertPNG() {
+  if (!STATE.life) { toast(LANG==='en' ? 'No life' : '沒有當前人生'); return; }
+  const life = STATE.life;
+  const c = life.countryData;
+  const loc = c ? localize(c) : { name: life.country };
+  const W = 700, H = 480;
+  const svgParts = [];
+  svgParts.push(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}">`);
+  // 背景紙質
+  svgParts.push(`<rect width="${W}" height="${H}" fill="#faf7f0"/>`);
+  // 邊框
+  svgParts.push(`<rect x="6" y="6" width="${W-12}" height="${H-12}" fill="none" stroke="#8C1D3C" stroke-width="2" rx="8"/>`);
+  svgParts.push(`<rect x="14" y="14" width="${W-28}" height="${H-28}" fill="none" stroke="#0F6E68" stroke-width="1" rx="6"/>`);
+  // guilloche 簡化紋路
+  for (let r = 30; r < W; r += 28) {
+    svgParts.push(`<ellipse cx="${W/2}" cy="${H/2}" rx="${r}" ry="${r*0.6}" fill="none" stroke="#8C1D3C" stroke-width="0.3" opacity="0.18"/>`);
+  }
+  // 標題列
+  svgParts.push(`<rect x="20" y="40" width="${W-40}" height="60" fill="#8C1D3C"/>`);
+  svgParts.push(`<text x="40" y="80" font-size="24" fill="white" font-weight="bold">${c?.flag || '🏳️'} ${escapeHtml(loc.name)}</text>`);
+  svgParts.push(`<text x="${W-40}" y="80" font-size="20" fill="white" text-anchor="end">${life.year + life.yearOffset}</text>`);
+  // 姓名
+  svgParts.push(`<text x="${W/2}" y="160" font-size="36" fill="#8C1D3C" text-anchor="middle" font-weight="bold">${escapeHtml(life.name.full || life.name.full_en || '—')}</text>`);
+  if (life.name.full_en && life.name.full_en !== life.name.full) {
+    svgParts.push(`<text x="${W/2}" y="186" font-size="14" fill="#7a6a5a" text-anchor="middle" font-style="italic">${escapeHtml(life.name.full_en)}</text>`);
+  }
+  // 大字歲數
+  svgParts.push(`<text x="${W/2}" y="250" font-size="48" fill="#1a1a1a" text-anchor="middle" font-weight="bold">${life.deathAge || life.age} ${LANG==='en'?'yrs':'歲'}</text>`);
+  // 副標題
+  svgParts.push(`<text x="${W/2}" y="285" font-size="14" fill="#5a4a3a" text-anchor="middle">${LANG==='en'?'Life Expectancy':'預期壽命'} ${c?.le || '—'} ${LANG==='en'?'yrs':'歲'}</text>`);
+  // 詳情
+  const rowY = 320;
+  const rows = [
+    [LANG==='en'?'Sex':'性別', life.sex === 'M' ? t('sex.male') : t('sex.female')],
+    [LANG==='en'?'Born':'出生', life.year || '?'],
+    [LANG==='en'?'Died':'逝世', life.died ? `${life.year + life.yearOffset}` : '—'],
+    [LANG==='en'?'Cause':'原因', escapeHtml(life.cause || (LANG==='en'?'(still alive)':'仍在世'))]
+  ];
+  rows.forEach((r, i) => {
+    const yy = rowY + i * 28;
+    svgParts.push(`<text x="40" y="${yy}" font-size="13" fill="#5a4a3a">${r[0]}</text>`);
+    svgParts.push(`<text x="${W-40}" y="${yy}" font-size="14" fill="#1a1a1a" text-anchor="end">${r[1]}</text>`);
+  });
+  // 章戳
+  svgParts.push(`<circle cx="${W-110}" cy="430" r="36" fill="none" stroke="#8C1D3C" stroke-width="1.5" opacity="0.7"/>`);
+  svgParts.push(`<text x="${W-110}" y="425" font-size="10" fill="#8C1D3C" text-anchor="middle">${LANG==='en'?'BORN-SOMEWHERE':'選出生地'}</text>`);
+  svgParts.push(`<text x="${W-110}" y="440" font-size="8" fill="#8C1D3C" text-anchor="middle">EST. 2024</text>`);
+  // 底部
+  svgParts.push(`<text x="40" y="450" font-size="9" fill="#9a8a7a">${LANG==='en'?'Life certificate':'生命證書'} · born-somewhere v5.2 · ${LANG==='en'?'Real statistics':'真實統計'}</text>`);
+  svgParts.push(`</svg>`);
+  const svgStr = svgParts.join('');
+  // 轉成 PNG via canvas
+  const blob = new Blob([svgStr], { type: 'image/svg+xml;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const img = new Image();
+  img.onload = () => {
+    const scale = 2; // 高解析度
+    const canvas = document.createElement('canvas');
+    canvas.width = W * scale;
+    canvas.height = H * scale;
+    const ctx = canvas.getContext('2d');
+    ctx.scale(scale, scale);
+    ctx.drawImage(img, 0, 0);
+    canvas.toBlob(pngBlob => {
+      const pngUrl = URL.createObjectURL(pngBlob);
+      const a = document.createElement('a');
+      const safeName = (life.name.full || life.name.full_en || 'life').replace(/[\/\\<>:"|?*\u0000-\u001f]/g, '_');
+      a.href = pngUrl; a.download = `${safeName}-${LANG==='en'?'certificate':'證書'}-${Date.now()}.png`;
+      document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(() => { URL.revokeObjectURL(url); URL.revokeObjectURL(pngUrl); }, 1000);
+      toast(LANG==='en'?'Certificate downloaded':'證書已下載');
+    }, 'image/png');
+  };
+  img.onerror = () => {
+    URL.revokeObjectURL(url);
+    toast(LANG==='en'?'Image conversion failed':'圖片轉換失敗');
+  };
+  img.src = url;
 }
 
 function toast(msg, ms=2200) {
