@@ -851,6 +851,35 @@ function milestoneEvents(life, newAge) {
 }
 
 // ==== 主迴圈 ====
+/* v5.24：再看一次最後的時刻 — 顯示生命最後 3 個事件 */
+function replayLastMoments() {
+  if (!STATE.life) return;
+  const life = STATE.life;
+  const isEn = LANG === 'en';
+  const lastEvents = (life.log || []).slice(-5);  // 最後 5 條
+  const list = $('#endLastMomentsList');
+  if (!list) return;
+  list.innerHTML = lastEvents.map(e => `<div class="elm-row"><span class="elm-age">${e.age} ${isEn?'yo':'歲'}</span><span class="elm-icon">${e.icon || '·'}</span><span class="elm-text">${escapeHtml(e.text || '')}</span></div>`).join('') || `<span class="muted">${isEn?'No events':'無事件'}</span>`;
+  $('#endLastMoments')?.removeAttribute('hidden');
+}
+
+/* v5.24：提供意見送出 — 存 localStorage */
+function submitFeedback() {
+  const email = $('#feedbackEmail')?.value || '';
+  const text = $('#feedbackText')?.value || '';
+  if (!text || text.length < 5) {
+    toast(LANG === 'en' ? 'Please write at least 5 characters' : '請至少寫 5 個字');
+    return;
+  }
+  const feedbacks = JSON.parse(localStorage.getItem('born-somewhere-v2:feedbacks') || '[]');
+  feedbacks.push({ ts: Date.now(), email, text, lang: LANG });
+  localStorage.setItem('born-somewhere-v2:feedbacks', JSON.stringify(feedbacks));
+  $('#feedbackModal')?.setAttribute('hidden', '');
+  toast(LANG === 'en' ? 'Feedback sent (saved locally)' : '感謝您的意見（已存於本機）');
+  if ($('#feedbackText')) $('#feedbackText').value = '';
+  if ($('#feedbackEmail')) $('#feedbackEmail').value = '';
+}
+
 function startLife(countryCode) {
   stopTicker();
   STATE.life = newLife(countryCode);
@@ -3565,6 +3594,13 @@ function wire() {
   });
   const downloadCert = $('#btnDownloadCert');
   if (downloadCert) downloadCert.addEventListener('click', downloadLifeCertPNG);
+  // v5.24：再看一次最後的時刻 + 提供意見
+  const replayLast = $('#btnReplayLast');
+  if (replayLast) replayLast.addEventListener('click', replayLastMoments);
+  $('#endCloseReplay')?.addEventListener('click', () => $('#endLastMoments')?.setAttribute('hidden', ''));
+  const feedbackSubmit = $('#feedbackSubmit');
+  if (feedbackSubmit) feedbackSubmit.addEventListener('click', submitFeedback);
+  $('#footerFeedbackBtn')?.addEventListener('click', () => $('#feedbackModal')?.removeAttribute('hidden'));
   // esc 關閉
   document.addEventListener('keydown', e => {
     // 跳過輸入框
