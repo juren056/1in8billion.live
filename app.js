@@ -1221,6 +1221,7 @@ function runFamilyLab(countryCode, N) {
 
 function renderLab() {
   const countrySel = $('#labCountry');
+  const countryBSel = $('#labCountryB');
   if (countrySel && countrySel.children.length !== COUNTRIES.length) {
     countrySel.innerHTML = '';
     for (const c of COUNTRIES) {
@@ -1229,6 +1230,16 @@ function renderLab() {
       opt.value = c.id;
       opt.textContent = `${c.flag} ${loc.name}`;
       countrySel.appendChild(opt);
+    }
+    if (countryBSel) {
+      countryBSel.innerHTML = '<option value="">—</option>';
+      for (const c of COUNTRIES) {
+        const loc = localize(c);
+        const opt = document.createElement('option');
+        opt.value = c.id;
+        opt.textContent = `${c.flag} ${loc.name}`;
+        countryBSel.appendChild(opt);
+      }
     }
   }
 }
@@ -1296,6 +1307,53 @@ function displayLabResults(result) {
   target.innerHTML = html;
 }
 
+/* ==== Lab 國家比較模式 ==== */
+function displayLabResultsCompare(rA, rB) {
+  const target = $('#labResults');
+  if (!target) return;
+  const flag = (c) => c.flag || '🏳️';
+  const stat = (label, a, b, fmt, lowerBetter) => {
+    const da = (a ?? 0), db = (b ?? 0);
+    const wa = lowerBetter ? (da < db ? '▲' : da > db ? '▼' : '=') : (da > db ? '▲' : da < db ? '▼' : '=');
+    const wb = lowerBetter ? (db < da ? '▲' : db > da ? '▼' : '=') : (db > da ? '▲' : db < da ? '▼' : '=');
+    return `<tr><td>${label}</td><td>${fmt(da)} ${wa}</td><td>${fmt(db)} ${wb}</td></tr>`;
+  };
+  const fmt1 = x => x?.toFixed ? x.toFixed(1) : x;
+  const fmt0 = x => Math.round(x ?? 0);
+  const html = `
+    <div class="lab-section"><h3>${flag(rA.country)} ${rA.country.name_zh} vs ${flag(rB.country)} ${rB.country.name_zh}</h3>
+      <p class="muted">${rA.N} ${LANG==='en'?'lives per country':'人/國家'} · ${LANG==='en'?'avg lifespan, family stats':'平均壽命、家庭統計'}</p>
+      <table class="lab-compare">
+        <thead><tr><th></th><th>${flag(rA.country)} ${rA.country.name_zh}</th><th>${flag(rB.country)} ${rB.country.name_zh}</th></tr></thead>
+        <tbody>
+          ${stat(t('lab.avg_age'), rA.avg, rB.avg, fmt1)}
+          ${stat(t('lab.median_age'), rA.median, rB.median, fmt0)}
+          ${stat('5歲以下死亡%', (rA.deaths.filter(d => d < 5).length / rA.N * 100), (rB.deaths.filter(d => d < 5).length / rB.N * 100), fmt1, true)}
+          ${stat(t('lab.famOrphan'), parseFloat(rA.famStats.orphanPct), parseFloat(rB.famStats.orphanPct), fmt1, true)}
+          ${stat(t('lab.famTwoParents'), parseFloat(rA.famStats.twoParentsPct), parseFloat(rB.famStats.twoParentsPct), fmt1)}
+          ${stat(t('lab.famAdopted'), parseFloat(rA.famStats.adoptedPct), parseFloat(rB.famStats.adoptedPct), fmt1)}
+          ${stat(t('lab.famAvgSib'), parseFloat(rA.famStats.avgSib), parseFloat(rB.famStats.avgSib), fmt1)}
+          ${stat(t('lab.famAvgGP'), parseFloat(rA.famStats.avgGP), parseFloat(rB.famStats.avgGP), fmt1)}
+        </tbody>
+      </table>
+    </div>
+    <div class="lab-section"><h3>${LANG==='en'?'Top causes':'死因分布對比'}</h3>
+      <div class="lab-compare-causes">
+        <div><h4>${flag(rA.country)} ${rA.country.name_zh}</h4>${renderCauseList(rA.causes)}</div>
+        <div><h4>${flag(rB.country)} ${rB.country.name_zh}</h4>${renderCauseList(rB.causes)}</div>
+      </div>
+    </div>`;
+  target.innerHTML = html;
+}
+
+function renderCauseList(causes) {
+  const sorted = Object.entries(causes).sort((a, b) => b[1] - a[1]).slice(0, 5);
+  const total = Object.values(causes).reduce((a, b) => a + b, 0);
+  return '<ol class="lab-causes">' + sorted.map(([c, n]) =>
+    `<li><span class="lab-cause">${c}</span><span class="lab-cause-n">${(n/total*100).toFixed(1)}%</span></li>`
+  ).join('') + '</ol>';
+}
+
 // ==== 事件 ====
 function wire() {
   // 導覽
@@ -1355,11 +1413,17 @@ function wire() {
   const labRun = $('#labRun');
   if (labRun) labRun.addEventListener('click', () => {
     const code = $('#labCountry').value;
+    const codeB = $('#labCountryB')?.value;
     const era = $('#labEra').value;
     const sex = $('#labSex').value;
     const N = +$('#labN').value;
     const result = runLab(code, era, sex, N);
-    displayLabResults(result);
+    if (codeB) {
+      const resultB = runLab(codeB, era, sex, N);
+      displayLabResultsCompare(result, resultB);
+    } else {
+      displayLabResults(result);
+    }
   });
   // Tree (族譜)
   $('#treeRoot')?.addEventListener('change', e => { TREE_STATE.rootId = e.target.value; renderTree(); });
