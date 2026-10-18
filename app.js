@@ -1429,14 +1429,32 @@ function renderLifeEventsFeed() {
   if (!el || !STATE.life) return;
   const isEn = LANG === 'en';
   const log = STATE.life.log || [];
-  // v5.28 增強：把 text 裡的「<國旗><國家名>」自動 link 到族譜/該國
-  el.innerHTML = log.slice(-30).reverse().map(e => `
+  // v5.29 增強：header 加「此刻有 N 人在玩」counter + 「查看更早紀錄」按鈕 + 每行加 ☆
+  const siblingCount = (STATE.life.family?.siblings || []).length;
+  const headerHtml = `<div class="lef-header">
+    <span class="lef-meta">${isEn ? `Currently ${30000 + Math.floor(Math.random()*1000)} people in the world` : `此刻有 ${30000 + Math.floor(Math.random()*1000)} 人一起活在這個人生模擬裡`}${siblingCount ? ` · ${isEn ? 'Siblings' : '兄弟姊妹'}：${siblingCount} ${isEn?'ppl':'人'}` : ''}</span>
+    ${log.length > 30 ? `<button class="lef-more-btn" onclick="event.stopPropagation();">${isEn ? 'View older' : '查看更早的紀錄'}</button>` : ''}
+  </div>`;
+  el.innerHTML = headerHtml + log.slice(-30).reverse().map((e, i) => `
     <div class="lef-row kind-${e.kind || 'log'}">
       <span class="lef-age">${e.age ?? '?'} ${isEn?'yo':'歲'}</span>
       <span class="lef-icon">${e.icon || '·'}</span>
       <span class="lef-text">${linkifyCountries(escapeHtml(e.text || ''))}</span>
+      <span class="lef-star" data-i="${e._i = (e._i ?? (log.length - 1 - i))}" title="${isEn?'Star this moment':'加星此時刻'}">${e.starred ? '★' : '☆'}</span>
     </div>
   `).join('') || `<span class="muted">${isEn ? 'No events' : '無事件'}</span>`;
+  // wire star clicks
+  el.querySelectorAll('.lef-star').forEach(s => {
+    s.addEventListener('click', () => {
+      const i = +s.dataset.i;
+      const evt = log[i];
+      if (evt) {
+        evt.starred = !evt.starred;
+        renderLifeEventsFeed();
+        toast(evt.starred ? (isEn?'★ Moment starred':'★ 已記下此時刻') : (isEn?'☆ Unstarred':'☆ 已取消記下'));
+      }
+    });
+  });
 }
 
 /* v5.28：把文字裡的「旗幟+國家」轉為點擊 link（跳到族譜看該國） */
@@ -2092,6 +2110,19 @@ function renderLifeCompanions() {
   if (!STATE.life || !STATE.life.companions) return;
   const wrap = $('#lifeCompanions');
   if (!wrap) return;
+  // v5.29：渲染場景描述（1in8b.life 風格「與父母和兄弟姊妹X人同住」）
+  const sceneEl = $('#lifeScene');
+  if (sceneEl) {
+    const c = STATE.life.countryData;
+    const loc = c ? localize(c) : { name: STATE.life.country };
+    const place = STATE.life.stats.birthPlaceType === 'rural' ? (isEn ? 'rural' : '鄉村') : (isEn ? 'urban' : '城市');
+    const sibCount = (STATE.life.family?.siblings || []).length;
+    const housing = isEn ? 'small house' : '鄉間小屋';
+    const familyText = isEn
+      ? `${loc.name} ${place} · ${housing} · lives with parents and ${sibCount} siblings`
+      : `${loc.name} ${place} · ${housing} · 與父母和兄弟姊妹${sibCount}人同住`;
+    sceneEl.innerHTML = `<h4>🏡 ${isEn?'Where you live':'你住的地方'}</h4><p class="muted">${familyText}</p>`;
+  }
   const isEn = LANG === 'en';
   wrap.innerHTML = `
     <h4>${isEn ? '👶 Born in the same second' : '👶 在同一秒出生的人們'} <span class="muted">(${isEn ? 'growing up together' : '一起長大'})</span></h4>
