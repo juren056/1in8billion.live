@@ -630,3 +630,73 @@ input, select, textarea { font: inherit; color: inherit; }
 }
 .help-fab:hover { transform: scale(1.1); }
 .help-fab:active { transform: scale(0.95); }
+
+/* v5.8 狀態條 + 家庭背景 + 同伴 */
+.life-stats {
+  background: linear-gradient(135deg, var(--bg), #f5ead0);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 12px 16px;
+  margin: 12px 0;
+  text-align: left;
+}
+.life-stats h4 {
+  margin: 0 0 10px;
+  font-size: 13px; color: var(--accent);
+  text-transform: uppercase; letter-spacing: 0.1em;
+}
+.state-row { display: flex; align-items: center; gap: 10px; padding: 3px 0; font-size: 13px; }
+.state-label { width: 50px; color: var(--ink-3); }
+.state-bar { flex: 1; background: var(--line); border-radius: 4px; height: 8px; overflow: hidden; }
+.state-bar i { display: block; height: 100%; background: linear-gradient(90deg, var(--accent), #ffaa00); border-radius: 4px; transition: width 0.3s; }
+.state-val { width: 32px; text-align: right; font-weight: 600; color: var(--ink); }
+.state-assets {
+  display: flex; justify-content: space-between; padding-top: 10px;
+  border-top: 1px dashed var(--line); margin-top: 8px;
+  font-size: 13px; color: var(--ink-3);
+}
+.state-assets b { color: var(--accent); font-size: 15px; }
+
+.life-family-detail {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 12px 16px;
+  margin: 12px 0;
+  text-align: left;
+  font-size: 13px;
+}
+.life-family-detail h4 {
+  margin: 0 0 10px;
+  font-size: 13px; color: var(--accent);
+  text-transform: uppercase; letter-spacing: 0.1em;
+}
+.fd-row { display: flex; gap: 12px; padding: 4px 0; }
+.fd-cell { flex: 1; background: var(--bg); border-radius: 6px; padding: 8px 10px; }
+.fd-role { font-size: 11px; color: var(--ink-3); text-transform: uppercase; letter-spacing: 0.08em; }
+.fd-name { font-size: 14px; font-weight: 600; color: var(--ink); margin: 2px 0; }
+.fd-detail { font-size: 12px; color: var(--ink-2); }
+
+.life-companions {
+  background: linear-gradient(135deg, #f5ead0, #e8d9b8);
+  border: 1px solid var(--accent);
+  border-radius: 10px;
+  padding: 12px 16px;
+  margin: 12px 0;
+  text-align: left;
+}
+.life-companions h4 {
+  margin: 0 0 10px;
+  font-size: 13px; color: var(--accent);
+  text-transform: uppercase; letter-spacing: 0.1em;
+}
+.lc-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 10px; }
+.lc-cell {
+  background: var(--paper);
+  border-radius: 8px;
+  padding: 8px 10px;
+  border: 1px solid var(--line);
+}
+.lc-flag { font-size: 22px; line-height: 1; }
+.lc-name { font-size: 13px; font-weight: 600; margin-top: 4px; }
+.lc-meta { font-size: 11px; color: var(--ink-3); margin-top: 2px; }
