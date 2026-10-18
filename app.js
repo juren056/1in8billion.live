@@ -1429,14 +1429,46 @@ function renderLifeEventsFeed() {
   if (!el || !STATE.life) return;
   const isEn = LANG === 'en';
   const log = STATE.life.log || [];
+  // v5.28 增強：把 text 裡的「<國旗><國家名>」自動 link 到族譜/該國
   el.innerHTML = log.slice(-30).reverse().map(e => `
     <div class="lef-row kind-${e.kind || 'log'}">
       <span class="lef-age">${e.age ?? '?'} ${isEn?'yo':'歲'}</span>
       <span class="lef-icon">${e.icon || '·'}</span>
-      <span class="lef-text">${escapeHtml(e.text || '')}</span>
+      <span class="lef-text">${linkifyCountries(escapeHtml(e.text || ''))}</span>
     </div>
   `).join('') || `<span class="muted">${isEn ? 'No events' : '無事件'}</span>`;
 }
+
+/* v5.28：把文字裡的「旗幟+國家」轉為點擊 link（跳到族譜看該國） */
+function linkifyCountries(text) {
+  if (!STATE.life || !text) return text;
+  // 抓取 🇹🇼 國旗後接的 1-3 字中文國名
+  const flagRegex = /([\u{1F1E6}-\u{1F1FF}]{2})([\u{4E00}-\u{9FFF}]{1,4})/gu;
+  return text.replace(flagRegex, (m, flag, name) => {
+    // 找對應國家
+    const c = COUNTRIES.find(cc => cc.name_zh === name || cc.name_en === name);
+    if (!c) return m;
+    return `<a href="#" class="lef-country-link" data-country="${c.id}">${flag}${name}</a>`;
+  });
+}
+
+/* v5.28：events feed 裡的國家 link 點擊 → 切換到族譜 + 切換到該國 */
+document.addEventListener('click', e => {
+  const a = e.target.closest('.lef-country-link');
+  if (!a) return;
+  e.preventDefault();
+  const cid = a.dataset.country;
+  if (!cid) return;
+  document.querySelectorAll('.navbtn').forEach(b => { if (b.dataset.view === 'tree') b.click(); });
+  setTimeout(() => {
+    if (STATE.life) {
+      STATE.life.country = cid;
+      STATE.life.countryData = countryById(cid);
+      STATE.life.family = generateFamily(cid, STATE.life.sex);
+      renderAll();
+    }
+  }, 100);
+});
 
 // ==== 過去生命 ====
 function savePastLife(life) {
