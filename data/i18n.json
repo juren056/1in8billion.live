@@ -190,7 +190,8 @@
     "life.familyGo": "看族譜 →",
     "lab.countryB": "國家 B（比較用，可選）",
     "tree.search": "搜尋名字",
-    "tree.searchPh": "輸入名字..."
+    "tree.searchPh": "輸入名字...",
+    "end.download": "下載證書 PNG"
   },
   "zh-Hans": {
     "title": "选出生地 · 人生模拟",
@@ -383,7 +384,8 @@
     "life.familyGo": "View tree →",
     "lab.countryB": "Country B (compare, optional)",
     "tree.search": "Search name",
-    "tree.searchPh": "Type name..."
+    "tree.searchPh": "Type name...",
+    "end.download": "Download certificate PNG"
   },
   "en": {
     "title": "Born Somewhere · Life Simulator",
@@ -576,7 +578,8 @@
     "life.familyGo": "View tree →",
     "lab.countryB": "Country B (compare, optional)",
     "tree.search": "Search name",
-    "tree.searchPh": "Type name..."
+    "tree.searchPh": "Type name...",
+    "end.download": "Download certificate PNG"
   },
   "ko": {
     "title": "태어난 곳 · 인생 시뮬레이션",
@@ -782,7 +785,8 @@
     "life.familyGo": "View tree →",
     "lab.countryB": "Country B (compare, optional)",
     "tree.search": "Search name",
-    "tree.searchPh": "Type name..."
+    "tree.searchPh": "Type name...",
+    "end.download": "Download certificate PNG"
   },
   "ja": {
     "title": "出生地 · 人生シミュレーション",
@@ -988,7 +992,8 @@
     "life.familyGo": "View tree →",
     "lab.countryB": "Country B (compare, optional)",
     "tree.search": "Search name",
-    "tree.searchPh": "Type name..."
+    "tree.searchPh": "Type name...",
+    "end.download": "Download certificate PNG"
   },
   "vi": {
     "title": "Nơi sinh · Mô phỏng cuộc đời",
@@ -1194,7 +1199,8 @@
     "life.familyGo": "View tree →",
     "lab.countryB": "Country B (compare, optional)",
     "tree.search": "Search name",
-    "tree.searchPh": "Type name..."
+    "tree.searchPh": "Type name...",
+    "end.download": "Download certificate PNG"
   },
   "fr": {
     "title": "Né quelque part · Simulateur de vie",
@@ -1400,7 +1406,8 @@
     "life.familyGo": "View tree →",
     "lab.countryB": "Country B (compare, optional)",
     "tree.search": "Search name",
-    "tree.searchPh": "Type name..."
+    "tree.searchPh": "Type name...",
+    "end.download": "Download certificate PNG"
   },
   "th": {
     "title": "เกิดที่ไหน · จำลองชีวิต",
@@ -1606,7 +1613,8 @@
     "life.familyGo": "View tree →",
     "lab.countryB": "Country B (compare, optional)",
     "tree.search": "Search name",
-    "tree.searchPh": "Type name..."
+    "tree.searchPh": "Type name...",
+    "end.download": "Download certificate PNG"
   },
   "es": {
     "title": "Nacido en algún lugar · Simulador de vida",
@@ -1812,6 +1820,7 @@
     "life.familyGo": "View tree →",
     "lab.countryB": "Country B (compare, optional)",
     "tree.search": "Search name",
-    "tree.searchPh": "Type name..."
+    "tree.searchPh": "Type name...",
+    "end.download": "Download certificate PNG"
   }
 }
