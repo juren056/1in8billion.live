@@ -603,7 +603,7 @@ function guessBirthCountry() {
   return countryById('USA');
 }
 
-/* v5.19：當年存活率（同年出生的同性別者中，仍存活的百分比） */
+/* v5.21 修：當年存活率 — 改用 l[]（cumulative survival probability），fallback 用通用曲線 */
 function survivalRateForAge(c, sex, age) {
   if (!c) return null;
   try {
@@ -612,9 +612,16 @@ function survivalRateForAge(c, sex, age) {
     const i = Math.max(0, Math.min(110, Math.floor(age)));
     const v = lt.l[i];
     if (typeof v !== 'number' || isNaN(v)) return null;
+    // 0歲顯示為 100%
+    if (age === 0) return 1;
     return Math.max(0, Math.min(1, v));
   } catch (e) {
-    return null;
+    // fallback：使用通用 GBD-style 簡化曲線
+    if (age === 0) return 1;
+    if (age < 5) return 0.99 - age * 0.001;
+    if (age < 30) return 0.99 - (age-5) * 0.0008;
+    if (age < 60) return 0.97 - (age-30) * 0.005;
+    return Math.max(0.1, 0.82 - (age-60) * 0.02);
   }
 }
 
@@ -1664,6 +1671,10 @@ function renderLife() {
   // 出生地：rural/urban + 國家 + 地區
   const cInfo = $('#lifeCountryInfo');
   if (cInfo) {
+    // v5.21 修：fallback 給舊存檔的 birthPlaceType 缺失
+    if (!STATE.life.stats.birthPlaceType) {
+      STATE.life.stats.birthPlaceType = Math.random() < 0.55 ? 'rural' : 'urban';
+    }
     const bpType = STATE.life.stats.birthPlaceType === 'rural' ? (isEn ? '🌾 Rural' : '🌾 鄉村') : (isEn ? '🏙️ Urban' : '🏙️ 城市');
     cInfo.textContent = `${bpType} · ${c.flag} ${loc.name} · ${loc.region_name}`;
   }
