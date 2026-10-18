@@ -22,6 +22,7 @@ const STATE = {
   paused: false,
   speed: 1,
   tickMs: 1500,  // v5.13：1 年 ≈ 1.5 秒（慢到能讀事件；8× 時約 15 秒跑完一生）
+              // v5.25：依生命長度選擇（30min/1hr/1.5hr）動態調整 → 改為 STATE.lifeDurationMs
   ticker: null,
   pendingDecision: null,
   autoDecide: false,  // v5.9 新增：自動抉擇模式
@@ -888,6 +889,12 @@ function startLife(countryCode) {
   logLife(t('log.born_in', localize(STATE.life.countryData).name, ''));
   STATE.paused = false;
   STATE.speed = 1;
+  // v5.25：依 duration 選擇調整 tickMs
+  const dur = $('#lifeDuration')?.value || '1hr';
+  if (dur === '30min') STATE.tickMs = 600;       // 約 30 分鐘跑完一生
+  else if (dur === '1hr') STATE.tickMs = 1200;  // 預設約 1 小時
+  else if (dur === '90min') STATE.tickMs = 1800; // 約 1.5 小時
+  else STATE.tickMs = 1500;
   setView('life');
   renderAll();
   startTicker();
@@ -1250,6 +1257,38 @@ function showFinancialChoice() {
     toast(isEn ? '⚡ Auto-picked cheapest option' : '⚡ 已自動選最便宜的選項');
   });
   modal.removeAttribute('hidden');
+}
+
+/* v5.25：花錢 modal — 4 種隨機社交支出選項 */
+function showSpendModal() {
+  if (!STATE.life) return;
+  STATE.paused = true;
+  const modal = $('#spendModal');
+  if (!modal) return;
+  modal.removeAttribute('hidden');
+  modal.querySelectorAll('.spend-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const act = btn.dataset.act;
+      const s = STATE.life.stats;
+      const cost = Math.max(50, Math.round((s.netAssets || 1000) * 0.03));
+      if ((s.netAssets || 0) < cost) {
+        toast(LANG === 'en' ? 'Not enough money' : '錢不夠');
+        modal.setAttribute('hidden', '');
+        STATE.paused = false;
+        return;
+      }
+      s.netAssets -= cost;
+      if (act === 'gifts') { s.social = Math.min(100, s.social + 4); s.happiness = Math.min(100, s.happiness + 2); }
+      else if (act === 'travel') { s.knowledge = Math.min(100, s.knowledge + 5); s.happiness = Math.min(100, s.happiness + 8); s.health = Math.max(0, s.health - 3); }
+      else if (act === 'donate') { s.happiness = Math.min(100, s.happiness + 10); s.health = Math.min(100, s.health + 2); s.knowledge = Math.min(100, s.knowledge + 2); }
+      else if (act === 'lifestyle') { s.health = Math.min(100, s.health + 1); s.happiness = Math.min(100, s.happiness + 1); }
+      STATE.life.log.push({ age: STATE.life.age, kind: 'finance', icon: '💰', text: `${act} -${cost}` });
+      renderLifeStats();
+      toast(LANG === 'en' ? `Spent ${cost}` : `支出 ${cost}`);
+      modal.setAttribute('hidden', '');
+      STATE.paused = false;
+    });
+  });
 }
 
 /* v5.19：抽出共用的「套用財務決策」邏輯（給按鈕和「快速決定」都用） */
@@ -1891,11 +1930,13 @@ function renderManualDecisions() {
       ${financeAvail ? `<button id="mdFinanceBtn" class="md-btn">💰 ${isEn?'Make financial decision at age '+age:'決定 ' + age + ' 歲的財務規劃'}</button>` : financePast.length ? `<span class="md-hint">${isEn?'Financial decisions made: ':'已做的財務決策：'} ${financePast.map(d => d.age).join('、')}</span>` : ''}
       <button id="mdQuickDecideBtn" class="md-btn md-btn-auto" title="${isEn ? 'Auto-apply: focus=work + finance=cheapest. Lets you watch a full life without manual input.' : '自動套：焦點→work / 財務→最便宜。可以放手看完整個人生。'}">⚡ ${isEn ? 'Quick-decide all (focus=work + cheapest)' : '快速決定（焦點→work、最便宜）'}</button>
       <button id="mdMusicBtn" class="md-btn md-btn-music" title="${isEn ? 'Soft background music' : '輕柔的背景音樂'}">♪ ${isEn ? 'Background music' : '背景音樂'}</button>
+      <button id="mdSpendBtn" class="md-btn md-btn-spend" title="${isEn ? 'Family gifts · Lifestyle · Travel · Donate' : '聚餐·生活方式·旅行·捐款'}">💸 ${isEn ? 'Spend' : '花錢'}</button>
     </div>
   `;
   // wire
   $('#mdFocusBtn')?.addEventListener('click', () => showFocusChoice());
   $('#mdFinanceBtn')?.addEventListener('click', () => showFinancialChoice());
+  $('#mdSpendBtn')?.addEventListener('click', () => showSpendModal());
   // v5.19：「快速決定」= 焦點→work、財務→最便宜、然後加速看完一生
   $('#mdQuickDecideBtn')?.addEventListener('click', () => {
     if (!STATE.life) return;
