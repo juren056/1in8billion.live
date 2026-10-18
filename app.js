@@ -2386,6 +2386,9 @@ function renderShelf() {
     book.title = `${life.name} · ${life.cause}`;
     book.addEventListener('click', () => showLifeModal(life));
     shelf.appendChild(book);
+    // v5.22：右鍵 / long-press 觸發「繼續這段人生」選單（雙擊 = 從當年齡接續）
+    let clickTime = 0;
+    book.addEventListener('dblclick', () => continueOldLife(life));
   }
   // v5.20：追思館（Memorial Wall） + 大家分享的人生
   renderMemorialWall(lives);
@@ -3414,6 +3417,25 @@ function wire() {
     thoughtsBtn.classList.toggle('active', STATE.thoughtsEnabled);
     if (STATE.thoughtsEnabled && STATE.pendingDecision) showPauseQuestion();
   });
+  // v5.22：貨幣切換 + 主題切換
+  const currencyBtn = $('#currencyToggle');
+  const currencies = ['NT$', 'HK$', 'MOP$', 'CNY', 'US$'];
+  if (currencyBtn) currencyBtn.addEventListener('click', () => {
+    const i = currencies.indexOf(STATE.life?.currency || 'NT$');
+    const next = currencies[(i + 1) % currencies.length];
+    setCurrency(next);
+    const lbl = $('#currencyLabel');
+    if (lbl) lbl.textContent = next;
+    toast(LANG === 'en' ? `Currency: ${next}` : `貨幣：${next}`);
+  });
+  const themeBtn = $('#themeToggle');
+  if (themeBtn) themeBtn.addEventListener('click', () => {
+    const order = ['theme-light','theme-dark','theme-sepia'];
+    const cur = order.find(c => document.body.classList.contains(c)) || 'theme-light';
+    const next = order[(order.indexOf(cur) + 1) % order.length];
+    setTheme(next);
+    toast(LANG === 'en' ? `Theme: ${next.replace('theme-','')}` : `主題：${next.replace('theme-','')}`);
+  });
   const pauseSave = $('#pauseSave');
   if (pauseSave) pauseSave.addEventListener('click', savePauseQuote);
   const pauseSkip = $('#pauseSkip');
@@ -3564,6 +3586,52 @@ function exportLifeJSON() {
   document.body.appendChild(a); a.click(); a.remove();
   setTimeout(() => URL.revokeObjectURL(url), 1000);
   toast(LANG === 'en' ? 'Life exported' : '已匯出生涯');
+}
+
+/* v5.22：繼續一段過去的人生（從 shelf 載入並接續從當年齡） */
+function continueOldLife(pastLife) {
+  if (!pastLife || pastLife.died) {
+    toast(LANG === 'en' ? 'Life already ended' : '這段人生已結束');
+    return;
+  }
+  stopTicker();
+  STATE.life = JSON.parse(JSON.stringify(pastLife));  // 深拷貝
+  STATE.life.died = false;
+  STATE.life.cause = null;
+  STATE.life.deathAge = null;
+  STATE.life.financeModalShown = [];  // 重開財務 modal 選項
+  STATE.life.focusThisYear = null;
+  setView('life');
+  setTimeout(() => {
+    startTicker();
+    toast(LANG === 'en' ? `Continuing from age ${STATE.life.age}` : `從 ${STATE.life.age} 歲接續這一生`);
+  }, 100);
+}
+
+/* v5.22：貨幣切換 — 即時換算 netAssets */
+function setCurrency(cur) {
+  if (!STATE.life) return;
+  STATE.life.currency = cur;
+  const s = STATE.life.stats;
+  const rateMap = { 'NT$': 30, 'HK$': 7.8, 'MOP$': 8.05, 'CNY': 7.2, 'US$': 1 };
+  const rates = { 'NT$': '🇹🇼 NT$', 'HK$': '🇭🇰 HK$', 'MOP$': '🇲🇴 MOP$', 'CNY': '🇨🇳 CNY', 'US$': '🇺🇸 US$' };
+  if (!rateMap[cur]) return;
+  const na = $('#netAssets');
+  if (na) na.textContent = rates[cur] + Math.round((s.netAssets || 0) * rateMap[cur]).toLocaleString();
+  // 也更新「💰 投資」選項的價格顯示
+  document.querySelectorAll('.fin-price').forEach(el => {
+    if (el.dataset.basePrice) {
+      el.textContent = cur + Math.round(parseFloat(el.dataset.basePrice) * rateMap[cur]).toLocaleString();
+    }
+  });
+}
+
+/* v5.22：主題切換（light/dark/sepia） */
+function setTheme(theme) {
+  document.body.classList.remove('theme-light','theme-dark','theme-sepia');
+  if (theme === 'auto') theme = matchMedia('(prefers-color-scheme: dark)').matches ? 'theme-dark' : 'theme-light';
+  document.body.classList.add(theme);
+  localStorage.setItem('born-somewhere-v2:theme', theme);
 }
 
 function importLifeJSON(file) {
@@ -3738,6 +3806,8 @@ function buildFamilyAround(selfP, parsed) {
 async function init() {
   await loadData();
   document.documentElement.lang = LANG;
+  const savedTheme = localStorage.getItem('born-somewhere-v2:theme') || 'theme-light';
+  setTheme(savedTheme);  // v5.22：套用保存的主題
   checkEduMode();      // v5.19: 教學版旗標 (?edu=1)
   wire();
   renderAll();
