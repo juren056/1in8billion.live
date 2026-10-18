@@ -15,6 +15,7 @@
     <button class="navbtn active" data-view="intro" data-t="nav.intro">開始</button>
     <button class="navbtn" data-view="life" data-t="nav.life">人生</button>
     <button class="navbtn" data-view="end" data-t="nav.end">訃聞</button>
+    <button class="navbtn" data-view="lab" data-t="lab.title">Lab</button>
     <button class="navbtn" data-view="shelf" data-t="nav.shelf">書架</button>
   </nav>
   <div class="topright">
@@ -22,6 +23,12 @@
       <option value="zh-Hant">繁體</option>
       <option value="zh-Hans">简体</option>
       <option value="en">EN</option>
+      <option value="ko">한국</option>
+      <option value="ja">日本</option>
+      <option value="vi">Việt</option>
+      <option value="fr">FR</option>
+      <option value="th">ไทย</option>
+      <option value="es">ES</option>
     </select>
   </div>
 </header>
@@ -185,6 +192,44 @@
   <h2 class="shelf-title" data-t="shelf.title">過去生命的書架</h2>
   <p class="shelf-hint" data-t="shelf.click">點書本看細節</p>
   <div id="shelfGrid" class="shelf-grid"></div>
+</section>
+
+<!-- LAB -->
+<section id="view-lab" class="view">
+  <h2 class="lab-title" data-t="lab.title">Lab · 批次模擬</h2>
+  <p class="lab-sub" data-t="lab.results">同時跑多條人生，看真實統計下的整體樣貌。</p>
+  <div class="lab-controls">
+    <div class="lab-row">
+      <label><span data-t="lab.country">國家</span>
+        <select id="labCountry"></select>
+      </label>
+      <label><span data-t="lab.sex">性別</span>
+        <select id="labSex">
+          <option value="random" data-t="lab.this">隨機</option>
+          <option value="M" data-t="sex.male">男</option>
+          <option value="F" data-t="sex.female">女</option>
+        </select>
+      </label>
+      <label><span data-t="lab.era">年代</span>
+        <select id="labEra">
+          <option value="now" data-t="intro.era.now">現在</option>
+          <option value="past" data-t="intro.era.past">過去</option>
+          <option value="future" data-t="intro.era.future">未來</option>
+          <option value="any" data-t="intro.era.any">哪個都好</option>
+        </select>
+      </label>
+      <label><span data-t="lab.start">人數</span>
+        <select id="labN">
+          <option value="20">20</option>
+          <option value="50">50</option>
+          <option value="100" selected>100</option>
+          <option value="200">200</option>
+        </select>
+      </label>
+      <button id="labRun" class="primary" data-t="lab.run">執 行</button>
+    </div>
+  </div>
+  <div id="labResults" class="lab-results"></div>
 </section>
 
 </main>

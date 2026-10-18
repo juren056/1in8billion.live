@@ -1,4 +1,4 @@
-/* === born-somewhere v2 === */
+/* === 選出生地 v3 === */
 :root {
   --bg: #f4f1eb;
   --bg-2: #faf7f0;
@@ -51,7 +51,7 @@ input, select, textarea { font: inherit; color: inherit; }
   font-weight: 600;
   white-space: nowrap;
 }
-.topnav { display: flex; gap: 4px; flex: 1; min-width: 0; }
+.topnav { display: flex; gap: 4px; flex: 1; min-width: 0; flex-wrap: wrap; }
 .navbtn {
   padding: 8px 16px;
   border-radius: 6px;
@@ -185,6 +185,7 @@ input, select, textarea { font: inherit; color: inherit; }
 .cert-year { font-family: var(--mono); font-size: 14px; opacity: 0.9; margin-left: auto; }
 .cert-body { padding: 24px; }
 .cert-figure { font-size: 56px; line-height: 1; text-align: center; margin: 8px 0; }
+.cert-figure svg { max-width: 200px; height: auto; }
 .cert-name-main { font-family: var(--serif); font-size: 28px; text-align: center; margin: 0 0 12px; font-weight: 600; }
 .cert-age-row { display: flex; align-items: baseline; justify-content: center; gap: 12px; margin-bottom: 8px; }
 .cert-age { font-family: var(--serif); font-size: 56px; font-weight: 700; line-height: 1; }
@@ -223,6 +224,7 @@ input, select, textarea { font: inherit; color: inherit; }
 }
 .log-row:last-child { border-bottom: 0; }
 .log-row.kind-death { color: var(--bad); font-weight: 500; }
+.log-row.kind-heavy { color: var(--bad); font-weight: 500; }
 
 /* === END CERTIFICATE === */
 .end-cert {
@@ -294,6 +296,47 @@ input, select, textarea { font: inherit; color: inherit; }
 .shelf-info { display: flex; flex-direction: column; gap: 2px; }
 .shelf-name { font-family: var(--serif); font-size: 14px; font-weight: 600; line-height: 1.2; }
 .shelf-meta { font-family: var(--mono); font-size: 11px; opacity: 0.8; }
+
+/* === LAB === */
+.lab-title { font-family: var(--serif); font-size: 32px; font-weight: 600; margin: 0 0 8px; color: var(--accent); }
+.lab-sub { color: var(--ink-3); font-size: 14px; margin: 0 0 24px; }
+.lab-controls { background: var(--bg-2); border: 1px solid var(--line); border-radius: 8px; padding: 20px; margin-bottom: 24px; box-shadow: var(--shadow); }
+.lab-row { display: flex; flex-wrap: wrap; gap: 16px 24px; align-items: end; }
+.lab-row label { display: flex; flex-direction: column; gap: 4px; font-size: 12px; color: var(--ink-3); letter-spacing: 0.04em; }
+.lab-row select, .lab-row input {
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 6px 10px;
+  color: var(--ink);
+  font-size: 14px;
+  outline: none;
+  min-width: 120px;
+}
+.lab-row select:focus, .lab-row input:focus { border-color: var(--accent); }
+.lab-row button.primary { padding: 8px 18px; font-size: 14px; }
+
+.lab-results { display: grid; grid-template-columns: 1fr; gap: 20px; }
+.lab-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; }
+.lab-stat { background: var(--bg-2); border: 1px solid var(--line); border-radius: 8px; padding: 14px 16px; }
+.lab-stat .k { font-size: 11px; color: var(--ink-3); letter-spacing: 0.04em; margin-bottom: 4px; }
+.lab-stat .v { font-family: var(--serif); font-size: 24px; font-weight: 600; }
+.lab-stat .sub { font-size: 12px; color: var(--ink-3); margin-top: 2px; }
+
+.lab-section { background: var(--bg-2); border: 1px solid var(--line); border-radius: 8px; padding: 20px; }
+.lab-section h3 { font-family: var(--serif); font-size: 16px; margin: 0 0 12px; font-weight: 600; }
+.lab-bars { display: flex; align-items: end; gap: 4px; height: 160px; padding: 8px 0; }
+.lab-bar-col { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; min-width: 0; }
+.lab-bar { background: var(--accent); width: 100%; border-radius: 2px 2px 0 0; min-height: 1px; transition: height 0.4s; }
+.lab-bar-col .lbl { font-size: 10px; color: var(--ink-3); font-family: var(--mono); }
+.lab-bar-col .val { font-size: 11px; color: var(--ink-2); font-family: var(--mono); }
+
+.lab-causes { display: flex; flex-direction: column; gap: 6px; }
+.lab-cause { display: flex; align-items: center; gap: 8px; }
+.lab-cause .nm { font-size: 13px; min-width: 100px; }
+.lab-cause .bg { flex: 1; height: 14px; background: var(--bg); border-radius: 2px; overflow: hidden; }
+.lab-cause .fi { height: 100%; background: var(--accent); }
+.lab-cause .ct { font-size: 12px; color: var(--ink-3); font-family: var(--mono); min-width: 50px; text-align: right; }
 
 /* === MODAL === */
 .modal {
