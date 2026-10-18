@@ -197,7 +197,9 @@
     "life.happiness": "幸福",
     "life.knowledge": "知識",
     "life.social": "人際",
-    "life.netAssets": "淨資產（PPP）"
+    "life.netAssets": "淨資產（PPP）",
+    "edu.pre": "學齡前",
+    "edu.univ": "大學"
   },
   "zh-Hans": {
     "title": "选出生地 · 人生模拟",
@@ -397,7 +399,9 @@
     "life.happiness": "Happiness",
     "life.knowledge": "Knowledge",
     "life.social": "Social",
-    "life.netAssets": "Net Assets (PPP)"
+    "life.netAssets": "Net Assets (PPP)",
+    "edu.pre": "pre-school",
+    "edu.univ": "university"
   },
   "en": {
     "title": "Born Somewhere · Life Simulator",
@@ -597,7 +601,9 @@
     "life.happiness": "Happiness",
     "life.knowledge": "Knowledge",
     "life.social": "Social",
-    "life.netAssets": "Net Assets (PPP)"
+    "life.netAssets": "Net Assets (PPP)",
+    "edu.pre": "pre-school",
+    "edu.univ": "university"
   },
   "ko": {
     "title": "태어난 곳 · 인생 시뮬레이션",
@@ -810,7 +816,9 @@
     "life.happiness": "Happiness",
     "life.knowledge": "Knowledge",
     "life.social": "Social",
-    "life.netAssets": "Net Assets (PPP)"
+    "life.netAssets": "Net Assets (PPP)",
+    "edu.pre": "pre-school",
+    "edu.univ": "university"
   },
   "ja": {
     "title": "出生地 · 人生シミュレーション",
@@ -1023,7 +1031,9 @@
     "life.happiness": "Happiness",
     "life.knowledge": "Knowledge",
     "life.social": "Social",
-    "life.netAssets": "Net Assets (PPP)"
+    "life.netAssets": "Net Assets (PPP)",
+    "edu.pre": "pre-school",
+    "edu.univ": "university"
   },
   "vi": {
     "title": "Nơi sinh · Mô phỏng cuộc đời",
@@ -1236,7 +1246,9 @@
     "life.happiness": "Happiness",
     "life.knowledge": "Knowledge",
     "life.social": "Social",
-    "life.netAssets": "Net Assets (PPP)"
+    "life.netAssets": "Net Assets (PPP)",
+    "edu.pre": "pre-school",
+    "edu.univ": "university"
   },
   "fr": {
     "title": "Né quelque part · Simulateur de vie",
@@ -1449,7 +1461,9 @@
     "life.happiness": "Happiness",
     "life.knowledge": "Knowledge",
     "life.social": "Social",
-    "life.netAssets": "Net Assets (PPP)"
+    "life.netAssets": "Net Assets (PPP)",
+    "edu.pre": "pre-school",
+    "edu.univ": "university"
   },
   "th": {
     "title": "เกิดที่ไหน · จำลองชีวิต",
@@ -1662,7 +1676,9 @@
     "life.happiness": "Happiness",
     "life.knowledge": "Knowledge",
     "life.social": "Social",
-    "life.netAssets": "Net Assets (PPP)"
+    "life.netAssets": "Net Assets (PPP)",
+    "edu.pre": "pre-school",
+    "edu.univ": "university"
   },
   "es": {
     "title": "Nacido en algún lugar · Simulador de vida",
@@ -1875,6 +1891,8 @@
     "life.happiness": "Happiness",
     "life.knowledge": "Knowledge",
     "life.social": "Social",
-    "life.netAssets": "Net Assets (PPP)"
+    "life.netAssets": "Net Assets (PPP)",
+    "edu.pre": "pre-school",
+    "edu.univ": "university"
   }
 }
