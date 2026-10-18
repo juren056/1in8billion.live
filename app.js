@@ -2417,6 +2417,54 @@ function renderEnd() {
   }
   // v5.20：死亡原因分析（本年 + 一生 Top 3）
   renderEndCauseAnalysis();
+  // v5.31：前世紀錄面板
+  renderEndPastRecords(past);
+}
+
+/* v5.31：前世紀錄面板 — 顯示最近 5 段人生 + 全部操作按鈕 */
+function renderEndPastRecords(past) {
+  const wrap = $('#endPastRecords');
+  const list = $('#endPastList');
+  const meta = $('#endPastMeta');
+  if (!wrap || !list) return;
+  if (!past || past.length === 0) {
+    list.innerHTML = `<div class="muted">—</div>`;
+    if (meta) meta.textContent = '';
+    return;
+  }
+  const avg = (past.reduce((s, p) => s + (p.age || 0), 0) / past.length).toFixed(1);
+  if (meta) meta.textContent = `${past.length} 段 · 平均 ${avg} 歲`;
+  list.innerHTML = past.slice(0, 5).map((p, i) => `
+    <div class="pr-row" data-i="${i}">
+      <div class="pr-info">
+        <strong>${p.name || '—'}</strong>
+        <span class="muted">${p.country || '—'} · ${p.sex === 'M' ? '男' : (p.sex === 'F' ? '女' : '?')} · ${p.age || 0} 歲 · ${p.cause || '—'}</span>
+      </div>
+      <div class="pr-actions">
+        <button class="ghost pr-replay" data-i="${i}">↻ 再看一次</button>
+        <button class="ghost pr-del" data-i="${i}">🗑️</button>
+      </div>
+    </div>
+  `).join('');
+  list.querySelectorAll('.pr-replay').forEach(b => b.addEventListener('click', () => {
+    const i = +b.dataset.i;
+    const ls = loadPastLives();
+    const lifeData = ls[i];
+    if (lifeData && lifeData.full) {
+      STATE.life = lifeData.full;
+      STATE.view = 'end';
+      setView('end');
+    } else {
+      showLifeModal(ls[i]);
+    }
+  }));
+  list.querySelectorAll('.pr-del').forEach(b => b.addEventListener('click', () => {
+    const i = +b.dataset.i;
+    const ls = loadPastLives();
+    ls.splice(i, 1);
+    localStorage.setItem(STORAGE_KEY + ':past', JSON.stringify(ls));
+    renderEnd();
+  }));
 }
 
 function drawGuilloche(w, h) {
@@ -3722,6 +3770,38 @@ function wire() {
   const replayLast = $('#btnReplayLast');
   if (replayLast) replayLast.addEventListener('click', replayLastMoments);
   $('#endCloseReplay')?.addEventListener('click', () => $('#endLastMoments')?.setAttribute('hidden', ''));
+  // v5.31：前世紀錄面板按鈕
+  $('#endShowMore9')?.addEventListener('click', () => {
+    const past = loadPastLives();
+    const more = past.slice(5, 14);
+    const html = more.map((p, i) => `<div class="pr-row"><div class="pr-info"><strong>${p.name || '—'}</strong><span class="muted">${p.country || '—'} · ${p.age} 歲</span></div></div>`).join('');
+    const wrap = document.createElement('div');
+    wrap.innerHTML = html || '<div class="muted">—</div>';
+    document.querySelector('#endPastList')?.appendChild(wrap);
+    toast(isEn ? `Showing ${more.length} more` : `顯示 ${more.length} 段過去`);
+  });
+  $('#endViewShelf')?.addEventListener('click', () => setView('shelf'));
+  $('#endResumeLife')?.addEventListener('click', () => {
+    if (!STATE.life || !STATE.life.died) return;
+    STATE.life.died = false;
+    STATE.life.cause = null;
+    STATE.life.deathAge = null;
+    STATE.paused = false;
+    setView('life');
+    startTicker();
+    toast(isEn ? 'Life resumed' : '已回到那一生');
+  });
+  $('#endOrganize')?.addEventListener('click', () => {
+    setView('shelf');
+    setTimeout(() => document.querySelector('#manageRecordsBtn')?.click(), 200);
+  });
+  $('#endDeleteAll')?.addEventListener('click', () => {
+    if (confirm(isEn ? 'Delete all past lives?' : '刪除所有過去的人生？')) {
+      localStorage.setItem(STORAGE_KEY + ':past', '[]');
+      renderEnd();
+      toast(isEn ? 'All deleted' : '已全部刪除');
+    }
+  });
   const feedbackSubmit = $('#feedbackSubmit');
   if (feedbackSubmit) feedbackSubmit.addEventListener('click', submitFeedback);
   $('#footerFeedbackBtn')?.addEventListener('click', () => $('#feedbackModal')?.removeAttribute('hidden'));
