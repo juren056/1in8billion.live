@@ -919,6 +919,14 @@ function tick() {
   // 達到當地平均壽命 1.3x 自動死亡
   const maxAge = c.le * 1.35;
   if (STATE.life.age > maxAge) dieNow('自然衰老');
+  // v5.20：每 5 年套用投資收益
+  if (STATE.life.age % 5 === 0 && STATE.life.age > 0) applyInvestmentReturn();
+  // v5.20：每 5 年彈出財務管理 modal（25/30/35/40/45/50/55/60）
+  if ([25, 30, 35, 40, 45, 50, 55, 60].includes(STATE.life.age) && !STATE.life.financeModalShown?.includes(STATE.life.age)) {
+    STATE.life.financeModalShown = STATE.life.financeModalShown || [];
+    STATE.life.financeModalShown.push(STATE.life.age);
+    setTimeout(() => showFinanceModal(), 100);
+  }
 }
 function dieNow(forcedCause) {
   const c = STATE.life.countryData;
@@ -1026,6 +1034,109 @@ function applyFocusEffects(focus) {
   else if (focus === 'family') { s.social = Math.min(100, s.social + 4); s.happiness = Math.min(100, s.happiness + 3); }
   else if (focus === 'health') s.health = Math.min(100, s.health + 4);
   else if (focus === 'play' || focus === 'rest') s.happiness = Math.min(100, s.happiness + 3);
+  renderLifeStats();
+}
+
+/* v5.20：財務管理 modal — 投資選項 + 自動進行 */
+const INVEST_OPTIONS = [
+  { id:'savings', en:'Savings', zh:'存款', realReturn: 0.013, volatility: 0, desc:{ en:'after inflation 1-1.5%/yr', zh:'扣除通膨後每年 1～1.5%' }},
+  { id:'bonds', en:'Bonds', zh:'債券', realReturn: 0.02, volatility: 0.05, desc:{ en:'~2% avg, low volatility', zh:'平均約 2%，波動小' }},
+  { id:'60-40', en:'60/40 fund', zh:'股債各半基金', realReturn: 0.035, volatility: 0.10, desc:{ en:'~3.5% avg, medium volatility', zh:'平均 3.5%，波動中等' }},
+  { id:'index', en:'Stock index', zh:'股票（指數）', realReturn: 0.05, volatility: 0.18, desc:{ en:'~5% avg, high volatility', zh:'平均 5%，波動大' }},
+  { id:'global', en:'Global index', zh:'全球指數（全球股票）', realReturn: 0.05, volatility: 0.18, desc:{ en:'~5% avg + currency risk, +1% fee', zh:'平均 5%，也會隨匯率波動，每年手續費約多 1.0%' }},
+  { id:'pick', en:'Stock picking', zh:'自行選股買賣', realReturn: 0.04, volatility: 0.30, desc:{ en:'most earn less than index', zh:'多數人賺得比指數少' }}
+];
+
+function showFinanceModal(forceOpt) {
+  if (!STATE.life) return;
+  STATE.paused = true;
+  const life = STATE.life;
+  const s = life.stats;
+  const isEn = LANG === 'en';
+  const modal = $('#financeModal');
+  if (!modal) return;
+  const currency = life.currency || 'NT$';
+  const netAssets = Math.round(s.netAssets || 0);
+  const currentInvest = life.investChoice || 'global';
+  const annualCost = Math.round(netAssets * 0.03);  // 假設生活方式成本 3%
+  const q = $('#financeQuestion');
+  if (q) q.textContent = isEn ? `Net Worth: ${currency || 'US$'}${netAssets.toLocaleString()}` : `積蓄：${currency || 'NT$'}${netAssets.toLocaleString()}`;
+  const body = $('#financeBody');
+  if (body) {
+    body.innerHTML = `
+      <p class="muted fin-intro">${isEn ? 'Spending affects happiness, social, health and future.':'金額以當地物價換算。你怎麼花錢，會改變你的幸福、人際關係、健康和未來。'}</p>
+      <div class="fin-actions">
+        <div class="fin-cost">
+          <strong>${isEn?'Family/friend dinners + gifts':'和家人朋友聚餐·送禮'}</strong>
+          <span class="fin-effect">${isEn?'social +4 · happy +2 · not enough':'人際關係 +4 · 幸福 +2 · 錢不夠'}</span>
+          <span class="fin-price">${currency}${annualCost.toLocaleString()}</span>
+        </div>
+      </div>
+      <h4>${isEn?'Idle money investment':'閒錢理財'}</h4>
+      <div class="fin-grid">
+        ${INVEST_OPTIONS.map(o => `
+          <button class="fin-opt ${o.id===currentInvest?'active':''}" data-id="${o.id}">
+            <span class="fin-icon">${o.id==='savings'?'🏦':o.id==='bonds'?'📜':o.id==='60-40'?'📊':o.id==='index'?'📈':o.id==='global'?'🌐':'🎲'}</span>
+            <span class="fin-name">${isEn?o.en:o.zh}</span>
+            <span class="fin-desc">${isEn?o.desc.en:o.desc.zh}</span>
+          </button>
+        `).join('')}
+      </div>
+      <p class="fin-info muted">${isEn?'Switching choices pays fees; profits may be taxed. Real estate is separate. Most traders underperform the index.':'點選其他選項，就會賣出後轉過去。賣出時要付手續費，依國家而定，獲利可能還要繳稅。不動產基金和自己的房子是分開的：自己住的房子請在「買自己的房子」中購買，出租用的房子請在「出租用的房子」中購買。多數人賺得比指數少。'}</p>
+      <div class="fin-auto">
+        <button id="finAutoBtn" class="${auto === 'active' ? 'active':''}">${isEn?'▶ Auto-execute (yearly)':'▶ 自動進行（每年）'}</button>
+        <p class="muted">${isEn?'Once enabled, when triggered: family gifts, dates, dining, travel, classes, donations happen automatically. Only if savings > 3× the cost.':'開啟後，每到時候就會自動進行。需要花錢的事，只有在存款超過費用的三倍時才會進行。孝親費、約會、外食、旅行、上課和捐款，只有在花完之後還能剩下一般人一年的收入時才會進行；開啟得越多，能存下的錢就越少。'}</p>
+      </div>
+    `;
+    // wire
+    body.querySelectorAll('.fin-opt').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const choice = btn.dataset.id;
+        life.investChoice = choice;
+        const opt = INVEST_OPTIONS.find(o => o.id === choice);
+        if (opt) {
+          // apply current return rate
+          toast(isEn ? `Investment set to ${opt.en}` : `投資已設為 ${opt.zh}`);
+        }
+        modal.setAttribute('hidden', '');
+        STATE.paused = false;
+      });
+    });
+    $('#finAutoBtn')?.addEventListener('click', () => {
+      life.autoInvest = !life.autoInvest;
+      $('#finAutoBtn')?.classList.toggle('active', life.autoInvest);
+      toast(isEn ? (life.autoInvest ? 'Auto-invest enabled' : 'Auto-invest disabled') : (life.autoInvest ? '已開啟自動投資' : '已關閉自動投資'));
+      modal.setAttribute('hidden', '');
+      STATE.paused = false;
+    });
+  }
+  modal.removeAttribute('hidden');
+}
+
+/* v5.20：每年套用投資收益（依 investChoice） */
+function applyInvestmentReturn() {
+  if (!STATE.life || !STATE.life.stats) return;
+  const life = STATE.life;
+  const choice = life.investChoice || 'global';
+  const opt = INVEST_OPTIONS.find(o => o.id === choice);
+  if (!opt || life.stats.netAssets <= 0) return;
+  // 真實報酬率（含通膨），每年變動
+  const baseReturn = opt.realReturn;
+  const volatility = opt.volatility;
+  const noise = (Math.random() - 0.5) * 2 * volatility;
+  const yearReturn = baseReturn + noise;
+  const gained = Math.round(life.stats.netAssets * yearReturn);
+  life.stats.netAssets = Math.max(0, life.stats.netAssets + gained);
+  if (life.autoInvest && life.stats.netAssets > 1000) {
+    // 自動社交支出（家庭聚餐等）
+    const socialCost = Math.round(life.stats.netAssets * 0.02);
+    if (socialCost > 0 && life.stats.netAssets > socialCost * 3) {
+      life.stats.netAssets -= socialCost;
+      life.stats.social = Math.min(100, life.stats.social + 4);
+      life.stats.happiness = Math.min(100, life.stats.happiness + 2);
+      life.log.push({ age: life.age, kind:'finance', icon:'💰', text: `自動社交支出 -${socialCost} · 人際+4` });
+    }
+  }
   renderLifeStats();
 }
 
