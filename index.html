@@ -114,7 +114,7 @@
 
   <section class="about">
     <h3 data-t="intro.about">關於本作品</h3>
-    <p data-t="intro.about.text">8 億分之 1 原作（1in8b.life）由 Jin's Earth 與 Claude 合作，以真實的公開統計為基礎。本版本以原作精神重新實作，重點放在 172 國真實生命表、死亡原因分布、出生證書、過去生命書架、族譜。本地端儲存，不上傳任何資料。</p>
+    <p data-t="intro.about.text">8 億分之 1 原作（1in8b.life）由 Jin's Earth 與 Claude 合作，以真實的公開統計為基礎。本版本以原作精神重新實作，重點放在 172 國真實生命表、死亡原因分布、出生證書、過去生命書架。本地端儲存，不上傳任何資料。</p>
   </section>
 </section>
 
@@ -217,6 +217,7 @@
       <span data-t="io.import">匯入 GEDCOM</span>
       <input id="treeImport" type="file" accept=".ged" style="display:none">
     </label>
+    <button id="treeShare" class="ghost" data-t="share.copy">複製分享連結</button>
   </div>
 
   <div id="treeCanvas" class="tree-canvas"></div>
@@ -292,6 +293,7 @@
 
 <div id="toast" class="toast" hidden></div>
 
+<script src="gedcom.js"></script>
 <script src="app.js"></script>
 </body>
 </html>
