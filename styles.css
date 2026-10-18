@@ -788,3 +788,19 @@ input, select, textarea { font: inherit; color: inherit; }
 .ty-icon { font-size: 22px; }
 .ty-text { flex: 1; color: var(--ink); font-weight: 500; }
 .ty-age { font-size: 11px; color: var(--ink-3); }
+
+/* v5.15 5 面向終身軌跡 */
+.life-trajectory {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 12px 16px;
+  margin: 12px 0;
+  text-align: left;
+}
+.life-trajectory h4 {
+  margin: 0 0 8px;
+  font-size: 13px; color: var(--accent);
+  text-transform: uppercase; letter-spacing: 0.08em;
+}
+.trajectory-svg { display: block; margin: 0 auto; }
