@@ -403,7 +403,12 @@
     "spend.travel.desc": "見識+5 幸福+8 健康-3",
     "spend.donate": "捐款",
     "spend.donate.desc": "幸福+10 健康+2 知識+2",
-    "life.feed": "人生紀錄"
+    "life.feed": "人生紀錄",
+    "end.pastRecords": "前世紀錄",
+    "end.pastNote": "最近的 N 段人生，按下「再看一次」就能重新打開死亡紀錄和分享卡。紀錄只會留在這個瀏覽器。",
+    "end.viewShelf": "看看我的前世展示架",
+    "end.organize": "整理紀錄",
+    "end.deleteAll": "全部刪除"
   },
   "zh-Hans": {
     "title": "选出生地 · 人生模拟",
@@ -809,7 +814,12 @@
     "spend.travel.desc": "experience+5 happy+8 health-3",
     "spend.donate": "Donate",
     "spend.donate.desc": "happy+10 health+2 knowledge+2",
-    "life.feed": "Life Record"
+    "life.feed": "Life Record",
+    "end.pastRecords": "Past life records",
+    "end.pastNote": "Your most recent N lives. Press replay to reopen the death record and share card. Records stay only in this browser.",
+    "end.viewShelf": "View my past life gallery",
+    "end.organize": "Manage records",
+    "end.deleteAll": "Delete all"
   },
   "en": {
     "title": "Born Somewhere · Life Simulator",
@@ -1215,7 +1225,12 @@
     "spend.travel.desc": "experience+5 happy+8 health-3",
     "spend.donate": "Donate",
     "spend.donate.desc": "happy+10 health+2 knowledge+2",
-    "life.feed": "Life Record"
+    "life.feed": "Life Record",
+    "end.pastRecords": "Past life records",
+    "end.pastNote": "Your most recent N lives. Press replay to reopen the death record and share card. Records stay only in this browser.",
+    "end.viewShelf": "View my past life gallery",
+    "end.organize": "Manage records",
+    "end.deleteAll": "Delete all"
   },
   "ko": {
     "title": "태어난 곳 · 인생 시뮬레이션",
@@ -1632,7 +1647,12 @@
     "spend.travel.desc": "experience+5 happy+8 health-3",
     "spend.donate": "Donate",
     "spend.donate.desc": "happy+10 health+2 knowledge+2",
-    "life.feed": "Life Record"
+    "life.feed": "Life Record",
+    "end.pastRecords": "Past life records",
+    "end.pastNote": "Your most recent N lives. Press replay to reopen the death record and share card. Records stay only in this browser.",
+    "end.viewShelf": "View my past life gallery",
+    "end.organize": "Manage records",
+    "end.deleteAll": "Delete all"
   },
   "ja": {
     "title": "出生地 · 人生シミュレーション",
@@ -2049,7 +2069,12 @@
     "spend.travel.desc": "experience+5 happy+8 health-3",
     "spend.donate": "Donate",
     "spend.donate.desc": "happy+10 health+2 knowledge+2",
-    "life.feed": "Life Record"
+    "life.feed": "Life Record",
+    "end.pastRecords": "Past life records",
+    "end.pastNote": "Your most recent N lives. Press replay to reopen the death record and share card. Records stay only in this browser.",
+    "end.viewShelf": "View my past life gallery",
+    "end.organize": "Manage records",
+    "end.deleteAll": "Delete all"
   },
   "vi": {
     "title": "Nơi sinh · Mô phỏng cuộc đời",
@@ -2466,7 +2491,12 @@
     "spend.travel.desc": "experience+5 happy+8 health-3",
     "spend.donate": "Donate",
     "spend.donate.desc": "happy+10 health+2 knowledge+2",
-    "life.feed": "Life Record"
+    "life.feed": "Life Record",
+    "end.pastRecords": "Past life records",
+    "end.pastNote": "Your most recent N lives. Press replay to reopen the death record and share card. Records stay only in this browser.",
+    "end.viewShelf": "View my past life gallery",
+    "end.organize": "Manage records",
+    "end.deleteAll": "Delete all"
   },
   "fr": {
     "title": "Né quelque part · Simulateur de vie",
@@ -2883,7 +2913,12 @@
     "spend.travel.desc": "experience+5 happy+8 health-3",
     "spend.donate": "Donate",
     "spend.donate.desc": "happy+10 health+2 knowledge+2",
-    "life.feed": "Life Record"
+    "life.feed": "Life Record",
+    "end.pastRecords": "Past life records",
+    "end.pastNote": "Your most recent N lives. Press replay to reopen the death record and share card. Records stay only in this browser.",
+    "end.viewShelf": "View my past life gallery",
+    "end.organize": "Manage records",
+    "end.deleteAll": "Delete all"
   },
   "th": {
     "title": "เกิดที่ไหน · จำลองชีวิต",
@@ -3300,7 +3335,12 @@
     "spend.travel.desc": "experience+5 happy+8 health-3",
     "spend.donate": "Donate",
     "spend.donate.desc": "happy+10 health+2 knowledge+2",
-    "life.feed": "Life Record"
+    "life.feed": "Life Record",
+    "end.pastRecords": "Past life records",
+    "end.pastNote": "Your most recent N lives. Press replay to reopen the death record and share card. Records stay only in this browser.",
+    "end.viewShelf": "View my past life gallery",
+    "end.organize": "Manage records",
+    "end.deleteAll": "Delete all"
   },
   "es": {
     "title": "Nacido en algún lugar · Simulador de vida",
@@ -3717,6 +3757,11 @@
     "spend.travel.desc": "experience+5 happy+8 health-3",
     "spend.donate": "Donate",
     "spend.donate.desc": "happy+10 health+2 knowledge+2",
-    "life.feed": "Life Record"
+    "life.feed": "Life Record",
+    "end.pastRecords": "Past life records",
+    "end.pastNote": "Your most recent N lives. Press replay to reopen the death record and share card. Records stay only in this browser.",
+    "end.viewShelf": "View my past life gallery",
+    "end.organize": "Manage records",
+    "end.deleteAll": "Delete all"
   }
 }
