@@ -1483,7 +1483,30 @@ function wire() {
   if (downloadCert) downloadCert.addEventListener('click', downloadLifeCertPNG);
   // esc 關閉
   document.addEventListener('keydown', e => {
-    if (e.key === ' ') { if (STATE.view === 'life') $('#btnPause')?.click(); e.preventDefault(); }
+    // 跳過輸入框
+    if (['INPUT','TEXTAREA','SELECT'].includes((e.target.tagName||'').toUpperCase())) return;
+    if (e.ctrlKey || e.metaKey || e.altKey) return;
+    const k = e.key;
+    if (k === ' ') { if (STATE.view === 'life') $('#btnPause')?.click(); e.preventDefault(); return; }
+    // 速度 1/2/4/8
+    if (['1','2','4','8'].includes(k)) {
+      const btn = document.querySelector(`.speed-btn[data-speed="${k}"]`);
+      if (btn) { btn.click(); e.preventDefault(); }
+      return;
+    }
+    const navMap = { i:'intro', l:'lab', s:'shelf', t:'tree', e:'end' };
+    if (navMap[k]) {
+      document.querySelectorAll('.navbtn').forEach(b => { if (b.dataset.view === navMap[k]) b.click(); });
+      e.preventDefault();
+      return;
+    }
+    // R = 重新出生
+    if (k === 'r' || k === 'R') {
+      if (STATE.life && STATE.view === 'life') {
+        $('#btnRebirth')?.click();
+        e.preventDefault();
+      }
+    }
   });
   // Lab
   const labRun = $('#labRun');
