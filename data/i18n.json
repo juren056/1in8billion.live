@@ -180,7 +180,9 @@
     "share.copy": "複製分享連結",
     "share.copied": "已複製",
     "share.load": "從連結載入",
-    "event.kidDeath": "嬰幼兒夭折"
+    "event.kidDeath": "嬰幼兒夭折",
+    "tree.migration": "跨國遷徙",
+    "event.migration": "遷徙到新國家"
   },
   "zh-Hans": {
     "title": "选出生地 · 人生模拟",
@@ -363,7 +365,9 @@
     "share.copy": "Copy share link",
     "share.copied": "Copied",
     "share.load": "Load from URL",
-    "event.kidDeath": "Infant death"
+    "event.kidDeath": "Infant death",
+    "tree.migration": "Cross-border migration",
+    "event.migration": "Migrated to new country"
   },
   "en": {
     "title": "Born Somewhere · Life Simulator",
@@ -546,7 +550,9 @@
     "share.copy": "Copy share link",
     "share.copied": "Copied",
     "share.load": "Load from URL",
-    "event.kidDeath": "Infant death"
+    "event.kidDeath": "Infant death",
+    "tree.migration": "Cross-border migration",
+    "event.migration": "Migrated to new country"
   },
   "ko": {
     "title": "태어난 곳 · 인생 시뮬레이션",
@@ -742,7 +748,9 @@
     "share.copy": "Copy share link",
     "share.copied": "Copied",
     "share.load": "Load from URL",
-    "event.kidDeath": "Infant death"
+    "event.kidDeath": "Infant death",
+    "tree.migration": "Cross-border migration",
+    "event.migration": "Migrated to new country"
   },
   "ja": {
     "title": "出生地 · 人生シミュレーション",
@@ -938,7 +946,9 @@
     "share.copy": "Copy share link",
     "share.copied": "Copied",
     "share.load": "Load from URL",
-    "event.kidDeath": "Infant death"
+    "event.kidDeath": "Infant death",
+    "tree.migration": "Cross-border migration",
+    "event.migration": "Migrated to new country"
   },
   "vi": {
     "title": "Nơi sinh · Mô phỏng cuộc đời",
@@ -1134,7 +1144,9 @@
     "share.copy": "Copy share link",
     "share.copied": "Copied",
     "share.load": "Load from URL",
-    "event.kidDeath": "Infant death"
+    "event.kidDeath": "Infant death",
+    "tree.migration": "Cross-border migration",
+    "event.migration": "Migrated to new country"
   },
   "fr": {
     "title": "Né quelque part · Simulateur de vie",
@@ -1330,7 +1342,9 @@
     "share.copy": "Copy share link",
     "share.copied": "Copied",
     "share.load": "Load from URL",
-    "event.kidDeath": "Infant death"
+    "event.kidDeath": "Infant death",
+    "tree.migration": "Cross-border migration",
+    "event.migration": "Migrated to new country"
   },
   "th": {
     "title": "เกิดที่ไหน · จำลองชีวิต",
@@ -1526,7 +1540,9 @@
     "share.copy": "Copy share link",
     "share.copied": "Copied",
     "share.load": "Load from URL",
-    "event.kidDeath": "Infant death"
+    "event.kidDeath": "Infant death",
+    "tree.migration": "Cross-border migration",
+    "event.migration": "Migrated to new country"
   },
   "es": {
     "title": "Nacido en algún lugar · Simulador de vida",
@@ -1722,6 +1738,8 @@
     "share.copy": "Copy share link",
     "share.copied": "Copied",
     "share.load": "Load from URL",
-    "event.kidDeath": "Infant death"
+    "event.kidDeath": "Infant death",
+    "tree.migration": "Cross-border migration",
+    "event.migration": "Migrated to new country"
   }
 }
