@@ -1898,3 +1898,15 @@ body.theme-sepia .muted { color: #8b7355; }
 .elm-age { font-weight: 700; color: var(--accent); min-width: 50px; }
 .elm-icon { min-width: 24px; }
 .elm-text { color: var(--ink-2); }
+
+/* v5.25 花錢 modal */
+.spend-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 12px; }
+.spend-btn {
+  display: flex; flex-direction: column; gap: 4px;
+  padding: 10px; background: var(--paper);
+  border: 1px solid var(--line); border-radius: 6px;
+  cursor: pointer; font-size: 13px; color: var(--ink);
+  text-align: center; transition: all 0.15s;
+}
+.spend-btn:hover { background: var(--bg); border-color: var(--accent); transform: translateY(-1px); }
+.spend-btn small { font-size: 11px; color: var(--ink-3); }
