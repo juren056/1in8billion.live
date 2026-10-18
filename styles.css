@@ -737,3 +737,29 @@ input, select, textarea { font: inherit; color: inherit; }
   text-transform: uppercase; letter-spacing: 0.1em;
 }
 .survival-svg { display: block; margin: 0 auto; }
+
+/* v5.13 焦點 + 財務 modal */
+.focus-card { max-width: 480px; }
+.focus-body { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 12px; }
+.focus-btn, .finance-btn {
+  display: flex; flex-direction: column; gap: 4px;
+  padding: 10px 12px;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 13px;
+  color: var(--ink);
+  transition: all 0.15s;
+}
+.focus-btn:hover, .finance-btn:hover {
+  background: var(--bg);
+  border-color: var(--accent);
+  transform: translateY(-1px);
+}
+.finance-btn { grid-column: 1 / -1; flex-direction: row; align-items: center; gap: 12px; }
+.finance-btn .fin-text { flex: 1; text-align: left; font-weight: 500; }
+.fin-tags { display: flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end; }
+.fin-pos { color: #2c6c2c; font-size: 11px; }
+.fin-neg { color: var(--accent); font-size: 11px; }
+.fin-stat { color: var(--ink-3); font-size: 11px; }
