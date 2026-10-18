@@ -763,3 +763,28 @@ input, select, textarea { font: inherit; color: inherit; }
 .fin-pos { color: #2c6c2c; font-size: 11px; }
 .fin-neg { color: var(--accent); font-size: 11px; }
 .fin-stat { color: var(--ink-3); font-size: 11px; }
+
+/* v5.14：本年事件 highlight */
+.life-this-year {
+  background: linear-gradient(135deg, #fff8e1, #ffe0b2);
+  border: 1px solid #ffaa00;
+  border-radius: 10px;
+  padding: 12px 16px;
+  margin: 12px 0;
+  text-align: left;
+}
+.life-this-year h4 {
+  margin: 0 0 8px;
+  font-size: 13px; color: #8a5a00;
+  text-transform: uppercase; letter-spacing: 0.08em;
+}
+.ty-body { font-size: 14px; }
+.ty-event {
+  display: flex; align-items: center; gap: 10px;
+  background: white;
+  border-radius: 6px;
+  padding: 8px 12px;
+}
+.ty-icon { font-size: 22px; }
+.ty-text { flex: 1; color: var(--ink); font-weight: 500; }
+.ty-age { font-size: 11px; color: var(--ink-3); }
