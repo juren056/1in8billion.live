@@ -1,734 +1,597 @@
-/* 選出生地 — 人生模擬 v1.0
-   根據 1in8b.life 原作的二次創作，差別在出生地由使用者主動選擇。
-   死亡、沉重事件按真實統計分布發生，不描寫畫面。
+/* born-somewhere v2
+   人生模擬遊戲：選一個出生地（172 國真實統計），從 0 歲活到當地平均壽命。
+   參考原作 1in8b.life 的生命表、死因分布、決策點等核心機制。
+   引擎是獨立重寫，不含原作程式碼。
 */
 
 const $ = (s, r=document) => r.querySelector(s);
 const $$ = (s, r=document) => Array.from(r.querySelectorAll(s));
-const sleep = (ms) => new Promise(r => setTimeout(r, ms));
-const rand = (a=1, b=0) => a + Math.random() * (b - a);
-const irand = (a, b) => Math.floor(rand(a, b+1));
-const pick = (arr) => arr[Math.floor(Math.random() * arr.length)];
-const weighted = (entries) => {
-  const total = entries.reduce((s, [,w]) => s + w, 0);
-  let r = Math.random() * total;
-  for (const [v, w] of entries) { r -= w; if (r <= 0) return v; }
-  return entries[entries.length-1][0];
-};
-const fmt = (n) => n.toLocaleString('zh-Hant');
-const fmtMoney = (amount, currency, ppp) => {
-  const local = Math.round(amount * (ppp || 1));
-  return `${currency} ${fmt(local)}`;
-};
+const STORAGE_KEY = 'born-somewhere-v2';
 
-const STORAGE_KEY = 'born-somewhere-v1';
-let COUNTRIES = {};
-let COUNTRY_LIST = [];
+let COUNTRIES = [];
+let I18N = {};
+let LANG = 'zh-Hant';
+let CACHE = { countries: null, i18n: null };
 
 const STATE = {
-  screen: 'home',
-  settings: { era: 'now', pace: 60, gender: 'random', currency: 'auto', music: false, auto: false },
+  view: 'intro',
+  era: 'now',
+  birthMode: 'baby',
   selectedCountry: null,
   life: null,
   paused: false,
   speed: 1,
-  running: false,
-  timer: null,
-  memorial: null,
+  tickMs: 60,
+  ticker: null,
+  pendingDecision: null,
+  pastLives: [],
+  modal: null,
 };
 
-const CAUSE_LABELS = {
-  comm: '心血管疾病', cancer: '癌症', resp: '呼吸系統疾病', infect: '感染性疾病',
-  acc: '意外事故', suicide: '自殺', homicide: '他殺', other: '其他',
-  maternal: '孕產相關', perinatal: '周產期問題', war: '衝突傷亡', famine: '營養不良',
-};
-
-/* === Gompertz 死亡模型 === */
-function gompertzParams(L) {
-  // 選擇 β = 0.085，搭配 α 讓中位壽命接近 L
-  const beta = 0.085;
-  const alpha = beta * Math.log(2) / (Math.exp(beta * L) - 1);
-  return { alpha, beta };
+function t(key, ...vals) {
+  const dict = I18N[LANG] || I18N['zh-Hant'] || {};
+  let s = dict[key] || key;
+  for (const v of vals) s = s.replace('{}', v);
+  return s;
 }
-function survivalProb(age, L) {
-  if (age < 0) return 1;
-  const { alpha, beta } = gompertzParams(L);
-  if (age < 15) {
-    // 0-15 用一條簡化曲線：嬰兒 + 兒童死亡率
-    return 1 - (age === 0 ? 0.005 : 0.005 + (age - 1) * 0.0003);
+async function loadData() {
+  if (!CACHE.countries) {
+    const r1 = await fetch('data/countries.json');
+    CACHE.countries = await r1.json();
+    COUNTRIES = CACHE.countries;
   }
-  return Math.exp(-(alpha/beta) * (Math.exp(beta * age) - Math.exp(beta * 15)) * 0.9 - 0.06);
+  if (!CACHE.i18n) {
+    const r2 = await fetch('data/i18n.json');
+    CACHE.i18n = await r2.json();
+    I18N = CACHE.i18n;
+  }
+  LANG = localStorage.getItem(STORAGE_KEY + ':lang') || detectLang();
 }
-function pDieThisYear(age, L) {
-  if (age < 1) {
-    // 嬰兒死亡率（每千活產）
-    return Math.min(0.5, (COUNTRIES[STATE.life.country.code].infantMort / 1000) + 0.001);
-  }
-  if (age < 5) {
-    return Math.min(0.1, 0.0008 + (COUNTRIES[STATE.life.country.code].infantMort / 100000));
-  }
-  if (age < 15) return 0.0003;
-  const s1 = survivalProb(age, L);
-  const s0 = survivalProb(age - 1, L);
-  return Math.max(0, Math.min(0.95, 1 - s1/s0));
+function detectLang() {
+  const nav = navigator.language;
+  if (nav.startsWith('zh')) return nav.includes('Hans') ? 'zh-Hans' : 'zh-Hant';
+  if (nav.startsWith('en')) return 'en';
+  return 'zh-Hant';
+}
+function setLang(lang) {
+  LANG = lang;
+  localStorage.setItem(STORAGE_KEY + ':lang', lang);
+  document.documentElement.lang = lang;
+  renderAll();
 }
 
-/* === 死因加權 === */
-function ageCauseWeights(age) {
-  if (age < 1) return { perinatal: 60, infect: 25, comm: 3, other: 12 };
-  if (age < 5) return { infect: 55, acc: 12, perinatal: 8, comm: 2, other: 23 };
-  if (age < 15) return { acc: 35, infect: 22, cancer: 10, comm: 4, suicide: 6, other: 23 };
-  if (age < 30) return { acc: 28, suicide: 22, homicide: 14, comm: 6, cancer: 6, infect: 8, other: 16 };
-  if (age < 50) return { cancer: 18, comm: 18, suicide: 14, acc: 12, infect: 8, homicide: 4, other: 26 };
-  if (age < 70) return { comm: 30, cancer: 28, resp: 10, suicide: 5, acc: 4, infect: 5, other: 18 };
-  return { comm: 35, cancer: 22, resp: 14, infect: 6, acc: 3, suicide: 4, other: 16 };
-}
-function pickCauseOfDeath(age, country, gender) {
-  const weights = ageCauseWeights(age);
-  // 國家調整：把對應的 cause 用 country.deathCauses 比例替換
-  const cc = country.deathCauses || {};
-  const adj = { ...weights };
-  if (age >= 15) {
-    adj.comm = (weights.comm || 0) * ((cc.comm || 25) / 25);
-    adj.cancer = (weights.cancer || 0) * ((cc.cancer || 20) / 20);
-    adj.resp = (weights.resp || 0) * ((cc.resp || 8) / 8);
-    adj.infect = (weights.infect || 0) * ((cc.infect || 15) / 15);
-    adj.acc = (weights.acc || 0) * ((cc.acc || 8) / 8);
-    adj.suicide = (weights.suicide || 0) * ((gender === 'M' ? country.suicideM : country.suicideF) / 12);
-    adj.homicide = (weights.homicide || 0) * ((cc.homicide || 1) / 1);
-  } else {
-    // 兒童以 infectious 為主
-    adj.infect = (weights.infect || 0) * 1.5;
-  }
-  return weighted(Object.entries(adj).map(([k,v]) => [k, Math.max(0.1, v)]));
-}
-
-/* === 教育 / 收入 / 家庭 抽樣 === */
-function educationOutcome(country, gender) {
-  const r = Math.random() * 100;
-  if (r < country.college) {
-    const years = Math.min(country.edu + 4, 18);
-    return { level: 'college', years, label: '大學' };
-  }
-  if (r < country.college + (100 - country.college) * 0.55) {
-    return { level: 'highschool', years: 12, label: '高中' };
-  }
-  if (r < country.college + (100 - country.college) * 0.85) {
-    return { level: 'middle', years: 9, label: '初中' };
-  }
-  return { level: 'primary', years: 6, label: '小學' };
-}
-function jobFor(country, edu, age) {
-  if (age < 18) return null;
-  if (edu.level === 'primary') {
-    return weighted([['農牧業', country.agriculturalEmp], ['建築工', 25], ['清潔/家務', 30], ['餐飲服務', 25], ['工廠作業員', 25]]);
-  }
-  if (edu.level === 'middle') {
-    return weighted([['餐飲服務', 22], ['零售店員', 20], ['司機', 15], ['工廠技工', 18], ['建築工', 12], ['農牧業', country.agriculturalEmp/2]]);
-  }
-  if (edu.level === 'highschool') {
-    return weighted([['文書/行政', 25], ['銷售/業務', 22], ['技術員', 20], ['護理/醫技', 13], ['軍警/消防', 10], ['教師', 10]]);
-  }
-  // college
-  return weighted([['工程師', 18], ['教師', 14], ['醫療專業', 13], ['商業/金融', 18], ['公務員', 12], ['資訊/科技', 14], ['研究/學術', 6], ['藝術/設計', 5]]);
-}
-function incomeFor(country, edu, gender) {
-  // 以 GDP PPP 為基準，按教育程度和吉尼係數分配
-  const gini = country.gini;
-  const baseGdp = country.gdp;
-  const eduMul = { primary: 0.15, middle: 0.30, highschool: 0.55, college: 1.3 }[edu.level];
-  const genderMul = gender === 'F' ? 0.7 : 1.0;
-  const median = baseGdp * eduMul * genderMul;
-  // 用對數常態分佈（粗略）
-  const sigma = gini / 60;
-  const ln = Math.log(median) + (Math.random() - 0.5) * sigma * 2;
-  return Math.max(800, Math.round(Math.exp(ln)));
-}
-function marriageAge(country, gender) {
-  const base = gender === 'F' ? 24 : 27;
-  const offset = Math.round((40 - country.satisfaction * 5) * 0.5) + irand(-3, 4);
-  const fertOffset = (country.fertility - 1.5) * 3;
-  return Math.max(16, Math.min(45, base + offset + Math.round(fertOffset)));
-}
-function childrenCount(country, gender) {
-  // 簡化：以國家生育率為期望，圍繞它波動
-  const f = country.fertility;
-  return Math.max(0, Math.round(f + (Math.random() - 0.5) * 2.2));
-}
-
-/* === 一次性抽樣：建立角色 === */
-function buildLife(countryCode, year, gender) {
-  const country = COUNTRIES[countryCode];
-  if (!country) throw new Error('unknown country');
-  const edu = educationOutcome(country, gender);
-  const marAge = marriageAge(country, gender);
-  const kids = childrenCount(country, gender);
-  const life = {
-    country: countryCode,
-    countryData: country,
-    year,
-    gender,
-    age: 0,
-    name: null, // 隨機給個當地風格名
-    edu,
-    marAge,
-    kids: kids,
-    job: null,
-    income: 0,
-    wealth: 0,        // 累積
-    health: 100,      // 0-100
-    mental: 70,       // 0-100
-    married: false,
-    partnerName: null,
-    kidsBorn: 0,
-    moves: 0,
-    parentsAlive: [true, true],
-    parentsAge: [irand(20, 38), irand(20, 38)],
-    milestones: [],
-    quotes: [],
-    log: [],
-    died: false,
-    cause: null,
-    deathAge: null,
+function countryById(id) { return COUNTRIES.find(c => c.id === id) || null; }
+function localize(c) {
+  if (!c) return null;
+  return {
+    ...c,
+    name: LANG === 'en' ? c.name_en : (LANG === 'zh-Hans' ? (c.name_zh_cn || c.name_zh) : c.name_zh),
+    region_name: LANG === 'en' ? c.region_en : c.region_zh,
   };
-  return life;
 }
 
-const NAME_BY_REGION = {
-  'Asia': { M: ['志明','俊宏','家豪','建宏','俊傑','浩宇','承恩','柏翰','冠廷','彥廷','俊佑','俊廷','柏宇','宥廷','禹辰','建宇','俊宇','子軒','睿恩','嘉佑'],
-             F: ['雅婷','怡君','佳穎','怡萱','雅雯','心怡','筱涵','筱萍','雅琪','雅文','郁婷','思妤','雅筑','宜君','詩涵','雅晴','宜臻','雅芳','婉婷','佳蓉'] },
-  'Middle East': { M: ['阿里','哈立德','穆罕默德','歐瑪','哈山','阿布','法赫德','薩利赫','約瑟夫','伊布拉希姆'],
-                   F: ['法蒂瑪','艾莎','瑪麗亞姆','努拉','萊拉','扎伊納布','哈南','薩拉','胡達','葉海拉'] },
-  'Europe': { M: ['Liam','Noah','Lucas','Oliver','James','Theo','Hugo','Leon','Mateo','Ethan','Adam','Daniel','Jack','Henry','Oscar'],
-              F: ['Olivia','Emma','Mia','Sofia','Ella','Ava','Luna','Maja','Nora','Clara','Eva','Lea','Julia','Anastasia','Marie'] },
-  'Americas': { M: ['Liam','Mateo','Sebastián','Santiago','Diego','Samuel','Miguel','Daniel','David','Carlos','James','Ethan','Logan','Lucas','Aiden'],
-                F: ['Sofía','Isabella','Emma','Camila','Valentina','Lucía','Victoria','Martina','Ximena','Sarah','Emily','Olivia','Ava','Mia','Hannah'] },
-  'Africa': { M: ['Kofi','Kwame','Tendai','Sipho','Tariro','Emeka','Chidi','Sekou','Ousmane','Mosi','Jabari','Kato','Sekuru','Bongani','Thabo'],
-              F: ['Amina','Zara','Nia','Amara','Kira','Sade','Nuru','Imani','Asha','Zola','Mosi','Lerato','Thandi','Aisha','Folami'] },
-  'Oceania': { M: ['Jack','Liam','Noah','William','Oliver','James','Henry','Thomas','Lucas','Ethan'],
-                F: ['Charlotte','Olivia','Mia','Amelia','Isla','Ava','Grace','Ella','Zoe','Sophie'] },
-};
-function pickName(country, gender) {
-  const region = country.region;
-  const list = NAME_BY_REGION[region]?.[gender] || NAME_BY_REGION.Asia[gender];
-  return pick(list);
-}
-
-/* === UI: 國家列表 === */
-function renderCountries() {
-  COUNTRY_LIST = Object.entries(COUNTRIES).map(([code, c]) => ({ code, ...c }));
-  const grid = $('#countryGrid');
-  grid.innerHTML = '';
-  for (const c of COUNTRY_LIST) {
-    const card = document.createElement('button');
-    card.className = 'country-card';
-    card.dataset.code = c.code;
-    card.dataset.region = c.region;
-    card.innerHTML = `
-      <div class="cc-row1">
-        <span class="cc-flag">${c.flag}</span>
-        <span class="cc-name">${c.name}</span>
-        <span class="cc-en">${c.nameEn}</span>
-      </div>
-      <div class="cc-stats">
-        <span>人均壽命</span><b>${Math.round((c.lifeM + c.lifeF)/2)} 歲</b>
-        <span>人均GDP</span><b>$${fmt(c.gdp)}</b>
-        <span>吸菸率</span><b>${c.smokingM}% / ${c.smokingF}%</b>
-        <span>吉尼</span><b>${c.gini.toFixed(1)}</b>
-        <span>生活滿意度</span><b>${c.satisfaction} / 10</b>
-        <span>兇殺率</span><b>${c.homicide}/10萬</b>
-      </div>
-    `;
-    card.addEventListener('click', () => selectCountry(c.code));
-    grid.appendChild(card);
+function chooseCountry(mode) {
+  if (!COUNTRIES.length) return null;
+  const weights = COUNTRIES.map(c => Math.max(1, c.births || c.pop || 1));
+  const total = weights.reduce((a, b) => a + b, 0);
+  let r = Math.random() * total;
+  for (let i = 0; i < COUNTRIES.length; i++) {
+    r -= weights[i];
+    if (r <= 0) return COUNTRIES[i];
   }
-  $('#countrySearch').addEventListener('input', filterCountries);
-  $$('#regionTabs .region-tab').forEach(btn => {
-    btn.addEventListener('click', () => {
-      $$('#regionTabs .region-tab').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      filterCountries();
-    });
-  });
+  return COUNTRIES[0];
 }
-function selectCountry(code) {
-  STATE.selectedCountry = code;
-  $$('.country-card').forEach(c => c.classList.toggle('selected', c.dataset.code === code));
-}
-function filterCountries() {
-  const q = $('#countrySearch').value.trim().toLowerCase();
-  const region = $('#regionTabs .region-tab.active').dataset.region;
-  let visible = 0;
-  $$('.country-card').forEach(c => {
-    const name = c.querySelector('.cc-name').textContent.toLowerCase();
-    const en = c.querySelector('.cc-en').textContent.toLowerCase();
-    const ok = (!q || name.includes(q) || en.includes(q)) && (region === 'all' || c.dataset.region === region);
-    c.style.display = ok ? '' : 'none';
-    if (ok) visible++;
-  });
-  // empty state
-  let empty = $('#countryGrid .cc-empty');
-  if (visible === 0) {
-    if (!empty) {
-      empty = document.createElement('div');
-      empty.className = 'cc-empty';
-      empty.textContent = '找不到符合的國家。試試其他關鍵字或換個地區。';
-      $('#countryGrid').appendChild(empty);
+
+const LT_CACHE = {};
+function lifeTable(c, sex) {
+  const key = c.id + sex + (c.yr || '');
+  if (LT_CACHE[key]) return LT_CACHE[key];
+  const e0 = sex === 'F' ? c.le + (c.gap || 4) * 0.49 : c.le - (c.gap || 4) * 0.51;
+  const k = sex === 'F' ? 0.92 : 1.08;
+  const q0 = Math.min(0.25, (c.im || 15) / 1000 * k);
+  const u5 = Math.min(0.35, Math.max(q0 + 0.0005, (c.u5 || 10) / 1000 * k));
+  const H = -Math.log((1 - u5) / Math.max(0.0001, 1 - q0));
+  const qc = [0.4, 0.27, 0.19, 0.14].map(w => 1 - Math.exp(-H * w));
+  const A = 0.00025 + 0.000028 * (c.u5 || 10);
+  const g = Math.max(0.085, Math.min(0.112, 0.112 - 0.00016 * (c.u5 || 10)));
+  const q = new Float64Array(111);
+  q[0] = q0;
+  for (let i = 1; i <= 4; i++) q[i] = qc[i - 1];
+  for (let x = 5; x <= 110; x++) {
+    if (x === 110) { q[x] = 1; continue; }
+    q[x] = Math.min(1, 1 - Math.exp(-(A + Math.exp(g * (x + 0.5)) * 0.001)));
+  }
+  let lo = Math.log(1e-9), hi = Math.log(5e-2);
+  for (let i = 0; i < 50; i++) {
+    const m = (lo + hi) / 2;
+    const B = Math.exp(m);
+    let l = 1, e = 0;
+    for (let x = 0; x <= 110; x++) {
+      const qx = (x < 5) ? q[x] : Math.min(1, 1 - Math.exp(-(A + B * Math.exp(g * (x + 0.5)))));
+      const d = l * qx;
+      e += x === 0 ? l - 0.85 * d : l - 0.5 * d;
+      l -= d;
     }
-  } else if (empty) {
-    empty.remove();
+    if (e > e0) lo = m; else hi = m;
   }
+  const qf = new Float64Array(111);
+  qf[0] = q0;
+  for (let i = 1; i <= 4; i++) qf[i] = qc[i - 1];
+  for (let x = 5; x <= 110; x++) {
+    if (x === 110) { qf[x] = 1; continue; }
+    qf[x] = Math.min(1, 1 - Math.exp(-(A + Math.exp(g * (x + 0.5)) * 0.001)));
+  }
+  const l = new Float64Array(112);
+  l[0] = 1;
+  for (let x = 0; x <= 110; x++) l[x + 1] = l[x] * (1 - qf[x]);
+  LT_CACHE[key] = { q: qf, l, e0 };
+  return LT_CACHE[key];
 }
 
-/* === seg buttons === */
-function wireSegs() {
-  $$('.seg').forEach(seg => {
-    seg.addEventListener('click', (e) => {
-      const btn = e.target.closest('.seg-btn');
-      if (!btn) return;
-      const group = seg.dataset.group;
-      $$('.seg-btn', seg).forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      STATE.settings[group] = btn.dataset.val;
-    });
-  });
+function pDie(age, c, sex) {
+  if (age < 0) return 0;
+  const lt = lifeTable(c, sex);
+  if (age >= 110) return 1;
+  if (age === 0) return lt.q[0];
+  if (lt.l[age] === 0) return 1;
+  return Math.max(0, Math.min(0.95, 1 - lt.l[age + 1] / lt.l[age]));
 }
 
-/* === 開始遊戲 === */
-function startLife() {
-  let code = STATE.selectedCountry;
-  if (!code) {
-    code = pick(COUNTRY_LIST).code;
+const CAUSE_BASE = {
+  infant:  { '周產期問題':50, '先天異常':20, '感染性疾病':15, '嬰兒猝死':5, '事故':5, '其他':5 },
+  child:    { '感染性疾病':35, '事故':25, '先天異常':15, '營養不良':10, '溺水':8, '其他':7 },
+  young:    { '事故':30, '感染性疾病':25, '癌症':12, '溺水':10, '自殺':6, '他殺':5, '其他':12 },
+  young_a:  { '事故':28, '自殺':20, '他殺':15, '癌症':10, '感染性疾病':10, '其他':17 },
+  middle:   { '癌症':22, '心血管':18, '自殺':14, '事故':10, '感染性疾病':10, '他殺':6, '其他':20 },
+  older:    { '癌症':30, '心血管':25, '呼吸系統':8, '糖尿病':8, '自殺':5, '事故':5, '其他':19 },
+  elderly:  { '心血管':35, '癌症':25, '呼吸系統':12, '中風':8, '糖尿病':5, '其他':15 },
+};
+
+function causeWeights(c, age, sex) {
+  let bucket;
+  if (age < 1) bucket = 'infant';
+  else if (age < 5) bucket = 'child';
+  else if (age < 15) bucket = 'young';
+  else if (age < 30) bucket = 'young_a';
+  else if (age < 50) bucket = 'middle';
+  else if (age < 70) bucket = 'older';
+  else bucket = 'elderly';
+  const w = { ...CAUSE_BASE[bucket] };
+  if (c.hom > 5 && w['他殺']) w['他殺'] *= c.hom / 5;
+  else if (w['他殺'] && c.hom < 1) w['他殺'] *= 0.5;
+  if (c.road > 15 && w['事故']) w['事故'] *= c.road / 15;
+  if (c.hiv > 1 && w['感染性疾病']) w['感染性疾病'] *= c.hiv / 0.5;
+  if (c.sm > 30 && w['癌症']) w['癌症'] *= c.sm / 25;
+  if (c.sm > 30 && w['心血管']) w['心血管'] *= 1.2;
+  if (c.wh > 0.1 && (age < 50)) {
+    w['戰爭/衝突'] = c.wh * 5;
   }
-  const country = COUNTRIES[code];
-  const year = STATE.settings.era === 'past' ? 1950 : STATE.settings.era === 'future' ? 2080 : 2024;
-  const gender = STATE.settings.gender === 'random' ? pick(['M','F']) : STATE.settings.gender;
-  STATE.life = buildLife(code, year, gender);
-  STATE.life.name = pickName(country, gender);
-  STATE.life.paceMs = STATE.settings.pace === 30 ? 30 : STATE.settings.pace === 60 ? 50 : 75;
+  if (c.mal > 0.5) {
+    w['瘧疾'] = (w['感染性疾病'] || 0) * c.mal * 2;
+  }
+  if (sex === 'F') {
+    if (w['他殺'] && age >= 15 && age < 30) w['他殺'] *= 0.3;
+    if (w['他殺'] && age >= 30 && age < 50) w['他殺'] *= 0.5;
+    if (w['事故'] && age >= 15 && age < 50) w['事故'] *= 0.5;
+  }
+  if (STATE.life && STATE.life.smoker) {
+    w['癌症'] *= 1.4; w['心血管'] *= 1.3; w['呼吸系統'] *= 1.5;
+  }
+  if (STATE.life && STATE.life.conditions) {
+    if (STATE.life.conditions.diabetes) w['糖尿病'] = (w['糖尿病'] || 1) * 3;
+    if (STATE.life.conditions.heart) w['心血管'] *= 1.5;
+  }
+  return w;
+}
+
+function pickCause(c, age, sex) {
+  const w = causeWeights(c, age, sex);
+  const keys = Object.keys(w);
+  const weights = keys.map(k => Math.max(0.001, w[k]));
+  const total = weights.reduce((a, b) => a + b, 0);
+  let r = Math.random() * total;
+  for (let i = 0; i < keys.length; i++) {
+    r -= weights[i];
+    if (r <= 0) return keys[i];
+  }
+  return keys[0];
+}
+
+const pick = arr => arr[Math.floor(Math.random() * arr.length)];
+const wpick = (obj) => {
+  const keys = Object.keys(obj);
+  const total = keys.reduce((s, k) => s + obj[k], 0);
+  let r = Math.random() * total;
+  for (const k of keys) { r -= obj[k]; if (r <= 0) return k; }
+  return keys[0];
+};
+const rand = (a, b) => a + Math.random() * (b - a);
+const irand = (a, b) => Math.floor(rand(a, b + 1));
+const chance = p => Math.random() < p;
+const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
+
+const FIRST_NAMES_ZH = {
+  M: ['志明','俊宏','家豪','建宏','俊傑','浩宇','承恩','柏翰','冠廷','彥廷','俊佑','俊廷','柏宇','宥廷','禹辰','建宇','俊宇','子軒','睿恩','嘉佑','家明','俊宏','志強','志偉','志豪','志遠','家豪','家銘','家祥','家瑞','國華','建國','建華','建民','建志','志強','志明','志偉','志豪','志遠','俊傑','俊宏','俊豪','俊宇','家豪','家銘','家祥','家瑞'],
+  F: ['雅婷','怡君','佳穎','怡萱','雅雯','心怡','筱涵','筱萍','雅琪','雅文','郁婷','思妤','雅筑','宜君','詩涵','雅晴','宜臻','雅芳','婉婷','佳蓉','家瑜','家琪','雅琪','雅雯','怡君','佳穎','怡萱','雅雯','心怡','筱涵','筱萍','雅琪','雅文','郁婷','思妤','雅筑','宜君','詩涵','雅晴','宜臻','雅芳','婉婷','佳蓉','婉婷','佳蓉','家瑜','家琪','雅琪','雅雯','美華','美玲','美君','美玉','美麗','淑芬','淑君','淑玲','玉嬌','秀蘭','秀英','秀梅','秀珍','秀珠','秀鳳','麗華','麗君','麗玲','麗娟','麗美','麗珍','麗珠','麗鳳','麗雲','麗霞','麗秋','麗月','麗雪','麗冰','麗卿','麗珊','麗貞','麗蓉','麗蓮','麗萍','麗燕','麗虹','麗鳳','麗鸞','麗雁','麗燕','麗鸞']
+};
+const FIRST_NAMES_EN = {
+  M: ['Wei','Hao','Junjie','Jianhong','Chen','Yu','Haochen','Bohan','Yanting','Yanting','Junjie','Yuchen','Jiayu','Bowen','Yuchen','Junhao','Zixuan','Rui','Jiayou','Minghao','David','James','Michael','John','Robert','William','Daniel','Matthew','Anthony','Mark','Steven','Paul','Andrew','Kenneth','George','Joshua','Kevin','Brian','Edward','Ronald','Timothy','Jason','Jeffrey','Ryan','Jacob','Gary','Nicholas','Eric','Jonathan','Stephen','Larry','Justin','Scott','Brandon','Benjamin','Samuel','Gregory','Alexander','Frank','Patrick','Raymond','Jack','Dennis','Jerry','Tyler','Aaron','Jose','Adam','Nathan','Henry','Douglas','Zachary','Peter','Kyle','Walter','Ethan','Jeremy','Harold','Keith','Christian','Roger','Noah','Gerald','Carl','Terry','Sean','Austin','Arthur','Lawrence','Jesse','Dylan','Bryan','Joe','Jordan','Billy','Bruce','Albert','Willie','Gabriel','Alan','Ralph','Logan'],
+  F: ['Mei','Hua','Lin','Fang','Yan','Ling','Min','Jing','Xia','Xiu','Lan','Ying','Mei','Fang','Yan','Jing','Lili','Min','Jing','Fang','Mei','Lan','Ying','Hua','Lily','Emma','Olivia','Ava','Sophia','Isabella','Mia','Charlotte','Amelia','Harper','Evelyn','Abigail','Emily','Ella','Elizabeth','Camila','Luna','Sofia','Avery','Mila','Aria','Scarlett','Penelope','Layla','Chloe','Victoria','Madison','Eleanor','Grace','Zoe','Nora','Riley','Zoey','Hannah','Hazel','Lily','Ellie','Violet','Aurora','Savannah','Audrey','Brooklyn','Bella','Claire','Skylar','Lucy','Paisley','Everly','Anna','Caroline','Nova','Genesis','Emilia','Kennedy','Samantha','Maya','Willow','Kinsley','Naomi','Aaliyah','Elena','Sarah','Ariana','Allison','Gabriella','Alice','Madelyn','Cora','Ruby','Eva','Serenity','Autumn','Adeline','Hailey','Gianna','Valentina','Isla','Eliana','Quinn','Nevaeh','Ivy','Sadie','Lydia','Piper','Lyla','Maya','Hailey']
+};
+const LAST_NAMES_ZH = ['張','王','李','陳','林','黃','吳','劉','蔡','楊','許','鄭','謝','洪','郭','邱','曾','廖','賴','徐','周','葉','蘇','莊','呂','江','何','羅','高','蕭','朱','羅','董','余','沈','許','韓','曹','許','鄧','曹','彭','曾','田','丁','杜','傅','范','方','鄒'];
+const LAST_NAMES_EN = ['Smith','Johnson','Williams','Brown','Jones','Garcia','Miller','Davis','Rodriguez','Martinez','Hernandez','Lopez','Gonzalez','Wilson','Anderson','Thomas','Taylor','Moore','Jackson','Martin','Lee','Perez','Thompson','White','Harris','Sanchez','Clark','Ramirez','Lewis','Robinson','Walker','Young','Allen','King','Wright','Scott','Torres','Nguyen','Hill','Flores','Green','Adams','Nelson','Baker','Hall','Rivera','Campbell','Mitchell','Carter','Roberts','Gomez','Phillips','Evans','Turner','Diaz','Parker','Cruz','Edwards','Collins','Reyes','Stewart','Morris','Morales','Murphy','Cook','Rogers','Gutierrez','Ortiz','Morgan','Cooper','Peterson','Bailey','Reed','Kelly','Howard','Ramos','Kim','Cox','Ward','Richardson','Watson','Brooks','Chavez','Wood','James','Bennett','Gray','Mendoza','Ruiz','Hughes','Price','Alvarez','Castillo','Sanders','Patel','Myers','Long','Ross','Foster','Jimenez'];
+const FIRST_NAMES_INDIA = {
+  M: ['Aarav','Vihaan','Aditya','Arjun','Rohit','Karan','Rahul','Amit','Vikram','Raj','Arun','Suresh','Mohan','Krishna','Ravi','Sanjay','Anil','Manish','Deepak','Pradeep','Rakesh','Sunil','Vinod','Ashok','Rajesh','Ajay','Naveen','Manoj','Dinesh','Pankaj','Sandeep','Mukesh','Anand','Sandeep','Rakesh','Prakash','Mukesh','Vivek','Vikas'],
+  F: ['Aadhya','Saanvi','Ananya','Aaradhya','Diya','Pari','Anika','Navya','Myra','Ira','Aarohi','Anvi','Misha','Anaya','Pihu','Riya','Aaradhya','Ananya','Saanvi','Diya','Aadhya','Pari','Navya','Myra','Aarohi','Anvi','Misha','Pihu','Riya','Anaya','Saanvi','Diya','Aadhya','Pari','Navya','Myra','Aarohi','Anvi','Misha','Pihu','Riya','Anaya']
+};
+const LAST_NAMES_INDIA = {
+  SC: ['Kumar','Ram','Lal','Das','Paswan','Choudhary','Valmiki','Korwa','Mochi','Dusadh','Pasi','Khatik','Dhobi','Nai','Kahar','Turi','Bhai','Gandhi','Mallah'],
+  ST: ['Meena','Munda','Ho','Oraon','Santhal','Bedia','Bhil','Korku','Gond','Kharia','Baiga'],
+  obc: ['Yadav','Kurmi','Patel','Jat','Reddy','Nayak','Gujjar','Kamboj','Rathore','Saini','Khatri'],
+  jana: ['Thapa','Tamang','Lama','Sherpa','Magar','Gurung','Rai','Limbu','Newar','Yadav'],
+  madh: ['Yadav','Kurmi','Patel','Jat','Reddy','Nayak','Gujjar','Kamboj','Rathore','Saini'],
+  '': ['Patel','Kumar','Singh','Shah','Sharma','Gupta','Verma','Yadav','Jain','Bansal']
+};
+
+function randomName(country, sex) {
+  if (country.id === 'TWN' || country.id === 'HKG' || (country.region === 'eap' && ['CHN','KOR','JPN','VNM'].includes(country.id))) {
+    const last = pick(LAST_NAMES_ZH);
+    const first = pick(FIRST_NAMES_ZH[sex] || FIRST_NAMES_ZH.M);
+    return { last, first, full: last + first, full_en: pick(LAST_NAMES_EN) + ' ' + pick(FIRST_NAMES_EN[sex] || FIRST_NAMES_EN.M) };
+  }
+  if (country.id === 'IND') {
+    const caste = pickIndianCaste();
+    const last = pick(LAST_NAMES_INDIA[caste] || LAST_NAMES_INDIA['']);
+    const first = pick(FIRST_NAMES_INDIA[sex] || FIRST_NAMES_INDIA.M);
+    return { last, first, full: first + ' ' + last, full_en: first + ' ' + last, caste };
+  }
+  const last = pick(LAST_NAMES_EN);
+  const first = pick(FIRST_NAMES_EN[sex] || FIRST_NAMES_EN.M);
+  return { last, first, full: last + ' ' + first, full_en: last + ' ' + first };
+}
+function pickIndianCaste() {
+  const r = Math.random();
+  if (r < 0.18) return 'SC';
+  if (r < 0.27) return 'ST';
+  if (r < 0.71) return 'obc';
+  return '';
+}
+
+function newLife(countryCode) {
+  const c = countryById(countryCode);
+  if (!c) return null;
+  const sex = Math.random() < 0.5 ? 'M' : 'F';
+  const name = randomName(c, sex);
+  return {
+    country: countryCode,
+    countryData: c,
+    name,
+    sex,
+    age: 0,
+    year: STATE.era === 'past' ? 1990 : STATE.era === 'future' ? 2080 : 2024,
+    yearOffset: 0,
+    smoker: chance(c.sm / 100 * 0.5),
+    conditions: { diabetes: chance(0.05 * (c.sm / 30)), heart: chance(0.03) },
+    log: [],
+    quotes: {},
+    stats: { education: 0, married: false, partner: null, kids: [], employment: 'none', health: 100, happiness: 70 },
+    died: false, cause: null, deathAge: null,
+  };
+}
+
+function milestoneEvents(life, newAge) {
+  const events = [];
+  if (newAge === 6) events.push({ age: 6, kind: 'milestone', icon: '🎒', text: t('event.school.start') });
+  if (newAge === 12) events.push({ age: 12, kind: 'milestone', icon: '📚', text: t('event.school.middle') });
+  if (newAge === 15 && life.stats.education < 2 && chance(0.4)) {
+    life.stats.education = 1;
+    events.push({ age: 15, kind: 'milestone', icon: '📖', text: t('event.education.low') });
+  }
+  if (newAge === 18) {
+    if (life.stats.education === 4 || (life.stats.education === 3 && chance(0.5))) {
+      events.push({ age: 18, kind: 'milestone', icon: '🎓', text: t('event.school.graduate') });
+    } else if (life.stats.education >= 2) {
+      events.push({ age: 18, kind: 'milestone', icon: '🔨', text: t('event.work.start') });
+    }
+  }
+  if (newAge >= 25 && newAge <= 35 && !life.stats.married && chance(0.15)) {
+    life.stats.married = true;
+    const partnerName = randomName(life.countryData, life.sex === 'M' ? 'F' : 'M');
+    life.stats.partner = { name: partnerName, sex: life.sex === 'M' ? 'F' : 'M' };
+    events.push({ age: newAge, kind: 'milestone', icon: '💍', text: t('event.marriage', partnerName.full || partnerName.full_en || '') });
+  }
+  if (life.stats.married && life.stats.kids.length < 3 && newAge >= 25 && newAge <= 45 && chance(0.12)) {
+    const sex = Math.random() < 0.5 ? 'M' : 'F';
+    life.stats.kids.push({ sex, bornAt: newAge });
+    events.push({ age: newAge, kind: 'milestone', icon: '👶', text: t('event.baby', life.stats.kids.length) });
+  }
+  if (newAge === 60 && life.stats.employment !== 'none') {
+    life.stats.employment = 'retired';
+    events.push({ age: 60, kind: 'milestone', icon: '🏖️', text: t('event.retirement') });
+  }
+  if (newAge >= 18 && newAge <= 65 && chance(0.04)) {
+    const cond = pick(['cancer', 'heart', 'stroke', 'diabetes']);
+    life.conditions[cond === 'cancer' ? 'cancer' : cond === 'heart' ? 'heart' : cond === 'stroke' ? 'heart' : 'diabetes'] = true;
+    events.push({ age: newAge, kind: 'illness', icon: '💊', text: t('event.illness.' + cond) });
+  }
+  if (life.country === 'IND' && life.name.caste === 'SC' && newAge >= 8 && newAge <= 16 && chance(0.08)) {
+    events.push({ age: newAge, kind: 'social', icon: '⚠️', text: t('event.caste.disc') });
+  }
+  if ([5, 15, 30, 50, 70].includes(newAge) && !life.quotes[newAge]) {
+    STATE.pendingDecision = { age: newAge, type: 'pause' };
+  }
+  return events;
+}
+
+function startLife(countryCode) {
+  stopTicker();
+  STATE.life = newLife(countryCode);
+  if (!STATE.life) return;
+  STATE.life.log.push({ age: 0, kind: 'birth', icon: '👶', text: t('event.born_in', '') });
+  logLife(t('log.born_in', localize(STATE.life.countryData).name, ''));
   STATE.paused = false;
   STATE.speed = 1;
-  $('#lifeFlag').textContent = country.flag;
-  $('#lifeName').textContent = country.name;
-  $('#lifeYear').textContent = year;
-  showScreen('life');
-  $('#lifeLog').innerHTML = '';
-  logEvent(0, `在 ${country.name} 出生`, `${STATE.life.name} 來到世界上，是這個家庭的一份子。`);
-  STATE.running = true;
-  setControlsState();
-  runLoop();
+  setView('life');
+  renderAll();
+  startTicker();
 }
-
-/* === 事件系統 === */
-function maybeEvent(age) {
-  const L = STATE.life.countryData;
-  const gender = STATE.life.gender;
-  const life = STATE.life;
-
-  // 死亡判定
-  const lifeExp = gender === 'F' ? L.lifeF : L.lifeM;
-  const pd = pDieThisYear(age, lifeExp);
-  if (Math.random() < pd) {
-    dieNow(age);
+function startTicker() {
+  STATE.ticker = setInterval(() => tick(), STATE.tickMs / STATE.speed);
+}
+function stopTicker() {
+  if (STATE.ticker) clearInterval(STATE.ticker);
+  STATE.ticker = null;
+}
+function setSpeed(sp) {
+  STATE.speed = sp;
+  stopTicker();
+  startTicker();
+  renderSpeedBtns();
+}
+function tick() {
+  if (!STATE.life || STATE.life.died || STATE.paused) return;
+  if (STATE.pendingDecision) return;
+  STATE.life.age += 1;
+  STATE.life.yearOffset += 1;
+  const c = STATE.life.countryData;
+  const sex = STATE.life.sex;
+  if (Math.random() < pDie(STATE.life.age, c, sex)) {
+    dieNow();
     return;
   }
-
-  // 5/15/30/50/70 暫停問題
-  if ([5,15,30,50,70].includes(age) && !life.quotes.find(q => q.age === age)) {
-    pauseForQuestion(age);
-    return;
+  const events = milestoneEvents(STATE.life, STATE.life.age);
+  for (const e of events) {
+    STATE.life.log.push(e);
+    if (e.kind === 'birth' || e.kind === 'milestone') logLife(e.text);
   }
-
-  // 其他事件
-  if (age === 6) logEvent(age, '開始上學', '走進小學的第一天，背著書包，在家門口回頭看了一眼。');
-  if (age === 12) {
-    if (Math.random() < 0.05) logEvent(age, '搬家', '家裡搬到城市的另一邊，換了學校。');
-    else logEvent(age, '升上國中', '進入青春期，功課開始變難，開始有自己的想法。');
-  }
-  if (age === 15 && life.edu.level === 'primary') {
-    if (Math.random() < 0.6) {
-      logEvent(age, '中輟', '家裡需要幫忙，也不太想讀了，決定不再升學。', 'heavy');
-    } else {
-      logEvent(age, '就讀高職', '進入技職學校，學一技之長。');
-    }
-  }
-  if (age === 18) {
-    if (life.edu.level === 'college' && Math.random() < 0.7) {
-      logEvent(age, '上大學', '考上大學，準備離家到另一個城市。');
-    } else if (life.edu.level === 'highschool' && Math.random() < 0.5) {
-      logEvent(age, '開始工作', '高中畢業，先去工作。');
-    } else if (life.edu.level === 'middle') {
-      logEvent(age, '開始工作', '初中念完，先去工作幫忙家計。');
-    }
-    if (life.edu.level === 'college') {
-      life.job = '大學生';
-    } else {
-      life.job = jobFor(L, life.edu, age);
-      life.income = incomeFor(L, life.edu, gender);
-      logEvent(age, '第一份工作', `在 ${life.job} 開始第一份工作，月收入 ${fmtMoney(life.income, getCurrency(), L.pppFactor)}。`);
-    }
-  }
-  if (age === 22 && life.edu.level === 'college') {
-    life.job = jobFor(L, life.edu, age);
-    life.income = incomeFor(L, life.edu, gender);
-    logEvent(age, '大學畢業', `進入職場，第一份正職是 ${life.job}，月收入 ${fmtMoney(life.income, getCurrency(), L.pppFactor)}。`);
-  }
-  if (age === life.marAge && !life.married) {
-    if (Math.random() < 0.85) {
-      const pname = pickName(L, gender === 'M' ? 'F' : 'M');
-      life.partnerName = pname;
-      life.married = true;
-      logEvent(age, '結婚', `與 ${pname} 結婚，開始一起生活。`, 'good');
-    } else {
-      logEvent(age, '選擇不婚', '決定不結婚，把時間留給自己和工作。');
-    }
-  }
-  // 孩子
-  if (life.married && life.kidsBorn < life.kids && age >= 18 && Math.random() < 0.15) {
-    life.kidsBorn++;
-    if (life.kidsBorn === 1) logEvent(age, '第一個孩子', '第一個孩子出生，家裡多了一個人。', 'good');
-    else if (life.kidsBorn === 2) logEvent(age, '第二個孩子', '第二個孩子出生，熱鬧的兩人世界變成三人行。');
-    else if (life.kidsBorn >= 3) logEvent(age, `第 ${life.kidsBorn} 個孩子`, '家裡繼續擴大。');
-  }
-  // 父母過世
-  for (let i = 0; i < 2; i++) {
-    if (life.parentsAlive[i]) {
-      life.parentsAge[i]++;
-      const parentL = (L.lifeM + L.lifeF) / 2 - 25;
-      if (Math.random() < pDieThisYear(life.parentsAge[i], parentL)) {
-        life.parentsAlive[i] = false;
-        const tag = i === 0 ? '父親' : '母親';
-        if (age >= 10) logEvent(age, `${tag}過世`, `${tag}在 ${life.parentsAge[i]} 歲時離開了。`, 'heavy');
-      }
-    }
-  }
-  // 升遷、換工作
-  if (life.job && age >= 25 && Math.random() < 0.08) {
-    const newJob = jobFor(L, life.edu, age);
-    if (newJob !== life.job) {
-      life.job = newJob;
-      life.income = Math.round(life.income * (0.9 + Math.random() * 0.4));
-      logEvent(age, '換工作', `換到 ${newJob}，月收入調整為 ${fmtMoney(life.income, getCurrency(), L.pppFactor)}。`);
-    } else if (Math.random() < 0.5) {
-      life.income = Math.round(life.income * 1.1);
-      logEvent(age, '加薪', `月收入調整為 ${fmtMoney(life.income, getCurrency(), L.pppFactor)}。`);
-    }
-  }
-  // 重大疾病
-  if (age >= 40 && Math.random() < 0.04) {
-    const cond = pick(['癌症', '心臟病', '中風', '糖尿病', '嚴重感染']);
-    logEvent(age, `確診${cond}`, '需要長期治療與休養。', 'heavy');
-    showHeavyModal(`${cond}的診斷是一記重擊。`, '依照這個國家的真實統計，中老年得這種病的機率不算低。治療會是漫長的過程，也會改變接下來的日子。');
-  }
-  if (age >= 50 && Math.random() < 0.03) {
-    logEvent(age, '喪偶', `${life.partnerName || '另一半'} 走了。`, 'heavy');
-    showHeavyModal('失去另一半的日子來了。', '悲傷沒有進度表。如果是你，請記得：你不是一個人，身邊有人在；想找人說話，請打給你信任的人。');
-    life.partnerName = null;
-    life.married = false;
-  }
-  // 心理健康
-  if (age >= 14 && Math.random() < 0.015) {
-    logEvent(age, '心理健康變差', '一段時間情緒低落，不想出門，影響了日常。', 'heavy');
-    showHeavyModal('有時候腦袋會跟我們作對。',
-      '在這個國家，每一年都有人經歷這樣的時刻。找人說話不是軟弱——你身邊的人比你想的更願意聽。如果在台灣或香港，可以打 1925（24小時）、生命線 1995、撒瑪利亞 2389。');
-  }
-  // 退休
-  if (age >= 60 && life.job && Math.random() < 0.4 && !life.milestones.find(m => m.title === '退休')) {
-    life.job = '退休';
-    life.income = Math.round(life.income * 0.4);
-    life.milestones.push({ age, title: '退休' });
-    logEvent(age, '退休', '離開職場，靠積蓄和退休金過日子。', 'good');
-  }
-  // 純隨機生活事件
-  if (Math.random() < 0.07) {
-    const flavor = pick([
-      ['養了一隻貓', '家裡多了一隻毛茸茸的同伴。', 'good'],
-      ['養了一隻狗', '每天多了一個固定散步的理由。', 'good'],
-      ['出國旅行', '第一次（或再一次）踏上陌生的國度。', 'good'],
-      ['開始跑步', '養成了規律運動的習慣。', 'good'],
-      ['學會做一道家鄉菜', '家裡的餐桌多了一個味道。'],
-      ['讀完一本很厚的書', '好幾個晚上沒睡好，但值得。'],
-      ['和朋友大吵一架', '關係變得尷尬，後來有慢慢和好。', 'heavy'],
-      ['家裡的車被撞', '處理保險和維修花了好一陣子。', 'heavy'],
-      ['接到一通久違的電話', '來自老朋友或家人。', 'good'],
-      ['搬到另一個城市', '換了一個生活的環境，重新開始。'],
-    ]);
-    logEvent(age, flavor[0], flavor[1], flavor[2]);
-  }
+  renderLife();
+  const maxAge = c.le * 1.35;
+  if (STATE.life.age > maxAge) dieNow('自然衰老');
 }
-
-function dieNow(age) {
-  const L = STATE.life.countryData;
-  const cause = pickCauseOfDeath(age, L, STATE.life.gender);
+function dieNow(forcedCause) {
+  const c = STATE.life.countryData;
+  const cause = forcedCause || pickCause(c, STATE.life.age, STATE.life.sex);
   STATE.life.died = true;
   STATE.life.cause = cause;
-  STATE.life.deathAge = age;
-  STATE.life.log.push({ age, title: '生命結束', body: causeSentence(cause, age, L), kind: 'heavy' });
-  endLife();
+  STATE.life.deathAge = STATE.life.age;
+  STATE.life.log.push({ age: STATE.life.age, kind: 'death', icon: '🕯️', text: t('log.died_of', cause) });
+  savePastLife(STATE.life);
+  stopTicker();
+  STATE.view = 'end';
+  renderAll();
+}
+function logLife(text) {
+  const el = $('#lifeLog');
+  if (!el) return;
+  const row = document.createElement('div');
+  row.className = 'log-row';
+  if (text.includes('🕯️') || text.includes('過世') || text.includes('died')) row.classList.add('kind-death');
+  row.textContent = text;
+  el.appendChild(row);
+  el.scrollTop = el.scrollHeight;
 }
 
-function causeSentence(cause, age, country) {
-  const label = CAUSE_LABELS[cause] || cause;
-  if (cause === 'perinatal') return `出生後短時間內，因 ${label} 離世。這是這個國家嬰兒最常見的死因之一。`;
-  if (cause === 'infect') return `在 ${age} 歲時因 ${label} 過世。在缺乏完善醫療的地區，傳染病仍是兒童主要死因。`;
-  if (cause === 'maternal') return `在生產過程中因 ${label} 離世。`;
-  if (cause === 'suicide') return `選擇自己結束生命。沉重的痛留給留下的人。如果在低潮，請聯絡身邊的人或求助專線。`;
-  if (cause === 'homicide') return `死於他人暴力。在這個國家每 10 萬人約有 ${country.homicide} 起兇殺案。`;
-  if (cause === 'acc') return `死於 ${label}。`;
-  return `在 ${age} 歲時因 ${label} 過世，這是這個國家最常見的死因之一。`;
-}
-
-/* === 暫停問題 === */
-const QUESTIONS = {
-  5: { q: '如果五歲的你能記得一件事，你會記得什麼？', help: '也許是某個人、某個味道、某個下午。不寫也可以。' },
-  15: { q: '十五歲的你，最在意什麼？', help: '是誰、什麼事、什麼感覺？' },
-  30: { q: '三十歲的你，現在最在乎的是什麼？', help: '跟十五歲時比起來，變了嗎？' },
-  50: { q: '五十歲回頭看，你怎麼看你走過的路？', help: '有什麼留下，有什麼錯過？' },
-  70: { q: '你這一生最想被人記住什麼？', help: '可以是一個畫面、一句話、一個堅持。' },
-};
-function pauseForQuestion(age) {
-  STATE.paused = true;
-  setControlsState();
-  const q = QUESTIONS[age];
-  $('#modalMeta').textContent = `生命走到 ${age} 歲`;
-  $('#modalQ').textContent = q.q;
-  $('#modalHelp').textContent = q.help;
-  $('#modalInput').value = '';
-  $('#modal').hidden = false;
-  STATE._pendingAge = age;
-}
-function submitQuestion() {
-  const age = STATE._pendingAge;
-  const text = $('#modalInput').value.trim();
-  if (text) {
-    STATE.life.quotes.push({ age, text });
-  }
-  $('#modal').hidden = true;
-  STATE.paused = false;
-  setControlsState();
-}
-function skipQuestion() {
-  $('#modal').hidden = true;
-  STATE.paused = false;
-  setControlsState();
-}
-function showHeavyModal(title, body) {
-  $('#heavyTitle').textContent = title;
-  $('#heavyBody').textContent = body;
-  $('#heavyModal').hidden = false;
-  STATE.paused = true;
-  setControlsState();
-}
-function closeHeavyModal() {
-  $('#heavyModal').hidden = true;
-  STATE.paused = false;
-  setControlsState();
-}
-
-/* === UI: 側欄 === */
-function updateSide() {
-  const L = STATE.life.countryData;
-  const life = STATE.life;
-  $('#sideFamily').innerHTML = `
-    <div class="kv"><span>性別</span><b>${life.gender === 'M' ? '男' : '女'}</b></div>
-    <div class="kv"><span>婚姻</span><b>${life.married ? `與 ${life.partnerName}` : '單身'}</b></div>
-    <div class="kv"><span>孩子</span><b>${life.kidsBorn} / ${life.kids}</b></div>
-    <div class="kv"><span>父母</span><b>${life.parentsAlive.filter(Boolean).length} 人在世</b></div>
-  `;
-  $('#sideHealth').innerHTML = `
-    <div class="kv"><span>健康</span><b>${Math.round(life.health)} / 100</b></div>
-    <div class="kv"><span>心理</span><b>${Math.round(life.mental)} / 100</b></div>
-  `;
-  $('#sideEdu').innerHTML = `
-    <div class="kv"><span>最高學歷</span><b>${life.edu.label}</b></div>
-    <div class="kv"><span>受教育年數</span><b>${life.edu.years} 年</b></div>
-  `;
-  $('#sideWork').innerHTML = `
-    <div class="kv"><span>工作</span><b>${life.job || '—'}</b></div>
-    <div class="kv"><span>月收入</span><b>${life.income ? fmtMoney(life.income, getCurrency(), L.pppFactor) : '—'}</b></div>
-  `;
-  $('#sideRel').innerHTML = `
-    <div class="kv"><span>移居</span><b>${life.moves} 次</b></div>
-  `;
-}
-function getCurrency() {
-  if (STATE.settings.currency !== 'auto') return STATE.settings.currency;
-  return STATE.life.countryData.currencyCode;
-}
-
-/* === 紀錄 === */
-function logEvent(age, title, body, kind) {
-  const row = { age, title, body, kind };
-  STATE.life.log.push(row);
-  renderLogRow(row, true);
-}
-function renderLogRow(row, prepend=false) {
-  const div = document.createElement('div');
-  div.className = 'log-row';
-  if (row.kind) div.classList.add(row.kind);
-  div.innerHTML = `
-    <div class="log-title"><span class="log-age">${row.age}</span>${row.title}</div>
-    <div class="log-body">${row.body}</div>
-  `;
-  const log = $('#lifeLog');
-  if (prepend) log.insertBefore(div, log.firstChild);
-  else log.appendChild(div);
-  log.scrollTop = 0;
-}
-
-/* === 主迴圈 === */
-async function runLoop() {
-  while (STATE.running && !STATE.life.died) {
-    if (STATE.paused) { await sleep(200); continue; }
-    STATE.life.age += 1;
-    const newYear = STATE.life.year + 1;
-    STATE.life.year = newYear;
-    $('#lifeAge').textContent = `${STATE.life.age} 歲`;
-    $('#lifeYear').textContent = newYear;
-    const L = STATE.life.countryData;
-    const lifeExp = STATE.life.gender === 'F' ? L.lifeF : L.lifeM;
-    $('#lifeExpect').textContent = lifeExp.toFixed(1);
-    const ratio = Math.min(1, STATE.life.age / lifeExp);
-    $('#lifeBarFill').style.width = `${(ratio * 100).toFixed(1)}%`;
-    maybeEvent(STATE.life.age);
-    updateSide();
-    if (STATE.life.died) break;
-    const base = STATE.life.paceMs;
-    const interval = base / STATE.speed;
-    await sleep(interval);
-  }
-  if (STATE.life.died) {
-    await sleep(1200);
-    endLife();
-  }
-}
-
-function setControlsState() {
-  $('#btnPause').textContent = STATE.paused ? '▶' : '⏸';
-  $('#btnFaster').textContent = STATE.speed >= 4 ? '«' : STATE.speed >= 2 ? '»' : '»';
-}
-
-function endLife() {
-  STATE.running = false;
-  const life = STATE.life;
-  const causeLabel = CAUSE_LABELS[life.cause] || life.cause || '—';
-  $('#memorialSub').textContent = `這是 ${life.name} 的一生，從 ${life.countryData.name} 的 0 歲走到 ${life.deathAge} 歲。`;
-  $('#mPlace').textContent = `${life.countryData.flag} ${life.countryData.name}`;
-  $('#mYears').textContent = `${life.year} → ${life.year + life.deathAge}`;
-  $('#mAge').textContent = `${life.deathAge} 歲`;
-  $('#mCause').textContent = causeLabel;
-  $('#mEdu').textContent = `${life.edu.label}（${life.edu.years} 年）`;
-  $('#mWork').textContent = life.job || '無正式工作';
-  $('#mPartner').textContent = life.partnerName || '—';
-  $('#mKids').textContent = `${life.kidsBorn} 個`;
-  $('#mMove').textContent = `${life.moves} 次`;
-  const q = $('#mQuotes');
-  q.innerHTML = '';
-  for (const qq of life.quotes) {
-    const d = document.createElement('div');
-    d.className = 'memorial-quote';
-    d.innerHTML = `<span class="q-age">${qq.age} 歲</span>${qq.text}`;
-    q.appendChild(d);
-  }
-  if (life.quotes.length === 0) {
-    q.innerHTML = '<div class="memorial-quote" style="border-color:#444">這一段人生沒有留下文字。沉默也是一段人生的一部分。</div>';
-  }
-  showScreen('memorial');
-  for (const row of life.log.slice(-3)) {
-    if (!$('#lifeLog').innerHTML.includes(row.title)) renderLogRow(row);
-  }
-  STATE.memorial = life;
-  saveMemorial(life);
-}
-
-function saveMemorial(life) {
+function savePastLife(life) {
   try {
-    const arr = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
-    arr.unshift({ name: life.name, country: life.country, age: life.deathAge, cause: life.cause, year: life.year, ts: Date.now() });
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(arr.slice(0, 30)));
+    const arr = JSON.parse(localStorage.getItem(STORAGE_KEY + ':past') || '[]');
+    const rec = { ts: Date.now(), country: life.country, name: life.name.full || life.name.full_en || '', age: life.deathAge || life.age, cause: life.cause };
+    arr.unshift(rec);
+    localStorage.setItem(STORAGE_KEY + ':past', JSON.stringify(arr.slice(0, 50)));
   } catch (e) {}
 }
-
-function showScreen(name) {
-  STATE.screen = name;
-  $$('.screen').forEach(s => s.classList.remove('active'));
-  if (name === 'home') $('#screenHome').classList.add('active');
-  if (name === 'life') $('#screenLife').classList.add('active');
-  if (name === 'memorial') $('#screenMemorial').classList.add('active');
-  window.scrollTo({ top: 0, behavior: 'instant' });
+function loadPastLives() {
+  try { return JSON.parse(localStorage.getItem(STORAGE_KEY + ':past') || '[]'); }
+  catch (e) { return []; }
 }
 
-/* === restart === */
-function restartLife() {
-  STATE.running = false;
-  STATE.life = null;
-  STATE.memorial = null;
-  showScreen('home');
+function setView(v) {
+  STATE.view = v;
+  $$('.view').forEach(el => el.classList.remove('active'));
+  $$('.navbtn').forEach(el => el.classList.remove('active'));
+  const vEl = $('#view-' + v);
+  if (vEl) vEl.classList.add('active');
+  const nEl = $(`.navbtn[data-view="${v}"]`);
+  if (nEl) nEl.classList.add('active');
+  renderView(v);
 }
-function newCountry() {
-  STATE.selectedCountry = null;
-  $$('.country-card').forEach(c => c.classList.remove('selected'));
-  restartLife();
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-}
-function copyMemorial() {
-  if (!STATE.memorial) return;
-  const life = STATE.memorial;
-  const L = life.countryData;
-  const txt = [
-    `${life.name} 的一生 — ${L.flag} ${L.name}`,
-    `${life.year} 出生，${life.deathAge} 歲離開。`,
-    `死因：${CAUSE_LABELS[life.cause] || life.cause}`,
-    `教育：${life.edu.label}`,
-    `工作：${life.job || '—'}`,
-    `伴侶：${life.partnerName || '—'}`,
-    `孩子：${life.kidsBorn}`,
-    ``,
-    ...life.quotes.map(q => `${q.age} 歲：${q.text}`),
-  ].join('\n');
-  navigator.clipboard.writeText(txt).then(() => {
-    $('#btnCopy').textContent = '已複製 ✓';
-    setTimeout(() => { $('#btnCopy').textContent = '複製這一段'; }, 1500);
-  }).catch(() => alert('複製失敗，請手動選取。'));
+function renderView(v) {
+  if (v === 'intro') renderIntro();
+  else if (v === 'life') renderLife();
+  else if (v === 'end') renderEnd();
+  else if (v === 'shelf') renderShelf();
 }
 
-/* === wire === */
-function wire() {
-  $('#btnBorn').addEventListener('click', startLife);
-  $('#btnPause').addEventListener('click', () => { STATE.paused = !STATE.paused; setControlsState(); });
-  $('#btnFaster').addEventListener('click', () => {
-    STATE.speed = STATE.speed >= 4 ? 1 : STATE.speed * 2;
-    setControlsState();
-  });
-  $('#btnRestart').addEventListener('click', () => {
-    if (confirm('重新開始會放棄現在這段人生，確定？')) restartLife();
-  });
-  $('#btnSettings').addEventListener('click', () => { $('#settingsModal').hidden = false; });
-  $('#settingsClose').addEventListener('click', () => { $('#settingsModal').hidden = true; });
-  $('#setMusic').addEventListener('change', e => { STATE.settings.music = e.target.checked; });
-  $('#setAuto').addEventListener('change', e => { STATE.settings.auto = e.target.checked; });
-  $('#setCurrency').addEventListener('change', e => { STATE.settings.currency = e.target.value; updateSide(); });
-  $('#modalSubmit').addEventListener('click', submitQuestion);
-  $('#modalSkip').addEventListener('click', skipQuestion);
-  $('#heavyClose').addEventListener('click', closeHeavyModal);
-  $('#btnAgain').addEventListener('click', () => { STATE.life = null; showScreen('home'); });
-  $('#btnNewCountry').addEventListener('click', newCountry);
-  $('#btnCopy').addEventListener('click', copyMemorial);
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') {
-      $('#modal').hidden = true;
-      $('#heavyModal').hidden = true;
-      $('#settingsModal').hidden = true;
+function renderAll() {
+  document.documentElement.lang = LANG;
+  document.title = t('title');
+  $$('[data-t]').forEach(el => { el.textContent = t(el.dataset.t); });
+  $$('[data-t-html]').forEach(el => { el.innerHTML = t(el.dataset.tHtml); });
+  if (STATE.view === 'intro') renderIntro();
+  else if (STATE.view === 'life') renderLife();
+  else if (STATE.view === 'end') renderEnd();
+  else if (STATE.view === 'shelf') renderShelf();
+  renderSpeedBtns();
+  updateLangSwitcher();
+}
+
+function renderIntro() {
+  if (!STATE.selectedCountry) STATE.selectedCountry = 'TWN';
+  const sel = $('#countrySelect');
+  if (sel && sel.children.length !== COUNTRIES.length) {
+    sel.innerHTML = '';
+    for (const c of COUNTRIES) {
+      const loc = localize(c);
+      const opt = document.createElement('option');
+      opt.value = c.id;
+      opt.textContent = `${c.flag} ${loc.name}`;
+      if (c.id === STATE.selectedCountry) opt.selected = true;
+      sel.appendChild(opt);
     }
-  });
-  wireSegs();
+  }
+  const c = countryById(STATE.selectedCountry);
+  if (c) {
+    const loc = localize(c);
+    $('#introCountryRegion').textContent = loc.region_name;
+    $('#introCountryLe').textContent = c.le + ' ' + t('unit.years');
+    $('#introCountryIm').textContent = c.im;
+    $('#introCountryU5').textContent = c.u5;
+    $('#introCountryPpp').textContent = '$' + c.ppp.toLocaleString();
+  }
+}
+
+function renderLife() {
+  if (!STATE.life) return;
+  const c = STATE.life.countryData;
+  const loc = localize(c);
+  $('#lifeFlag').textContent = c.flag;
+  $('#lifeName').textContent = loc.name;
+  $('#lifeYear').textContent = STATE.life.year + STATE.life.yearOffset;
+  $('#lifeAge').textContent = STATE.life.age + ' ' + t('unit.years');
+  $('#lifeName2').textContent = (STATE.life.name.full || STATE.life.name.full_en) || '—';
+  $('#lifeLe').textContent = c.le;
+  $('#lifeSex').textContent = STATE.life.sex === 'M' ? t('sex.male') : t('sex.female');
+  $('#lifeEduc').textContent = ['—', t('edu.0'), t('edu.1'), t('edu.2'), t('edu.3')][STATE.life.stats.education + 1];
+  $('#lifeJob').textContent = jobLabel(STATE.life.stats.employment);
+  $('#lifePartner').textContent = STATE.life.stats.married ? (STATE.life.stats.partner.name.full || STATE.life.stats.partner.name.full_en || t('partner.yes')) : t('partner.no');
+  $('#lifeKids').textContent = STATE.life.stats.kids.length;
+  const pct = Math.min(100, STATE.life.age / c.le * 100);
+  $('#lifeBar').style.width = pct + '%';
+  const portrait = $('#lifePortrait');
+  if (portrait) {
+    portrait.className = 'cert-figure';
+    if (STATE.life.age < 5) portrait.textContent = '👶';
+    else if (STATE.life.age < 18) portrait.textContent = STATE.life.sex === 'M' ? '👦' : '👧';
+    else if (STATE.life.age < 60) portrait.textContent = STATE.life.sex === 'M' ? '🧑' : '👩';
+    else portrait.textContent = STATE.life.sex === 'M' ? '👴' : '👵';
+  }
+  const cInfo = $('#lifeCountryInfo');
+  if (cInfo) cInfo.textContent = `${c.flag} ${loc.name} · ${loc.region_name}`;
+}
+
+function jobLabel(j) {
+  return ({none: t('job.none'), student: t('job.student'), employed: t('job.employed'), university: t('job.university'), retired: t('job.retired')})[j] || t('job.none');
+}
+
+function renderEnd() {
+  if (!STATE.life) return;
+  const life = STATE.life;
+  const c = life.countryData;
+  const loc = localize(c);
+  $('#endCertTitle').textContent = t('end.cert_title');
+  $('#endCountry').textContent = c.flag + ' ' + loc.name;
+  $('#endBorn').textContent = life.year + '/' + (life.sex === 'M' ? t('sex.male') : t('sex.female'));
+  $('#endAge').textContent = life.deathAge + ' ' + t('unit.years');
+  $('#endCause').textContent = life.cause;
+  $('#endName').textContent = life.name.full || life.name.full_en || '—';
+  $('#endPortrait').textContent = portraitFor(life.age, life.sex);
+  $('#endLe').textContent = t('end.lifespan').replace('{age}', life.deathAge).replace('{le}', c.le);
+  $('#endYears').textContent = life.year + ' – ' + (life.year + life.deathAge);
+  const past = loadPastLives();
+  $('#endPastCount').textContent = past.length;
+  const cert = $('#certCanvas');
+  if (cert) cert.innerHTML = drawGuilloche(680, 420);
+}
+
+function drawGuilloche(w, h) {
+  const cx = w / 2, cy = h / 2;
+  let svg = `<svg width="${w}" height="${h}" xmlns="http://www.w3.org/2000/svg" style="position:absolute;top:0;left:0;pointer-events:none;opacity:0.08;">`;
+  for (let r = 30; r < w; r += 18) svg += `<ellipse cx="${cx}" cy="${cy}" rx="${r}" ry="${r*0.6}" fill="none" stroke="#8C1D3C" stroke-width="0.5"/>`;
+  for (let r = 24; r < w; r += 22) svg += `<ellipse cx="${cx}" cy="${cy}" rx="${r}" ry="${r*0.5}" fill="none" stroke="#0F6E68" stroke-width="0.4"/>`;
+  for (let i = 0; i < 8; i++) {
+    const a = i * Math.PI / 4;
+    const x = cx + Math.cos(a) * 200, y = cy + Math.sin(a) * 100;
+    svg += `<text x="${x}" y="${y}" text-anchor="middle" font-size="10" fill="#8C1D3C" transform="rotate(${a*180/Math.PI} ${x} ${y})">8 億 分 之 1</text>`;
+  }
+  svg += `</svg>`;
+  return svg;
+}
+
+function portraitFor(age, sex) {
+  if (age < 5) return '👶🏻';
+  if (age < 18) return sex === 'M' ? '👦' : '👧';
+  if (age < 60) return sex === 'M' ? '🧑' : '👩';
+  return sex === 'M' ? '👴' : '👵';
+}
+
+function renderShelf() {
+  const shelf = $('#shelfGrid');
+  if (!shelf) return;
+  const lives = loadPastLives();
+  shelf.innerHTML = '';
+  if (lives.length === 0) { shelf.innerHTML = `<div class="shelf-empty">${t('shelf.empty')}</div>`; return; }
+  for (const life of lives) {
+    const c = countryById(life.country);
+    const flag = c ? c.flag : '🏳️';
+    const book = document.createElement('div');
+    book.className = 'shelf-book';
+    book.innerHTML = `<div class="shelf-cover"><div class="shelf-spine"></div><div class="shelf-flag">${flag}</div><div class="shelf-info"><div class="shelf-name">${life.name || '—'}</div><div class="shelf-meta">${life.age} 歲</div></div></div>`;
+    book.title = `${life.name} · ${life.cause}`;
+    book.addEventListener('click', () => { alert(`${life.name}\n${life.age} 歲 · ${life.cause}`); });
+    shelf.appendChild(book);
+  }
+}
+
+function renderSpeedBtns() {
+  $$('.speed-btn').forEach(b => { b.classList.toggle('active', +b.dataset.speed === STATE.speed); });
+}
+function updateLangSwitcher() { const sel = $('#langSwitcher'); if (sel) sel.value = LANG; }
+
+function wire() {
+  $$('.navbtn').forEach(b => b.addEventListener('click', () => setView(b.dataset.view)));
+  const ls = $('#langSwitcher');
+  if (ls) ls.addEventListener('change', e => setLang(e.target.value));
+  const sel = $('#countrySelect');
+  if (sel) sel.addEventListener('change', e => { STATE.selectedCountry = e.target.value; renderIntro(); });
+  $$('[data-birth-mode]').forEach(b => b.addEventListener('click', () => {
+    $$('[data-birth-mode]').forEach(x => x.classList.remove('active'));
+    b.classList.add('active');
+    STATE.birthMode = b.dataset.birthMode;
+  }));
+  $$('[data-era]').forEach(b => b.addEventListener('click', () => {
+    $$('[data-era]').forEach(x => x.classList.remove('active'));
+    b.classList.add('active');
+    STATE.era = b.dataset.era;
+  }));
+  const start = $('#btnStart');
+  if (start) start.addEventListener('click', () => { const c = chooseCountry(STATE.birthMode); if (c) startLife(c.id); });
+  const startSelected = $('#btnStartSelected');
+  if (startSelected) startSelected.addEventListener('click', () => { if (STATE.selectedCountry) startLife(STATE.selectedCountry); });
+  const pauseBtn = $('#btnPause');
+  if (pauseBtn) pauseBtn.addEventListener('click', () => { STATE.paused = !STATE.paused; pauseBtn.textContent = STATE.paused ? '▶' : '⏸'; });
+  $$('.speed-btn').forEach(b => b.addEventListener('click', () => setSpeed(+b.dataset.speed)));
+  const dieBtn = $('#btnDieNow');
+  if (dieBtn) dieBtn.addEventListener('click', () => { if (STATE.life && !STATE.life.died) dieNow('自行結束'); });
+  const restart = $('#btnRestart');
+  if (restart) restart.addEventListener('click', () => setView('intro'));
+  const newLife = $('#btnNewLife');
+  if (newLife) newLife.addEventListener('click', () => { const c = chooseCountry(STATE.birthMode); if (c) startLife(c.id); });
+  document.addEventListener('keydown', e => { if (e.key === ' ') { if (STATE.view === 'life') $('#btnPause')?.click(); e.preventDefault(); } });
 }
 
 async function init() {
-  const res = await fetch('data/countries.json');
-  COUNTRIES = await res.json();
-  COUNTRY_LIST = Object.entries(COUNTRIES).map(([code, c]) => ({ code, ...c }));
-  renderCountries();
+  await loadData();
+  document.documentElement.lang = LANG;
   wire();
+  renderAll();
 }
 init();
