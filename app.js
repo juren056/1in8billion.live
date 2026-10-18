@@ -29,6 +29,7 @@ const STATE = {
   thoughtsEnabled: true, // v5.10：✎ 寫下想法 啟用（5/15/30/50/70 暫停時彈出 modal）
   pastLives: [],
   modal: null,
+  eduMode: false,      // v5.19：教學版（?edu=1）— 過濾沉重事件、隱藏訃聞/書架
 };
 
 // ==== i18n ====
@@ -84,9 +85,15 @@ function localize(c) {
 
 // ==== 出生選擇 ====
 function chooseCountry(mode) {
-  // mode: 'baby' 依嬰兒出生人口權重；'all' 依現存人口權重
+  // mode:
+  //   'baby' 依嬰兒出生人數權重（c.births — 每國每年新生兒數）
+  //   'all'  依現存人口權重（c.pop — 80 億人口的當下分布）
   if (!COUNTRIES.length) return null;
-  const weights = COUNTRIES.map(c => Math.max(1, c.births || c.pop || 1));
+  const m = (mode === 'all') ? 'all' : 'baby';
+  const weights = COUNTRIES.map(c => {
+    if (m === 'all') return Math.max(1, c.pop || 1);
+    return Math.max(1, c.births || c.pop || 1);
+  });
   const total = weights.reduce((a, b) => a + b, 0);
   let r = Math.random() * total;
   for (let i = 0; i < COUNTRIES.length; i++) {
@@ -94,6 +101,146 @@ function chooseCountry(mode) {
     if (r <= 0) return COUNTRIES[i];
   }
   return COUNTRIES[0];
+}
+
+/* ==== v5.19：依出生人數加權的機率分布（top N） ==== */
+function countryProbabilities(mode, n) {
+  // 回傳 [{c, weight, pct, cumPct}]，c=country, pct=該國佔比(%), 已排序降冪
+  const m = (mode === 'all') ? 'all' : 'baby';
+  const rows = COUNTRIES.map(c => {
+    const w = (m === 'all')
+      ? Math.max(1, c.pop || 1)
+      : Math.max(1, c.births || c.pop || 1);
+    return { c, weight: w };
+  });
+  const total = rows.reduce((s, r) => s + r.weight, 0);
+  rows.forEach(r => r.pct = r.weight / total * 100);
+  rows.sort((a, b) => b.weight - a.weight);
+  let cum = 0;
+  rows.forEach(r => { cum += r.pct; r.cumPct = cum; });
+  return n ? rows.slice(0, n) : rows;
+}
+
+/* ==== v5.19：今日主題 ==== */
+const THEMES_ZH = ['家人','未來','記憶','離別','重逢','家鄉','城市','海','山','雨','雪','風','黎明','黃昏','路','名字','時光','童年','母親','父親','兄弟','姊妹','朋友','敵人','鄰居','陌生人','夢','醒','工作','休息','旅行','停留','選擇','機會','失敗','成功','病','老','死','生','信仰','希望','失望','愛','恨','孤獨','陪伴'];
+const THEMES_EN = ['family','future','memory','farewell','homecoming','hometown','city','sea','mountain','rain','snow','wind','dawn','dusk','road','name','time','childhood','mother','father','brother','sister','friend','stranger','neighbor','dream','work','rest','travel','stay','choice','chance','failure','success','sickness','age','death','birth','faith','hope','love','loneliness','company'];
+function getDailyTheme() {
+  // 跨 session 同日保留；不同日期重新抽
+  const today = new Date();
+  const dayKey = today.toISOString().slice(0, 10); // YYYY-MM-DD
+  const cacheKey = STORAGE_KEY + ':theme:' + dayKey;
+  const cached = localStorage.getItem(cacheKey);
+  if (cached) {
+    try {
+      const obj = JSON.parse(cached);
+      return { word: obj.word, dayKey, en: obj.en || THEMES_EN[obj.idx] || '' };
+    } catch (e) { /* fallthrough */ }
+  }
+  // 用日期當 hash seed（保證同日所有人都抽到同一個，但讓每天不同）
+  const seed = hashStringToInt(dayKey);
+  const idx = seed % THEMES_ZH.length;
+  const word = LANG === 'en' ? (THEMES_EN[idx] || THEMES_ZH[idx]) : (THEMES_ZH[idx]);
+  const en = THEMES_EN[idx] || THEMES_ZH[idx];
+  localStorage.setItem(cacheKey, JSON.stringify({ word, idx, en }));
+  // 清掉過期主題（保留最近 7 天）
+  for (let i = 0; i < localStorage.length; i++) {
+    const k = localStorage.key(i);
+    if (k && k.startsWith(STORAGE_KEY + ':theme:')) {
+      const day = k.split(':').pop();
+      if (day !== dayKey && Date.now() - new Date(day).getTime() > 7 * 86400 * 1000) {
+        localStorage.removeItem(k);
+      }
+    }
+  }
+  return { word, dayKey, en };
+}
+function hashStringToInt(s) {
+  let h = 2166136261 >>> 0;
+  for (let i = 0; i < s.length; i++) {
+    h ^= s.charCodeAt(i);
+    h = Math.imul(h, 16777619);
+  }
+  return h >>> 0;
+}
+
+/* ==== v5.19：依瀏覽器語言/時區推測「你實際所在的國家」 ==== */
+function guessUserCountry() {
+  // 1) localStorage 顯式設定（若使用者已選過國家）
+  const sel = localStorage.getItem(STORAGE_KEY + ':country');
+  if (sel) {
+    const c = countryById(sel);
+    if (c) return c;
+  }
+  // 2) Intl locale → 國家
+  try {
+    const locale = Intl.DateTimeFormat().resolvedOptions().locale || '';
+    const region = (locale.split('-').pop() || '').toUpperCase();
+    if (region && region.length === 2) {
+      const c = countryById(region);
+      if (c) return c;
+    }
+  } catch (e) { /* ignore */ }
+  // 3) navigator.language → 語言對應主要國家（單一國家）
+  const lang = (navigator.language || 'en').toLowerCase();
+  const langToCountry = {
+    'zh-tw': 'TWN', 'zh-hk': 'HKG', 'zh-cn': 'CHN', 'zh': 'TWN',
+    'en-us': 'USA', 'en-gb': 'GBR', 'en-ca': 'CAN', 'en-au': 'AUS',
+    'ja': 'JPN', 'ja-jp': 'JPN',
+    'ko': 'KOR', 'ko-kr': 'KOR',
+    'vi': 'VNM', 'vi-vn': 'VNM',
+    'fr': 'FRA', 'fr-fr': 'FRA',
+    'th': 'THA', 'th-th': 'THA',
+    'es': 'ESP', 'es-es': 'ESP', 'es-mx': 'MEX',
+    'pt': 'BRA', 'pt-br': 'BRA',
+    'de': 'DEU', 'de-de': 'DEU',
+    'ru': 'RUS', 'ru-ru': 'RUS',
+    'ar': 'SAU', 'ar-sa': 'SAU',
+  };
+  let key = lang.toLowerCase();
+  if (langToCountry[key]) {
+    const c = countryById(langToCountry[key]);
+    if (c) return c;
+  }
+  // 部分匹配（zh-* → TWN、en-* → USA、es-* → ESP）
+  const base = lang.split('-')[0];
+  const fallback = {
+    'zh': 'TWN', 'en': 'USA', 'ja': 'JPN', 'ko': 'KOR',
+    'vi': 'VNM', 'fr': 'FRA', 'th': 'THA', 'es': 'ESP',
+    'pt': 'BRA', 'de': 'DEU', 'ru': 'RUS', 'ar': 'SAU',
+  };
+  if (fallback[base]) {
+    const c = countryById(fallback[base]);
+    if (c) return c;
+  }
+  return countryById('USA') || COUNTRIES[0];
+}
+
+/* ==== v5.19：即時計數器 — 從頁面載入算起的全球出生/死亡數 ==== */
+// 全球每秒約出生 4.3 人、死亡 1.8 人（依 UN WPP 2024 估算）
+const REAL_BIRTHS_PER_SEC = 4.3;
+const REAL_DEATHS_PER_SEC = 1.8;
+let REALTIME_PAGE_LOAD = Date.now();
+let REALTIME_INTERVAL = null;
+function startRealtimeCounters() {
+  if (REALTIME_INTERVAL) return;
+  REALTIME_PAGE_LOAD = Date.now();
+  REALTIME_INTERVAL = setInterval(updateRealtimeCounters, 1000);
+  updateRealtimeCounters();
+}
+function stopRealtimeCounters() {
+  if (REALTIME_INTERVAL) clearInterval(REALTIME_INTERVAL);
+  REALTIME_INTERVAL = null;
+}
+function updateRealtimeCounters() {
+  const elapsedSec = Math.max(0, (Date.now() - REALTIME_PAGE_LOAD) / 1000);
+  // 加 ±5% 隨機讓數字不會太死板（用 seeded RNG 從載入秒數當種子）
+  const jitter = 0.95 + Math.random() * 0.10;
+  const born = Math.floor(elapsedSec * REAL_BIRTHS_PER_SEC * jitter);
+  const died = Math.floor(elapsedSec * REAL_DEATHS_PER_SEC * jitter);
+  const bornEl = $('#counterBorn');
+  const diedEl = $('#counterDied');
+  if (bornEl) bornEl.textContent = born.toLocaleString();
+  if (diedEl) diedEl.textContent = died.toLocaleString();
 }
 
 // ==== 生命表 (Gompertz) ====
@@ -366,7 +513,8 @@ function newLife(countryCode) {
 /* ==== v5.8 新增：宗教 + 父母工作池 ==== */
 function pickReligion(c) {
   const r = c.region || 'eap';
-  const map = {
+  const isEn = LANG === 'en';
+  const mapZh = {
     'eap': ['佛教', '民間信仰', '基督新教', '天主教', '無信仰'],
     'sa': ['印度教', '伊斯蘭', '錫克教', '基督教', '佛教'],
     'eca': ['基督新教', '天主教', '東正教', '伊斯蘭', '無信仰'],
@@ -375,19 +523,37 @@ function pickReligion(c) {
     'lac': ['天主教', '基督新教', '無信仰'],
     'na': ['基督新教', '天主教', '無信仰'],
   };
-  return pick(map[r] || ['無信仰']);
+  const mapEn = {
+    'eap': ['Buddhist', 'Folk religion', 'Protestant', 'Catholic', 'Non-religious'],
+    'sa': ['Hindu', 'Muslim', 'Sikh', 'Christian', 'Buddhist'],
+    'eca': ['Protestant', 'Catholic', 'Orthodox', 'Muslim', 'Non-religious'],
+    'mena': ['Muslim', 'Christian', 'Druze'],
+    'ssa': ['Protestant', 'Catholic', 'Muslim', 'African traditional'],
+    'lac': ['Catholic', 'Protestant', 'Non-religious'],
+    'na': ['Protestant', 'Catholic', 'Non-religious'],
+  };
+  const m = isEn ? mapEn : mapZh;
+  return pick(m[r] || (isEn ? ['Non-religious'] : ['無信仰']));
 }
 function pickParentJob(c, sex) {
   const r = c.region || 'eap';
-  const mJobs = ['農夫', '工人', '計程車司機', '建築工', '漁民', '牧民', '汽車維修技師', '技工', '小販', '搬運工', '保全'];
-  const fJobs = ['農夫', '工人', '教師', '護理師', '家庭主婦', '小販', '裁縫', '清潔工', '幫傭', '小吃店老闆'];
-  const urbanJobs = sex === 'M' ? ['工程師', '教師', '銀行員', '銷售員', '公務員'] : ['教師', '護理師', '銷售員', '公務員', '服務業'];
+  const isEn = LANG === 'en';
+  const ruralMZh = ['農夫', '工人', '計程車司機', '建築工', '漁民', '牧民', '汽車維修技師', '技工', '小販', '搬運工', '保全'];
+  const urbanMZh = ['工程師', '教師', '銀行員', '銷售員', '公務員'];
+  const urbanFZh = ['教師', '護理師', '銷售員', '公務員', '服務業'];
+  const ruralMEn = ['Farmer', 'Laborer', 'Taxi driver', 'Construction worker', 'Fisherman', 'Herder', 'Auto mechanic', 'Technician', 'Vendor', 'Porter', 'Security guard'];
+  const urbanMEn = ['Engineer', 'Teacher', 'Bank clerk', 'Sales clerk', 'Civil servant'];
+  const urbanFEn = ['Teacher', 'Nurse', 'Sales clerk', 'Civil servant', 'Service worker'];
   // 55% 鄉村 → 農業；45% 城市 → 多元工作
   const isRural = Math.random() < 0.55;
-  return isRural ? pick(mJobs) : pick(urbanJobs);
+  if (isEn) {
+    return isRural ? pick(ruralMEn) : pick(sex === 'M' ? urbanMEn : urbanFEn);
+  }
+  return isRural ? pick(ruralMZh) : pick(sex === 'M' ? urbanMZh : urbanFZh);
 }
 
 /* ==== v5.8 新增：4 位同伴（同時出生的隨機人物） ==== */
+/* v5.19：每位同伴補上「家庭背景」+「出生地區」 */
 function generateCompanions(selfCountry, n) {
   const allCountries = ['USA','CHN','IND','JPN','KOR','BRA','RUS','DEU','GBR','FRA','MEX','IDN','TUR','SAU','ITA','EGY','PAK','BGD','NGA','VNM','PHL','ETH','IRN','COD','MMR','THA','ZAF','TZA','KEN','UKR','POL','CAN','AUS','ARG','KAZ','NPL','CUB'];
   const companions = [];
@@ -397,6 +563,9 @@ function generateCompanions(selfCountry, n) {
     const c = countryById(cCode);
     const sex = Math.random() < 0.5 ? 'M' : 'F';
     const nm = randomName(c, sex);
+    // v5.19：父母職業依同伴國家脈絡
+    const fatherJob = pickParentJob(c, 'M');
+    const motherJob = pickParentJob(c, 'F');
     companions.push({
       id: 'comp_' + i,
       name: nm.full || nm.full_en,
@@ -408,9 +577,52 @@ function generateCompanions(selfCountry, n) {
       lifeExpectancy: c.le,
       // 家境也分位
       incomeQuartile: 1 + Math.floor(Math.random()*4),
+      // v5.19 新增：家庭背景 + 出生地類型
+      parentJobFather: fatherJob,
+      parentJobMother: motherJob,
+      birthPlaceType: Math.random() < 0.55 ? 'rural' : 'urban',
     });
   }
   return companions;
+}
+
+/* v5.19：根據瀏覽器語言推測「你現在若出生」的真實國家 */
+function guessBirthCountry() {
+  const nav = (navigator.language || 'en').toLowerCase();
+  // 依語系 → 推測人口最多的國家
+  if (nav.startsWith('zh-tw') || nav === 'zh-hant' || nav === 'zh-hk' || nav === 'zh-mo') return countryById('TWN');
+  if (nav.startsWith('zh')) return countryById('CHN');
+  if (nav.startsWith('ja')) return countryById('JPN');
+  if (nav.startsWith('ko')) return countryById('KOR');
+  if (nav.startsWith('vi')) return countryById('VNM');
+  if (nav.startsWith('fr')) return countryById('FRA');
+  if (nav.startsWith('th')) return countryById('THA');
+  if (nav.startsWith('es')) return countryById('MEX');
+  // en / 其他：英文使用人口最多的國家
+  if (nav.startsWith('en')) return countryById('USA');
+  return countryById('USA');
+}
+
+/* v5.19：當年存活率（同年出生的同性別者中，仍存活的百分比） */
+function survivalRateForAge(c, sex, age) {
+  if (!c) return null;
+  try {
+    const lt = lifeTable(c, sex);
+    if (!lt || !lt.l || age < 0) return null;
+    const i = Math.max(0, Math.min(110, Math.floor(age)));
+    const v = lt.l[i];
+    if (typeof v !== 'number' || isNaN(v)) return null;
+    return Math.max(0, Math.min(1, v));
+  } catch (e) {
+    return null;
+  }
+}
+
+/* v5.19：你是哪個家庭分位 (1-4) 的中文/英文短碼 */
+function quartileLabel(q, isEn) {
+  if (!q) return '—';
+  if (isEn) return ['Bottom 25%','Lower-middle','Upper-middle','Top 25%'][q-1] || ('Q' + q);
+  return ['最低 25%','中下 50%','中上 75%','最高 25%'][q-1] || ('Q' + q);
 }
 
 /* ==== 族譜：家族生成 ==== */
@@ -542,7 +754,7 @@ function milestoneEvents(life, newAge) {
         death: chance((life.countryData.im || 5) / 1000 * 0.3) ? { year: childBirth.year + Math.floor(Math.random() * 5) } : null
       };
       life.family.kids.push(childNode);
-      if (childNode.death) events.push({ age: newAge, kind: 'heavy', icon: '🕯️', text: LANG === 'en' ? `${childNode.name} died as an infant.` : `${childNode.name} 在嬰幼兒時期夭折了。` });
+      if (childNode.death && !STATE.eduMode) events.push({ age: newAge, kind: 'heavy', icon: '🕯️', text: LANG === 'en' ? `${childNode.name} died as an infant.` : `${childNode.name} 在嬰幼兒時期夭折了。` });
     }
     events.push({ age: newAge, kind: 'milestone', icon: '👶', text: t('event.baby', life.stats.kids.length) });
   }
@@ -550,8 +762,8 @@ function milestoneEvents(life, newAge) {
     life.stats.employment = 'retired';
     events.push({ age: 60, kind: 'milestone', icon: '🏖️', text: t('event.retirement') });
   }
-  // 偶發事件
-  if (newAge >= 18 && newAge <= 65 && chance(0.04)) {
+  // 偶發事件（教學版過濾掉疾病）
+  if (!STATE.eduMode && newAge >= 18 && newAge <= 65 && chance(0.04)) {
     const cond = pick(['cancer', 'heart', 'stroke', 'diabetes']);
     life.conditions[cond === 'cancer' ? 'cancer' : cond === 'heart' ? 'heart' : cond === 'stroke' ? 'heart' : 'diabetes'] = true;
     events.push({ age: newAge, kind: 'illness', icon: '💊', text: t('event.illness.' + cond) });
@@ -567,9 +779,9 @@ function milestoneEvents(life, newAge) {
   if ((life.country === 'NZL' || life.country === 'AUS') && newAge === 18 && chance(0.5)) {
     events.push({ age: newAge, kind: 'social', icon: '🌿', text: LANG === 'en' ? 'You identify as indigenous; get education & health support.' : '你被認定為原住民後裔，獲得教育補助與健康資源。' });
   }
-  // 戰爭/衝突
+  // 戰爭/衝突（教學版過濾掉）
   const wh = life.countryData?.wh || 0;
-  if (wh > 0.1 && newAge >= 1 && chance(wh * 0.1)) {
+  if (!STATE.eduMode && wh > 0.1 && newAge >= 1 && chance(wh * 0.1)) {
     const warEvt = pick([
       LANG === 'en' ? 'Air raid sirens. The family shelters in the basement.' : '空襲警報響起，全家躲進防空洞。',
       LANG === 'en' ? 'A neighbor dies in the fighting. You witness the scene.' : '鄰居在衝突中喪生，你目睹了場面。',
@@ -579,8 +791,8 @@ function milestoneEvents(life, newAge) {
     ]);
     events.push({ age: newAge, kind: 'heavy', icon: '⚔️', text: warEvt });
   }
-  // 寄養（美/英/紐/澳/韓/日）
-  if (['USA','GBR','NZL','AUS','KOR','JPN'].includes(life.country) && newAge === 0) {
+  // 寄養（美/英/紐/澳/韓/日）— 教學版不觸發
+  if (!STATE.eduMode && ['USA','GBR','NZL','AUS','KOR','JPN'].includes(life.country) && newAge === 0) {
     if (chance(0.04)) {
       life.fc = { in: 1, system: 'state', type: 'foster' };
       life.family = generateFamily(life.country, life.sex, { type: 'foster' });
@@ -773,8 +985,24 @@ function showFocusChoice() {
   ];
   const q = $('#focusQuestion');
   if (q) q.textContent = isEn ? `Age ${age} — What do you want to focus on this year?` : `${age} 歲——這一年你想把重心放在哪？`;
+  // v5.19：每個選項的影響細節 tooltip
+  const tooltips = isEn ? {
+    study:  '📚 +3 Knowledge · +1 Happiness',
+    work:   '💼 +$2000 net assets · +2 Knowledge',
+    family: '👨‍👩‍👧 +4 Social · +3 Happiness',
+    health: '🧘 +4 Health',
+    play:   '⚽ +3 Happiness · +1 Social',
+    rest:   '🌳 +3 Happiness · +1 Health',
+  } : {
+    study:  '📚 +3 知識 · +1 幸福',
+    work:   '💼 +$2000 淨資產 · +2 知識',
+    family: '👨‍👩‍👧 +4 人際 · +3 幸福',
+    health: '🧘 +4 健康',
+    play:   '⚽ +3 幸福 · +1 人際',
+    rest:   '🌳 +3 幸福 · +1 健康',
+  };
   const body = $('#focusBody');
-  if (body) body.innerHTML = focusOpts.map(o => `<button class="focus-btn" data-focus="${o.id}">${o.icon} ${isEn ? o.en : o.zh}</button>`).join('');
+  if (body) body.innerHTML = focusOpts.map(o => `<button class="focus-btn" data-focus="${o.id}" title="${(tooltips[o.id] || '').replace(/"/g,'&quot;')}"><span class="fb-icon">${o.icon}</span><span class="fb-label">${isEn ? o.en : o.zh}</span><span class="fb-tip">${tooltips[o.id] || ''}</span></button>`).join('');
   body.querySelectorAll('.focus-btn').forEach(btn => {
     btn.addEventListener('click', () => {
       const focus = btn.dataset.focus;
@@ -809,19 +1037,24 @@ function showFinancialChoice() {
   const isEn = LANG === 'en';
   const modal = $('#financeModal');
   if (!modal) return;
-  const choices = age === 18 ? [
+  // v5.19：先建好 choices，再依據「快速決定」標記誰是預設
+  let choices;
+  if (age === 18) choices = [
     { id:'study_loan', text: isEn?'Take student loan to study':'學生貸款升學', delta:{net:-5000, knowledge:+10} },
     { id:'work', text: isEn?'Start working immediately':'直接工作', delta:{net:+3000} },
     { id:'trade', text: isEn?'Learn a trade':'學手藝', delta:{net:+1000, knowledge:+5} },
-  ] : age === 25 ? [
+  ];
+  else if (age === 25) choices = [
     { id:'save', text: isEn?'Save aggressively':'積極儲蓄', delta:{net:+8000, happiness:-5} },
     { id:'travel', text: isEn?'Travel the world':'環遊世界', delta:{net:-6000, happiness:+10, social:+5} },
     { id:'invest', text: isEn?'Start investing':'開始投資', delta:{net:+5000, knowledge:+3} },
-  ] : age === 35 ? [
+  ];
+  else if (age === 35) choices = [
     { id:'house', text: isEn?'Buy a house':'買房', delta:{net:-50000, happiness:+5} },
     { id:'kids', text: isEn?'Have children':'生孩子', delta:{net:-10000, happiness:+10, social:+5} },
     { id:'career', text: isEn?'Focus on career':'衝刺事業', delta:{net:+20000} },
-  ] : [
+  ];
+  else choices = [
     { id:'retire', text: isEn?'Save for retirement':'為退休儲蓄', delta:{net:+50000} },
     { id:'enjoy', text: isEn?'Enjoy life now':'及時行樂', delta:{net:-10000, happiness:+10} },
     { id:'give_back', text: isEn?'Donate to charity':'慈善捐贈', delta:{net:-15000, happiness:+15} },
@@ -829,33 +1062,61 @@ function showFinancialChoice() {
   const q = $('#financeQuestion');
   if (q) q.textContent = isEn ? `Age ${age} — How do you want to handle your money?` : `${age} 歲——你要怎麼處理你的錢？`;
   const body = $('#financeBody');
-  if (body) body.innerHTML = choices.map((c, i) => {
-    const d = c.delta;
-    const tags = [];
-    if (d.net > 0) tags.push(`<span class="fin-pos">+$${d.net.toLocaleString()}</span>`);
-    else if (d.net < 0) tags.push(`<span class="fin-neg">−$${Math.abs(d.net).toLocaleString()}</span>`);
-    if (d.knowledge) tags.push(`<span class="fin-stat">+${d.knowledge} 📚</span>`);
-    if (d.happiness) tags.push(`<span class="fin-stat">${d.happiness > 0 ? '+' : ''}${d.happiness} 😊</span>`);
-    if (d.social) tags.push(`<span class="fin-stat">${d.social > 0 ? '+' : ''}${d.social} 👥</span>`);
-    return `<button class="finance-btn" data-idx="${i}"><span class="fin-text">${c.text}</span><span class="fin-tags">${tags.join(' ')}</span></button>`;
-  }).join('');
+  // v5.19：「最便宜」= delta.net 最低（最負 / 最少正）
+  const cheapestIdx = (() => {
+    let idx = 0, best = Infinity;
+    choices.forEach((c, i) => {
+      const v = (c.delta && typeof c.delta.net === 'number') ? c.delta.net : 0;
+      if (v < best) { best = v; idx = i; }
+    });
+    return idx;
+  })();
+  if (body) body.innerHTML = `
+    <div class="fc-row">${choices.map((c, i) => {
+      const d = c.delta;
+      const tags = [];
+      if (d.net > 0) tags.push(`<span class="fin-pos">+$${d.net.toLocaleString()}</span>`);
+      else if (d.net < 0) tags.push(`<span class="fin-neg">−$${Math.abs(d.net).toLocaleString()}</span>`);
+      if (d.knowledge) tags.push(`<span class="fin-stat">+${d.knowledge} 📚</span>`);
+      if (d.happiness) tags.push(`<span class="fin-stat">${d.happiness > 0 ? '+' : ''}${d.happiness} 😊</span>`);
+      if (d.social) tags.push(`<span class="fin-stat">${d.social > 0 ? '+' : ''}${d.social} 👥</span>`);
+      const isCheap = i === cheapestIdx;
+      const badge = isCheap ? `<span class="fin-auto">${isEn ? '⚡ auto' : '⚡ 自動'}</span>` : '';
+      return `<button class="finance-btn" data-idx="${i}"><span class="fin-text">${c.text}${badge}</span><span class="fin-tags">${tags.join(' ')}</span></button>`;
+    }).join('')}</div>
+    <div class="fc-auto-row">
+      <button id="btnFinanceAuto" class="fc-auto-btn">⚡ ${isEn ? 'Quick-decide (pick cheapest)' : '快速決定（最便宜的選項）'}</button>
+    </div>
+  `;
   body.querySelectorAll('.finance-btn').forEach(btn => {
     btn.addEventListener('click', () => {
       const idx = +btn.dataset.idx;
-      const choice = choices[idx];
-      const d = choice.delta;
-      STATE.life.stats.netAssets = Math.max(-100000, (STATE.life.stats.netAssets || 0) + (d.net || 0));
-      if (d.knowledge) STATE.life.stats.knowledge = Math.min(100, Math.max(0, STATE.life.stats.knowledge + d.knowledge));
-      if (d.happiness) STATE.life.stats.happiness = Math.min(100, Math.max(0, STATE.life.stats.happiness + d.happiness));
-      if (d.social) STATE.life.stats.social = Math.min(100, Math.max(0, STATE.life.stats.social + d.social));
-      STATE.life.log.push({ age: STATE.life.age, kind:'finance', icon:'💰', text: (isEn?'Money: ':'理財：') + choice.text });
-      logLife('💰 ' + choice.text);
-      renderLifeStats();
+      applyFinanceChoice(choices, idx, isEn);
       modal.setAttribute('hidden', '');
       STATE.paused = false;
     });
   });
+  $('#btnFinanceAuto')?.addEventListener('click', () => {
+    applyFinanceChoice(choices, cheapestIdx, isEn);
+    modal.setAttribute('hidden', '');
+    STATE.paused = false;
+    toast(isEn ? '⚡ Auto-picked cheapest option' : '⚡ 已自動選最便宜的選項');
+  });
   modal.removeAttribute('hidden');
+}
+
+/* v5.19：抽出共用的「套用財務決策」邏輯（給按鈕和「快速決定」都用） */
+function applyFinanceChoice(choices, idx, isEn) {
+  const choice = choices[idx];
+  if (!choice) return;
+  const d = choice.delta || {};
+  STATE.life.stats.netAssets = Math.max(-100000, (STATE.life.stats.netAssets || 0) + (d.net || 0));
+  if (d.knowledge) STATE.life.stats.knowledge = Math.min(100, Math.max(0, STATE.life.stats.knowledge + d.knowledge));
+  if (d.happiness) STATE.life.stats.happiness = Math.min(100, Math.max(0, STATE.life.stats.happiness + d.happiness));
+  if (d.social) STATE.life.stats.social = Math.min(100, Math.max(0, STATE.life.stats.social + d.social));
+  STATE.life.log.push({ age: STATE.life.age, kind:'finance', icon:'💰', text: (isEn ? 'Money: ' : '理財：') + choice.text });
+  logLife('💰 ' + choice.text);
+  renderLifeStats();
 }
 function savePauseQuote() {
   const age = STATE.pendingDecision?.age;
@@ -1062,6 +1323,188 @@ function renderIntro() {
     $('#introCountryU5').textContent = c.u5;
     $('#introCountryPpp').textContent = '$' + c.ppp.toLocaleString();
   }
+  // v5.19：即時計數器 + 今日主題 + 機率分布 + 國家對照
+  renderDailyTheme();
+  renderProbTable();
+  renderCountryCompare();
+  // 即時計數器在 init 啟動；renderIntro 重繪時不重啟
+  updateRealtimeCounters();
+  // v5.20：現在居住的地方（active players map）
+  renderActivePlayersMap();
+}
+
+/* v5.19：今日主題顯示 */
+function renderDailyTheme() {
+  const el = $('#dailyTheme');
+  if (!el) return;
+  const { word, dayKey, en } = getDailyTheme();
+  el.textContent = word;
+  el.dataset.en = en || '';
+  el.dataset.dayKey = dayKey;
+}
+
+/* v5.19：出生機率分布表（top 10） */
+function renderProbTable() {
+  const wrap = $('#probTable');
+  if (!wrap) return;
+  const isEn = LANG === 'en';
+  const mode = STATE.birthMode === 'all' ? 'all' : 'baby';
+  const rows = countryProbabilities(mode, 10);
+  const modeLabel = mode === 'all'
+    ? (isEn ? '8 billion alive' : '80 億人活口')
+    : (isEn ? 'Just born' : '此刻出生');
+  wrap.innerHTML = `
+    <h3>${isEn ? 'If you were born right now…' : '如果你此刻出生⋯⋯'} <span class="muted">(${modeLabel})</span></h3>
+    <table class="prob-table">
+      <thead><tr>
+        <th>${isEn ? 'Country' : '國家'}</th>
+        <th class="prob-pct">${isEn ? 'Probability' : '機率'}</th>
+        <th class="prob-bar-col"></th>
+      </tr></thead>
+      <tbody>
+        ${rows.map(r => {
+          const loc = localize(r.c);
+          return `<tr>
+            <td><span class="prob-flag">${r.c.flag}</span><span class="prob-name">${escapeHtml(loc.name)}</span></td>
+            <td class="prob-pct">${r.pct.toFixed(1)}%</td>
+            <td class="prob-bar-col"><div class="prob-bar" style="width:${Math.max(2, r.pct * 5)}%"></div></td>
+          </tr>`;
+        }).join('')}
+      </tbody>
+    </table>
+    <p class="muted">${isEn ? 'Source: UN WPP 2024 (annual births / total population by country)' : '資料來源：聯合國《世界人口展望 2024》（各國年度出生數／總人口）'}</p>
+  `;
+}
+
+/* v5.19：「如果你現在出生」對照表 — 你的實際國家 vs 隨機國家 */
+function renderCountryCompare() {
+  const wrap = $('#countryCompare');
+  if (!wrap) return;
+  const isEn = LANG === 'en';
+  const me = guessUserCountry();
+  const random = chooseCountry(STATE.birthMode);
+  if (!me || !random) { wrap.innerHTML = ''; return; }
+  // 三項關鍵指標
+  const meLe = me.le;
+  const rLe = random.le;
+  const meU5 = (me.u5 || 0) / 1000 * 100;
+  const rU5 = (random.u5 || 0) / 1000 * 100;
+  const mePpp = me.ppp || 0;
+  const rPpp = random.ppp || 0;
+  const loc = (c) => LANG === 'en' ? c.name_en : c.name_zh;
+  const fmtPct = (n) => (n < 0.1 ? n.toFixed(2) : n.toFixed(1)) + '%';
+  const fmtMoney = (n) => '$' + Math.round(n).toLocaleString();
+  wrap.innerHTML = `
+    <h3>${isEn ? 'If you were born now, your life vs. a random one' : '如果你此刻出生：你的人生 vs 隨機的人生'}</h3>
+    <table class="cmp-table">
+      <thead><tr>
+        <th></th>
+        <th>${me.flag} ${escapeHtml(loc(me))}<div class="cmp-sub">${isEn ? 'Where you probably are' : '你實際所在地'}</div></th>
+        <th>${random.flag} ${escapeHtml(loc(random))}<div class="cmp-sub">${isEn ? 'Random draw' : '隨機抽中'}</div></th>
+      </tr></thead>
+      <tbody>
+        <tr>
+          <td class="cmp-k">${isEn ? 'Life expectancy' : '平均壽命'}</td>
+          <td class="cmp-v">${meLe.toFixed(1)} ${isEn ? 'yrs' : '歲'}</td>
+          <td class="cmp-v">${rLe.toFixed(1)} ${isEn ? 'yrs' : '歲'}</td>
+        </tr>
+        <tr>
+          <td class="cmp-k">${isEn ? 'Under-5 mortality' : '5 歲前死亡機率'}</td>
+          <td class="cmp-v">${fmtPct(meU5)}</td>
+          <td class="cmp-v">${fmtPct(rU5)}</td>
+        </tr>
+        <tr>
+          <td class="cmp-k">${isEn ? 'GDP per capita (PPP)' : '人均 GDP（PPP）'}</td>
+          <td class="cmp-v">${fmtMoney(mePpp)}</td>
+          <td class="cmp-v">${fmtMoney(rPpp)}</td>
+        </tr>
+      </tbody>
+    </table>
+    <p class="muted">${isEn ? 'Detected from browser language / locale. You can override by selecting one in the country list above.' : '依瀏覽器語系／地區推測。你可以從上方國家清單覆寫。'}</p>
+  `;
+}
+
+/* v5.19：完整出生登記卡 — 1in8b.life 風格 */
+function buildBirthCertCard(c, life) {
+  if (!c || !life) return '';
+  const isEn = LANG === 'en';
+  const loc = localize(c);
+  const fam = life.family || {};
+  const father = fam.parents?.find(p => p.sex === 'M');
+  const mother = fam.parents?.find(p => p.sex === 'F');
+  const fd = life.fatherDetail || {};
+  const md = life.motherDetail || {};
+  // 父母住房（依國家統計推測：urb%、agr% 推）
+  const housing = (() => {
+    const isRural = (life.stats.birthPlaceType === 'rural');
+    if (isRural) {
+      const typ = (c.agr || 30) > 50 ? (isEn ? 'Farm' : '農舍')
+                : (c.agr || 30) > 20 ? (isEn ? 'Village house' : '村莊平房')
+                : (isEn ? 'Suburban house' : '郊區住宅');
+      return typ;
+    }
+    // 城市
+    if ((c.ppp || 0) > 30000) return isEn ? 'Modern apartment' : '現代公寓';
+    if ((c.ppp || 0) > 10000) return isEn ? 'Apartment block' : '公寓大樓';
+    return isEn ? 'Slum / informal settlement' : '貧民窟／非正式住宅';
+  })();
+  const sexLabel = life.sex === 'M' ? t('sex.male') : t('sex.female');
+  const yr = life.year + life.yearOffset;
+  const u5pct = ((c.u5 || 0) / 1000 * 100);
+  return `
+    <div class="bc-stamp">${isEn ? 'OFFICIAL BIRTH REGISTRATION' : '出 生 登 記 證 明'}</div>
+    <div class="bc-header">
+      <div class="bc-flag">${c.flag}</div>
+      <div class="bc-name">${escapeHtml(loc.name)}</div>
+      <div class="bc-iso">${c.id}</div>
+    </div>
+    <div class="bc-reg">${isEn ? 'Reg. No.' : '登記編號'}：<b>${escapeHtml(life.regNumber || (c.id + '-' + yr + '-0000000'))}</b></div>
+    <div class="bc-reg">${isEn ? 'Date of Birth' : '出生日期'}：<b>${yr}-01-01</b></div>
+    <table class="bc-table">
+      <tbody>
+        <tr><td class="bc-k">${isEn ? 'Name' : '姓名'}</td><td class="bc-v">${escapeHtml(life.name.full || life.name.full_en || '—')}</td></tr>
+        <tr><td class="bc-k">${isEn ? 'Sex' : '性別'}</td><td class="bc-v">${sexLabel}</td></tr>
+        <tr><td class="bc-k">${isEn ? 'Country' : '出生國家'}</td><td class="bc-v">${c.flag} ${escapeHtml(loc.name)}</td></tr>
+        <tr><td class="bc-k">${isEn ? 'Place' : '出生地'}</td><td class="bc-v">${life.stats.birthPlaceType === 'rural' ? (isEn ? '🌾 Rural' : '🌾 鄉村') : (isEn ? '🏙️ Urban' : '🏙️ 城市')} · ${escapeHtml(loc.region_name || '')}</td></tr>
+        <tr><td class="bc-k">${isEn ? 'Household income' : '家境'}</td><td class="bc-v">${isEn ? 'Quartile' : '分位'} Q${life.stats.incomeQuartile || 2} / 4</td></tr>
+        <tr><td class="bc-k">${isEn ? "Father's age / job" : '父親年齡／工作'}</td><td class="bc-v">${father ? escapeHtml(father.name) : '—'}${fd.age ? ` · ${fd.age} ${isEn ? 'yrs' : '歲'}` : ''}${fd.job ? ` · ${escapeHtml(fd.job)}` : ''}</td></tr>
+        <tr><td class="bc-k">${isEn ? "Mother's age / job" : '母親年齡／工作'}</td><td class="bc-v">${mother ? escapeHtml(mother.name) : '—'}${md.age ? ` · ${md.age} ${isEn ? 'yrs' : '歲'}` : ''}${md.job ? ` · ${escapeHtml(md.job)}` : ''}</td></tr>
+        <tr><td class="bc-k">${isEn ? "Parents' housing" : '父母住房'}</td><td class="bc-v">${escapeHtml(housing)}</td></tr>
+        <tr><td class="bc-k">${isEn ? 'Religion' : '宗教'}</td><td class="bc-v">${escapeHtml(life.stats.religion || (isEn ? '—' : '未填'))}</td></tr>
+        <tr class="bc-stat"><td class="bc-k">${isEn ? 'Life expectancy' : '平均壽命'}</td><td class="bc-v">${c.le.toFixed(1)} ${isEn ? 'yrs' : '歲'}</td></tr>
+        <tr class="bc-stat"><td class="bc-k">${isEn ? 'Under-5 mortality' : '5 歲前死亡機率'}</td><td class="bc-v">${u5pct < 0.1 ? u5pct.toFixed(2) : u5pct.toFixed(1)}%</td></tr>
+        <tr class="bc-stat"><td class="bc-k">${isEn ? 'GDP per capita (PPP)' : '人均 GDP（PPP）'}</td><td class="bc-v">$${(c.ppp || 0).toLocaleString()}</td></tr>
+      </tbody>
+    </table>
+  `;
+}
+
+/* v5.19：顯示出生登記卡 modal */
+function showBirthCertModal(c) {
+  const modal = $('#birthCertModal');
+  if (!modal) return;
+  // 先建立一個臨時的 life 物件（不啟動 ticker、不切換視圖）
+  const life = newLife(c.id);
+  if (!life) return;
+  STATE.birthCertCountry = c;
+  const body = $('#birthCertBody');
+  if (body) body.innerHTML = buildBirthCertCard(c, life);
+  modal.removeAttribute('hidden');
+  STATE.modal = 'birthCert';
+}
+function hideBirthCertModal() {
+  const modal = $('#birthCertModal');
+  if (modal) modal.setAttribute('hidden', '');
+  if (STATE.modal === 'birthCert') STATE.modal = null;
+  STATE.birthCertCountry = null;
+}
+
+/* v5.19：點「出 生」按鈕 — 隨機抽國家、顯示出生卡、確認後才開始 */
+function startLifeWithCert() {
+  const c = chooseCountry(STATE.birthMode);
+  if (!c) return;
+  // 顯示出生卡 modal，等使用者按「開始人生」才正式 startLife
+  showBirthCertModal(c);
 }
 
 function renderLife() {
@@ -1125,6 +1568,11 @@ function renderLife() {
   renderManualDecisions();
   renderLifeMap();
   renderIdentityRecord();
+  // v5.20：本年死因分析
+  renderLifeCauseThisYear();
+  // v5.19：「如果你現在出生」vs 隨機 比較表 + 「狀態 ℹ️」綁定
+  bindStateInfoButton();
+  renderActualVsRandom();
 }
 
 /* v5.14：本年最重要事件 */
@@ -1273,6 +1721,7 @@ function recordTrajectory(life) {
 
 /* v5.8 新增：4 個狀態條 + 淨資產 */
 /* v5.16：手動決策面板（玩家主動觸發） */
+/* v5.19：新增「⚡ 快速決定」+ 「♪ 音樂」按鈕 */
 function renderManualDecisions() {
   if (!STATE.life) return;
   const wrap = $('#lifeManualDecisions');
@@ -1289,11 +1738,29 @@ function renderManualDecisions() {
     <div class="md-row">
       <button id="mdFocusBtn" class="md-btn">🎯 ${isEn ? 'Choose this year\'s focus' : '設定本年焦點'} <span class="md-hint">${life.focus ? (isEn?'Now: ':'目前：')+life.focus : (isEn?'(not set)':'（未設定）')}</span></button>
       ${financeAvail ? `<button id="mdFinanceBtn" class="md-btn">💰 ${isEn?'Make financial decision at age '+age:'決定 ' + age + ' 歲的財務規劃'}</button>` : financePast.length ? `<span class="md-hint">${isEn?'Financial decisions made: ':'已做的財務決策：'} ${financePast.map(d => d.age).join('、')}</span>` : ''}
+      <button id="mdQuickDecideBtn" class="md-btn md-btn-auto" title="${isEn ? 'Auto-apply: focus=work + finance=cheapest. Lets you watch a full life without manual input.' : '自動套：焦點→work / 財務→最便宜。可以放手看完整個人生。'}">⚡ ${isEn ? 'Quick-decide all (focus=work + cheapest)' : '快速決定（焦點→work、最便宜）'}</button>
+      <button id="mdMusicBtn" class="md-btn md-btn-music" title="${isEn ? 'Soft background music' : '輕柔的背景音樂'}">♪ ${isEn ? 'Background music' : '背景音樂'}</button>
     </div>
   `;
   // wire
   $('#mdFocusBtn')?.addEventListener('click', () => showFocusChoice());
   $('#mdFinanceBtn')?.addEventListener('click', () => showFinancialChoice());
+  // v5.19：「快速決定」= 焦點→work、財務→最便宜、然後加速看完一生
+  $('#mdQuickDecideBtn')?.addEventListener('click', () => {
+    if (!STATE.life) return;
+    STATE.life.focus = 'work';
+    applyFocusEffects('work');
+    toast(isEn ? '⚡ Auto: focus=work, finance→cheapest. Speeding up ×4.' : '⚡ 自動：焦點→work、財務→最便宜。加速 ×4 中。');
+    // 加快速度，讓玩家「放手看完」
+    STATE.speed = 4;
+    STATE.autoDecide = true;
+    $$('.speed-btn').forEach(b => b.classList.toggle('active', +b.dataset.speed === STATE.speed));
+    renderSpeedBtns && renderSpeedBtns();
+  });
+  // v5.19：「♪ 背景音樂」= 沒有音樂資源，顯示 toast
+  $('#mdMusicBtn')?.addEventListener('click', () => {
+    toast(isEn ? '♪ Music feature coming soon' : '♪ 音樂功能即將推出');
+  });
 }
 
 function renderLifeStats() {
@@ -1311,6 +1778,37 @@ function renderLifeStats() {
   // 淨資產（PPP 美元）
   const na = $('#netAssets');
   if (na) na.textContent = 'US$' + Math.round(s.netAssets || 0).toLocaleString();
+  // v5.19：當年存活率
+  renderSurvivalRate();
+  // v5.19：你現在 vs 隨機國家 比較表
+  renderActualVsRandom();
+}
+
+/* v5.19 新增：「狀態代表什麼？」展開說明 */
+function bindStateInfoButton() {
+  const btn = $('#btnStateInfo');
+  const panel = $('#stateInfoPanel');
+  if (!btn || !panel) return;
+  // 避免重複綁定
+  if (btn.__wired) return;
+  btn.__wired = true;
+  btn.addEventListener('click', () => {
+    const isHidden = panel.hasAttribute('hidden');
+    const isEn = LANG === 'en';
+    if (isHidden) {
+      panel.innerHTML = `
+        <div class="si-row"><span class="si-k">${isEn ? 'Health' : '健康'}</span><span class="si-v">${isEn ? '100 − age × 0.5 (capped 0-100). Drops sharply after age 60.' : '100 − 年齡 × 0.5（最大 0、最小 100）。60 歲後下降加速。'}</span></div>
+        <div class="si-row"><span class="si-k">${isEn ? 'Knowledge' : '知識'}</span><span class="si-v">${isEn ? 'Education level + life experience. Self-study focus +3, secondary school +0.5/yr.' : '學歷 + 人生經歷。每年自我進修 +3、升上國中 +0.5。'}</span></div>
+        <div class="si-row"><span class="si-k">${isEn ? 'Happiness' : '幸福'}</span><span class="si-v">${isEn ? '70 + random life events. Marriage/children +10, illness −15, health focus +3.' : '70 + 隨機事件。結婚生子 +10、生病 −15、養生焦點 +3。'}</span></div>
+        <div class="si-row"><span class="si-k">${isEn ? 'Social' : '人際'}</span><span class="si-v">${isEn ? '60 + partner (married +10) + each child (+4) + working years (+2).' : '60 + 伴侶（已婚 +10）+ 每位子女（+4）+ 工作年資（+2）。'}</span></div>
+      `;
+      panel.removeAttribute('hidden');
+      btn.textContent = 'ℹ️✕';
+    } else {
+      panel.setAttribute('hidden', '');
+      btn.textContent = 'ℹ️';
+    }
+  });
 }
 
 /* v5.8 新增：1in8b.life 風格家庭背景卡 */
@@ -1345,6 +1843,7 @@ function renderLifeFamilyDetail() {
 }
 
 /* v5.8 新增：4 位同伴（同時出生的人） */
+/* v5.19 強化：補上「家庭背景」「父母職業」「出生地區」 */
 function renderLifeCompanions() {
   if (!STATE.life || !STATE.life.companions) return;
   const wrap = $('#lifeCompanions');
@@ -1357,9 +1856,74 @@ function renderLifeCompanions() {
         <div class="lc-flag">${c.flag}</div>
         <div class="lc-name">${c.name}</div>
         <div class="lc-meta">${c.countryData?.name_zh || c.country} · ${c.sex === 'M' ? (isEn?'♂':'男') : (isEn?'♀':'女')} · ${c.lifeExpectancy ? c.lifeExpectancy + (isEn?' yrs':'歲') : ''}</div>
+        <div class="lc-bg">
+          <div class="lc-bg-row"><span class="lc-bg-k">${isEn ? 'Father' : '父'}</span><span class="lc-bg-v">${c.parentJobFather || '—'}</span></div>
+          <div class="lc-bg-row"><span class="lc-bg-k">${isEn ? 'Mother' : '母'}</span><span class="lc-bg-v">${c.parentJobMother || '—'}</span></div>
+          <div class="lc-bg-row"><span class="lc-bg-k">${isEn ? 'Family' : '家境'}</span><span class="lc-bg-v lc-q">${quartileLabel(c.incomeQuartile, isEn)}</span></div>
+          <div class="lc-bg-row"><span class="lc-bg-k">${isEn ? 'Born in' : '出生地'}</span><span class="lc-bg-v">${c.birthPlaceType === 'rural' ? (isEn ? '🌾 Rural' : '🌾 鄉村') : (isEn ? '🏙️ Urban' : '🏙️ 城市')}</span></div>
+        </div>
       </div>
     `).join('')}</div>
   `;
+}
+
+/* v5.19 新增：「如果你現在出生」vs 隨機國家 比較表 */
+function renderActualVsRandom() {
+  if (!STATE.life) return;
+  const wrap = $('#lifeActualVsRandom');
+  if (!wrap) return;
+  const c = STATE.life.countryData;
+  if (!c) return;
+  const isEn = LANG === 'en';
+  const real = guessBirthCountry();
+  const random = c;
+  if (!real) return;
+  const rows = [
+    { key: 'le',   labelZh: '平均壽命',      labelEn: 'Life expectancy', fmt: v => (v ? (v + ' ' + (isEn ? 'yrs' : '歲')) : '—'), realVal: real.le, randVal: random.le },
+    { key: 'u5',   labelZh: '5 歲前死亡機率', labelEn: 'Under-5 mortality', fmt: v => v != null ? ((v / 1000) * 100).toFixed(2) + '%' : '—', realVal: real.u5, randVal: random.u5 },
+    { key: 'ppp',  labelZh: '人均 GDP (PPP)', labelEn: 'GDP per capita (PPP)', fmt: v => v != null ? ('$' + Math.round(v).toLocaleString()) : '—', realVal: real.ppp, randVal: random.ppp },
+    { key: 'eys',  labelZh: '預期受教育年數',  labelEn: 'Expected school years', fmt: v => v != null ? (v.toFixed(1) + ' ' + (isEn ? 'yrs' : '年')) : '—', realVal: real.eys, randVal: random.eys },
+  ];
+  wrap.innerHTML = `
+    <h4>${isEn ? '🧭 If you were born now' : '🧭 如果你現在出生'} <span class="muted">${isEn ? 'vs your random country' : 'vs 你的隨機出生地'}</span></h4>
+    <table class="ar-table">
+      <thead>
+        <tr><th></th><th class="ar-you">${real.flag} ${isEn ? real.name_en : real.name_zh} <span class="muted">${isEn?'(by your browser language)':'（依瀏覽器語言推測）'}</span></th><th class="ar-rand">${random.flag} ${isEn ? random.name_en : random.name_zh} <span class="muted">${isEn?'(random draw)':'（隨機）'}</span></th></tr>
+      </thead>
+      <tbody>${rows.map(r => {
+        const realV = r.fmt(r.realVal);
+        const randV = r.fmt(r.randVal);
+        const numReal = parseFloat(String(r.realVal).replace(/[^0-9.\-]/g, ''));
+        const numRand = parseFloat(String(r.randVal).replace(/[^0-9.\-]/g, ''));
+        let winner = '';
+        if (!isNaN(numReal) && !isNaN(numRand)) {
+          if (r.key === 'u5') winner = numReal < numRand ? '🟢' : (numReal > numRand ? '🔴' : '⚪');
+          else winner = numReal > numRand ? '🟢' : (numReal < numRand ? '🔴' : '⚪');
+        }
+        return `<tr><td class="ar-k">${isEn ? r.labelEn : r.labelZh}${winner ? ' ' + winner : ''}</td><td class="ar-v">${realV}</td><td class="ar-v">${randV}</td></tr>`;
+      }).join('')}</tbody>
+    </table>
+    <p class="muted ar-note">${isEn ? '🟢 = better than random · 🔴 = worse · ⚪ = same. ' : '🟢 = 比隨機好 · 🔴 = 比隨機差 · ⚪ = 一樣。'}</p>
+  `;
+}
+
+/* v5.19 新增：在 cert-meta 加「當年存活率」欄位 */
+function renderSurvivalRate() {
+  const el = $('#lifeSurvival');
+  if (!el) return;
+  if (!STATE.life || !STATE.life.countryData) {
+    el.textContent = '—';
+    return;
+  }
+  const c = STATE.life.countryData;
+  const sr = survivalRateForAge(c, STATE.life.sex, STATE.life.age);
+  if (sr == null) {
+    el.textContent = '—';
+    return;
+  }
+  const pct = Math.round(sr * 100);
+  el.textContent = pct + '%';
+  el.style.color = pct >= 95 ? 'var(--good)' : pct >= 80 ? 'var(--gold)' : 'var(--bad)';
 }
 
 /* v5.9 新增：完整國家統計面板（16 個關鍵指標） */
@@ -1576,6 +2140,8 @@ function renderEnd() {
   if (cert) {
     cert.innerHTML = drawGuilloche(680, 420);
   }
+  // v5.20：死亡原因分析（本年 + 一生 Top 3）
+  renderEndCauseAnalysis();
 }
 
 function drawGuilloche(w, h) {
@@ -1699,6 +2265,9 @@ function renderShelf() {
     book.addEventListener('click', () => showLifeModal(life));
     shelf.appendChild(book);
   }
+  // v5.20：追思館（Memorial Wall） + 大家分享的人生
+  renderMemorialWall(lives);
+  renderSharedLives(lives);
 }
 
 /* ==== Shelf 世界地圖 ==== */
@@ -1743,6 +2312,429 @@ function renderShelfWorldMap(lives) {
   const legend = svgEl('text', { x: 8, y: H - 8, 'font-size': 10, fill: '#5a4a3a' }, svg);
   legend.textContent = `${LANG==='en'?'Lived in':'曾活過'} ${visited.length} ${LANG==='en'?'countries':'個國家'}`;
   return svg;
+}
+
+/* ==== v5.20：追思館 (Memorial Wall) ==== */
+let _memorialIdx = 0;
+function getMemorialState() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY + ':memorial_state');
+    if (!raw) return { candlesByLife: {}, heartsByLife: {} };
+    return JSON.parse(raw);
+  } catch (e) {
+    return { candlesByLife: {}, heartsByLife: {} };
+  }
+}
+function saveMemorialState(s) {
+  try {
+    localStorage.setItem(STORAGE_KEY + ':memorial_state', JSON.stringify(s));
+  } catch (e) { /* quota exceeded */ }
+}
+function lifeMemorialId(life) {
+  // 用生命唯一識別：country|year|name|age|cause hash
+  const base = `${life.country || '?'}|${life.year || '?'}|${life.name || '?'}|${life.age || '?'}|${life.cause || '?'}`;
+  let h = 0;
+  for (let i = 0; i < base.length; i++) h = ((h << 5) - h) + base.charCodeAt(i) | 0;
+  return 'm_' + (h >>> 0).toString(36);
+}
+function getLifeSummary(life) {
+  // 一句總結：取一個有意義的 quote，或用一句合成
+  if (!life) return '';
+  const quotes = life.quotes || {};
+  const ages = Object.keys(quotes).map(Number).sort((a, b) => a - b);
+  for (const a of ages) {
+    const q = (quotes[a] || '').trim();
+    if (q && q !== '（自動抉擇）' && q !== '（隱蔽）') return q;
+  }
+  const c = countryById(life.country);
+  const loc = localize(c);
+  const flag = c ? c.flag : '🏳️';
+  const cause = life.cause || '';
+  const age = life.age || '?';
+  if (LANG === 'en') return `Lived ${age} years in ${flag} ${loc?.name || ''}. ${cause ? 'Cause: ' + cause + '.' : ''}`;
+  return `在 ${flag} ${loc?.name || ''} 活了 ${age} 歲。${cause ? '原因：' + cause + '。' : ''}`;
+}
+function getLifeOneLine(life) {
+  // 短摘：用第一個非空 quote
+  if (!life) return '';
+  const quotes = life.quotes || {};
+  const ages = Object.keys(quotes).map(Number).sort((a, b) => a - b);
+  for (const a of ages) {
+    const q = (quotes[a] || '').trim();
+    if (q && q !== '（自動抉擇）' && q !== '（隱蔽）') return q;
+  }
+  return '';
+}
+function getLifeStory(life) {
+  // 完整故事：所有 quote 串起來 + 重大事件
+  if (!life) return '';
+  const quotes = life.quotes || {};
+  const ages = Object.keys(quotes).map(Number).sort((a, b) => a - b);
+  const lines = [];
+  for (const a of ages) {
+    const q = (quotes[a] || '').trim();
+    if (q && q !== '（自動抉擇）' && q !== '（隱蔽）') {
+      lines.push(`【${a}${LANG==='en'?'':'歲'}】${q}`);
+    }
+  }
+  if (lines.length === 0) {
+    if (LANG === 'en') return '(No words left behind.)';
+    return '（沒有留下任何話）';
+  }
+  return lines.join('\n');
+}
+function renderMemorialWall(lives) {
+  const wall = $('#memorialWall');
+  if (!wall) return;
+  if (!lives || lives.length === 0) {
+    wall.querySelector('.memorial-empty').hidden = false;
+    wall.querySelector('.memorial-content').hidden = true;
+    return;
+  }
+  wall.querySelector('.memorial-empty').hidden = true;
+  wall.querySelector('.memorial-content').hidden = false;
+  if (_memorialIdx >= lives.length) _memorialIdx = 0;
+  const life = lives[_memorialIdx];
+  const c = countryById(life.country);
+  const flag = c ? c.flag : '🏳️';
+  const loc = localize(c);
+  const card = $('#memorialCard');
+  if (!card) return;
+  const summary = getLifeSummary(life);
+  const state = getMemorialState();
+  const id = lifeMemorialId(life);
+  const candles = state.candlesByLife[id] || 0;
+  const hearts = state.heartsByLife[id] || 0;
+  card.innerHTML = `
+    <div class="memorial-candle-display">
+      ${candles > 0 ? `<span class="candle-flame">🕯️×${candles}</span>` : ''}
+    </div>
+    <div class="memorial-card-content">
+      <div class="memorial-flag">${flag}</div>
+      <div class="memorial-name">${escapeHtml(life.name || '—')}</div>
+      <div class="memorial-years">${life.year || ''} → ${(life.year || 0) + (life.yearOffset || 0)} · ${life.age || '?'} ${LANG==='en'?'yrs':'歲'}</div>
+      <div class="memorial-country">${escapeHtml(loc?.name || life.country || '?')}</div>
+      <div class="memorial-summary">${escapeHtml(summary)}</div>
+    </div>
+  `;
+  // 計數
+  const cn = $('#memorialCandles');
+  const hn = $('#memorialHearts');
+  if (cn) cn.textContent = candles > 0 ? `🕯️ ${t('memorial.candles', candles)}` : '';
+  if (hn) hn.textContent = hearts > 0 ? `🤍 ${t('memorial.hearts', hearts)}` : '';
+  $('#memorialCounter').textContent = `${_memorialIdx + 1} / ${lives.length}`;
+  // 按鈕事件（綁定一次即可，但每次重渲染時重新綁以保證指向當前 life）
+  const lifeRef = life;
+  const bind = (sel, fn) => {
+    const el = $(sel);
+    if (!el) return;
+    el.onclick = () => fn(lifeRef, id);
+  };
+  bind('#memorialPrev', (l) => {
+    _memorialIdx = (_memorialIdx - 1 + lives.length) % lives.length;
+    renderMemorialWall(lives);
+  });
+  bind('#memorialNext', (l) => {
+    _memorialIdx = (_memorialIdx + 1) % lives.length;
+    renderMemorialWall(lives);
+  });
+  bind('#memorialCandle', (l, mid) => {
+    const s = getMemorialState();
+    s.candlesByLife[mid] = (s.candlesByLife[mid] || 0) + 1;
+    saveMemorialState(s);
+    renderMemorialWall(lives);
+    toast(LANG === 'en' ? 'A candle lit 🕯️' : '已點一支蠟燭 🕯️', 1500);
+  });
+  bind('#memorialHeart', (l, mid) => {
+    const s = getMemorialState();
+    s.heartsByLife[mid] = (s.heartsByLife[mid] || 0) + 1;
+    saveMemorialState(s);
+    renderMemorialWall(lives);
+    toast(LANG === 'en' ? 'Kept in heart 🤍' : '已記在心裡 🤍', 1500);
+  });
+  bind('#memorialVisit', (l) => showLifeModal(l));
+  bind('#memorialRandom', () => {
+    if (lives.length > 1) {
+      let ni;
+      do { ni = Math.floor(Math.random() * lives.length); } while (ni === _memorialIdx && lives.length > 1);
+      _memorialIdx = ni;
+      renderMemorialWall(lives);
+    }
+  });
+}
+
+/* ==== v5.20：大家分享的人生 (Shared Lives Feed) ==== */
+function getSharedState() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY + ':shared_state');
+    if (!raw) return { heartsByLife: {}, reportedByLife: {} };
+    return JSON.parse(raw);
+  } catch (e) {
+    return { heartsByLife: {}, reportedByLife: {} };
+  }
+}
+function saveSharedState(s) {
+  try {
+    localStorage.setItem(STORAGE_KEY + ':shared_state', JSON.stringify(s));
+  } catch (e) { /* quota */ }
+}
+function renderSharedLives(lives) {
+  const wrap = $('#sharedFeed');
+  if (!wrap) return;
+  if (!lives || lives.length === 0) {
+    wrap.hidden = true;
+    return;
+  }
+  wrap.hidden = false;
+  const list = $('#sharedList');
+  if (!list) return;
+  list.innerHTML = '';
+  const state = getSharedState();
+  lives.forEach((life) => {
+    const c = countryById(life.country);
+    const flag = c ? c.flag : '🏳️';
+    const loc = localize(c);
+    const id = lifeMemorialId(life);
+    const oneLine = getLifeOneLine(life);
+    const fullStory = getLifeStory(life);
+    const hearts = state.heartsByLife[id] || 0;
+    const reported = !!state.reportedByLife[id];
+    const sexLabel = life.sex === 'M' ? t('sex.male') : t('sex.female');
+    const card = document.createElement('div');
+    card.className = 'shared-card';
+    card.dataset.id = id;
+    card.innerHTML = `
+      <div class="shared-head">
+        <span class="shared-flag">${flag}</span>
+        <div>
+          <div class="shared-name">${escapeHtml(life.name || '—')}</div>
+          <div class="shared-meta">${escapeHtml(loc?.name || life.country || '?')} · ${sexLabel} · ${life.age || '?'} ${LANG==='en'?'yrs':'歲'}</div>
+        </div>
+      </div>
+      <div class="shared-quote ${oneLine ? '' : 'shared-empty'}">${oneLine ? escapeHtml(oneLine) : (LANG==='en'?'(no words left behind)':'（沒有留下任何話）')}</div>
+      <div class="shared-story" data-story>${escapeHtml(fullStory).replace(/\n/g, '<br/>')}</div>
+      <div class="shared-actions">
+        <button class="shared-action-btn heart ${hearts > 0 ? 'active' : ''}" data-act="heart">${hearts > 0 ? '♥' : '♡'} ${hearts > 0 ? hearts : ''} ${LANG==='en'?'Keep in heart':'記在心裡'}</button>
+        <button class="shared-action-btn report ${reported ? 'active' : ''}" data-act="report">${reported ? '✓' : '⚐'} ${LANG==='en'?'Report':'檢舉'}</button>
+        <button class="shared-expand-btn" data-act="expand">${LANG==='en'?'Expand ▼':'展開 ▼'}</button>
+      </div>
+    `;
+    // 事件
+    card.querySelector('[data-act="heart"]').addEventListener('click', (e) => {
+      e.stopPropagation();
+      const s = getSharedState();
+      s.heartsByLife[id] = (s.heartsByLife[id] || 0) + 1;
+      saveSharedState(s);
+      renderSharedLives(lives);
+    });
+    card.querySelector('[data-act="report"]').addEventListener('click', (e) => {
+      e.stopPropagation();
+      const s = getSharedState();
+      if (!s.reportedByLife[id]) {
+        s.reportedByLife[id] = Date.now();
+        saveSharedState(s);
+        toast(t('shared.reported'));
+      }
+      renderSharedLives(lives);
+    });
+    card.querySelector('[data-act="expand"]').addEventListener('click', (e) => {
+      e.stopPropagation();
+      const story = card.querySelector('[data-story]');
+      const isExpanded = story.classList.toggle('expanded');
+      e.currentTarget.textContent = isExpanded
+        ? (LANG === 'en' ? '▲ Collapse' : '▲ 收合')
+        : (LANG === 'en' ? 'Expand ▼' : '展開 ▼');
+    });
+    list.appendChild(card);
+  });
+}
+
+/* ==== v5.20：現在居住的地方 (Active Players Map, intro) ==== */
+function renderActivePlayersMap() {
+  const wrap = $('#introPlayersMap');
+  if (!wrap) return;
+  // 收集目前「進行中」的 life：來自 STATE.life（若有）以及任何未死的 pastLives
+  const points = [];
+  if (STATE.life && !STATE.life.died) {
+    const c = countryById(STATE.life.country);
+    if (c) {
+      points.push({
+        country: STATE.life.country,
+        flag: c.flag,
+        name: STATE.life.name?.full || STATE.life.name?.full_en || '—',
+        age: STATE.life.age,
+        sex: STATE.life.sex,
+        active: true
+      });
+    }
+  }
+  // 過去 lives 中若 died 為 false 也算 active（理論上 loadPastLives 只存死亡，保留相容）
+  const past = loadPastLives();
+  past.forEach(l => {
+    if (!l.died) {
+      const c = countryById(l.country);
+      if (c) {
+        points.push({
+          country: l.country,
+          flag: c.flag,
+          name: l.name,
+          age: l.age,
+          sex: l.sex,
+          active: false
+        });
+      }
+    }
+  });
+  if (points.length === 0) {
+    wrap.innerHTML = `<div class="players-empty">${t('intro.players.empty')}</div>`;
+    return;
+  }
+  const W = 720, H = 360;
+  const proj = (lng, lat) => [((lng + 180) / 360) * W, ((90 - lat) / 180) * H];
+  const svg = svgEl('svg', {
+    viewBox: `0 0 ${W} ${H}`,
+    class: 'world-map',
+    style: 'max-width:100%;height:auto;background:#f5ead0;border-radius:8px;'
+  });
+  svgEl('rect', { x: 0, y: 0, width: W, height: H, fill: '#dde6e8' }, svg);
+  // 已去過國家（過去 lives）淡化顯示
+  const pastCountries = new Set(past.map(l => l.country));
+  const tooltipLines = [];
+  // 畫目前進行中（亮）
+  points.forEach(p => {
+    const coords = window.WORLD_COORDS && window.WORLD_COORDS[p.country];
+    if (!coords) return;
+    const [lng, lat] = coords;
+    const [x, y] = proj(lng, lat);
+    const r = p.active ? 6 : 4;
+    const circle = svgEl('circle', {
+      cx: x, cy: y, r,
+      fill: p.active ? '#c2185b' : '#8C1D3C',
+      stroke: 'white', 'stroke-width': 1.5,
+      opacity: p.active ? 1 : 0.7
+    }, svg);
+    circle.addEventListener('mouseenter', e => showMapTooltip(e, `${p.flag} ${escapeHtml(p.name)}<br>${LANG==='en'?'Age':'年齡'} ${p.age}${LANG===''?' ':' '}<br>${p.active ? (LANG==='en'?'● Active':'● 進行中') : (LANG==='en'?'○ Past':'○ 過去')}`));
+    circle.addEventListener('mouseleave', hideMapTooltip);
+    const flagText = svgEl('text', { x, y: y - r - 4, 'font-size': 12, 'text-anchor': 'middle' }, svg);
+    flagText.textContent = p.flag;
+  });
+  // 圖例
+  const legend = svgEl('text', { x: 8, y: H - 8, 'font-size': 10, fill: '#5a4a3a' }, svg);
+  legend.textContent = `${LANG==='en'?'Active lives':'進行中人生'} ${points.length}${LANG===''?'':' '}${LANG==='en'?'/ past countries':'/ 過去國家'} ${pastCountries.size}`;
+  wrap.innerHTML = '';
+  wrap.appendChild(svg);
+}
+
+/* ==== v5.20：本年死因（life view） ==== */
+function renderLifeCauseThisYear() {
+  const wrap = $('#lifeCauseThisYear');
+  if (!wrap || !STATE.life) return;
+  const life = STATE.life;
+  if (life.died) {
+    // 已死：本年分析改用死因年齡
+    const age = life.deathAge || life.age;
+    const w = causeWeights(life.countryData, age, life.sex);
+    const entries = Object.entries(w).sort((a, b) => b[1] - a[1]).slice(0, 5);
+    const total = entries.reduce((a, b) => a + b[1], 0);
+    wrap.innerHTML = `
+      <h4>⚖️ ${t('life.causeThisYear')}</h4>
+      <div class="lcw-list">
+        ${entries.map(([c, n]) => {
+          const pct = total > 0 ? (n / total * 100).toFixed(1) : 0;
+          return `<div class="lcw-row">
+            <span class="lcw-name">${escapeHtml(c)}</span>
+            <span class="lcw-bg"><span class="lcw-fi" style="width:${pct}%"></span></span>
+            <span class="lcw-pct">${pct}%</span>
+          </div>`;
+        }).join('')}
+      </div>
+    `;
+    return;
+  }
+  const age = life.age;
+  const w = causeWeights(life.countryData, age, life.sex);
+  const entries = Object.entries(w).sort((a, b) => b[1] - a[1]).slice(0, 5);
+  const total = entries.reduce((a, b) => a + b[1], 0);
+  wrap.innerHTML = `
+    <h4>${t('life.causeThisYear')}</h4>
+    <p class="muted" style="font-size:11px;margin:0 0 8px;">${t('life.causeThisYearAge', age)}</p>
+    <div class="lcw-list">
+      ${entries.map(([c, n]) => {
+        const pct = total > 0 ? (n / total * 100).toFixed(1) : 0;
+        return `<div class="lcw-row">
+          <span class="lcw-name">${escapeHtml(c)}</span>
+          <span class="lcw-bg"><span class="lcw-fi" style="width:${pct}%"></span></span>
+          <span class="lcw-pct">${pct}%</span>
+        </div>`;
+      }).join('')}
+    </div>
+  `;
+}
+
+/* ==== v5.20：一生主要死因 Top 3（end view） ==== */
+function computeLifetimeCauses(life) {
+  // 模擬每年 age→cause weights，整合為一生的死因分布
+  if (!life) return { top: [], byAge: {} };
+  const c = life.countryData;
+  const sex = life.sex;
+  const causeAccum = {};
+  // 取幾個代表性年齡：每 5 年（嬰兒細分）
+  const sampleAges = [0, 1, 3, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90];
+  const maxAge = life.deathAge || life.age || 80;
+  const filtered = sampleAges.filter(a => a <= Math.min(110, maxAge + 1));
+  if (filtered.length === 0) filtered.push(maxAge);
+  for (const a of filtered) {
+    const w = causeWeights(c, a, sex);
+    Object.entries(w).forEach(([k, v]) => {
+      causeAccum[k] = (causeAccum[k] || 0) + v;
+    });
+  }
+  const total = Object.values(causeAccum).reduce((a, b) => a + b, 0);
+  const sorted = Object.entries(causeAccum).sort((a, b) => b[1] - a[1]);
+  const top = sorted.slice(0, 3).map(([k, v]) => ({ cause: k, pct: total > 0 ? (v / total * 100) : 0 }));
+  return { top, byAge: causeAccum };
+}
+function renderEndCauseAnalysis() {
+  const wrap = $('#endCauseAnalysis');
+  if (!wrap || !STATE.life) return;
+  const life = STATE.life;
+  // 本年（死那年）死因
+  const deathAge = life.deathAge || life.age;
+  const yearW = causeWeights(life.countryData, deathAge, life.sex);
+  const yearEntries = Object.entries(yearW).sort((a, b) => b[1] - a[1]).slice(0, 5);
+  const yearTotal = yearEntries.reduce((a, b) => a + b[1], 0);
+  // 一生 top 3
+  const { top } = computeLifetimeCauses(life);
+  const isEn = LANG === 'en';
+  wrap.innerHTML = `
+    <h3>${isEn ? '⚖️ Death cause analysis' : '⚖️ 死亡原因分析'}</h3>
+    <div class="eca-section">
+      <h4 style="font-size:13px;color:var(--ink-2);margin:0 0 8px;">${t('end.causeYear')}</h4>
+      <p class="muted" style="font-size:11px;margin:0 0 8px;">${t('end.causeYearAge', deathAge)}</p>
+      <div class="eca-list">
+        ${yearEntries.length === 0 ? `<div class="eca-empty">${t('end.causeNot')}</div>` : yearEntries.map(([c, n]) => {
+          const pct = yearTotal > 0 ? (n / yearTotal * 100).toFixed(1) : 0;
+          return `<div class="eca-row">
+            <span class="eca-name">${escapeHtml(c)}</span>
+            <span class="eca-bg"><span class="eca-fi" style="width:${pct}%"></span></span>
+            <span class="eca-pct">${t('end.causeShare', pct)}</span>
+          </div>`;
+        }).join('')}
+      </div>
+    </div>
+    <div class="eca-section">
+      <h4 style="font-size:13px;color:var(--ink-2);margin:14px 0 8px;">${t('end.topCauseLifetime')}</h4>
+      <div class="eca-list">
+        ${top.length === 0 ? `<div class="eca-empty">${t('end.causeNot')}</div>` : top.map(({ cause, pct }) => {
+          return `<div class="eca-row">
+            <span class="eca-name">${escapeHtml(cause)}</span>
+            <span class="eca-bg"><span class="eca-fi" style="width:${pct.toFixed(1)}%"></span></span>
+            <span class="eca-pct">${t('end.causeShare', pct.toFixed(1))}</span>
+          </div>`;
+        }).join('')}
+      </div>
+    </div>
+  `;
 }
 
 let _mapTooltip = null;
@@ -2238,16 +3230,39 @@ function wire() {
     b.classList.add('active');
     STATE.era = b.dataset.era;
   }));
-  // 開始按鈕
+  // 開始按鈕（v5.19：先顯示出生登記卡 modal，等使用者確認才 startLife）
   const start = $('#btnStart');
   if (start) start.addEventListener('click', () => {
-    const c = chooseCountry(STATE.birthMode);
-    if (c) startLife(c.id);
+    startLifeWithCert();
   });
-  // 選特定國家開始
+  // 選特定國家開始（v5.19：同樣先顯示出生卡）
   const startSelected = $('#btnStartSelected');
   if (startSelected) startSelected.addEventListener('click', () => {
-    if (STATE.selectedCountry) startLife(STATE.selectedCountry);
+    const c = countryById(STATE.selectedCountry);
+    if (c) showBirthCertModal(c);
+  });
+  // v5.19：出生卡 modal 的確認按鈕
+  const birthCertConfirm = $('#birthCertConfirm');
+  if (birthCertConfirm) birthCertConfirm.addEventListener('click', () => {
+    const c = STATE.birthCertCountry;
+    hideBirthCertModal();
+    if (c) startLife(c.id);
+  });
+  // v5.19：出生卡 modal 的取消按鈕
+  const birthCertCancel = $('#birthCertCancel');
+  if (birthCertCancel) birthCertCancel.addEventListener('click', () => {
+    hideBirthCertModal();
+  });
+  // v5.19：出生卡 modal 的「換一個國家」
+  const birthCertReroll = $('#birthCertReroll');
+  if (birthCertReroll) birthCertReroll.addEventListener('click', () => {
+    const c = chooseCountry(STATE.birthMode);
+    if (c) showBirthCertModal(c);
+  });
+  // v5.19：modal 點背景關閉
+  const birthCertModal = $('#birthCertModal');
+  if (birthCertModal) birthCertModal.addEventListener('click', (e) => {
+    if (e.target === birthCertModal) hideBirthCertModal();
   });
   // 生命控制
   const pauseBtn = $('#btnPause');
@@ -2296,9 +3311,12 @@ function wire() {
       startLife(c.id);
     }
   });
-  // v5.12：分享出生卡
+  // v5.12 / v5.20：分享出生卡（下載 PNG + 複製 base64 URL）
   const shareCardBtn = $('#btnShareCard');
-  if (shareCardBtn) shareCardBtn.addEventListener('click', downloadBirthCardPNG);
+  if (shareCardBtn) shareCardBtn.addEventListener('click', () => {
+    downloadBirthCardPNG();
+    copyBirthCardShareURL();
+  });
   // 結束畫面
   const restart = $('#btnRestart');
   if (restart) restart.addEventListener('click', () => setView('intro'));
@@ -2598,12 +3616,367 @@ function buildFamilyAround(selfP, parsed) {
 async function init() {
   await loadData();
   document.documentElement.lang = LANG;
+  checkEduMode();      // v5.19: 教學版旗標 (?edu=1)
   wire();
   renderAll();
   injectHelpFab();
+  injectFooter();      // v5.19: footer + 工具列
+  registerServiceWorker(); // v5.19: PWA
+  setupPWAInstall();   // v5.19: beforeinstallprompt
+  startRealtimeCounters(); // v5.19: 即時計數器（每秒更新）
   if (location.hash.includes('tree=')) loadFromHash();
+  // v5.19 dev: hash 直接打開對應 modal（截圖 / 深連結用）
+  if (location.hash === '#feedback') setTimeout(renderFeedbackModal, 200);
+  if (location.hash === '#changelog') setTimeout(renderChangelogModal, 200);
+  if (location.hash === '#privacy') setTimeout(renderPrivacyModal, 200);
+  if (location.hash === '#terms') setTimeout(renderTermsModal, 200);
 }
 init();
+
+/* =====================================================================
+   v5.19 新增：footer + 工具列（feedback / changelog / privacy / terms /
+   contact / PWA install）+ 教學版模式 + 版本歷史
+   ===================================================================== */
+
+const APP_VERSION = '5.19.0';
+const APP_BUILD = '2026-10-18';
+
+// 版本歷史（每個版本：v / date / items；每個 item 含 emoji badge + 文字）
+// 為節省空間與維護成本，所有語言文字都用 i18n key；徽章 emoji 是視覺標記。
+const CHANGELOG = [
+  { v: '5.19', date: '2026-10-18', items: [
+      { tag: 'new',    icon: '📲', key: 'cl.5.19.pwa' },
+      { tag: 'new',    icon: '🎓', key: 'cl.5.19.edu' },
+      { tag: 'feat',   icon: '💌', key: 'cl.5.19.feedback' },
+      { tag: 'feat',   icon: '📜', key: 'cl.5.19.changelog' },
+      { tag: 'feat',   icon: '🔒', key: 'cl.5.19.privacy' },
+    ] },
+  { v: '5.18', date: '2026-10-15', items: [
+      { tag: 'feat',   icon: '🗺️', key: 'cl.5.18.map' },
+      { tag: 'feat',   icon: '🛂', key: 'cl.5.18.passport' },
+    ] },
+  { v: '5.17', date: '2026-10-10', items: [
+      { tag: 'fix',    icon: '🐛', key: 'cl.5.17.bugfix' },
+      { tag: 'style',  icon: '🎨', key: 'cl.5.17.style' },
+    ] },
+  { v: '5.16', date: '2026-10-05', items: [
+      { tag: 'feat',   icon: '🎯', key: 'cl.5.16.manual' },
+      { tag: 'fix',    icon: '⚙️', key: 'cl.5.16.focus' },
+    ] },
+  { v: '5.15', date: '2026-09-28', items: [
+      { tag: 'feat',   icon: '📈', key: 'cl.5.15.trajectory' },
+    ] },
+  { v: '5.14', date: '2026-09-20', items: [
+      { tag: 'feat',   icon: '🎲', key: 'cl.5.14.events' },
+      { tag: 'feat',   icon: '🛡️', key: 'cl.5.14.protect' },
+    ] },
+  { v: '5.13', date: '2026-09-10', items: [
+      { tag: 'feat',   icon: '⏱️', key: 'cl.5.13.tick' },
+      { tag: 'feat',   icon: '🎯', key: 'cl.5.13.focus' },
+      { tag: 'feat',   icon: '💰', key: 'cl.5.13.finance' },
+    ] },
+  { v: '5.12', date: '2026-08-25', items: [
+      { tag: 'feat',   icon: '📤', key: 'cl.5.12.share' },
+    ] },
+  { v: '5.11', date: '2026-08-12', items: [
+      { tag: 'feat',   icon: '📉', key: 'cl.5.11.survival' },
+    ] },
+  { v: '5.10', date: '2026-07-30', items: [
+      { tag: 'feat',   icon: '✎', key: 'cl.5.10.thoughts' },
+    ] },
+  { v: '5.9',  date: '2026-07-15', items: [
+      { tag: 'feat',   icon: '⏭', key: 'cl.5.9.auto' },
+      { tag: 'feat',   icon: '⏩', key: 'cl.5.9.skip' },
+    ] },
+  { v: '5.8',  date: '2026-07-01', items: [
+      { tag: 'new',    icon: '⚖️', key: 'cl.5.8.status' },
+      { tag: 'new',    icon: '💵', key: 'cl.5.8.assets' },
+      { tag: 'new',    icon: '👨‍👩‍👧', key: 'cl.5.8.family' },
+      { tag: 'new',    icon: '👥', key: 'cl.5.8.companions' },
+    ] },
+  { v: '5.7',  date: '2026-06-15', items: [
+      { tag: 'feat',   icon: '🌳', key: 'cl.5.7.tree' },
+      { tag: 'feat',   icon: '📚', key: 'cl.5.7.shelf' },
+    ] },
+  { v: '5.6',  date: '2026-06-01', items: [
+      { tag: 'feat',   icon: '🧪', key: 'cl.5.6.lab' },
+    ] },
+  { v: '5.5',  date: '2026-05-20', items: [
+      { tag: 'style',  icon: '🌐', key: 'cl.5.5.i18n' },
+    ] },
+  { v: '5.0',  date: '2026-05-01', items: [
+      { tag: 'new',    icon: '🚀', key: 'cl.5.0.engine' },
+    ] },
+  { v: '4.x',  date: '2026-03-15', items: [
+      { tag: 'feat',   icon: '🌏', key: 'cl.4.country' },
+    ] },
+  { v: '3.x',  date: '2026-01-20', items: [
+      { tag: 'feat',   icon: '🎭', key: 'cl.3.character' },
+    ] },
+  { v: '2.x',  date: '2025-11-10', items: [
+      { tag: 'feat',   icon: '🧬', key: 'cl.2.stats' },
+    ] },
+  { v: '1.0',  date: '2025-10-01', items: [
+      { tag: 'new',    icon: '👶', key: 'cl.1.first' },
+    ] },
+];
+
+// ==== 教學版模式 (?edu=1) ====
+function checkEduMode() {
+  const params = new URLSearchParams(location.search);
+  STATE.eduMode = params.get('edu') === '1';
+  if (STATE.eduMode) {
+    document.documentElement.classList.add('edu-mode');
+    // 預設自動抉擇
+    STATE.autoDecide = true;
+    // 隱藏訃聞 + 書架 tab（書架 = 追思館）
+    $$('.navbtn[data-view="end"]').forEach(el => el.hidden = true);
+    $$('.navbtn[data-view="shelf"]').forEach(el => el.hidden = true);
+    // 顯示教學版 badge
+    const badge = $('#eduBadge');
+    if (badge) badge.hidden = false;
+    // 文案提示
+    const sub = $('#introCountryInfoSub');
+    // 不要覆蓋既有 intro.sub，避免破壞既有 i18n
+  }
+}
+
+// ==== Footer 注入 ====
+function injectFooter() {
+  const f = $('#appFooter');
+  if (!f) return;
+  f.hidden = false;
+  // 綁定事件
+  $('#btnFeedback')?.addEventListener('click', renderFeedbackModal);
+  $('#btnChangelog')?.addEventListener('click', renderChangelogModal);
+  $('#btnPrivacy')?.addEventListener('click', e => { e.preventDefault(); renderPrivacyModal(); });
+  $('#btnTerms')?.addEventListener('click', e => { e.preventDefault(); renderTermsModal(); });
+  // contact 是 mailto，預設瀏覽器處理
+  // install 按鈕在 setupPWAInstall() 處理
+  // 套翻譯
+  $$('#appFooter [data-t]').forEach(el => { el.textContent = t(el.dataset.t); });
+}
+
+// ==== Feedback modal ====
+const FEEDBACK_MAX = 500;
+function renderFeedbackModal() {
+  document.querySelector('#feedbackModal')?.remove();
+  const isEn = LANG === 'en';
+  const html = `
+    <div id="feedbackModal" class="life-modal">
+      <div class="life-modal-card">
+        <button class="lm-close" onclick="document.getElementById('feedbackModal').remove()">×</button>
+        <h2 class="lm-title">💌 ${t('feedback.title')}</h2>
+        <p class="modal-help">${t('feedback.help')}</p>
+        <textarea id="feedbackInput" class="feedback-textarea" maxlength="${FEEDBACK_MAX}" placeholder="${t('feedback.placeholder')}"></textarea>
+        <div class="feedback-meta">
+          <span>${t('feedback.local')}</span>
+          <span id="feedbackCount">0 / ${FEEDBACK_MAX}</span>
+        </div>
+        <div class="modal-actions" style="margin-top:14px;">
+          <button class="ghost" onclick="document.getElementById('feedbackModal').remove()">${t('feedback.cancel')}</button>
+          <button class="primary" id="feedbackSend">${t('feedback.send')}</button>
+        </div>
+      </div>
+    </div>`;
+  const wrap = document.createElement('div');
+  wrap.innerHTML = html;
+  document.body.appendChild(wrap.firstElementChild);
+  const modal = $('#feedbackModal');
+  modal.addEventListener('click', e => { if (e.target === modal) modal.remove(); });
+  const input = $('#feedbackInput');
+  const count = $('#feedbackCount');
+  input.addEventListener('input', () => {
+    const len = input.value.length;
+    count.textContent = `${len} / ${FEEDBACK_MAX}`;
+    count.classList.toggle('over', len >= FEEDBACK_MAX);
+  });
+  $('#feedbackSend').addEventListener('click', () => {
+    const text = (input.value || '').trim().slice(0, FEEDBACK_MAX);
+    if (!text) {
+      toast(t('feedback.empty'));
+      return;
+    }
+    try {
+      const KEY = STORAGE_KEY + ':feedback';
+      const list = JSON.parse(localStorage.getItem(KEY) || '[]');
+      list.push({ ts: Date.now(), lang: LANG, v: APP_VERSION, text });
+      // 只保留最近 50 則
+      while (list.length > 50) list.shift();
+      localStorage.setItem(KEY, JSON.stringify(list));
+    } catch (e) { /* localStorage 滿了就靜默忽略 */ }
+    modal.remove();
+    toast(t('feedback.thanks'));
+  });
+}
+
+// ==== Changelog modal ====
+function renderChangelogModal() {
+  document.querySelector('#changelogModal')?.remove();
+  const items = CHANGELOG.map(entry => `
+    <div class="changelog-entry">
+      <div>
+        <span class="changelog-ver">v${escapeHtml(entry.v)}</span>
+        <span class="changelog-date">${escapeHtml(entry.date)}</span>
+      </div>
+      <ul class="changelog-items">
+        ${entry.items.map(it => `
+          <li>
+            <span class="cl-badge cl-badge-${it.tag}">${escapeHtml(t('cl.tag.' + it.tag))}</span>
+            <span>${it.icon}</span>
+            <span>${escapeHtml(t(it.key))}</span>
+          </li>`).join('')}
+      </ul>
+    </div>`).join('');
+  const html = `
+    <div id="changelogModal" class="life-modal">
+      <div class="life-modal-card life-modal-wide">
+        <button class="lm-close" onclick="document.getElementById('changelogModal').remove()">×</button>
+        <h2 class="lm-title">📜 ${t('changelog.title')} <span class="muted" style="font-size:13px;font-weight:400;margin-left:6px;">v${APP_VERSION} · ${APP_BUILD}</span></h2>
+        <p class="modal-help">${t('changelog.intro')}</p>
+        <div class="changelog-list">${items}</div>
+        <div class="modal-actions" style="margin-top:14px;">
+          <button class="primary" onclick="document.getElementById('changelogModal').remove()">${t('changelog.close')}</button>
+        </div>
+      </div>
+    </div>`;
+  const wrap = document.createElement('div');
+  wrap.innerHTML = html;
+  document.body.appendChild(wrap.firstElementChild);
+  const modal = $('#changelogModal');
+  modal.addEventListener('click', e => { if (e.target === modal) modal.remove(); });
+}
+
+// ==== Privacy modal ====
+function renderPrivacyModal() {
+  showLegalModal('privacyModal', '🔒 ' + t('privacy.title'), `
+    <p>${t('privacy.p1')}</p>
+    <p>${t('privacy.p2')}</p>
+    <ul>
+      <li>${t('privacy.p3')}</li>
+      <li>${t('privacy.p4')}</li>
+      <li>${t('privacy.p5')}</li>
+    </ul>
+    <p class="legal-helpline"><strong>${t('privacy.licenseTitle')}</strong><br/>${t('privacy.license')}</p>
+  `);
+}
+
+// ==== Terms modal ====
+function renderTermsModal() {
+  showLegalModal('termsModal', '📋 ' + t('terms.title'), `
+    <p>${t('terms.p1')}</p>
+    <p>${t('terms.p2')}</p>
+    <ul>
+      <li>${t('terms.p3')}</li>
+      <li>${t('terms.p4')}</li>
+    </ul>
+    <p>${t('terms.p5')}</p>
+    <p class="legal-helpline">${t('terms.helpline')}</p>
+  `);
+}
+
+function showLegalModal(id, title, html) {
+  document.querySelector('#' + id)?.remove();
+  const wrap = document.createElement('div');
+  wrap.innerHTML = `
+    <div id="${id}" class="life-modal">
+      <div class="life-modal-card">
+        <button class="lm-close" onclick="document.getElementById('${id}').remove()">×</button>
+        <h2 class="lm-title">${title}</h2>
+        <div class="legal-body">${html}</div>
+        <div class="modal-actions" style="margin-top:14px;">
+          <button class="primary" onclick="document.getElementById('${id}').remove()">${t('changelog.close')}</button>
+        </div>
+      </div>
+    </div>`;
+  document.body.appendChild(wrap.firstElementChild);
+  const modal = document.querySelector('#' + id);
+  modal.addEventListener('click', e => { if (e.target === modal) modal.remove(); });
+}
+
+// ==== Service Worker 註冊（PWA 離線快取）====
+function registerServiceWorker() {
+  if (!('serviceWorker' in navigator)) return;
+  // 開發/檔案模式跳過（sw.js 需 HTTP 協議）
+  if (location.protocol === 'file:') return;
+  navigator.serviceWorker.register('sw.js').then(reg => {
+    // 監聽更新
+    reg.addEventListener('updatefound', () => {
+      const ni = reg.installing;
+      if (!ni) return;
+      ni.addEventListener('statechange', () => {
+        if (ni.state === 'activated' && navigator.serviceWorker.controller) {
+          // 新 SW 已接管
+        }
+      });
+    });
+  }).catch(() => { /* 靜默失敗，不影響主程式 */ });
+}
+
+// ==== PWA 安裝提示（beforeinstallprompt） ====
+let pwaDeferredPrompt = null;
+function setupPWAInstall() {
+  window.addEventListener('beforeinstallprompt', e => {
+    e.preventDefault();
+    pwaDeferredPrompt = e;
+    // 顯示 footer 的安裝按鈕
+    const btn = $('#btnInstall');
+    if (btn) {
+      btn.hidden = false;
+      btn.addEventListener('click', promptPWAInstall, { once: true });
+    }
+    // 在 help-fab 上加 pulse 提示
+    document.querySelector('.help-fab')?.classList.add('install-ready');
+  });
+  window.addEventListener('appinstalled', () => {
+    pwaDeferredPrompt = null;
+    const btn = $('#btnInstall');
+    if (btn) { btn.hidden = true; }
+    document.querySelector('.help-fab')?.classList.remove('install-ready');
+    toast(t('install.installed'));
+  });
+}
+async function promptPWAInstall() {
+  if (!pwaDeferredPrompt) {
+    showInstallHelp();
+    return;
+  }
+  try {
+    pwaDeferredPrompt.prompt();
+    const choice = await pwaDeferredPrompt.userChoice;
+    pwaDeferredPrompt = null;
+    if (choice?.outcome === 'accepted') {
+      // appinstalled 會處理
+    } else {
+      const btn = $('#btnInstall');
+      if (btn) btn.addEventListener('click', promptPWAInstall, { once: true });
+    }
+  } catch (e) {
+    showInstallHelp();
+  }
+}
+function showInstallHelp() {
+  const btn = $('#btnInstall');
+  if (btn) btn.hidden = true;
+  showLegalModal('installHelp', '📲 ' + t('install.title'), `
+    <p>${t('install.text')}</p>
+    <div class="install-card">
+      <span class="install-emoji">📲</span>
+      <div>
+        <div><strong>${t('install.androidHint')}</strong></div>
+        <div class="install-hint">${t('install.androidStep')}</div>
+      </div>
+    </div>
+    <div class="install-card">
+      <span class="install-emoji">🍎</span>
+      <div>
+        <div><strong>${t('install.iosHint')}</strong></div>
+        <div class="install-hint">${t('install.iosStep')}</div>
+      </div>
+    </div>
+    <p class="install-hint" style="margin-top:10px;">${t('install.unavailable')}</p>
+  `);
+}
 
 function injectHelpFab() {
   if (document.querySelector('.help-fab')) return;
@@ -2899,11 +4272,13 @@ function computeCrossLifeEvents(p) {
   if (p.death?.year) {
     const myAge = selfAgeAt(p.death.year);
     if (myAge >= 0 && myAge <= self.age) {
-      events.push({
-        icon: '🕯️',
-        text: LANG === 'en' ? `${p.name} passed away when you were ${myAge}.` : `${p.name} 過世時，你 ${myAge} 歲。`,
-        kind: 'heavy'
-      });
+      if (!STATE.eduMode) {
+        events.push({
+          icon: '🕯️',
+          text: LANG === 'en' ? `${p.name} passed away when you were ${myAge}.` : `${p.name} 過世時，你 ${myAge} 歲。`,
+          kind: 'heavy'
+        });
+      }
     } else if (myAge > self.age) {
       events.push({
         icon: '🕯️',
@@ -3235,6 +4610,39 @@ function downloadBirthCardPNG() {
     toast(isEn ? 'Image conversion failed' : '圖片轉換失敗');
   };
   img.src = url;
+}
+
+/* v5.20：複製出生卡 base64 data URL 到剪貼簿（並顯示 toast） */
+function copyBirthCardShareURL() {
+  if (!STATE.life) return;
+  const life = STATE.life;
+  const c = life.countryData;
+  if (!c) return;
+  // 構建一個精簡版 life 物件，序列化後 base64 成 URL hash
+  try {
+    const minimal = {
+      name: life.name?.full || life.name?.full_en || '',
+      country: life.country,
+      year: life.year,
+      yearOffset: life.yearOffset,
+      age: life.age,
+      sex: life.sex,
+      regNumber: life.regNumber,
+      cause: life.cause
+    };
+    const json = JSON.stringify(minimal);
+    const b64 = btoa(unescape(encodeURIComponent(json)));
+    const url = `${location.origin}${location.pathname}#life=${b64}`;
+    const ok = navigator.clipboard?.writeText(url);
+    if (ok && typeof ok.then === 'function') {
+      ok.then(() => toast(t('share.linkCopied')))
+        .catch(() => toast(t('share.linkCopied')));
+    } else {
+      toast(t('share.linkCopied'));
+    }
+  } catch (e) {
+    // btoa 失敗時靜默
+  }
 }
 
 function toast(msg, ms=2200) {
