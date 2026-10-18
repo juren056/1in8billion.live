@@ -1423,6 +1423,21 @@ function logLife(text) {
   el.scrollTop = el.scrollHeight;
 }
 
+/* v5.27：完整時序事件 feed — 從 life.log 渲染為卡片 */
+function renderLifeEventsFeed() {
+  const el = $('#lifeEventsFeed');
+  if (!el || !STATE.life) return;
+  const isEn = LANG === 'en';
+  const log = STATE.life.log || [];
+  el.innerHTML = log.slice(-30).reverse().map(e => `
+    <div class="lef-row kind-${e.kind || 'log'}">
+      <span class="lef-age">${e.age ?? '?'} ${isEn?'yo':'歲'}</span>
+      <span class="lef-icon">${e.icon || '·'}</span>
+      <span class="lef-text">${escapeHtml(e.text || '')}</span>
+    </div>
+  `).join('') || `<span class="muted">${isEn ? 'No events' : '無事件'}</span>`;
+}
+
 // ==== 過去生命 ====
 function savePastLife(life) {
   try {
@@ -1755,6 +1770,7 @@ function renderLife() {
   renderCountryStats();
   renderSurvivalCurve();
   renderThisYear();
+  renderLifeEventsFeed();
   renderManualDecisions();
   renderLifeMap();
   renderIdentityRecord();
