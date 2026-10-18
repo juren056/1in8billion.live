@@ -502,3 +502,19 @@ input, select, textarea { font: inherit; color: inherit; }
 .lm-meta { display: flex; gap: 8px; flex-wrap: wrap; font-size: 13px; color: var(--ink-2); margin-bottom: 14px; }
 .life-tree { background: var(--bg); border-radius: 8px; padding: 10px; overflow-x: auto; }
 .panorama-common { padding: 10px; background: #fef0f0; border: 1px solid #a04040; border-radius: 6px; font-size: 13px; margin-bottom: 12px; }
+
+/* Lab family stats grid */
+.fam-stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 10px; margin-top: 8px; }
+.fam-stats-grid .lab-stat { padding: 10px 8px; background: #fbf6ea; }
+
+/* Caste markers in tree */
+.caste-marker { font-size: 10px; padding: 1px 6px; border-radius: 4px; display: inline-block; margin-top: 2px; }
+.caste-SC { background: #5C2B2B; color: #fff; }
+.caste-ST { background: #8B4513; color: #fff; }
+.caste-OBC { background: #C97D2A; color: #fff; }
+.caste-GEN { background: #2A6B8C; color: #fff; }
+
+/* Share button */
+.tree-share { display: inline-block; margin-left: 8px; }
+.tree-share button { padding: 6px 12px; font-size: 13px; border-radius: 6px; border: 1px solid var(--accent-2); background: var(--accent-2); color: white; cursor: pointer; }
+.tree-share button:hover { opacity: 0.9; }
