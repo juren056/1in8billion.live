@@ -905,6 +905,13 @@ function renderShelf() {
     shelf.appendChild(btn);
     btn.querySelector('#shelfPanoramaBtn').addEventListener('click', () => renderPanorama(lives));
   }
+  // 世界地圖：標出歷來人生去過的國家
+  if (lives.length > 0) {
+    const worldWrap = document.createElement('div');
+    worldWrap.className = 'shelf-world';
+    worldWrap.appendChild(renderShelfWorldMap(lives));
+    shelf.appendChild(worldWrap);
+  }
   for (const life of lives) {
     const c = countryById(life.country);
     const flag = c ? c.flag : '🏳️';
@@ -924,6 +931,64 @@ function renderShelf() {
     book.addEventListener('click', () => showLifeModal(life));
     shelf.appendChild(book);
   }
+}
+
+/* ==== Shelf 世界地圖 ==== */
+function renderShelfWorldMap(lives) {
+  const W = 720, H = 360;
+  // 計算各國家被經歷次數 + 平均壽命
+  const countryStats = {};
+  lives.forEach(l => {
+    if (!countryStats[l.country]) countryStats[l.country] = { count: 0, totalAge: 0, deaths: [] };
+    countryStats[l.country].count++;
+    countryStats[l.country].totalAge += l.age || 0;
+    countryStats[l.country].deaths.push(l.cause);
+  });
+  // 經度→x: (lng + 180) / 360 * W; 緯度→y: (90 - lat) / 180 * H
+  const proj = (lng, lat) => [((lng + 180) / 360) * W, ((90 - lat) / 180) * H];
+  const svg = svgEl('svg', { viewBox: `0 0 ${W} ${H}`, class: 'world-map', style: 'max-width:100%;height:auto;background:#f5ead0;border-radius:8px;' });
+  // 大陸輪廓（簡化用矩形網格代替）
+  const grid = svgEl('rect', { x: 0, y: 0, width: W, height: H, fill: '#dde6e8' }, svg);
+  // 為每個經歷國家繪製點
+  const visited = Object.keys(countryStats);
+  const tooltipLines = [];
+  visited.forEach(iso => {
+    const coords = window.WORLD_COORDS && window.WORLD_COORDS[iso];
+    if (!coords) return;
+    const [lng, lat] = coords;
+    const [x, y] = proj(lng, lat);
+    const stat = countryStats[iso];
+    const avgAge = (stat.totalAge / stat.count).toFixed(1);
+    const c = countryById(iso);
+    const flag = c ? c.flag : '🏳️';
+    // 主圓點：依去過次數調整大小
+    const r = 4 + Math.min(stat.count * 2, 12);
+    const circle = svgEl('circle', { cx: x, cy: y, r, fill: 'var(--accent)', stroke: 'white', 'stroke-width': 1, opacity: 0.85 }, svg);
+    circle.addEventListener('mouseenter', e => showMapTooltip(e, `${flag} ${c?.name_zh || iso}<br>${LANG==='en'?'Lived':'活過'} ${stat.count} ${LANG==='en'?'lives':'次'}, ${LANG==='en'?'avg':'平均'} ${avgAge} ${LANG==='en'?'yrs':'歲'}`));
+    circle.addEventListener('mouseleave', hideMapTooltip);
+    // 國旗 emoji 標記
+    const flagText = svgEl('text', { x: x, y: y - r - 4, 'font-size': 12, 'text-anchor': 'middle' }, svg);
+    flagText.textContent = flag;
+    tooltipLines.push(`${flag} ${c?.name_zh || iso}: ${stat.count} ${LANG==='en'?'times':'次'}`);
+  });
+  // 圖例
+  const legend = svgEl('text', { x: 8, y: H - 8, 'font-size': 10, fill: '#5a4a3a' }, svg);
+  legend.textContent = `${LANG==='en'?'Lived in':'曾活過'} ${visited.length} ${LANG==='en'?'countries':'個國家'}`;
+  return svg;
+}
+
+let _mapTooltip = null;
+function showMapTooltip(e, html) {
+  hideMapTooltip();
+  _mapTooltip = document.createElement('div');
+  _mapTooltip.className = 'map-tooltip';
+  _mapTooltip.innerHTML = html;
+  _mapTooltip.style.left = (e.pageX + 12) + 'px';
+  _mapTooltip.style.top = (e.pageY + 12) + 'px';
+  document.body.appendChild(_mapTooltip);
+}
+function hideMapTooltip() {
+  if (_mapTooltip) { _mapTooltip.remove(); _mapTooltip = null; }
 }
 
 function showLifeModal(life) {
