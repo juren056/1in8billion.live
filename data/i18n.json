@@ -153,7 +153,11 @@
     "tree.noteFoster": "寄養",
     "person.cross": "與你生命的交會",
     "person.detail": "家族成員詳情",
-    "person.close": "關閉"
+    "person.close": "關閉",
+    "shelf.panorama": "家族全景圖",
+    "shelf.panoramaSub": "合併多段人生的族譜",
+    "shelf.commonAncestors": "共同親屬",
+    "shelf.noCommon": "無共同親屬"
   },
   "zh-Hans": {
     "title": "选出生地 · 人生模拟",
@@ -309,7 +313,11 @@
     "tree.noteFoster": "Foster",
     "person.cross": "Crossovers with your life",
     "person.detail": "Family member detail",
-    "person.close": "Close"
+    "person.close": "Close",
+    "shelf.panorama": "Family Panorama",
+    "shelf.panoramaSub": "Merge families across lives",
+    "shelf.commonAncestors": "Common relatives",
+    "shelf.noCommon": "No common relatives"
   },
   "en": {
     "title": "Born Somewhere · Life Simulator",
@@ -465,7 +473,11 @@
     "tree.noteFoster": "Foster",
     "person.cross": "Crossovers with your life",
     "person.detail": "Family member detail",
-    "person.close": "Close"
+    "person.close": "Close",
+    "shelf.panorama": "Family Panorama",
+    "shelf.panoramaSub": "Merge families across lives",
+    "shelf.commonAncestors": "Common relatives",
+    "shelf.noCommon": "No common relatives"
   },
   "ko": {
     "title": "태어난 곳 · 인생 시뮬레이션",
@@ -634,7 +646,11 @@
     "tree.noteFoster": "Foster",
     "person.cross": "Crossovers with your life",
     "person.detail": "Family member detail",
-    "person.close": "Close"
+    "person.close": "Close",
+    "shelf.panorama": "Family Panorama",
+    "shelf.panoramaSub": "Merge families across lives",
+    "shelf.commonAncestors": "Common relatives",
+    "shelf.noCommon": "No common relatives"
   },
   "ja": {
     "title": "出生地 · 人生シミュレーション",
@@ -803,7 +819,11 @@
     "tree.noteFoster": "Foster",
     "person.cross": "Crossovers with your life",
     "person.detail": "Family member detail",
-    "person.close": "Close"
+    "person.close": "Close",
+    "shelf.panorama": "Family Panorama",
+    "shelf.panoramaSub": "Merge families across lives",
+    "shelf.commonAncestors": "Common relatives",
+    "shelf.noCommon": "No common relatives"
   },
   "vi": {
     "title": "Nơi sinh · Mô phỏng cuộc đời",
@@ -972,7 +992,11 @@
     "tree.noteFoster": "Foster",
     "person.cross": "Crossovers with your life",
     "person.detail": "Family member detail",
-    "person.close": "Close"
+    "person.close": "Close",
+    "shelf.panorama": "Family Panorama",
+    "shelf.panoramaSub": "Merge families across lives",
+    "shelf.commonAncestors": "Common relatives",
+    "shelf.noCommon": "No common relatives"
   },
   "fr": {
     "title": "Né quelque part · Simulateur de vie",
@@ -1141,7 +1165,11 @@
     "tree.noteFoster": "Foster",
     "person.cross": "Crossovers with your life",
     "person.detail": "Family member detail",
-    "person.close": "Close"
+    "person.close": "Close",
+    "shelf.panorama": "Family Panorama",
+    "shelf.panoramaSub": "Merge families across lives",
+    "shelf.commonAncestors": "Common relatives",
+    "shelf.noCommon": "No common relatives"
   },
   "th": {
     "title": "เกิดที่ไหน · จำลองชีวิต",
@@ -1310,7 +1338,11 @@
     "tree.noteFoster": "Foster",
     "person.cross": "Crossovers with your life",
     "person.detail": "Family member detail",
-    "person.close": "Close"
+    "person.close": "Close",
+    "shelf.panorama": "Family Panorama",
+    "shelf.panoramaSub": "Merge families across lives",
+    "shelf.commonAncestors": "Common relatives",
+    "shelf.noCommon": "No common relatives"
   },
   "es": {
     "title": "Nacido en algún lugar · Simulador de vida",
@@ -1479,6 +1511,10 @@
     "tree.noteFoster": "Foster",
     "person.cross": "Crossovers with your life",
     "person.detail": "Family member detail",
-    "person.close": "Close"
+    "person.close": "Close",
+    "shelf.panorama": "Family Panorama",
+    "shelf.panoramaSub": "Merge families across lives",
+    "shelf.commonAncestors": "Common relatives",
+    "shelf.noCommon": "No common relatives"
   }
 }
