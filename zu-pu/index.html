@@ -1,0 +1,255 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+<meta name="theme-color" content="#f5efe2" />
+<title data-t="title">族譜 · 自己的家族，自己記</title>
+<link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+<header class="topbar">
+  <a class="brand" href="#home" data-t="brand">族 譜</a>
+  <nav class="topnav">
+    <button class="navbtn active" data-view="tree" data-t="nav.tree">族譜</button>
+    <button class="navbtn" data-view="list" data-t="nav.list">名冊</button>
+    <button class="navbtn" data-view="timeline" data-t="nav.timeline">時間軸</button>
+    <button class="navbtn" data-view="lab" data-t="nav.lab">Lab</button>
+  </nav>
+  <div class="topright">
+    <select id="langSwitcher" class="lang-select" title="Language">
+      <option value="zh-Hant">繁體</option>
+      <option value="zh-Hans">简体</option>
+      <option value="en">EN</option>
+      <option value="ko">한국</option>
+      <option value="ja">日本</option>
+      <option value="vi">Việt</option>
+      <option value="fr">FR</option>
+      <option value="th">ไทย</option>
+      <option value="es">ES</option>
+    </select>
+    <button class="iconbtn" id="btnSearch" title="搜尋">⌕</button>
+    <button class="iconbtn" id="btnAdd" title="新增成員">＋</button>
+    <button class="iconbtn" id="btnIO" title="匯入/匯出">⇄</button>
+  </div>
+</header>
+
+<main class="main">
+
+<!-- 樹狀視圖 -->
+<section id="viewTree" class="view active">
+  <div class="view-header">
+    <div class="legend">
+      <span class="dot dot-m"></span><span data-t="legend.m">男</span>
+      <span class="dot dot-f"></span><span data-t="legend.f">女</span>
+      <span class="dot dot-d"></span><span data-t="legend.d">已故</span>
+    </div>
+    <div class="view-actions">
+      <label data-t="label.center">中心人物
+        <select id="treeRoot"></select>
+      </label>
+      <div class="seg" data-group="treeMode">
+        <button class="seg-btn active" data-val="ancestor" data-t="tree.ancestor">祖上</button>
+        <button class="seg-btn" data-val="descendant" data-t="tree.descendant">子孫</button>
+        <button class="seg-btn" data-val="both" data-t="tree.both">祖上＋子孫</button>
+      </div>
+      <div class="seg" data-group="treeGen">
+        <button class="seg-btn" data-val="2" data-t="tree.g2">2 代</button>
+        <button class="seg-btn active" data-val="3" data-t="tree.g3">3 代</button>
+        <button class="seg-btn" data-val="4" data-t="tree.g4">4 代</button>
+        <button class="seg-btn" data-val="5" data-t="tree.g5">5 代</button>
+      </div>
+    </div>
+  </div>
+  <div id="treeCanvas" class="tree-canvas">
+    <div class="tree-empty" data-t="tree.loading">載入中…</div>
+  </div>
+</section>
+
+<!-- 名冊視圖 -->
+<section id="viewList" class="view">
+  <div class="view-header">
+    <div class="view-actions">
+      <input id="listSearch" class="search" type="search" data-t-placeholder="list.search" placeholder="搜尋姓名、地點、備註…" />
+      <label data-t="list.sort">排序
+        <select id="listSort">
+          <option value="gen" data-t="list.sort.gen">世代</option>
+          <option value="birthAsc" data-t="list.sort.birth">出生（舊→新）</option>
+          <option value="birthDesc" data-t="list.sort.birth">出生（新→舊）</option>
+          <option value="name" data-t="list.sort.name">姓名</option>
+        </select>
+      </label>
+    </div>
+  </div>
+  <div id="listContainer" class="list-container"></div>
+</section>
+
+<!-- 時間軸視圖 -->
+<section id="viewTimeline" class="view">
+  <div class="view-header">
+    <div class="view-actions">
+      <label data-t="timeline.label">顯示
+        <select id="tlMode">
+          <option value="birth" data-t="timeline.birth">出生年</option>
+          <option value="death" data-t="timeline.death">逝世年</option>
+          <option value="both" data-t="timeline.both">兩者</option>
+        </select>
+      </label>
+    </div>
+  </div>
+  <div id="tlCanvas" class="tl-canvas"></div>
+</section>
+
+<!-- Lab 視圖 -->
+<section id="viewLab" class="view">
+  <h2 class="lab-title" data-t="lab.title">Lab · 系譜分析</h2>
+  <p class="lab-sub" data-t="lab.sub">給定家族資料，計算整體統計：總人數、平均壽命、平均世代、最深世代、年齡分布。</p>
+  <div class="lab-controls">
+    <button id="labRun" class="primary" data-t="lab.run">執 行</button>
+  </div>
+  <div id="labResults" class="lab-results"></div>
+</section>
+
+</main>
+
+<!-- 人物詳情 modal -->
+<div id="personModal" class="modal" hidden>
+  <div class="modal-card modal-card-wide">
+    <div class="modal-head">
+      <h2 class="modal-q" id="pmTitle">人物</h2>
+      <div class="modal-actions-inline">
+        <button class="ghost" id="pmEdit" data-t="pm.edit">編輯</button>
+        <button class="ghost danger" id="pmDelete" data-t="pm.delete">刪除</button>
+        <button class="ghost" id="pmClose" data-t="pm.close">關閉</button>
+      </div>
+    </div>
+    <div class="pm-body" id="pmBody"></div>
+  </div>
+</div>
+
+<!-- 新增/編輯表單 modal -->
+<div id="editModal" class="modal" hidden>
+  <div class="modal-card modal-card-wide">
+    <h2 class="modal-q" id="emTitle">新增人物</h2>
+    <form id="emForm" class="em-form">
+      <div class="em-row">
+        <label data-t="em.name">姓名 *</label>
+        <input name="name" required />
+      </div>
+      <div class="em-row">
+        <label data-t="em.nameEn">英文名 / 別名</label>
+        <input name="nameEn" />
+      </div>
+      <div class="em-row em-row-2">
+        <div>
+          <label data-t="em.gender">性別 *</label>
+          <select name="gender" required>
+            <option value="M" data-t="sex.male">男</option>
+            <option value="F" data-t="sex.female">女</option>
+            <option value="U" data-t="sex.unknown">未知</option>
+          </select>
+        </div>
+        <div>
+          <label data-t="em.birthYear">出生年</label>
+          <input name="birthYear" type="number" min="1500" max="2100" />
+        </div>
+      </div>
+      <div class="em-row em-row-2">
+        <div>
+          <label data-t="em.birthMonth">出生月</label>
+          <input name="birthMonth" type="number" min="1" max="12" />
+        </div>
+        <div>
+          <label data-t="em.birthDay">出生日</label>
+          <input name="birthDay" type="number" min="1" max="31" />
+        </div>
+      </div>
+      <div class="em-row">
+        <label data-t="em.birthPlace">出生地</label>
+        <input name="birthPlace" />
+      </div>
+      <div class="em-row em-row-2">
+        <div>
+          <label data-t="em.deathYear">逝世年</label>
+          <input name="deathYear" type="number" min="1500" max="2100" />
+        </div>
+        <div>
+          <label data-t="em.deathMonth">逝世月</label>
+          <input name="deathMonth" type="number" min="1" max="12" />
+        </div>
+      </div>
+      <div class="em-row em-row-2">
+        <div>
+          <label data-t="em.deathDay">逝世日</label>
+          <input name="deathDay" type="number" min="1" max="31" />
+        </div>
+        <div>
+          <label data-t="em.deathPlace">逝世地</label>
+          <input name="deathPlace" />
+        </div>
+      </div>
+      <div class="em-row">
+        <label data-t="em.parents">父母（最多兩位，長上為父）</label>
+        <div class="em-parents">
+          <select name="parent1"><option value="">— 無 —</option></select>
+          <select name="parent2"><option value="">— 無 —</option></select>
+        </div>
+      </div>
+      <div class="em-row">
+        <label data-t="em.spouses">配偶</label>
+        <select name="spouses" multiple size="4"></select>
+        <p class="em-help" data-t="em.spousesHelp">按住 Ctrl/Cmd 多選。順序 = 重要性（第一位為正室）。</p>
+      </div>
+      <div class="em-row">
+        <label data-t="em.notes">備註</label>
+        <textarea name="notes" rows="3"></textarea>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="ghost" id="emCancel" data-t="em.cancel">取消</button>
+        <button type="submit" class="primary" id="emSave" data-t="em.save">儲存</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- 匯入/匯出 modal -->
+<div id="ioModal" class="modal" hidden>
+  <div class="modal-card">
+    <h2 class="modal-q" data-t="io.title">匯入 / 匯出</h2>
+    <p class="modal-help" data-t="io.sub">支援 GEDCOM 5.5.1。可與 Gramps、MyHeritage、Ancestry 等工具互通。</p>
+    <div class="io-actions">
+      <button class="primary" id="btnImport" data-t="io.import">匯入 GEDCOM</button>
+      <input type="file" id="fileImport" accept=".ged,.gedcom,text/plain" hidden />
+      <button class="ghost" id="btnExport" data-t="io.export">匯出 GEDCOM</button>
+    </div>
+    <div class="io-danger">
+      <button class="ghost danger" id="btnReset" data-t="io.reset">重置為範例資料</button>
+      <button class="ghost danger" id="btnClear" data-t="io.clear">清空全部</button>
+    </div>
+    <div id="ioMsg" class="io-msg"></div>
+    <div class="modal-actions">
+      <button class="ghost" id="ioClose" data-t="io.close">關閉</button>
+    </div>
+  </div>
+</div>
+
+<!-- 搜尋 modal -->
+<div id="searchModal" class="modal" hidden>
+  <div class="modal-card">
+    <h2 class="modal-q" data-t="sm.title">搜尋成員</h2>
+    <input id="searchInput" class="modal-input" type="search" data-t-placeholder="sm.placeholder" placeholder="輸入姓名、地點或備註…" />
+    <div id="searchResults" class="search-results"></div>
+    <div class="modal-actions">
+      <button class="ghost" id="searchClose" data-t="sm.close">關閉</button>
+    </div>
+  </div>
+</div>
+
+<!-- 通用 toast -->
+<div id="toast" class="toast" hidden></div>
+
+<script src="gedcom.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
