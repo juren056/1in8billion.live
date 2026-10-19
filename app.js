@@ -914,7 +914,13 @@ function setSpeed(sp) {
 }
 function tick() {
   if (!STATE.life || STATE.life.died || STATE.paused) return;
-  if (STATE.pendingDecision) return; // 暫停等決策
+  // v5.33：5/15/30/50/70 暫停不阻擋 tick（顯示 modal 但生命繼續；用戶可手動互動）
+  // 原本：if (STATE.pendingDecision) return;
+  if (STATE.pendingDecision && !STATE.pendingDecision._dismissed) {
+    // 第一次彈出 modal（已透過 milestoneEvents 觸發）；不阻擋生命
+    STATE.pendingDecision._dismissed = true;
+    return;
+  }
   const c = STATE.life.countryData;
   const sex = STATE.life.sex;
   // v5.9：快轉到下一個抉擇 — 跳過直到遇到 pause decision
@@ -960,7 +966,8 @@ function tick() {
   // v5.16：年度焦點選擇 — 改為手動觸發（不再自動彈出）
   // v5.13：年度焦點選擇（每年 6+ 歲自動彈出，除非autoDecide）→ 已改為手動
   // 達到當地平均壽命 1.3x 自動死亡
-  const maxAge = c.le * 1.35;
+  // v5.33：壽命上限放寬（從 1.35x 改為 1.8x，1in8b.life 實測 98-101 歲）
+  const maxAge = c.le * 1.8;
   if (STATE.life.age > maxAge) dieNow('自然衰老');
   // v5.20：每 5 年套用投資收益
   if (STATE.life.age % 5 === 0 && STATE.life.age > 0) applyInvestmentReturn();
