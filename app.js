@@ -1802,6 +1802,15 @@ function renderLife() {
   // 進度條
   const pct = Math.min(100, STATE.life.age / c.le * 100);
   $('#lifeBar').style.width = pct + '%';
+  // v5.35：標記 + 百分比 + 起訖年齡
+  const marker = $('#lifeBarMarker');
+  if (marker) marker.style.left = pct + '%';
+  const pctEl = $('#lifeBarPct');
+  if (pctEl) pctEl.textContent = pct.toFixed(1) + '%';
+  const nowEl = $('#lifeBarNow');
+  if (nowEl) nowEl.textContent = (STATE.life.age || 0) + ' ' + (LANG==='en'?'yo':'歲');
+  const endEl = $('#lifeBarEnd');
+  if (endEl) endEl.textContent = c.le + ' ' + (LANG==='en'?'yo':'歲');
   // 角色簡介
   const portrait = $('#lifePortrait');
   if (portrait) {
