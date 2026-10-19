@@ -1006,7 +1006,7 @@ function resolvePendingDecision() {
 function showPauseQuestion() {
   if (!STATE.pendingDecision || STATE.pendingDecision.type !== 'pause') return;
   const age = STATE.pendingDecision.age;
-  STATE.paused = true;
+  // v5.33：不再設 STATE.paused = true（讓生命繼續在背景跑；modal 顯示但可手動互動）
   const modal = $('#pauseModal');
   if (!modal) return;
   const q = $('#pauseQuestion');
