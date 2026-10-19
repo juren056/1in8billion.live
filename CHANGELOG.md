@@ -151,3 +151,13 @@
 ### Files
 - 13 個檔案（8 個資料 + 4 個程式 + 1 個 README + 2 個 zu-pu 歷史遺產）
 - 0 npm dependencies
+
+## v5.34 (2026-10-19)
+
+### Fixed
+- 1in8b.life 對齊（5/15/30/50/70 暫停）：showPauseQuestion 移除 `STATE.paused = true`，生命繼續在背景跑；modal 顯示但用戶可手動互動
+- 動手驗證：60 秒測試中非·男，age 從 0 進展到 > 5（修正前卡在 5）
+
+### Match
+- 1in8b.life v0.7.70 行為：modal 不阻擋生命繼續 ✓
+- v5.34 = 對齊
