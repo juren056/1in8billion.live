@@ -2,6 +2,8 @@
 
 172 國真實統計人生模擬遊戲。從 1in8b.life（原作 v0.7.68 beta）的功能完整移植並擴充，**融合了 zu-pu 的族譜模組**（GEDCOM 5.5.1 雙向互通）。
 
+> **v5.33**：zu-pu 原始 v1 已整合為本 repo 的 `zu-pu/` 子目錄（30 人張氏範例家族 + gedcom.js + index.html）。兩個部署合二為一，統一從 `rollroyces/born-somewhere` 維護。
+
 ## 部署
 
 https://qcm8a40uzgrkv.space.mcode.cn
@@ -62,7 +64,7 @@ https://qcm8a40uzgrkv.space.mcode.cn
 
 ## 與 zu-pu 的互通
 
-zu-pu v1（已歸檔於 rollroyces/zu-pu）的張氏 30 人範例家族可透過以下方式匯入：
+zu-pu v1 已整合為本 repo 的 `zu-pu/` 子目錄（含 30 人張氏範例家族 + `gedcom.js` + `index.html`）。可透過以下方式匯入 born-somewhere：
 
 1. 從 `zu-pu/data/demo.json` 用 `zu-pu/gedcom.js` 的 `Gedcom.export(DB)` 轉成 GEDCOM 5.5.1
 2. 將產生的 .ged 檔透過 born-somewhere 族譜 tab 的「匯入 GEDCOM」按鈕載入
