@@ -1,5 +1,6 @@
 import{drawScene,drawActor,drawPortrait}from'../life-scene.js';import{lines}from'./build-document.js';
-let fontReady;async function posterFont(){fontReady??=new FontFace('NotoKeepsake','url(/vendor/premium/KeepsakeSans-Regular.ttf)').load().then(f=>document.fonts.add(f));return fontReady;}
+import{prepareFont}from'./font.js';
+let fontReady;async function posterFont(){fontReady??=prepareFont().then(bytes=>new FontFace('NotoKeepsake',bytes).load()).then(f=>document.fonts.add(f)).catch(e=>{fontReady=null;throw e;});return fontReady;}
 export async function renderPoster(doc,variant=0,{demo=true}={}){
  await posterFont();const s=doc.snapshot,c=doc.copy,canvas=document.createElement('canvas');canvas.width=variant===1?2400:1800;canvas.height=variant===1?1600:2400;const x=canvas.getContext('2d');if(!x)throw Error('canvas_unavailable');const w=canvas.width,h=canvas.height;x.fillStyle=variant===2?'#061b32':'#f4efe3';x.fillRect(0,0,w,h);x.fillStyle=variant===2?'#edf5f8':'#102d45';
  const write=(text,left,top,size=40,width=w-160)=>{x.font=`${size}px "NotoKeepsake",sans-serif`;for(const line of lines(text,Math.max(12,Math.floor(width/size)))){x.fillText(line,left,top,width);top+=size*1.5;}return top;};
