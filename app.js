@@ -99,7 +99,7 @@ function chooseCountry(mode) {
     return Math.max(1, c.births || c.pop || 1);
   });
   const total = weights.reduce((a, b) => a + b, 0);
-  let r = Math.random() * total;
+  let r = simRandom() * total;
   for (let i = 0; i < COUNTRIES.length; i++) {
     r -= weights[i];
     if (r <= 0) return COUNTRIES[i];
@@ -238,7 +238,7 @@ function stopRealtimeCounters() {
 function updateRealtimeCounters() {
   const elapsedSec = Math.max(0, (Date.now() - REALTIME_PAGE_LOAD) / 1000);
   // 加 ±5% 隨機讓數字不會太死板（用 seeded RNG 從載入秒數當種子）
-  const jitter = 0.95 + Math.random() * 0.10;
+  const jitter = 0.95 + simRandom() * 0.10;
   const born = Math.floor(elapsedSec * REAL_BIRTHS_PER_SEC * jitter);
   const died = Math.floor(elapsedSec * REAL_DEATHS_PER_SEC * jitter);
   const bornEl = $('#counterBorn');
@@ -372,7 +372,7 @@ function pickCause(c, age, sex) {
   const keys = Object.keys(w);
   const weights = keys.map(k => Math.max(0.001, w[k]));
   const total = weights.reduce((a, b) => a + b, 0);
-  let r = Math.random() * total;
+  let r = simRandom() * total;
   for (let i = 0; i < keys.length; i++) {
     r -= weights[i];
     if (r <= 0) return keys[i];
@@ -381,20 +381,20 @@ function pickCause(c, age, sex) {
 }
 
 // ==== 隨機抽樣 ====
-const pick = arr => arr[Math.floor(Math.random() * arr.length)];
+const pick = arr => arr[Math.floor(simRandom() * arr.length)];
 const wpick = (obj) => {
   const keys = Object.keys(obj);
   const total = keys.reduce((s, k) => s + obj[k], 0);
-  let r = Math.random() * total;
+  let r = simRandom() * total;
   for (const k of keys) {
     r -= obj[k];
     if (r <= 0) return k;
   }
   return keys[0];
 };
-const rand = (a, b) => a + Math.random() * (b - a);
+const rand = (a, b) => a + simRandom() * (b - a);
 const irand = (a, b) => Math.floor(rand(a, b + 1));
-const chance = p => Math.random() < p;
+const chance = p => simRandom() < p;
 const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
 
 // ==== 名字 ====
@@ -446,7 +446,7 @@ function randomName(country, sex) {
 }
 function pickIndianCaste() {
   // SC 18%, ST 9%, OBC 44%, General 29% (近似 2024 估算)
-  const r = Math.random();
+  const r = simRandom();
   if (r < 0.18) return 'SC';
   if (r < 0.27) return 'ST';
   if (r < 0.71) return 'obc';
@@ -457,7 +457,7 @@ function pickIndianCaste() {
 function newLife(countryCode) {
   const c = countryById(countryCode);
   if (!c) return null;
-  const sex = Math.random() < 0.5 ? 'M' : 'F';
+  const sex = simRandom() < 0.5 ? 'M' : 'F';
   const name = randomName(c, sex);
   // 1in8b.life 風格：出生登記背景
   const fam = generateFamily(countryCode, sex);
@@ -494,17 +494,17 @@ function newLife(countryCode) {
       netAssets: 0,     // v5.8 新增：淨資產（PPP 美元）
       annualIncome: 0,  // v5.8 新增：年收入
       // 1in8b.life 風格：家境、宗教、出生地類型
-      incomeQuartile: 1 + Math.floor(Math.random() * 4),  // 1-4 分位
+      incomeQuartile: 1 + Math.floor(simRandom() * 4),  // 1-4 分位
       religion: pickReligion(c),
-      birthPlaceType: Math.random() < 0.55 ? 'rural' : 'urban',  // 55% 鄉村、45% 城市
+      birthPlaceType: simRandom() < 0.55 ? 'rural' : 'urban',  // 55% 鄉村、45% 城市
     },
     // 父母詳細（v5.8 新增）
-    fatherDetail: father ? { age: 20 + Math.floor(Math.random()*25), job: pickParentJob(c, 'M') } : null,
-    motherDetail: mother ? { age: 18 + Math.floor(Math.random()*22), job: pickParentJob(c, 'F') } : null,
+    fatherDetail: father ? { age: 20 + Math.floor(simRandom()*25), job: pickParentJob(c, 'M') } : null,
+    motherDetail: mother ? { age: 18 + Math.floor(simRandom()*22), job: pickParentJob(c, 'F') } : null,
     // 同伴（v5.8 新增）：4 個同時出生的隨機人物
     companions: generateCompanions(countryCode, 4),
     // 1in8b.life 風格：出生登記編號
-    regNumber: `${countryCode}-${(STATE.era==='past'?'1990':STATE.era==='future'?'2080':'2024')}-${Math.floor(Math.random()*9000000)+1000000}`,
+    regNumber: `${countryCode}-${(STATE.era==='past'?'1990':STATE.era==='future'?'2080':'2024')}-${Math.floor(simRandom()*9000000)+1000000}`,
     // 死亡
     died: false,
     cause: null,
@@ -549,7 +549,7 @@ function pickParentJob(c, sex) {
   const urbanMEn = ['Engineer', 'Teacher', 'Bank clerk', 'Sales clerk', 'Civil servant'];
   const urbanFEn = ['Teacher', 'Nurse', 'Sales clerk', 'Civil servant', 'Service worker'];
   // 55% 鄉村 → 農業；45% 城市 → 多元工作
-  const isRural = Math.random() < 0.55;
+  const isRural = simRandom() < 0.55;
   if (isEn) {
     return isRural ? pick(ruralMEn) : pick(sex === 'M' ? urbanMEn : urbanFEn);
   }
@@ -565,7 +565,7 @@ function generateCompanions(selfCountry, n) {
     let cCode;
     do { cCode = pick(allCountries); } while (cCode === selfCountry);
     const c = countryById(cCode);
-    const sex = Math.random() < 0.5 ? 'M' : 'F';
+    const sex = simRandom() < 0.5 ? 'M' : 'F';
     const nm = randomName(c, sex);
     // v5.19：父母職業依同伴國家脈絡
     const fatherJob = pickParentJob(c, 'M');
@@ -580,11 +580,11 @@ function generateCompanions(selfCountry, n) {
       // 每人也是 80 歲預期壽命起點
       lifeExpectancy: c.le,
       // 家境也分位
-      incomeQuartile: 1 + Math.floor(Math.random()*4),
+      incomeQuartile: 1 + Math.floor(simRandom()*4),
       // v5.19 新增：家庭背景 + 出生地類型
       parentJobFather: fatherJob,
       parentJobMother: motherJob,
-      birthPlaceType: Math.random() < 0.55 ? 'rural' : 'urban',
+      birthPlaceType: simRandom() < 0.55 ? 'rural' : 'urban',
     });
   }
   return companions;
@@ -644,15 +644,15 @@ function generateFamily(countryCode, selfSex, fc) {
   const war = c.war || 0;
   // 戰區孤兒機率：war 高 → 雙親存在率低
   const parentChance = Math.max(0.35, 1 - war * 0.4);
-  const haveFather = Math.random() < parentChance;
-  const haveMother = Math.random() < parentChance;
+  const haveFather = simRandom() < parentChance;
+  const haveMother = simRandom() < parentChance;
   // 寄養/收養：換父母
   let parentCountry = countryCode, parentCountryData = c;
   let parentNote = null;
   if (fc && fc.type === 'adopt') {
     // 從隨機另一個國家收養
     const adopters = ['USA','CAN','GBR','FRA','DEU','AUS','SWE','NOR'];
-    const fcode = adopters[Math.floor(Math.random() * adopters.length)];
+    const fcode = adopters[Math.floor(simRandom() * adopters.length)];
     parentCountry = fcode;
     parentCountryData = countryById(fcode) || c;
     parentNote = 'adoptive';
@@ -662,7 +662,7 @@ function generateFamily(countryCode, selfSex, fc) {
   const fatherName = haveFather ? randomName(parentCountryData, 'M') : null;
   const motherName = haveMother ? randomName(parentCountryData, 'F') : null;
   const father = haveFather ? {
-    id: 'f_' + Math.random().toString(36).slice(2,8),
+    id: 'f_' + simRandom().toString(36).slice(2,8),
     name: fatherName.full || fatherName.full_en || '?',
     sex: 'M', country: parentCountry, countryData: parentCountryData,
     note: parentNote,
@@ -670,40 +670,40 @@ function generateFamily(countryCode, selfSex, fc) {
     death: parentNote ? null : { year: baseYear - 30 + (parentNote === 'foster' ? 50 : 70) }
   } : null;
   const mother = haveMother ? {
-    id: 'm_' + Math.random().toString(36).slice(2,8),
+    id: 'm_' + simRandom().toString(36).slice(2,8),
     name: motherName.full || motherName.full_en || '?',
     sex: 'F', country: parentCountry, countryData: parentCountryData,
     note: parentNote,
-    birth: { year: (father?.birth?.year || baseYear-30) + (Math.random() < 0.5 ? -2 : 3) },
+    birth: { year: (father?.birth?.year || baseYear-30) + (simRandom() < 0.5 ? -2 : 3) },
     death: parentNote ? null : { year: (father?.birth?.year || baseYear-30) + 75 }
   } : null;
   const parents = [father, mother].filter(Boolean);
   // 手足數：戰區小孩通常更少
   let nSib = 0;
-  const sibR = Math.random();
+  const sibR = simRandom();
   if (war > 0.5) nSib = sibR < 0.4 ? 0 : sibR < 0.75 ? 1 : 2;
   else nSib = sibR < 0.3 ? 0 : sibR < 0.6 ? 1 : sibR < 0.85 ? 2 : 3;
   const siblings = [];
   for (let i = 0; i < nSib; i++) {
-    const sibSex = Math.random() < 0.5 ? 'M' : 'F';
+    const sibSex = simRandom() < 0.5 ? 'M' : 'F';
     const nm = randomName(c, sibSex);
     siblings.push({
-      id: 's_' + Math.random().toString(36).slice(2,8),
+      id: 's_' + simRandom().toString(36).slice(2,8),
       name: nm.full || nm.full_en || '?',
       sex: sibSex, country: countryCode, countryData: c,
-      birth: { year: baseYear - (Math.floor(Math.random()*8)+1) }
+      birth: { year: baseYear - (Math.floor(simRandom()*8)+1) }
     });
   }
   // 祖父母：有父母才合理；戰區祖父母多半死亡
   const grandparents = [];
   const gpChance = parentNote ? 0.5 : Math.max(0.2, 0.7 - war * 0.3);
-  if (father && Math.random() < gpChance) {
+  if (father && simRandom() < gpChance) {
     const gf = randomName(parentCountryData, 'M');
-    grandparents.push({ id:'gf_'+Math.random().toString(36).slice(2,8), name: gf.full||gf.full_en||'?', sex:'M', country: parentCountry, countryData: parentCountryData, note: parentNote, birth:{year: father.birth.year - 28}, death:{year: father.birth.year + 35} });
+    grandparents.push({ id:'gf_'+simRandom().toString(36).slice(2,8), name: gf.full||gf.full_en||'?', sex:'M', country: parentCountry, countryData: parentCountryData, note: parentNote, birth:{year: father.birth.year - 28}, death:{year: father.birth.year + 35} });
   }
-  if (mother && Math.random() < gpChance) {
+  if (mother && simRandom() < gpChance) {
     const gm = randomName(parentCountryData, 'F');
-    grandparents.push({ id:'gm_'+Math.random().toString(36).slice(2,8), name: gm.full||gm.full_en||'?', sex:'F', country: parentCountry, countryData: parentCountryData, note: parentNote, birth:{year: mother.birth.year - 26}, death:{year: mother.birth.year + 38} });
+    grandparents.push({ id:'gm_'+simRandom().toString(36).slice(2,8), name: gm.full||gm.full_en||'?', sex:'F', country: parentCountry, countryData: parentCountryData, note: parentNote, birth:{year: mother.birth.year - 26}, death:{year: mother.birth.year + 38} });
   }
   return { parents, siblings, grandparents, partner: null, kids: [], fosterCare: fc?.type || null, adoptedFrom: fc?.type === 'adopt' ? countryCode : null };
 }
@@ -737,32 +737,32 @@ function milestoneEvents(life, newAge) {
     life.stats.partner = { name: partnerName, sex: life.sex === 'M' ? 'F' : 'M' };
     if (life.family) {
       life.family.partner = {
-        id: 'p_' + Math.random().toString(36).slice(2,8),
+        id: 'p_' + simRandom().toString(36).slice(2,8),
         name: partnerName.full || partnerName.full_en || '?',
         nameEn: partnerName.full_en,
         sex: life.sex === 'M' ? 'F' : 'M',
         country: life.country,
         countryData: life.countryData,
         marriageAge: newAge,
-        birth: { year: (life.year + life.yearOffset - life.age) - (newAge - Math.floor(Math.random()*5)) }
+        birth: { year: (life.year + life.yearOffset - life.age) - (newAge - Math.floor(simRandom()*5)) }
       };
     }
     events.push({ age: newAge, kind: 'milestone', icon: '💍', text: t('event.marriage', partnerName.full || partnerName.full_en || '') });
   }
   if (life.stats.married && life.stats.kids.length < 3 && newAge >= 25 && newAge <= 45 && chance(0.12)) {
-    const sex = Math.random() < 0.5 ? 'M' : 'F';
+    const sex = simRandom() < 0.5 ? 'M' : 'F';
     const child = { sex, bornAt: newAge };
     life.stats.kids.push(child);
     if (life.family) {
       life.family.kids = life.family.kids || [];
       const childBirth = { year: (life.year + life.yearOffset) };
       const childNode = {
-        id: 'k_' + Math.random().toString(36).slice(2,8),
+        id: 'k_' + simRandom().toString(36).slice(2,8),
         name: randomName(life.countryData, sex).full || randomName(life.countryData, sex).full_en || '?',
         sex, country: life.country, countryData: life.countryData,
         birth: childBirth,
         // 依 country.im 機率夭折（5 歲以下死亡率）
-        death: chance((life.countryData.im || 5) / 1000 * 0.3) ? { year: childBirth.year + Math.floor(Math.random() * 5) } : null
+        death: chance((life.countryData.im || 5) / 1000 * 0.3) ? { year: childBirth.year + Math.floor(simRandom() * 5) } : null
       };
       life.family.kids.push(childNode);
       if (childNode.death && !STATE.eduMode) events.push({ age: newAge, kind: 'heavy', icon: '🕯️', text: LANG === 'en' ? `${childNode.name} died as an infant.` : `${childNode.name} 在嬰幼兒時期夭折了。` });
@@ -937,7 +937,7 @@ function tick() {
       saveCurrentLife();
   STATE.life.age += 1;
       STATE.life.yearOffset += 1;
-      if (Math.random() < pDie(STATE.life.age, c, sex)) { dieNow(); break; }
+      if (simRandom() < pDie(STATE.life.age, c, sex)) { dieNow(); break; }
       if ([5,15,30,50,70].includes(STATE.life.age)) {
         STATE.pendingDecision = { age: STATE.life.age, type: 'pause' };
         if (STATE.autoDecide) resolvePendingDecision();
@@ -951,7 +951,7 @@ function tick() {
   STATE.life.age += 1;
   STATE.life.yearOffset += 1;
   // 死亡判定
-  if (Math.random() < pDie(STATE.life.age, c, sex)) {
+  if (simRandom() < pDie(STATE.life.age, c, sex)) {
     dieNow();
     return;
   }
@@ -1182,7 +1182,7 @@ function applyInvestmentReturn() {
   // 真實報酬率（含通膨），每年變動
   const baseReturn = opt.realReturn;
   const volatility = opt.volatility;
-  const noise = (Math.random() - 0.5) * 2 * volatility;
+  const noise = (simRandom() - 0.5) * 2 * volatility;
   const yearReturn = baseReturn + noise;
   const gained = Math.round(life.stats.netAssets * yearReturn);
   life.stats.netAssets = Math.max(0, life.stats.netAssets + gained);
@@ -1397,12 +1397,12 @@ function generateYearlyEvent(life) {
     events.push({ weight: 10, icon: '🏥', en: 'Had health check', zh: '做了健康檢查' });
   }
   // 加國家特殊事件
-  if (c.wh > 0.5 && Math.random() < c.wh * 0.1) {
+  if (c.wh > 0.5 && simRandom() < c.wh * 0.1) {
     events.push({ weight: 50, icon: '⚔️', en: 'Affected by local unrest', zh: '受到當地動亂影響' });
   }
   // 抽權重
   const total = events.reduce((s, e) => s + e.weight, 0);
-  let r = Math.random() * total;
+  let r = simRandom() * total;
   for (const e of events) {
     r -= e.weight;
     if (r <= 0) return e;
@@ -1448,7 +1448,7 @@ function renderLifeEventsFeed() {
   // v5.29 增強：header 加「此刻有 N 人在玩」counter + 「查看更早紀錄」按鈕 + 每行加 ☆
   const siblingCount = (STATE.life.family?.siblings || []).length;
   const headerHtml = `<div class="lef-header">
-    <span class="lef-meta">${isEn ? `Currently ${30000 + Math.floor(Math.random()*1000)} people in the world` : `此刻有 ${30000 + Math.floor(Math.random()*1000)} 人一起活在這個人生模擬裡`}${siblingCount ? ` · ${isEn ? 'Siblings' : '兄弟姊妹'}：${siblingCount} ${isEn?'ppl':'人'}` : ''}</span>
+    <span class="lef-meta">${isEn ? `Currently local fictional family` : `本機虛構家庭`}${siblingCount ? ` · ${isEn ? 'Siblings' : '兄弟姊妹'}：${siblingCount} ${isEn?'ppl':'人'}` : ''}</span>
     ${log.length > 30 ? `<button class="lef-more-btn" onclick="event.stopPropagation();">${isEn ? 'View older' : '查看更早的紀錄'}</button>` : ''}
   </div>`;
   el.innerHTML = headerHtml + log.slice(-30).reverse().map((e, i) => `
@@ -1783,7 +1783,7 @@ function renderLife() {
   if (cInfo) {
     // v5.21 修：fallback 給舊存檔的 birthPlaceType 缺失
     if (!STATE.life.stats.birthPlaceType) {
-      STATE.life.stats.birthPlaceType = Math.random() < 0.55 ? 'rural' : 'urban';
+      STATE.life.stats.birthPlaceType = simRandom() < 0.55 ? 'rural' : 'urban';
     }
     const bpType = STATE.life.stats.birthPlaceType === 'rural' ? (isEn ? '🌾 Rural' : '🌾 鄉村') : (isEn ? '🏙️ Urban' : '🏙️ 城市');
     cInfo.textContent = `${bpType} · ${c.flag} ${loc.name} · ${loc.region_name}`;
@@ -2307,9 +2307,9 @@ function renderIdentityRecord() {
   // MRZ-like format
   const mrz = `I<${life.country || 'XXX'}${surname.toUpperCase().padEnd(5)}<<${givenName.toUpperCase().padEnd(44)}<`.slice(0, 44);
   const year = life.year + life.yearOffset;
-  const mm = String(Math.floor(Math.random()*12)+1).padStart(2, '0');
-  const dd = String(Math.floor(Math.random()*28)+1).padStart(2, '0');
-  const exp = String((year + 10) % 100).padStart(2, '0') + String(Math.floor(Math.random()*12)+1).padStart(2, '0') + String(Math.floor(Math.random()*28)+1).padStart(2, '0');
+  const mm = String(Math.floor(simRandom()*12)+1).padStart(2, '0');
+  const dd = String(Math.floor(simRandom()*28)+1).padStart(2, '0');
+  const exp = String((year + 10) % 100).padStart(2, '0') + String(Math.floor(simRandom()*12)+1).padStart(2, '0') + String(Math.floor(simRandom()*28)+1).padStart(2, '0');
   wrap.innerHTML = `
     <h4>🛂 ${isEn ? 'Identity Record' : '身分紀錄'} <span class="muted">${life.country || ''} · ${life.regNumber || ''}</span></h4>
     <pre class="mrz-line">${mrz}${life.name?.full_en?.toUpperCase().replace(/[^A-Z]/g,'').padEnd(20,'<').slice(0,20) || ''}</pre>
@@ -2848,7 +2848,7 @@ function renderMemorialWall(lives) {
   bind('#memorialRandom', () => {
     if (lives.length > 1) {
       let ni;
-      do { ni = Math.floor(Math.random() * lives.length); } while (ni === _memorialIdx && lives.length > 1);
+      do { ni = Math.floor(simRandom() * lives.length); } while (ni === _memorialIdx && lives.length > 1);
       _memorialIdx = ni;
       renderMemorialWall(lives);
     }
@@ -3296,7 +3296,7 @@ function renderPanorama(lives) {
   for (const life of lives) {
     if (!life.family) continue;
     const f = life.family;
-    const selfId = 'self_' + Math.random().toString(36).slice(2,9);
+    const selfId = 'self_' + simRandom().toString(36).slice(2,9);
     const selfNode = {
       id: selfId,
       name: life.name,
@@ -3314,7 +3314,7 @@ function renderPanorama(lives) {
     const upsertPerson = (p) => {
       const k = keyOf(p);
       if (idMap[k]) return idMap[k];
-      const newId = 'p_' + Math.random().toString(36).slice(2,9);
+      const newId = 'p_' + simRandom().toString(36).slice(2,9);
       idMap[k] = newId;
       allPeople[newId] = { ...p, id: newId };
       return newId;
@@ -3406,7 +3406,7 @@ function runLab(countryCode, era, sexMode, N) {
   if (!country) return null;
   const adjustEra = { past: 1990, future: 2080, any: 2024, now: 2024 }[era] || 2024;
   for (let i = 0; i < N; i++) {
-    const sex = sexMode === 'random' ? (Math.random() < 0.5 ? 'M' : 'F') : sexMode;
+    const sex = sexMode === 'random' ? (simRandom() < 0.5 ? 'M' : 'F') : sexMode;
     const life = newLife(countryCode);
     life.sex = sex;
     life.year = adjustEra;
@@ -3415,7 +3415,7 @@ function runLab(countryCode, era, sexMode, N) {
     while (!life.died && life.age < 120) {
       life.age += 1;
       life.yearOffset += 1;
-      if (Math.random() < pDie(life.age, life.countryData, sex)) {
+      if (simRandom() < pDie(life.age, life.countryData, sex)) {
         life.died = true;
         life.deathAge = life.age;
         const cause = pickCause(life.countryData, life.age, sex);
@@ -3445,7 +3445,7 @@ function runFamilyLab(countryCode, N) {
   let adopted = 0, fostered = 0, orphan = 0, withFather = 0, withMother = 0, twoParents = 0;
   let sibTotal = 0, gpTotal = 0;
   for (let i = 0; i < N; i++) {
-    const f = generateFamily(countryCode, Math.random() < 0.5 ? 'M' : 'F');
+    const f = generateFamily(countryCode, simRandom() < 0.5 ? 'M' : 'F');
     if (f.fosterCare === 'adopt') adopted++;
     if (f.fosterCare === 'foster') fostered++;
     if (f.parents.length === 0) orphan++;
@@ -4143,8 +4143,8 @@ init();
    contact / PWA install）+ 教學版模式 + 版本歷史
    ===================================================================== */
 
-const APP_VERSION = '5.19.0';
-const APP_BUILD = '2026-10-18';
+const APP_VERSION = '1.1.0';
+const APP_BUILD = '2026-10-20';
 
 // 版本歷史（每個版本：v / date / items；每個 item 含 emoji badge + 文字）
 // 為節省空間與維護成本，所有語言文字都用 i18n key；徽章 emoji 是視覺標記。

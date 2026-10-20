@@ -1,5 +1,9 @@
 # 1in8billion.live
 
+P1 release v1.1.0: 33 indexable pages, four localized country comparison tools, three pair pages, four practical guides, and deterministic Auto replay v1. See P1_REPORT.md for evidence and limitations. Replay engine/data changes must introduce a new version or preserve the v1 contract. Legacy saves without a seed remain usable but cannot be shared reproducibly.
+
+Browser verification: run the dev server, then `node tests/p1-browser.cjs` with Playwright and Chrome installed. PLAYWRIGHT_MODULE can point to a bundled Playwright module. Standard Node/SEO checks: `npm run verify`.
+
 Independent free browser life simulator. Vanilla HTML/CSS/JS with static English, Japanese, Korean and Traditional Chinese guides. Adapted from rollroyces/born-somewhere under the retained MIT LICENSE; see ATTRIBUTIONS.md.
 
 ## Develop and verify
@@ -13,7 +17,7 @@ Existing Cloudflare Worker: `1in8billion-live`; domain: https://1in8billion.live
 
 Optional build variables: GA4_MEASUREMENT_ID (real G- ID), GSC_VERIFICATION (real HTML verification value). Analytics loads automatically on page load. Never put secrets in browser code. GSC/GA4 external setup and reception require their own verification.
 
-Progress uses legacy localStorage keys for compatibility. Quick mode enables auto decisions. Sharing uses the system share sheet or copies the website URL, not a deterministic replay. Saving on one device is not cloud backup.
+Progress uses legacy localStorage keys for compatibility. Quick mode enables auto decisions. Compatible Quick play lives offer a seeded replay v1 with fixed automatic choices. Manual changes invalidate replay eligibility. Saving on one device is not cloud backup.
 
 ## Data and provenance
 
