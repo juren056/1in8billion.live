@@ -1,4 +1,6 @@
 {
-  "prompt": "Origin: actual v1.11.0 fictional completed sample rendered by the site PDF and poster exporters, editorial design. Original pixel scene, browser-rendered text with word-aware wrapping; no customer story or generated image.",
-  "createdAt": "2026-10-20T18:21:49.608Z"
+  "origin": "Actual v1.13.0 exporter render from a completed monthly fictional example, not a customer story.",
+  "birthMonth": "2026-10",
+  "source": "content/premium-samples.json",
+  "updated": "2026-10-21"
 }

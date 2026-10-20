@@ -1,4 +1,9 @@
-# v1.12.0 user journey and discoverability release
+# v1.13.0 real-time birth calendar
+
+New real-time births use the device-local current year and month, frozen when the birth card is generated. Annual simulation advances one year at a time; the ending uses the actual simulated lifespan, not average life expectancy. Replay v2 includes YYYYMM and daily invitations use the UTC month. Saved v1 runs keep their original 2024 baseline with no invented month; historical 1990 and future 2080 modes stay year-only. Statistical observation years, source editions, model weights and legacy storage keys are unchanged. Birth cards, current dates, family records, endings, free PNG, premium PNG/PDF, examples and localized guides use this shared calendar contract. See CALENDAR_RELEASE_REPORT.md.
+
+## Historical v1.12.0 release
+v1.12.0 user journey and discoverability release
 
 Nine public languages and 226 canonical routes. This release fixes birth-card actions on small screens, preserves public comparison inputs across language changes, clarifies game guidance and model population units, and links every gameplay explanation from global navigation. Reading sections stay open by default. The keepsake preview has persistent download/close controls and page navigation, and uses lightweight poster previews without loading the full export font. PDF and full-resolution poster exports retain their original fonts and dimensions. Live payments remain closed.
 

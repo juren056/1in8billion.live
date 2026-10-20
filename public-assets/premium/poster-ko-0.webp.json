@@ -1,4 +1,6 @@
 {
-  "prompt": "Origin: actual locally rendered v1.11.0 completed fictional game sample; cover rendered from the exported editorial PDF; poster rendered from the actual poster canvas. No customer or invented testimonial.",
-  "createdAt": "2026-10-20T18:02:18.062Z"
+  "origin": "Actual v1.13.0 exporter render from a completed monthly fictional example, not a customer story.",
+  "birthMonth": "2026-10",
+  "source": "content/premium-samples.json",
+  "updated": "2026-10-21"
 }

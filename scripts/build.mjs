@@ -12,7 +12,7 @@ const out='dist',origin='https://1in8billion.live';
 fs.rmSync(out,{recursive:true,force:true});
 fs.mkdirSync(out,{recursive:true});
 const write=(p,s)=>{const dest=path.join(out,p);fs.mkdirSync(path.dirname(dest),{recursive:true});fs.writeFileSync(dest,s);};
-for(const file of ['task-navigation.js','playback.js','playback-copy.js','playback.css','retention-bootstrap.js','retention.js','retention-copy.js','retention-core.js','life-scene.js','life-audio.js','life-keepsake.js','life-return.js','retention.css','ux-flow.js','ux-copy.js','app.js','replay-core.js','p1-game.js','replay-entry.js','compare.js','comparison-core.js','performance.js','experience.js','storage.js','site-nav.js','content.css','experience.css','gedcom.js','styles.css','launch.css','sw.js','manifest.json','LICENSE'])fs.copyFileSync(file,path.join(out,file));
+for(const file of ['calendar-core.js','calendar-copy.js','calendar-ui.js','task-navigation.js','playback.js','playback-copy.js','playback.css','retention-bootstrap.js','retention.js','retention-copy.js','retention-core.js','life-scene.js','life-audio.js','life-keepsake.js','life-return.js','retention.css','ux-flow.js','ux-copy.js','app.js','replay-core.js','p1-game.js','replay-entry.js','compare.js','comparison-core.js','performance.js','experience.js','storage.js','site-nav.js','content.css','experience.css','gedcom.js','styles.css','launch.css','sw.js','manifest.json','LICENSE'])fs.copyFileSync(file,path.join(out,file));
 for(const dir of ['data','public-assets','vendor'])fs.cpSync(dir,path.join(out,dir),{recursive:true});
 fs.writeFileSync(out+'/app.js',fs.readFileSync('app.js','utf8').replace(/^\s*\/\/[^\r\n]*$/gm,'').replace(/^[ \t]+/gm,''));
 for(const css of ['styles.css','launch.css','content.css','experience.css'])fs.writeFileSync(out+'/'+css,fs.readFileSync(css,'utf8').replace(/\/\*[\s\S]*?\*\//g,'').split(/\r?\n/).map(line=>line.trim()).filter(Boolean).join('\n'));
@@ -44,6 +44,7 @@ enhanceOutput({routes,write,countries});
 buildProvenance({write,countries});
 buildPremium({write,head,links,footerFor,routes,langs,esc});
 buildExpansion({routes});
+await import('./build-calendar.mjs').then(m=>m.buildCalendar(routes));
 write('404.html',`<!doctype html><html lang="en"><head><title>Page not found</title><meta name="robots" content="noindex"><link rel="stylesheet" href="/launch.css"></head><body><main class="article"><h1>Page not found</h1><a href="/">Return to the simulator</a></main></body></html>`);
 write('robots.txt',`User-agent: *\nAllow: /\nSitemap: ${origin}/sitemap.xml\n`);
 write('sitemap.xml',`<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${routes.map(r=>`<url><loc>${origin}${r}</loc></url>`).join('')}</urlset>`);
@@ -52,7 +53,7 @@ write('llms.txt',`# 1in8billion.live\nIndependent fictional life simulator.\n- [
 write('odds.js',`fetch('/data/countries.json').then(r=>r.json()).then(data=>{const select=document.querySelector('#oddsCountry'),output=document.querySelector('#oddsResult');const total=data.reduce((s,c)=>s+c.births,0);if(select){const update=()=>{const c=data.find(c=>c.id===select.value);output.textContent=' '+(100*c.births/total).toFixed(4)+'% · 1 / '+Math.round(total/c.births);};select.addEventListener('change',update);update();}});document.querySelector('#countrySearch')?.addEventListener('input',e=>{let n=0;document.querySelectorAll('.country-entry').forEach(a=>{a.hidden=!a.textContent.toLowerCase().includes(e.target.value.toLowerCase());if(!a.hidden)n++;});document.querySelector('#searchEmpty').hidden=n>0;});`);
 const siteConfig=JSON.parse(fs.readFileSync('site.config.json','utf8'));
 const ga=process.env.GA4_MEASUREMENT_ID||siteConfig.ga4MeasurementId||'';if(ga&&!/^G-[A-Z0-9]+$/.test(ga))throw Error('Invalid GA4 measurement ID');
-write('analytics-config.js',`window.SITE_RELEASE="1.12.0";window.GA4_ID=${JSON.stringify(ga)};\n`+fs.readFileSync('analytics-url.js','utf8')+'\n'+fs.readFileSync('scripts/analytics.js','utf8'));
+write('analytics-config.js',`window.SITE_RELEASE="1.13.0";window.GA4_ID=${JSON.stringify(ga)};\n`+fs.readFileSync('analytics-url.js','utf8')+'\n'+fs.readFileSync('scripts/analytics.js','utf8'));
 fs.copyFileSync('public-assets/favicon.ico',out+'/favicon.ico');
 write('routes.json',JSON.stringify(routes));console.log('Built '+routes.length+' indexable pages');
 

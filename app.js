@@ -450,10 +450,11 @@ function pickIndianCaste() {
 function newLife(countryCode) {
   const c = countryById(countryCode);
   if (!c) return null;
+  const calendar = CalendarCore.birthSpec(STATE.era);
   const sex = simRandom() < 0.5 ? 'M' : 'F';
   const name = randomName(c, sex);
   // 1in8b.life 風格：出生登記背景
-  const fam = generateFamily(countryCode, sex);
+  const fam = generateFamily(countryCode, sex, undefined, calendar);
   const father = fam.parents.find(p => p.sex === 'M');
   const mother = fam.parents.find(p => p.sex === 'F');
   return {
@@ -462,7 +463,7 @@ function newLife(countryCode) {
     name,
     sex,
     age: 0,
-    year: STATE.era === 'past' ? 1990 : STATE.era === 'future' ? 2080 : 2024,
+    ...calendar,
     yearOffset: 0,
     // 個人條件
     smoker: chance(c.sm / 100 * 0.5),
@@ -497,7 +498,7 @@ function newLife(countryCode) {
     // 同伴（v5.8 新增）：4 個同時出生的隨機人物
     companions: generateCompanions(countryCode, 4),
     // 1in8b.life 風格：出生登記編號
-    regNumber: `${countryCode}-${(STATE.era==='past'?'1990':STATE.era==='future'?'2080':'2024')}-${Math.floor(simRandom()*9000000)+1000000}`,
+    regNumber: `${countryCode}-${(calendar.calendarMonth||calendar.year)}-${Math.floor(simRandom()*9000000)+1000000}`,
     // 死亡
     died: false,
     cause: null,
@@ -630,10 +631,10 @@ function quartileLabel(q, isEn) {
 }
 
 /* ==== 族譜：家族生成 ==== */
-function generateFamily(countryCode, selfSex, fc) {
+function generateFamily(countryCode, selfSex, fc, calendar = STATE.life?{year:STATE.life.year,calendarMonth:STATE.life.calendarMonth}:CalendarCore.birthSpec(STATE.era)) {
   const c = countryById(countryCode);
   if (!c) return { parents: [], siblings: [], grandparents: [], partner: null, kids: [] };
-  const baseYear = (STATE.era === 'past' ? 1990 : STATE.era === 'future' ? 2080 : 2024);
+  const baseYear = calendar.year;
   const war = c.war || 0;
   // 戰區孤兒機率：war 高 → 雙親存在率低
   const parentChance = Math.max(0.35, 1 - war * 0.4);
@@ -698,6 +699,7 @@ function generateFamily(countryCode, selfSex, fc) {
     const gm = randomName(parentCountryData, 'F');
     grandparents.push({ id:'gm_'+simRandom().toString(36).slice(2,8), name: gm.full||gm.full_en||'?', sex:'F', country: parentCountry, countryData: parentCountryData, note: parentNote, birth:{year: mother.birth.year - 26}, death:{year: mother.birth.year + 38} });
   }
+  if(calendar.calendarMonth)for(const p of [...parents,...siblings,...grandparents])for(const date of [p.birth,p.death])if(date)date.month=Number(calendar.calendarMonth.slice(5));
   return { parents, siblings, grandparents, partner: null, kids: [], fosterCare: fc?.type || null, adoptedFrom: fc?.type === 'adopt' ? countryCode : null };
 }
 
@@ -737,7 +739,7 @@ function milestoneEvents(life, newAge) {
         country: life.country,
         countryData: life.countryData,
         marriageAge: newAge,
-        birth: { year: (life.year + life.yearOffset - life.age) - (newAge - Math.floor(simRandom()*5)) }
+        birth: { year: (life.year + life.yearOffset - life.age) - (newAge - Math.floor(simRandom()*5)),...(life.calendarMonth?{month:Number(life.calendarMonth.slice(5))}:{}) }
       };
     }
     events.push({ age: newAge, kind: 'milestone', icon: '💍', text: t('event.marriage', partnerName.full || partnerName.full_en || '') });
@@ -748,14 +750,14 @@ function milestoneEvents(life, newAge) {
     life.stats.kids.push(child);
     if (life.family) {
       life.family.kids = life.family.kids || [];
-      const childBirth = { year: (life.year + life.yearOffset) };
+      const childBirth = CalendarCore.date(life,life.age);
       const childNode = {
         id: 'k_' + simRandom().toString(36).slice(2,8),
         name: randomName(life.countryData, sex).full || randomName(life.countryData, sex).full_en || '?',
         sex, country: life.country, countryData: life.countryData,
         birth: childBirth,
         // 依 country.im 機率夭折（5 歲以下死亡率）
-        death: chance((life.countryData.im || 5) / 1000 * 0.3) ? { year: childBirth.year + Math.floor(simRandom() * 5) } : null
+        death: chance((life.countryData.im || 5) / 1000 * 0.3) ? { year: childBirth.year + Math.floor(simRandom() * 5),...(life.calendarMonth?{month:childBirth.month}:{}) } : null
       };
       life.family.kids.push(childNode);
       if (childNode.death && !STATE.eduMode) events.push({ age: newAge, kind: 'heavy', icon: '🕯️', text: LANG === 'en' ? `${childNode.name} died as an infant.` : `${childNode.name} 在嬰幼兒時期夭折了。` });
@@ -952,6 +954,7 @@ function dieNow(forcedCause) {
   STATE.life.died = true;
   STATE.life.cause = cause;
   STATE.life.deathAge = STATE.life.age;
+  if(STATE.life.calendarMonth) STATE.life.endMonth=CalendarCore.at(STATE.life,STATE.life.deathAge);
   STATE.life.log.push({ age: STATE.life.age, kind: 'death', icon: '🕯️', text: t('log.died_of', cause) });
   savePastLife(STATE.life);
   saveCurrentLife();
@@ -1478,6 +1481,7 @@ function savePastLife(life) {
       ts: Date.now(),
       country: life.country,
       name: life.name.full || life.name.full_en || '',
+      ...(life.calendarMonth?{calendarMonth:life.calendarMonth,endMonth:CalendarCore.at(life,life.deathAge??life.age)}:{}),
       age: life.deathAge || life.age,
       cause: life.cause,
     };
@@ -1660,7 +1664,7 @@ function renderCountryCompare() {
 /* v5.19：完整出生登記卡 — 1in8b.life 風格 */
 function buildBirthCertCard(c, life) {
  const s=window.SurfaceCopy,loc=localize(c);
- return '<div class="birth-record"><p>'+s.birthCard+'</p><h2>'+escapeHtml(life.name.full||life.name.full_en||'')+'</h2><p>'+c.flag+' '+escapeHtml(loc.name)+' · '+life.year+'</p><p>'+s.birthInfo+'</p><p class="muted">'+s.shortNote+'</p></div>';
+ return '<div class="birth-record"><p>'+s.birthCard+'</p><h2>'+escapeHtml(life.name.full||life.name.full_en||'')+'</h2><p>'+c.flag+' '+escapeHtml(loc.name)+' · '+CalendarCore.at(life)+'</p><p>'+s.birthInfo+'</p><p class="muted">'+s.shortNote+'</p></div>';
 }
 
 function showBirthCertModal(c) {
@@ -1699,7 +1703,7 @@ function renderLife() {
   const isEn = LANG === 'en';
   $('#lifeFlag').textContent = c.flag;
   $('#lifeName').textContent = loc.name;
-  $('#lifeYear').textContent = STATE.life.year + STATE.life.yearOffset;
+  $('#lifeYear').textContent = CalendarCore.at(STATE.life,STATE.life.age);
   $('#lifeAge').textContent = STATE.life.age + ' ' + t('unit.years');
   $('#lifeName2').textContent = (STATE.life.name.full || STATE.life.name.full_en) || '...';
   $('#lifeLe').textContent = c.le;
@@ -2273,14 +2277,14 @@ function renderIdentityRecord() {
   // MRZ-like format
   const mrz = `I<${life.country || 'XXX'}${surname.toUpperCase().padEnd(5)}<<${givenName.toUpperCase().padEnd(44)}<`.slice(0, 44);
   const year = life.year + life.yearOffset;
-  const mm = String(Math.floor(simRandom()*12)+1).padStart(2, '0');
+  const mm = life.calendarMonth?life.calendarMonth.slice(5):String(Math.floor(simRandom()*12)+1).padStart(2, '0');
   const dd = String(Math.floor(simRandom()*28)+1).padStart(2, '0');
   const exp = String((year + 10) % 100).padStart(2, '0') + String(Math.floor(simRandom()*12)+1).padStart(2, '0') + String(Math.floor(simRandom()*28)+1).padStart(2, '0');
   wrap.innerHTML = `
     <h4>🛂 ${isEn ? 'Identity Record' : '身分紀錄'} <span class="muted">${life.country || ''} · ${life.regNumber || ''}</span></h4>
     <pre class="mrz-line">${mrz}${life.name?.full_en?.toUpperCase().replace(/[^A-Z]/g,'').padEnd(20,'<').slice(0,20) || ''}</pre>
-    <pre class="mrz-line">${year}${mm}${dd}${life.sex}${exp}${life.country || 'XXX'}</pre>
-    <div class="ir-meta">${surname} ${givenName} · ${life.sex === 'M' ? (isEn?'Male':'男') : (isEn?'Female':'女')} · ${year}/${life.regNumber?.split('-').pop() || ''}</div>
+    <pre class="mrz-line">${life.calendarMonth?CalendarCore.at(life):year+mm+dd}${life.sex}${life.calendarMonth?'':exp}${life.country || 'XXX'}</pre>
+    <div class="ir-meta">${surname} ${givenName} · ${life.sex === 'M' ? (isEn?'Male':'男') : (isEn?'Female':'女')} · ${life.calendarMonth?CalendarCore.at(life):year}/${life.regNumber?.split('-').pop() || ''}</div>
   `;
 }
 
@@ -2345,7 +2349,7 @@ function renderEnd() {
   const loc = localize(c);
   $('#endCertTitle').textContent = t('end.cert_title');
   $('#endCountry').textContent = c.flag + ' ' + loc.name;
-  $('#endBorn').textContent = life.year + '/' + t('event.born_in2', life.sex === 'M' ? t('sex.male') : t('sex.female'));
+  $('#endBorn').textContent = CalendarCore.at(life) + ' / ' + t('event.born_in2', life.sex === 'M' ? t('sex.male') : t('sex.female'));
   $('#endAge').textContent = life.deathAge + ' ' + t('unit.years');
   $('#endCause').textContent = life.cause;
   $('#endName').textContent = life.name.full || life.name.full_en || '—';
@@ -2770,7 +2774,7 @@ function renderMemorialWall(lives) {
     <div class="memorial-card-content">
       <div class="memorial-flag">${flag}</div>
       <div class="memorial-name">${escapeHtml(life.name || '—')}</div>
-      <div class="memorial-years">${life.year || ''} → ${(life.year || 0) + (life.yearOffset || 0)} · ${life.age || '?'} ${LANG==='en'?'yrs':'歲'}</div>
+      <div class="memorial-years">${CalendarCore.range(life)} · ${life.age || '?'} ${LANG==='en'?'yrs':'歲'}</div>
       <div class="memorial-country">${escapeHtml(loc?.name || life.country || '?')}</div>
       <div class="memorial-summary">${escapeHtml(summary)}</div>
     </div>
@@ -3151,7 +3155,7 @@ function showLifeModal(life) {
       <button class="lm-close" onclick="document.getElementById('lifeModal').remove()">×</button>
       <h2 class="lm-title">${c?.flag || ''} ${escapeHtml(life.name)}</h2>
       <div class="lm-meta">
-        <span>${life.year || ''} → ${life.year + life.yearOffset || ''}</span>
+        <span>${CalendarCore.range(life)}</span>
         <span>·</span>
         <span>${life.age} ${t('unit.years')}</span>
         <span>·</span>
@@ -3184,8 +3188,8 @@ function renderLifeTreeInto(life, container) {
     sex: life.sex,
     country: life.country,
     countryData: countryById(life.country),
-    birth: { year: life.year },
-    death: life.died ? { year: life.year + life.yearOffset } : null
+    birth: CalendarCore.date(life),
+    death: life.died ? CalendarCore.date(life,life.deathAge??life.age) : null
   };
   const people = { [self.id]: self };
   (f.parents || []).forEach(p => { people[p.id] = p; });
@@ -3269,8 +3273,8 @@ function renderPanorama(lives) {
       sex: life.sex,
       country: life.country,
       countryData: countryById(life.country),
-      birth: { year: life.year },
-      death: life.died ? { year: life.year + life.yearOffset } : null,
+      birth: CalendarCore.date(life),
+      death: life.died ? CalendarCore.date(life,life.deathAge??life.age) : null,
       isSelf: true,
       lifeAge: life.age,
       lifeCause: life.cause
@@ -3370,10 +3374,10 @@ function runLab(countryCode, era, sexMode, N) {
   const causes = {}; // cause -> count
   const country = countryById(countryCode);
   if (!country) return null;
-  const adjustEra = { past: 1990, future: 2080, any: 2024, now: 2024 }[era] || 2024;
+  const adjustEra = { past: 1990, future: 2080, any: new Date().getFullYear(), now: new Date().getFullYear() }[era] || new Date().getFullYear();
   for (let i = 0; i < N; i++) {
     const sex = sexMode === 'random' ? (simRandom() < 0.5 ? 'M' : 'F') : sexMode;
-    const life = newLife(countryCode);
+    const previousEra=STATE.era;STATE.era=era;let life;try{life=newLife(countryCode);}finally{STATE.era=previousEra;}
     life.sex = sex;
     life.year = adjustEra;
     life.yearOffset = 0;
@@ -4051,8 +4055,8 @@ function buildFamilyAround(selfP, parsed) {
       sex: p.gender === 'F' ? 'F' : 'M',
       country: p.birthPlace || STATE.life.country,
       countryData: countryById(p.birthPlace) || STATE.life.countryData,
-      birth: p.birth ? { year: p.birth.year } : null,
-      death: p.death ? { year: p.death.year } : null,
+      birth: p.birth ? {...p.birth} : null,
+      death: p.death ? {...p.death} : null,
       note: null,
       sourceGedcomId: p.id
     })),
@@ -4062,8 +4066,8 @@ function buildFamilyAround(selfP, parsed) {
       sex: p.gender === 'F' ? 'F' : 'M',
       country: p.birthPlace || STATE.life.country,
       countryData: countryById(p.birthPlace) || STATE.life.countryData,
-      birth: p.birth ? { year: p.birth.year } : null,
-      death: p.death ? { year: p.death.year } : null,
+      birth: p.birth ? {...p.birth} : null,
+      death: p.death ? {...p.death} : null,
       note: null,
       sourceGedcomId: p.id
     })),
@@ -4073,8 +4077,8 @@ function buildFamilyAround(selfP, parsed) {
       sex: p.gender === 'F' ? 'F' : 'M',
       country: p.birthPlace || STATE.life.country,
       countryData: countryById(p.birthPlace) || STATE.life.countryData,
-      birth: p.birth ? { year: p.birth.year } : null,
-      death: p.death ? { year: p.death.year } : null,
+      birth: p.birth ? {...p.birth} : null,
+      death: p.death ? {...p.death} : null,
       note: null,
       sourceGedcomId: p.id
     }))
@@ -4109,7 +4113,7 @@ init().catch(()=>{const el=document.querySelector('#gameLoadState');if(el){el.te
    contact / PWA install）+ 教學版模式 + 版本歷史
    ===================================================================== */
 
-const APP_VERSION = '1.12.0';
+const APP_VERSION = '1.13.0';
 const APP_BUILD = '2026-10-21';
 
 // 版本歷史（每個版本：v / date / items；每個 item 含 emoji badge + 文字）
@@ -4476,8 +4480,8 @@ function treePeopleGraph() {
     country: STATE.life.country,
     countryData: STATE.life.countryData,
     birthOrigin: STATE.life.birthOrigin,
-    birth: { year: STATE.life.year + STATE.life.yearOffset - STATE.life.age },
-    death: STATE.life.died ? { year: (STATE.life.year + STATE.life.yearOffset - STATE.life.age) + STATE.life.deathAge } : null,
+    birth: CalendarCore.date(STATE.life),
+    death: STATE.life.died ? CalendarCore.date(STATE.life,STATE.life.deathAge) : null,
     family: selfCaste
   };
   const people = { [self.id]: self };
@@ -4543,7 +4547,7 @@ function renderTree() {
       const p = people[id];
       const opt = document.createElement('option');
       opt.value = id;
-      opt.textContent = `${p.name}${p.birth?.year ? ' ('+p.birth.year+')' : ''}${id==='self'?' · '+t('label.center',''):''}`;
+      opt.textContent = `${p.name}${p.birth?.year ? ' ('+CalendarCore.personDate(p.birth)+')' : ''}${id==='self'?' · '+t('label.center',''):''}`;
       if (id === rootId) opt.selected = true;
       sel.appendChild(opt);
     }
@@ -4553,7 +4557,7 @@ function renderTree() {
       const id = opt.value;
       const p = people[id];
       if (!p) return;
-      opt.textContent = `${p.name}${p.birth?.year ? ' ('+p.birth.year+')' : ''}${id==='self'?' · '+t('label.center',''):''}`;
+      opt.textContent = `${p.name}${p.birth?.year ? ' ('+CalendarCore.personDate(p.birth)+')' : ''}${id==='self'?' · '+t('label.center',''):''}`;
     });
     sel.value = rootId;
   }
@@ -4689,7 +4693,7 @@ function drawPersonNode(svg, p, x, y, w, h, selected) {
     const ne = svgEl('text', { class: 'node-en', x: 70, y: nameY + 14, 'font-size': 10, fill: '#7a7a7a' }, g);
     ne.textContent = p.nameEn;
   }
-  const lifeText = p.birth?.year ? `${p.birth.year || '?'} – ${p.death?.year || ''}` : '';
+  const lifeText = p.birth?.year ? `${CalendarCore.personDate(p.birth)} – ${CalendarCore.personDate(p.death)}` : '';
   if (lifeText) {
     const lt = svgEl('text', { class: 'node-life', x: 70, y: h - 8, 'font-size': 10, fill: '#7a7a7a' }, g);
     lt.textContent = lifeText;
@@ -4801,7 +4805,7 @@ function showPersonDetail(p) {
       <div class="pd-meta">
         <h3 class="pd-name">${escapeHtml(p.name || '?')} ${deceasedMark(p)}</h3>
         <div class="pd-relation"><span class="badge">${rel}</span> ${p.note === 'adoptive' ? `<span class="badge badge-adopt">🧩 ${t('tree.noteAdoptive')}</span>` : p.note === 'foster' ? `<span class="badge badge-foster">🏠 ${t('tree.noteFoster')}</span>` : ''}</div>
-        <div class="pd-life">${p.birth?.year || '?'} – ${p.death?.year || t('legend.m')}</div>
+        <div class="pd-life">${CalendarCore.personDate(p.birth) || '?'} – ${CalendarCore.personDate(p.death) || t('legend.m')}</div>
         <div class="pd-country">${p.countryData?.flag || ''} ${p.country || ''}${p.birthOrigin ? ' <span class="fam-flag">' + p.birthOrigin.flag + '→</span>' : ''}</div>
       </div>
       <button class="pd-close" onclick="document.getElementById('personDetail').remove()">×</button>
@@ -4877,7 +4881,7 @@ function svgEl(tag, attrs, parent) {
 
 function computeAge(p) {
   const by = p.birth?.year || 1990;
-  const ey = p.death?.year || 2024;
+  const ey = p.death?.year || (STATE.life?STATE.life.year+STATE.life.age:new Date().getFullYear());
   return Math.max(0, ey - by);
 }
 
@@ -4894,7 +4898,7 @@ function exportGEDCOM() {
       nameEn: p.nameEn || '',
       gender: p.sex || 'U',
       birth: p.birth ? { year: p.birth.year, month: p.birth.month, day: p.birth.day } : null,
-      death: p.death ? { year: p.death.year } : null,
+      death: p.death ? {...p.death} : null,
       birthPlace: p.country || '',
       deathPlace: '',
       notes: id === 'self' ? '@self@' : (p.note || ''),
@@ -4964,7 +4968,7 @@ function downloadOriginalLifeCard(ending){
  const text=(value,x,y,size,color='#eff8fc')=>{c.fillStyle=color;c.font=`${size}px sans-serif`;c.fillText(String(value),x,y,1030);};
  text('1in8billion.live',112,110,32,'#37d7ed');text(ending?'A life, remembered.':'A life, beginning.',112,210,52);
  text(life.name.full||life.name.full_en||'Fictional character',112,300,48);
- text(localize(life.countryData).name+' · '+life.year,112,365,30);
+ text(localize(life.countryData).name+' · '+(ending?CalendarCore.range(life):CalendarCore.at(life)),112,365,30);
  text(ending?'Age '+(life.deathAge??life.age):'Age 0',112,425,30);
  c.strokeStyle='#498297';c.lineWidth=3;c.beginPath();c.moveTo(112,540);c.lineTo(1080,540);c.stroke();
  const events=(life.log||[]).filter(e=>e.kind==='milestone').slice(-5);events.forEach((e,i)=>{const x=135+i*210;c.fillStyle='#37d7ed';c.beginPath();c.arc(x,540,8,0,Math.PI*2);c.fill();text('Age '+e.age,x-20,590,22);});

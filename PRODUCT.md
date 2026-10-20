@@ -18,7 +18,7 @@ Current product supports English, Japanese, Korean, Traditional and Simplified C
 
 ## Operating Context
 
-Vanilla HTML/CSS/JavaScript game, Node static build, existing Git-to-Cloudflare deployment. Current release v1.12.0, with 226 intended indexable routes; previous production revision 55f0a962d8ac2f8673c7082a321195b627ecb826. Discovery/indexing and retention are measured separately.
+Vanilla HTML/CSS/JavaScript game, Node static build, existing Git-to-Cloudflare deployment. Current release v1.13.0, with 226 intended indexable routes; previous production revision 55f0a962d8ac2f8673c7082a321195b627ecb826. Discovery/indexing and retention are measured separately.
 
 ## Capabilities and Constraints
 
@@ -44,3 +44,6 @@ Existing game and build source, 12 actual reproducible sample proofs, local/prod
 3. Local/private records stay local unless the player deliberately chooses a supported sharing action.
 4. Readable controls, optional audio and reduced motion support the experience.
 5. Improvements are evaluated with comparable user/session cohorts, not invented popularity or unrelated event ratios.
+
+## Birth calendar
+New real-time lives freeze the device-local current YYYY-MM at birth. Endings advance that month by the actual lifespan in whole years. Replay v2 stores the month; UTC daily invitations carry their recorded month. Legacy v1 and existing saves retain the original year and explicitly have no recorded month. Historical/future modes and statistical observation years remain unchanged.

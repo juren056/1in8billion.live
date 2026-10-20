@@ -4,10 +4,10 @@ function simRandom(){return p1RandomContext?p1RandomContext():Math.random();}
 function p1Scope(seed,fn){const previous=p1RandomContext;p1RandomContext=seed?ReplayCore.random(seed):null;try{return fn();}finally{p1RandomContext=previous;}}
 let p1Incoming=ReplayCore.parse(location.hash);
 const p1SeenInvitations=new Set();
-let p1PendingSeed=null;
+let p1PendingSeed=null,p1PendingCalendar=undefined;
 const p1Labels=Object.fromEntries(['en','ja','ko','zh-Hant'].map(lang=>[lang,[SurfaceCopy.replayCopy,SurfaceCopy.replayStart,SurfaceCopy.replayInfo,SurfaceCopy.ineligible]]));
 const p1OriginalNewLife=newLife;
-newLife=function(country){const seed=p1PendingSeed||crypto.getRandomValues(new Uint32Array(1))[0].toString(36);p1PendingSeed=null;const life=p1Scope(seed+':birth',()=>p1OriginalNewLife(country));if(life)life.replayV1={seed,country,era:['past','future'].includes(STATE.era)?STATE.era:'now',lang:LANG,edu:STATE.eduMode,eligible:false};return life;};
+newLife=function(country){const seed=p1PendingSeed||crypto.getRandomValues(new Uint32Array(1))[0].toString(36);p1PendingSeed=null;CalendarCore.pending=p1PendingCalendar;p1PendingCalendar=undefined;let life;try{life=p1Scope(seed+':birth',()=>p1OriginalNewLife(country));}finally{CalendarCore.pending=undefined;}if(life)life.replayV1={...(life.calendarMonth?{calendarMonth:life.calendarMonth}:{}),seed,country,era:['past','future'].includes(STATE.era)?STATE.era:'now',lang:LANG,edu:STATE.eduMode,eligible:false};return life;};
 const p1OriginalTick=tick;
 tick=function(){const run=STATE.life?.replayV1;return p1Scope(run?run.seed+':year:'+STATE.life.age:null,()=>p1OriginalTick());};
 // Rendering and cosmetic randomness must never consume a simulation stream.
@@ -30,7 +30,7 @@ function p1PresentReplay({source,trigger}={}){
  if(!p1Incoming){p1Entry?.closeReplay();if(location.hash.startsWith('#run='))toast(SurfaceCopy.unsupported,6000);return;}
  if(!countryById(p1Incoming.country)||LANG!==p1Incoming.lang){p1Entry?.closeReplay();toast(SurfaceCopy.mismatch,5000);return;}
  const run={...p1Incoming},hash=location.hash;source=source||(new URLSearchParams(location.search).get('utm_source')==='daily'?'daily':'shared');
- import('./replay-entry.js').then(entry=>{if(token!==p1EntryToken||hash!==location.hash)return;p1Entry=entry;entry.openReplay({run,source,trigger,onCancel:()=>{p1EntryToken++;p1Incoming=null;if(history.state?.replayEntry)history.back();else{const url=new URL(location.href);url.hash='';history.replaceState(null,'',p1ReturnUrl||url.href);}},onStart:()=>{STATE.era=run.era;STATE.eduMode=run.edu;p1PendingSeed=run.seed;document.querySelector('#lifeDuration').value='quick';launchEvent('replay_started',{action:source});startLife(run.country);}});}).catch(()=>toast(SurfaceCopy.error,6000));
+ import('./replay-entry.js').then(entry=>{if(token!==p1EntryToken||hash!==location.hash)return;p1Entry=entry;entry.openReplay({run,source,trigger,onCancel:()=>{p1EntryToken++;p1Incoming=null;if(history.state?.replayEntry)history.back();else{const url=new URL(location.href);url.hash='';history.replaceState(null,'',p1ReturnUrl||url.href);}},onStart:()=>{STATE.era=run.era;STATE.eduMode=run.edu;p1PendingSeed=run.seed;p1PendingCalendar=run.calendarMonth??null;document.querySelector('#lifeDuration').value='quick';launchEvent('replay_started',{action:source});startLife(run.country);}});}).catch(()=>toast(SurfaceCopy.error,6000));
 }
 window.addEventListener('hashchange',()=>{if(document.documentElement.dataset.gameReady==='true')p1PresentReplay();});
 window.addEventListener('popstate',()=>{if(document.documentElement.dataset.gameReady==='true')p1PresentReplay();});

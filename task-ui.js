@@ -29,9 +29,9 @@ export function installTaskUI(){
  document.addEventListener('keydown',e=>{if(modal.hidden)return;if(e.key==='Escape'){e.preventDefault();$('#birthCertCancel').click();}if(e.key==='Tab'){const controls=[...modal.querySelectorAll('button,a[href],input,select')].filter(el=>!el.disabled&&el.getClientRects().length),i=controls.indexOf(document.activeElement);if(e.shiftKey&&i<=0){e.preventDefault();controls.at(-1)?.focus();}else if(!e.shiftKey&&i===controls.length-1){e.preventDefault();controls[0]?.focus();}}});
  const localizeOptions=()=>{for(const option of $('#countrySelect').options){const country=COUNTRIES.find(row=>row.id===option.value);if(country)option.textContent=country.flag+' '+localize(country).name;}};localizeOptions();new MutationObserver(localizeOptions).observe($('#countrySelect'),{childList:true});
  const sync=()=>{
-  const era=$('[data-t="intro.era"]');if(era)era.textContent=c.era;
+  const era=$('[data-t="intro.era"]');if(era)era.textContent=(CalendarCopy[document.documentElement.dataset.siteLocale]||CalendarCopy.en).title;
   const duration=$('[data-t="intro.duration"]');if(duration)duration.textContent=window.translateUI?.('Pace')||'Pace';
-  for(const[era,year]of[['now',2024],['past',1990],['future',2080]])for(const button of document.querySelectorAll('[data-era="'+era+'"]'))if(!button.textContent.includes(String(year)))button.textContent+=' · '+year;
+  for(const[era,year]of[['past',1990],['future',2080]])for(const button of document.querySelectorAll('[data-era="'+era+'"]'))if(!button.textContent.includes(String(year)))button.textContent+=' · '+year;
   const bar=$('.cert-bar-wrap');bar.classList.add('reference-values');bar.setAttribute('aria-label',c.progress);
   $('#lifeBarPct').hidden=true;$('.cert-bar-track').hidden=true;
   for(const el of [$('#lifeAge'),$('#lifeBarNow')])if(STATE.life)el.textContent=STATE.life.age+' '+c.years;
