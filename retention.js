@@ -38,5 +38,6 @@ export async function installRetention(){
  const bridge={lang,s,event,config,update,getAudio,paintScene};window.Retention=bridge;
  if(config.stage>=2)await (await import('./life-keepsake.js')).installKeepsake(bridge);
  if(config.stage>=3)await (await import('./life-return.js')).installReturn(bridge);
+ await (await import('./ux-flow.js')).installUX(bridge);
  return bridge;
 }

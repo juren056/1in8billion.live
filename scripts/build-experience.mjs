@@ -1,3 +1,4 @@
+import {uxCopy} from '../ux-copy.js';
 import {controlCopy} from '../content/control-copy.mjs';
 import fs from 'node:fs';
 import {execFileSync} from 'node:child_process';
@@ -21,7 +22,8 @@ export function homeExperience(h,{lang,l,countries,esc}){
  const settings=h.slice(begin,end).replace(/\s*<\/div>\s*$/,'');
  const currentSamples=fs.existsSync('content/life-samples.json')?JSON.parse(fs.readFileSync('content/life-samples.json','utf8')):[];
  const samples=currentSamples.filter(x=>x.lang===lang);
- const card=(sample,i=0)=>{const c=countries.find(c=>c.id===sample.country);return `<article class="sample-life"><p class="sample-origin">${c.flag} ${countryName(c,lang)} <span>${s.fiction}</span></p><h3>${sample.age} ${s.years}</h3><p class="sample-age">${s.sampleEnded}</p><ol class="life-thread">${sample.moments.slice(0,3).map(m=>`<li><b>${m.age}</b><span>${esc(translateStory(m.text,lang))}</span></li>`).join('')}</ol><a href="/${l.prefix}#run=v1.${sample.seed}.${sample.country}.now.${l.internal}.0" class="text-link">${s.sample}</a></article>`;};
+ const u=uxCopy[lang];
+ const card=(sample,i=0)=>{const c=countries.find(c=>c.id===sample.country);return `<article class="sample-life"><p class="sample-origin">${c.flag} ${countryName(c,lang)} <span>${s.fiction}</span></p><h3>${sample.age} ${s.years}</h3><p class="sample-age">${s.sampleEnded}</p><ol class="life-thread">${sample.moments.slice(0,1).map(m=>`<li><b>${m.age}</b><span>${esc(translateStory(m.text,lang))}</span></li>`).join('')}</ol><a href="/${l.prefix}#run=v1.${sample.seed}.${sample.country}.now.${l.internal}.0" class="text-link sample-action">${u.experience}</a></article>`;};
  const hero=`<div class="hero experience-hero"><div class="hero-copy"><h1 class="hero-title">${s.title}<span id="eduBadge" class="edu-badge" hidden data-t="edu.badge"></span></h1><p class="hero-sub">${s.sub}</p><p class="load-state" id="gameLoadState" role="status">${s.loading}</p><div class="cta-row"><button id="btnStart" class="cta-btn" disabled>${s.start}</button><button id="customizeLife" class="text-button" type="button">${s.custom}</button></div><p class="play-policy">${s.hint}</p><noscript><p>${s.error}</p></noscript></div><aside class="hero-world" aria-label="${s.odds}"><div class="orbital-world" aria-hidden="true"><span>1</span></div><div class="birth-distribution"><h2>${s.odds}</h2><ul>${top.map(c=>`<li><a href="/${l.prefix}?country=${c.id}">${countryName(c,lang)}</a><span class="weight-bar"><i style="width:${100*c.births/top[0].births}%"></i></span><b>${(100*c.births/total).toFixed(1)}%</b></li>`).join('')}</ul><p>${s.oddsNote}</p></div></aside></div><details id="lifeSettings" class="life-settings"><summary>${s.settings}</summary>${settings}<p>${s.hint}</p></details>`;
  h=h.replace(/  <div class="hero">[\s\S]*?(?=  <!-- v5.19：即時計數器)/,hero+'\n');
  const sections=`<section class="sample-section"><h2>${s.samples}</h2><p>${s.sampleIntro} <a href="/guides/model-experiment/#replay-proof">${s.whySamples}</a></p><div class="sample-grid">${samples.map(card).join('')}</div></section><section class="compare-prompt"><div><h2>${s.compare}</h2><p>${s.compareSub}</p></div><a class="primary-link" href="/${l.prefix}compare/">${s.compareCta}</a></section>`;
@@ -30,7 +32,7 @@ export function homeExperience(h,{lang,l,countries,esc}){
  h=h.replace(/<option value="(zh-Hans|vi|fr|th|es)">.*?<\/option>/g,'');
  h=h.replace('<option value="quick">Quick · automatic</option>','<option value="quick" selected>'+s.quick+'</option>').replace('<option value="30min">Standard · relaxed</option>','<option value="30min">'+s.relaxed+'</option>').replace('<option value="1hr" selected>Standard</option>','<option value="1hr">'+s.standard+'</option>').replace('<option value="90min">Slow</option>','<option value="90min">'+s.slow+'</option>');
  h=h.replace('<script src="/app.js"></script>','<script src="/storage.js"></script><script src="/app.js"></script>').replace('<script src="/p1-game.js"></script>','<script src="/p1-game.js"></script><script src="/experience.js"></script>');
- h=h.replace('v1.1.0','v1.7.2');
+ h=h.replace('v1.1.0','v1.8.0');
  h=h.replace('<script src="/gedcom.js"></script>','').replace('<script src="/data/world-coords.js"></script>','');
  h=h.replace(/(<header class="topbar">[\s\S]*?)(<\/header>)\s*(<nav class="site-links"[\s\S]*?<\/nav>)/,'$1$3$2');
  const controls=controlCopy[lang];
