@@ -33,7 +33,7 @@ export function homeExperience(h,{lang,l,countries,esc}){
  h=h.replace('<option value="quick">Quick · automatic</option>','<option value="quick">'+s.quick+'</option>').replace('<option value="30min">Standard · relaxed</option>','<option value="30min">'+s.relaxed+'</option>').replace('<option value="1hr" selected>Standard</option>','<option value="1hr" selected>'+s.standard+'</option>').replace('<option value="90min">Slow</option>','<option value="90min">'+s.slow+'</option>');
  h=h.replace(/<option value="(?:30min|90min)">[^<]*<\/option>/g,'');
  h=h.replace('<script src="/app.js"></script>','<script src="/storage.js"></script><script src="/app.js"></script>').replace('<script src="/p1-game.js"></script>','<script src="/p1-game.js"></script><script src="/experience.js"></script>');
- h=h.replace('v1.1.0','v1.10.0');
+ h=h.replace('v1.1.0','v1.11.0');
  h=h.replace('<script src="/gedcom.js"></script>','').replace('<script src="/data/world-coords.js"></script>','');
  h=h.replace(/(<header class="topbar">[\s\S]*?)(<\/header>)\s*(<nav class="site-links"[\s\S]*?<\/nav>)/,'$1$3$2');
  const controls=controlCopy[lang];

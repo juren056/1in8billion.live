@@ -9,3 +9,5 @@ export const copy={
 for(const [lang,more]of Object.entries(batchCopy))Object.assign(copy[lang],more);
 
 for(const [lang,c]of Object.entries(playbackCopy)){Object.assign(copy[lang],{start:c.start,standard:c.slow,quick:c.quick});}
+
+copy.en.hint='Read at 5 seconds per year. Pause anytime; manual choices wait for you.';copy.ja.hint='1年5秒で読み進めます。いつでも停止でき、手動の選択では回答を待ちます。';copy.ko.hint='1년당 5초로 읽습니다. 언제든 멈추고 수동 선택은 답변을 기다립니다.';copy['zh-TW'].hint='每年5秒，隨時可暫停；手動選擇會等待你回答。';

@@ -8,6 +8,7 @@ import {calculateComparison,comparisonCSV} from './comparison-core.js';
  const params=new URLSearchParams(location.search);for(const [el,key] of [[a,'a'],[b,'b']])if(data.some(c=>c.id===params.get(key)))el.value=params.get(key);
  if(params.get('mode')==='population')mode.value='population';
  let current;
+ const t=x=>window.translateUI?.(x)||x;
  function update(){
   const A=data.find(c=>c.id===a.value),B=data.find(c=>c.id===b.value);if(!A||!B)return;
   current=calculateComparison(data,A.id,B.id,mode.value);
@@ -15,7 +16,7 @@ import {calculateComparison,comparisonCSV} from './comparison-core.js';
   root.querySelectorAll('[data-side]').forEach(el=>{const c=el.dataset.side==='a'?A:B;let value;switch(el.dataset.metric){case'name':value=name(c);break;case'share':value=share(c).toFixed(4)+'%';break;case'one':value='1 / '+Math.round(100/share(c));break;case'le':value=c.le+' '+s.years;break;case'eys':value=c.eys==null?s.missing:c.eys+' '+s.years;break;case'ppp':value=c.ppp==null?s.missing:'$'+c.ppp.toLocaleString(lang);break;}el.textContent=value;});
   document.querySelector('#modeShareLabel').textContent=population?s.sharePopulation:s.shareBirth;
   document.querySelector('#modeOddsLabel').textContent=population?s.drawPopulation:s.drawBirth;
-  document.querySelector('#compareAnswer').textContent=A.id===B.id?s.same:`${name(A)} / ${name(B)}: ${(weight(A)/weight(B)).toFixed(2)}× · ${s.ratio} (${population?s.population:s.birth})`;
+  document.querySelector('#compareAnswer').textContent=A.id===B.id?t(s.same):`${name(A)} / ${name(B)}: ${(weight(A)/weight(B)).toFixed(2)}× · ${t(s.ratio)} (${t(population?s.population:s.birth)})`;
   for(const [side,c] of [['a',A],['b',B]]){document.querySelector('#barName'+side).textContent=name(c);document.querySelector('#barValue'+side).textContent=share(c).toFixed(4)+'%';document.querySelector('#bar'+side).style.width=100*weight(c)/Math.max(weight(A),weight(B))+'%';}
   for(const [id,c] of [['playA',A],['playB',B]]){const link=document.querySelector('#'+id);link.href=document.documentElement.dataset.playPath+'?country='+c.id;link.textContent=s.playIn+' '+name(c);}
   const url=new URL(location.href);url.searchParams.set('a',A.id);url.searchParams.set('b',B.id);url.searchParams.set('mode',mode.value);history.replaceState(null,'',url.pathname+url.search);
@@ -25,5 +26,5 @@ import {calculateComparison,comparisonCSV} from './comparison-core.js';
  document.querySelector('#swapCountries').onclick=()=>{[a.value,b.value]=[b.value,a.value];update();window.siteEvent?.('compare_used',{mode:mode.value,action:'swap'});};
  document.querySelector('#copyComparison').onclick=async()=>{try{await navigator.clipboard.writeText(location.href);document.querySelector('#compareStatus').textContent=s.copied;window.siteEvent?.('comparison_shared',{mode:mode.value});}catch{document.querySelector('#compareStatus').textContent=location.href;}};
  document.querySelector('#downloadComparison').onclick=()=>{if(!current)return;const names=[a.options[a.selectedIndex].text,b.options[b.selectedIndex].text],blob=new Blob([comparisonCSV(current,names,window.MODEL_SNAPSHOT)],{type:'text/csv;charset=utf-8'}),url=URL.createObjectURL(blob),link=document.createElement('a');link.href=url;link.download=`birthplace-${current.a.id}-${current.b.id}-${current.mode}.csv`;link.click();setTimeout(()=>URL.revokeObjectURL(url),1000);window.siteEvent?.('comparison_download',{mode:mode.value});};
- update();
+ document.addEventListener('site:locale-ready',update);update();
 })().catch(()=>{const status=document.querySelector('#compareStatus');if(status)status.textContent=window.SurfaceCopy.failed;});

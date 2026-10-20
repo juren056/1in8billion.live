@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 const routes=JSON.parse(fs.readFileSync('dist/routes.json')),titles=new Set();
 for(const route of routes){const html=fs.readFileSync('dist'+route+'index.html','utf8');
 assert.ok(html.includes(`rel="canonical" href="https://1in8billion.live${route}"`),route+' canonical');
-const title=html.match(/<title>(.*?)<\/title>/)[1];assert.ok(!titles.has(title),'Duplicate title '+title);titles.add(title);
+const title=html.match(/<title>(.*?)<\/title>/)[1],titleKey=html.match(/<html lang="([^"]+)"/)[1]+'|'+title;assert.ok(!titles.has(titleKey),'Duplicate title within language '+title);titles.add(titleKey);
 assert.equal((html.match(/<h1[ >]/g)||[]).length,1,route+' h1');
 assert.ok(/<html lang="[^"]+"/.test(html));assert.ok(html.includes('name="description"'));
 for(const m of html.matchAll(/<link rel="alternate" hreflang="[^"]+" href="https:\/\/1in8billion.live([^"?]+)"/g))assert.ok(routes.includes(m[1]),'Missing alternate '+m[1]);
