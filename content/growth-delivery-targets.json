@@ -1,0 +1,170 @@
+[
+  {
+    "id": 1,
+    "batch": "首批 0–48h",
+    "language": "en",
+    "route": "/alternatives/1in8b/",
+    "action": "新建",
+    "keywordHypothesis": "1in8b alternatives"
+  },
+  {
+    "id": 2,
+    "batch": "首批 0–48h",
+    "language": "ja",
+    "route": "/ja/alternatives/",
+    "action": "新建",
+    "keywordHypothesis": "80億分の1 似たゲーム"
+  },
+  {
+    "id": 3,
+    "batch": "首批 0–48h",
+    "language": "en",
+    "route": "/",
+    "action": "升级",
+    "keywordHypothesis": "1 in 8 billion life simulator"
+  },
+  {
+    "id": 4,
+    "batch": "首批 0–48h",
+    "language": "ja",
+    "route": "/ja/",
+    "action": "升级",
+    "keywordHypothesis": "出生ガチャ ゲーム 無料"
+  },
+  {
+    "id": 5,
+    "batch": "首批 0–48h",
+    "language": "zh-TW",
+    "route": "/zh-tw/",
+    "action": "升级",
+    "keywordHypothesis": "投胎模擬器 線上玩"
+  },
+  {
+    "id": 6,
+    "batch": "首批 0–48h",
+    "language": "en",
+    "route": "/guides/quick-play/",
+    "action": "升级",
+    "keywordHypothesis": "how to play a life simulator online"
+  },
+  {
+    "id": 7,
+    "batch": "首批 0–48h",
+    "language": "ja",
+    "route": "/ja/guides/quick-play/",
+    "action": "升级",
+    "keywordHypothesis": "80億分の1 やり方"
+  },
+  {
+    "id": 8,
+    "batch": "首批 0–48h",
+    "language": "zh-TW",
+    "route": "/zh-tw/guides/quick-play/",
+    "action": "升级",
+    "keywordHypothesis": "80億分之一 怎麼玩"
+  },
+  {
+    "id": 9,
+    "batch": "第二批 2–5天",
+    "language": "en",
+    "route": "/guides/auto-mode/",
+    "action": "新建",
+    "keywordHypothesis": "life simulator auto mode"
+  },
+  {
+    "id": 10,
+    "batch": "第二批 2–5天",
+    "language": "en",
+    "route": "/guides/speed-controls/",
+    "action": "新建",
+    "keywordHypothesis": "how to speed up 1 in 8 billion"
+  },
+  {
+    "id": 11,
+    "batch": "第二批 2–5天",
+    "language": "en",
+    "route": "/guides/replay-links/",
+    "action": "升级",
+    "keywordHypothesis": "how to save life simulator progress"
+  },
+  {
+    "id": 12,
+    "batch": "首批 0–48h",
+    "language": "en",
+    "route": "/birth-odds/",
+    "action": "升级",
+    "keywordHypothesis": "birth lottery simulator"
+  },
+  {
+    "id": 13,
+    "batch": "首批 0–48h",
+    "language": "en",
+    "route": "/countries/japan/",
+    "action": "新建",
+    "keywordHypothesis": "odds of being born in Japan"
+  },
+  {
+    "id": 14,
+    "batch": "第二批 2–5天",
+    "language": "en",
+    "route": "/countries/india/",
+    "action": "新建",
+    "keywordHypothesis": "odds of being born in India"
+  },
+  {
+    "id": 15,
+    "batch": "第二批 2–5天",
+    "language": "en",
+    "route": "/countries/united-states/",
+    "action": "新建",
+    "keywordHypothesis": "odds of being born in USA"
+  },
+  {
+    "id": 16,
+    "batch": "第二批 2–5天",
+    "language": "en",
+    "route": "/countries/south-korea/",
+    "action": "新建",
+    "keywordHypothesis": "odds of being born in South Korea"
+  },
+  {
+    "id": 17,
+    "batch": "第二批 2–5天",
+    "language": "en",
+    "route": "/countries/china/",
+    "action": "新建",
+    "keywordHypothesis": "odds of being born in China"
+  },
+  {
+    "id": 18,
+    "batch": "第二批 2–5天",
+    "language": "en",
+    "route": "/countries/nigeria/",
+    "action": "新建",
+    "keywordHypothesis": "odds of being born in Nigeria"
+  },
+  {
+    "id": 19,
+    "batch": "第二批 2–5天",
+    "language": "en",
+    "route": "/compare/china-vs-united-states/",
+    "action": "新建",
+    "keywordHypothesis": "born in China vs USA simulator"
+  },
+  {
+    "id": 20,
+    "batch": "第二批 2–5天",
+    "language": "en",
+    "route": "/compare/taiwan-vs-japan/",
+    "action": "新建",
+    "keywordHypothesis": "born in Taiwan vs Japan"
+  },
+  {
+    "id": 21,
+    "batch": "第二批 2–5天",
+    "language": "en",
+    "route": "/compare/nigeria-vs-united-states/",
+    "action": "新建",
+    "keywordHypothesis": "born in Nigeria vs USA life simulator"
+  }
+]

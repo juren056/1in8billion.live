@@ -4,7 +4,7 @@ v1.3.0 adds `release` to all events and coarse `run_type` to game events (new, r
 
 `web_vital` is reported by the official self-hosted web-vitals 6.2.3 standard build after critical work. Parameters: metric_name, metric_rating, metric_value and metric_delta. Only real browser observations are reported. No selectors or attribution payloads are collected. The browser may not report INP until a qualifying interaction/visibility change; absent is not zero. Distinguish these first-party observations from Google's population-level CrUX/GSC field data.
 
-Analytics remains enabled on page load, as requested. Existing GA4 property and stream are retained. `page_location` excludes query strings and fragments. Interaction parameters are allowlisted to language, play_mode, mode, action and page_type; do not add names, story text, notes, family records or replay seeds.
+Analytics remains enabled on page load, as requested. Existing GA4 property and stream are retained. `page_location` preserves only safe utm_source/utm_medium/utm_campaign/utm_content/utm_term/utm_id labels (100 characters each) and excludes other queries and all fragments. Internal navigation receives no marketing UTM. v1.4.0 adds coarse content_game_click/explore_click path events and odds_used; eligible replay links use player/share/replay campaign labels while the seed stays in the stripped fragment. Interaction parameters are allowlisted to language, play_mode, mode, action and page_type; do not add names, story text, notes, family records or replay seeds.
 
 | Event | Actual trigger |
 | --- | --- |

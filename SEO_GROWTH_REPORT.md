@@ -2,7 +2,7 @@
 
 ## Scope and baseline
 
-Read the full supplied Markdown execution document and all five workbook sheets, including 75 keyword candidates, the 21 P0 page targets and P1/P2 conditions. Candidate demand is a hypothesis, not validated search volume. Latest origin/main was fetched and matched 18c26818e5e61e0d34c12b131fba5f09076a5b93. Safety branch: codex/baseline-v1.3-before-growth. Existing local historical-report edits and audit artifacts were preserved.
+Read the full supplied Markdown execution document and all four workbook sheets, including 75 keyword candidates, the 21 P0 page targets and P1/P2 conditions. Candidate demand is a hypothesis, not validated search volume. Latest origin/main was fetched and matched 18c26818e5e61e0d34c12b131fba5f09076a5b93. Safety branch: codex/baseline-v1.3-before-growth. Existing local historical-report edits and audit artifacts were preserved.
 
 ## Stage B: attribution repair
 
@@ -33,3 +33,56 @@ Evidence: audit/growth-ga4-acquisition.jpg, audit/growth-ga4-realtime-before.txt
 - All releases retain GA4 default collection, privacy disclosure, Google signals disabled, the same domain/Worker, local saves, offline worker, Replay v1 and inherited input provenance. Sitemap omits lastmod rather than refreshing unchanged dates on every build.
 
 Production acceptance and second-batch results are appended as they are verified. Rollback: revert the corresponding growth commits and push the verified previous tree through the same Git deployment; preserve any unrelated user changes. No new engine/data migration is required.
+
+
+## Stage C production acceptance
+
+Revision 2ed68b1016f5a1f5272023de601cd3896e56e688 published and release.json confirmed. Production sitemap captured with 52 URLs; Japan model page and its actual chart/links confirmed in Chrome (audit/growth-live-stage-a.jpg). A Git push encountered TLS/HTTP408 transport failures; HTTP/1.1 and a bounded post buffer succeeded, without changing repository or deployment destination.
+
+## Stage D: P0-B and measured follow-up
+
+Default build now contains 62 routes: five additional country profiles (India, United States, South Korea, China, Nigeria), three pair pages (China/United States, Taiwan/Japan, Nigeria/United States), and Auto/speed guides. Each country has unique editorial explanation, its actual two-mode chart and calculations, source limitations and a real selected-country entry. Pair pages provide both static denominators, live mode controls, original relative bars, CSV and two combination-specific explanations. Upgraded replay guide separates local continuation, PNG, Replay v1 and ordinary site links. No new public-user-life storage or OG service was introduced.
+
+A real phone screenshot exposed control buttons being squeezed/clipped in a single row. Fixed wrapping and minimum 44px targets, with Auto text sized to its label. Browser assertions now check every control fits its parent, not only document overflow. Actual control-row screenshot is used by both new tutorials, with correct intrinsic dimensions. This is a functional mobile fix driven by visual acceptance.
+
+Supplementary analytics: content_game_click/explore_click use coarse from/to page categories and odds_used records actual calculator interactions. Replay copies carry player/share/replay UTM labels; its existing versioned fragment is unchanged. A fresh Chrome context successfully copies the actual replay to the clipboard and confirms the campaign labels plus identical fragment. Local internal links deliberately have no UTM.
+
+All 21 workbook P0 page targets are mirrored in content/growth-delivery-targets.json and checked against the build. 13 are new relative to the frozen 49-route baseline; eight primary existing pages are upgraded. P1/P2 keyword hypotheses remain conditional on actual query/intent evidence.
+
+Independent official-observation calibration is not completed. WPP 2024 and World Bank definition/license/API documentation were reviewed. World Bank API retrieval failed through proxy and direct TLS. reference-review-v1 records the real status, intended units/years/rights checks and an empty observations array. No invented numbers, inferred years or replacement game weights were imported. It is publicly inspectable separately from the inherited snapshot.
+
+## External measurement limits
+
+GSC Performance rechecked in Chrome: still processing, query/page/country/device tabs and export disabled. No query-led P1 expansion is justified yet. Index counts are not inferred from sitemap URLs.
+
+GA4 DebugView was opened and existing page_view parameters were inspectable. The inspected event showed the root URL, not the uniquely marked new UTM test; the matching campaign event could not be positively identified before the live stream cleared. Therefore production backend UTM attribution remains unverified, despite passing built-config, privacy and fresh-browser tests. Do not claim repaired historical acquisition or a validated source/medium uplift. Test campaign labels use codex_validation/internal_test/utm_check_20261020 and must be excluded from business analysis.
+
+Promotion drafts with channel-specific UTM links are in GROWTH_PROMOTION_PACK.md. They are not published posts or earned links. No social account actions, paid campaign, automated forum submissions or scheduled follow-up was performed. Public personalized OG pages and subsequent expansion remain later work.
+
+## P0 delivery targets
+
+| # | Action | Route |
+|---|---|---|
+| 1 | 新建 | /alternatives/1in8b/ |
+| 2 | 新建 | /ja/alternatives/ |
+| 3 | 升级 | / |
+| 4 | 升级 | /ja/ |
+| 5 | 升级 | /zh-tw/ |
+| 6 | 升级 | /guides/quick-play/ |
+| 7 | 升级 | /ja/guides/quick-play/ |
+| 8 | 升级 | /zh-tw/guides/quick-play/ |
+| 9 | 新建 | /guides/auto-mode/ |
+| 10 | 新建 | /guides/speed-controls/ |
+| 11 | 升级 | /guides/replay-links/ |
+| 12 | 升级 | /birth-odds/ |
+| 13 | 新建 | /countries/japan/ |
+| 14 | 新建 | /countries/india/ |
+| 15 | 新建 | /countries/united-states/ |
+| 16 | 新建 | /countries/south-korea/ |
+| 17 | 新建 | /countries/china/ |
+| 18 | 新建 | /countries/nigeria/ |
+| 19 | 新建 | /compare/china-vs-united-states/ |
+| 20 | 新建 | /compare/taiwan-vs-japan/ |
+| 21 | 新建 | /compare/nigeria-vs-united-states/ |
+
+Final production revision, selected-page status/canonical checks, sitemap submission and screenshots are recorded after the final push.

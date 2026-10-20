@@ -10,7 +10,7 @@ export function prepareData(countries,dict,write){
  const snapshot={hash:dataHash(JSON.parse(fs.readFileSync('data/countries.json','utf8'))),revision:execFileSync('git',['rev-parse','HEAD'],{encoding:'utf8'}).trim()};
  for(const c of countries){if(!alpha2[c.id])throw Error('Missing identity '+c.id);c.iso2=alpha2[c.id];c.flag=flagFor(c.id);}
  write('data/countries.json',JSON.stringify(countries));
- for(const [lang,d] of Object.entries(dict)){Object.assign(d,coreOverrides[lang]||{});write('data/i18n/'+lang+'.json',JSON.stringify(d));}
+ for(const [lang,d] of Object.entries(dict)){Object.assign(d,coreOverrides[lang]||{});const controls=controlCopy[lang==='zh-Hant'?'zh-TW':lang];if(controls)Object.assign(d,{'end.lastMoments':controls.last,'end.replay':controls.again});write('data/i18n/'+lang+'.json',JSON.stringify(d));}
  for(const [lang,s] of Object.entries(copy))write('ui-copy/'+lang+'.js','window.ControlCopy='+JSON.stringify(controlCopy[lang])+';window.MODEL_SNAPSHOT='+JSON.stringify(snapshot)+';window.SurfaceCopy='+JSON.stringify(s)+';window.storyMap='+JSON.stringify(storyMaps[lang])+';window.localizeStory=text=>Object.keys(storyMap).sort((a,b)=>b.length-a.length).reduce((v,k)=>v.replaceAll(k,storyMap[k]),String(text));');
 }
 export function navigation(l,lang){const s=copy[lang];return `<nav class="site-links" aria-label="${s.related}"><a href="/${l.prefix}">${s.play}</a><a href="/${l.prefix}compare/">${s.compare}</a><a href="/${l.prefix}guides/">${s.guides}</a><a href="/${l.prefix}countries/">${s.countries}</a><details class="language-menu"><summary>🌐 ${lang}</summary><div>${Object.entries(copy).map(([code])=>`<a href="/${({en:'',ja:'ja/',ko:'ko/','zh-TW':'zh-tw/'})[code]}" lang="${code}" data-locale="${code}">${({en:'English',ja:'日本語',ko:'한국어','zh-TW':'繁體中文'})[code]}</a>`).join('')}</div></details></nav>`;}
@@ -30,7 +30,7 @@ export function homeExperience(h,{lang,l,countries,esc}){
  h=h.replace(/<option value="(zh-Hans|vi|fr|th|es)">.*?<\/option>/g,'');
  h=h.replace('<option value="quick">Quick · automatic</option>','<option value="quick" selected>'+s.quick+'</option>').replace('<option value="30min">Standard · relaxed</option>','<option value="30min">'+s.relaxed+'</option>').replace('<option value="1hr" selected>Standard</option>','<option value="1hr">'+s.standard+'</option>').replace('<option value="90min">Slow</option>','<option value="90min">'+s.slow+'</option>');
  h=h.replace('<script src="/app.js"></script>','<script src="/storage.js"></script><script src="/app.js"></script>').replace('<script src="/p1-game.js"></script>','<script src="/p1-game.js"></script><script src="/experience.js"></script>');
- h=h.replace('v1.1.0','v1.3.0');
+ h=h.replace('v1.1.0','v1.4.0');
  h=h.replace('<script src="/gedcom.js"></script>','').replace('<script src="/data/world-coords.js"></script>','');
  h=h.replace(/(<header class="topbar">[\s\S]*?)(<\/header>)\s*(<nav class="site-links"[\s\S]*?<\/nav>)/,'$1$3$2');
  const controls=controlCopy[lang];

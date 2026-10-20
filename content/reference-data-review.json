@@ -1,0 +1,14 @@
+{
+  "version": "reference-review-v1",
+  "reviewed": "2026-10-20",
+  "purpose": "Independent calibration queue; never loaded by the game or used to replace replay-v1 inputs",
+  "countries": ["JPN", "IND", "USA", "KOR", "CHN", "NGA"],
+  "status": "pending observation retrieval and field-level review",
+  "attempts": "World Bank API HTTPS retrieval failed through both configured proxy and direct connection. No response values were imported or invented.",
+  "sources": [
+    {"name":"UN World Population Prospects 2024", "url":"https://population.un.org/wpp/", "edition":2024, "observationYear":null, "license":"Must confirm the license and attribution attached to the specific downloadable table", "fields":["annual births", "population", "life expectancy"], "status":"reference source identified; country/year table not ingested"},
+    {"name":"World Bank World Development Indicators", "url":"https://data.worldbank.org/indicator/SP.DYN.CBRT.IN", "indicator":"SP.DYN.CBRT.IN", "unit":"births per 1,000 people", "observationYear":null, "licenseUrl":"https://datacatalog.worldbank.org/public-licenses", "license":"Verify dataset-specific terms before publishing observations", "status":"definition page checked; API observations unavailable"}
+  ],
+  "gates": ["Save unmodified response and retrieval timestamp", "Verify country and observation year separately from edition", "Confirm coverage, units, source attribution and dataset license", "Reconcile births against matching-year population; do not substitute crude birth rate for birth share", "Review missing values and territories", "Publish a separate observation snapshot with SHA-256", "Do not change simulation input or replay version as part of this SEO release"],
+  "observations": []
+}

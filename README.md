@@ -1,3 +1,7 @@
+# v1.4.0 growth release
+
+62 indexable routes: 13 quality additions and 8 primary page upgrades from the 49-route v1.3 baseline. See SEO_GROWTH_REPORT.md for staged releases, GA4 evidence and limits. Run the default build for all P0-A/P0-B pages; GROWTH_STAGE=A reproduces the 52-route first-batch selection. P1 expansion still requires GSC evidence.
+
 # 1in8billion.live
 
 P1 release v1.1.0: 33 indexable pages, four localized country comparison tools, three pair pages, four practical guides, and deterministic Auto replay v1. See P1_REPORT.md for evidence and limitations. Replay engine/data changes must introduce a new version or preserve the v1 contract. Resumed or legacy saves remain usable but cannot be shared reproducibly because transient decision state is not fully serialized.
@@ -21,7 +25,7 @@ Progress uses legacy localStorage keys for compatibility. Quick mode enables aut
 
 ## Data and provenance
 
-The bundled data is inherited game input with unverified observation years. It is disclosed as model weights; country fact pages remain withheld. See DATA_SOURCES.md. MIT notices remain, no original-site image/code was imported during this launch, and the historical demo is not deployed.
+The bundled data is inherited game input with unverified observation years. It is disclosed as model weights; country profiles explicitly describe game-model shares, not verified official statistics. See DATA_SOURCES.md. MIT notices remain, no original-site image/code was imported during this launch, and the historical demo is not deployed.
 
 Historical first-launch evidence is in IMPLEMENTATION_REPORT.md and LIVE_CHECKS.json. The current v1.2.0 optimization record is OPTIMIZATION_REPORT.md; it supersedes earlier browser-connectivity and page-count notes.
 

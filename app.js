@@ -4136,7 +4136,7 @@ init().catch(()=>{const el=document.querySelector('#gameLoadState');if(el){el.te
    contact / PWA install）+ 教學版模式 + 版本歷史
    ===================================================================== */
 
-const APP_VERSION = '1.3.0';
+const APP_VERSION = '1.4.0';
 const APP_BUILD = '2026-10-20';
 
 // 版本歷史（每個版本：v / date / items；每個 item 含 emoji badge + 文字）
