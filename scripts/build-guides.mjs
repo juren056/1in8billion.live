@@ -1,13 +1,16 @@
+import {quickGuides,replayUpgrade,controlsGuides} from '../content/growth-guides.mjs';
 import fs from 'node:fs';
 import {guides} from '../content/guides.mjs';
 import {copy} from '../content/surface-copy.mjs';
 export function buildGuides({write,head,links,footerFor,routes,langs,esc}){
+ for(const [lang,row] of Object.entries(quickGuides)){const g=guides[lang].find(g=>g[0]==='quick-play');g[1]=row[0];g[2]=row[1];g[3]=row[2];}
+ if(process.env.GROWTH_STAGE==='B')guides.en.find(g=>g[0]==='replay-links').splice(1,5,...replayUpgrade);
  for(const [lang,l]of Object.entries(langs)){
   const s=copy[lang];
   const publish=(path,title,description,body)=>{const route='/'+l.prefix+path;if(!routes.includes(route))routes.push(route);const breadcrumbs=path==='guides/'?'':`<p class="breadcrumbs"><a href="/${l.prefix}guides/">${s.guides}</a> / ${title}</p>`;write(l.prefix+path+'index.html',`<!doctype html><html lang="${lang}"><head>${head(title,description,route,lang,path)}${path==='guides/'?'':`<script type="application/ld+json">${JSON.stringify({"@context":"https://schema.org","@type":"BreadcrumbList",itemListElement:[{"@type":"ListItem",position:1,name:s.guides,item:"https://1in8billion.live/"+l.prefix+"guides/"},{"@type":"ListItem",position:2,name:title,item:"https://1in8billion.live"+route}]})}</script>`}</head><body><header class="topbar"><a class="brand" href="/${l.prefix}">1in8billion.live</a></header>${links(l)}<main class="article">${breadcrumbs}<h1>${title}</h1>${body}</main>${footerFor(lang)}</body></html>`);};
   for(const [slug,title,intro,steps,limits]of guides[lang]){
-   const image=slug==='quick-play'?'quick-play':slug==='replay-links'?'ending':null;
-   const figure=image&&fs.existsSync('public-assets/guide-'+image+'.png')?`<figure class="guide-figure"><img src="/public-assets/guide-${image}.png" width="1100" height="740" loading="lazy" alt="${esc(title)}"><figcaption>${s.fiction} · English UI · v1.3.0</figcaption></figure>`:'';
+   const image=slug==='quick-play'?'quick-play'+(['ja','zh-TW'].includes(lang)?'-'+lang:''):slug==='replay-links'?'ending':null;
+   const figure=image&&fs.existsSync('public-assets/guide-'+image+'.png')?`<figure class="guide-figure"><img src="/public-assets/guide-${image}.png" width="1100" height="740" loading="lazy" alt="${esc(title)}"><figcaption>${s.fiction} · ${lang} UI · v1.4.0</figcaption></figure>`:'';
    publish('guides/'+slug+'/',title,intro,`<p>${intro}</p><ol class="guide-steps">${steps.map(step=>`<li>${step}</li>`).join('')}</ol>${figure}<aside class="related-guides"><h2>${s.relatedGuides}</h2><ul>${guides[lang].filter(g=>g[0]!==slug).slice(0,2).map(([other,label])=>`<li><a href="/${l.prefix}guides/${other}/">${label}</a></li>`).join('')}</ul></aside><details class="model-details" open><summary>${s.notes}</summary><p>${limits}</p></details><div class="related-links"><a class="primary-link" href="/${l.prefix}">${s.play}</a><a href="/${l.prefix}compare/">${s.compare}</a><a href="/sources/">${s.sources} (${s.readEnglish})</a></div><p class="muted">v1.3.0 · 2026-10-20</p>`);
   }
   publish('guides/',s.guides,s.sub,`<p>${s.saving} ${s.shortNote}.</p><div class="guide-cards">${guides[lang].map(([slug,title,intro])=>`<article class="guide-card"><h2><a href="/${l.prefix}guides/${slug}/">${title}</a></h2><p>${intro}</p></article>`).join('')}</div><p><a href="/guides/model-experiment/">${s.readEnglish}: A reproducible model experiment</a></p>`);

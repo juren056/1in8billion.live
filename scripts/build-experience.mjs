@@ -1,3 +1,4 @@
+import {controlCopy} from '../content/control-copy.mjs';
 import fs from 'node:fs';
 import {execFileSync} from 'node:child_process';
 import {dataHash} from './build-provenance.mjs';
@@ -10,7 +11,7 @@ export function prepareData(countries,dict,write){
  for(const c of countries){if(!alpha2[c.id])throw Error('Missing identity '+c.id);c.iso2=alpha2[c.id];c.flag=flagFor(c.id);}
  write('data/countries.json',JSON.stringify(countries));
  for(const [lang,d] of Object.entries(dict)){Object.assign(d,coreOverrides[lang]||{});write('data/i18n/'+lang+'.json',JSON.stringify(d));}
- for(const [lang,s] of Object.entries(copy))write('ui-copy/'+lang+'.js','window.MODEL_SNAPSHOT='+JSON.stringify(snapshot)+';window.SurfaceCopy='+JSON.stringify(s)+';window.storyMap='+JSON.stringify(storyMaps[lang])+';window.localizeStory=text=>Object.keys(storyMap).sort((a,b)=>b.length-a.length).reduce((v,k)=>v.replaceAll(k,storyMap[k]),String(text));');
+ for(const [lang,s] of Object.entries(copy))write('ui-copy/'+lang+'.js','window.ControlCopy='+JSON.stringify(controlCopy[lang])+';window.MODEL_SNAPSHOT='+JSON.stringify(snapshot)+';window.SurfaceCopy='+JSON.stringify(s)+';window.storyMap='+JSON.stringify(storyMaps[lang])+';window.localizeStory=text=>Object.keys(storyMap).sort((a,b)=>b.length-a.length).reduce((v,k)=>v.replaceAll(k,storyMap[k]),String(text));');
 }
 export function navigation(l,lang){const s=copy[lang];return `<nav class="site-links" aria-label="${s.related}"><a href="/${l.prefix}">${s.play}</a><a href="/${l.prefix}compare/">${s.compare}</a><a href="/${l.prefix}guides/">${s.guides}</a><a href="/${l.prefix}countries/">${s.countries}</a><details class="language-menu"><summary>🌐 ${lang}</summary><div>${Object.entries(copy).map(([code])=>`<a href="/${({en:'',ja:'ja/',ko:'ko/','zh-TW':'zh-tw/'})[code]}" lang="${code}" data-locale="${code}">${({en:'English',ja:'日本語',ko:'한국어','zh-TW':'繁體中文'})[code]}</a>`).join('')}</div></details></nav>`;}
 export function footerFor(lang){const s=copy[lang];return `<footer class="site-footer"><a href="/about/">${s.about}</a><a href="/sources/">${s.sources}</a><a href="/privacy/">${s.privacy}</a><a href="/terms/">${s.terms}</a><a href="/contact/">${s.contact}</a><p>${s.independent} <a href="/LICENSE">${s.license}</a></p></footer>`;}
@@ -32,6 +33,9 @@ export function homeExperience(h,{lang,l,countries,esc}){
  h=h.replace('v1.1.0','v1.3.0');
  h=h.replace('<script src="/gedcom.js"></script>','').replace('<script src="/data/world-coords.js"></script>','');
  h=h.replace(/(<header class="topbar">[\s\S]*?)(<\/header>)\s*(<nav class="site-links"[\s\S]*?<\/nav>)/,'$1$3$2');
+ const controls=controlCopy[lang];
+ h=h.replace(/<h4>📌 今年的你[\s\S]*?<\/h4>/,'<h4>📌 '+controls.year+'</h4>').replace('（最新的在前）',controls.newest).replace('title="Pause"','title="'+controls.pause+'" aria-label="'+controls.pause+'"').replace('title="Skip to next decision"','title="'+controls.next+'" aria-label="'+controls.next+'"').replace('title="Auto-decide"','title="'+controls.auto+'"').replace('▶ 自動</button>','▶ '+controls.auto+'</button>');
+ h=h.replace(/(<button id="btnReplayLast"[^>]*>)[^<]+/,'$1'+controls.again).replace(/(<span data-t="end.lastMoments">)[^<]+/,'$1'+controls.last);
  return h;
 }
 export function enhanceOutput({routes,write,countries}){

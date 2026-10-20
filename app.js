@@ -4978,7 +4978,7 @@ function setupLaunch(){
  window.addEventListener('pagehide',saveCurrentLife);
  document.querySelector('#countrySelect').setAttribute('aria-label',s.name);
  document.querySelector('#customizeLife').onclick=()=>{const settings=document.querySelector('#lifeSettings');settings.open=true;settings.scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'start'});document.querySelector('#countrySelect').focus({preventScroll:true});};
- const selected=new URLSearchParams(location.search).get('country');if(countryById(selected)){STATE.selectedCountry=selected;document.querySelector('#lifeSettings').open=true;renderIntro();}
+ const selected=new URLSearchParams(location.search).get('country');if(countryById(selected)){STATE.selectedCountry=selected;document.querySelector('#lifeSettings').open=true;renderIntro();document.querySelector('#countrySelect').value=selected;}
  document.querySelector('#btnFeedback')?.addEventListener('click',()=>location.assign('/contact/'));
  document.querySelector('#gameLoadState').textContent=s.ready;
  document.documentElement.dataset.gameReady='true';

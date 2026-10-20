@@ -5,10 +5,12 @@ function loadOptionalGameTools(){if(optionalGameTools)return optionalGameTools;o
 setupLaunch=function(){experienceOriginalSetup();const s=window.SurfaceCopy;
  const translateTree=root=>{if(!root)return;const walker=document.createTreeWalker(root,NodeFilter.SHOW_TEXT);while(walker.nextNode()){const node=walker.currentNode;if(node.parentElement?.closest('input,textarea,script,style,#endName,strong'))continue;node.textContent=localizeStory(node.textContent);}};
  const originalLife=renderLife;renderLife=function(...args){const out=originalLife(...args);for(const id of ['lifeLog','lifeLatestEvent'])translateTree(document.getElementById(id));for(const id of ['lifeBarNow','lifeBarEnd']){const el=document.getElementById(id);if(el)el.textContent=el.textContent.replace(/yo|歲/g,t('unit.years'));}return out;};
+ const controlLabels=()=>{const c=window.ControlCopy;if(!c)return;const auto=document.querySelector('#btnAuto');if(auto){auto.textContent=(STATE.autoDecide?'⏸ ':'▶ ')+(STATE.autoDecide?c.stop:c.auto);auto.setAttribute('aria-pressed',String(STATE.autoDecide));}document.querySelector('#themeToggle').textContent='◐ '+c.theme;};
+ document.querySelector('#btnAuto').addEventListener('click',controlLabels);document.querySelector('#themeToggle').addEventListener('click',controlLabels);controlLabels();
  const updateView=()=>document.body.classList.toggle('game-active',STATE.view!=='intro');
  const originalView=setView;setView=function(...args){if(['tree','shelf'].includes(args[0])&&(!window.Gedcom||!window.WORLD_COORDS)){toast(s.loading);loadOptionalGameTools().then(()=>{originalView(...args);updateView();}).catch(()=>toast(s.error,5000));return;}const out=originalView(...args);updateView();return out;};updateView();
  let sawFirst=false;const originalTick=tick;tick=function(...args){const before=STATE.life?.age;const out=originalTick(...args);if(!sawFirst&&STATE.life?.age>0&&STATE.life.age!==before){sawFirst=true;launchEvent('first_event_reached');}return out;};
- const originalStart=startLife;startLife=function(...args){sawFirst=false;const out=originalStart(...args);saveCurrentLife();return out;};
+ const originalStart=startLife;startLife=function(...args){sawFirst=false;const out=originalStart(...args);controlLabels();saveCurrentLife();return out;};
  document.querySelectorAll('[data-view="lab"],[data-view="tree"],[data-view="shelf"]').forEach(b=>{b.title=s.controls;});
  document.querySelector('#btnStart').addEventListener('click',()=>launchEvent('start_click',{play_mode:document.querySelector('#lifeDuration').value==='quick'?'quick':'manual'}));
  document.querySelector('#btnStartSelected').addEventListener('click',()=>launchEvent('start_click',{play_mode:document.querySelector('#lifeDuration').value==='quick'?'quick':'manual'}));
