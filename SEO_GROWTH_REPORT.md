@@ -86,3 +86,12 @@ Promotion drafts with channel-specific UTM links are in GROWTH_PROMOTION_PACK.md
 | 21 | 新建 | /compare/nigeria-vs-united-states/ |
 
 Final production revision, selected-page status/canonical checks, sitemap submission and screenshots are recorded after the final push.
+
+
+### Production follow-up and correction
+
+397c0bb92ed9b5eb9576fe53d98137a29f37ad63 published the 62-route build. GSC accepted the submitted sitemap and displayed Success / 62 discovered pages (audit/growth-gsc-62-submitted.jpg). Discovered does not mean indexed. The production comparison rendered the correct actual weights and two-mode explanation.
+
+Production interaction inspection found that the new article publisher omitted data-play-path, causing compare.js to rewrite its two game CTAs to undefined?country=... after load. Corrected the publisher and strengthened both Node and browser acceptance: full href equality and an actual click through to the selected-country game, for every English comparison route. The earlier substring-only browser assertion was insufficient. Corrected production acceptance is recorded below.
+
+HTTP checks returned 200 and correct title/canonical for ja, zh-tw, calculator, alternatives and sources; robots and the 62-URL sitemap also returned 200. Some other curl requests hit TLS/timeouts through the local proxy, while Python transport hit 403. These transport failures are retained in audit/growth-production-checks.json, not represented as successful status checks. The same pages' actual Chrome rendering is checked separately.

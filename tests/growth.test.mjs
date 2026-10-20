@@ -11,5 +11,6 @@ test('growth routes are linked, indexable static answers with honest model calcu
  for(const r of routes.filter(r=>!baseline.includes(r))){const h=all.find(([route])=>route===r)[1];assert(!h.includes('name="robots" content="noindex"'));assert(all.some(([other,text])=>other!==r&&text.includes('href="'+r+'"')),'orphan '+r);assert(h.includes('BreadcrumbList'));}
  const data=JSON.parse(fs.readFileSync('data/countries.json'));
  for(const c of countryPages){const r='/countries/'+c.slug+'/';if(!routes.includes(r))continue;const html=all.find(([route])=>route===r)[1],v=calculateComparison(data,c.id,c.id);assert(html.includes(v.a.share.toFixed(4)+'%'));assert(html.includes('unverified observation years'));assert(html.includes('<svg'));assert(html.includes('?country='+c.id));assert(html.includes(c.question));}
+ for(const [route,html]of all.filter(([r])=>r.startsWith('/compare/')))assert(html.includes('data-play-path="/"'),'comparison missing game path '+route);
  assert(!fs.readFileSync('dist/sitemap.xml','utf8').includes('<lastmod>'));
 });
