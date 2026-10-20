@@ -41,18 +41,11 @@ function t(key, ...vals) {
   return s;
 }
 async function loadData() {
-  if (!CACHE.countries) {
-    const r1 = await fetch('/data/countries.json');
-    CACHE.countries = await r1.json();
-    COUNTRIES = CACHE.countries;
-  }
-  if (!CACHE.i18n) {
-    const r2 = await fetch('/data/i18n.json');
-    CACHE.i18n = await r2.json();
-    I18N = CACHE.i18n;
-  }
-  // 語言偏好
   LANG = document.documentElement.dataset.gameLang || 'en';
+  const responses=await Promise.all([fetch('/data/countries.json'),fetch('/data/i18n/'+LANG+'.json')]);
+  if(responses.some(r=>!r.ok))throw Error('Game data unavailable');
+  const [countries,translations]=await Promise.all(responses.map(r=>r.json()));
+  COUNTRIES=countries;CACHE.countries=countries;I18N={[LANG]:translations};CACHE.i18n=I18N;
 }
 function detectLang() {
   const nav = (navigator.language || 'en').toLowerCase();
@@ -82,8 +75,8 @@ function localize(c) {
   if (!c) return null;
   return {
     ...c,
-    name: LANG === 'en' ? c.name_en : (LANG === 'zh-Hans' ? (c.name_zh_cn || c.name_zh) : c.name_zh),
-    region_name: LANG === 'en' ? c.region_en : c.region_zh,
+    name: c.iso2 ? new Intl.DisplayNames([LANG],{type:'region'}).of(c.iso2) : (LANG==='en'?c.name_en:c.name_zh),
+    region_name: ({ja:{hi:'高所得',sa:'南アジア',eap:'東アジア・太平洋',ssa:'サハラ以南アフリカ',lac:'中南米',mena:'中東・北アフリカ',eca:'欧州・中央アジア'},ko:{hi:'고소득',sa:'남아시아',eap:'동아시아·태평양',ssa:'사하라 이남 아프리카',lac:'중남미',mena:'중동·북아프리카',eca:'유럽·중앙아시아'}})[LANG]?.[c.region] || (LANG==='en'?c.region_en:c.region_zh),
   };
 }
 
@@ -887,8 +880,8 @@ function submitFeedback() {
 function startLife(countryCode, preparedLife) {
   stopTicker();
   STATE.life = preparedLife || newLife(countryCode);
-  launchEvent('life_started');
   if (!STATE.life) return;
+  launchEvent('life_started',{play_mode:document.querySelector('#lifeDuration').value==='quick'?'quick':'manual'});
   STATE.life.log.push({ age: 0, kind: 'birth', icon: '👶', text: t('event.birth', '') });
   logLife(t('log.born_in', localize(STATE.life.countryData).name, ''));
   STATE.paused = false;
@@ -1693,8 +1686,8 @@ function renderCountryCompare() {
 
 /* v5.19：完整出生登記卡 — 1in8b.life 風格 */
 function buildBirthCertCard(c, life) {
- const loc=localize(c);const isEn=LANG==='en';
- return `<div class="birth-record"><p>1in8billion.live · ${isEn?'Fictional character':'虛構角色'}</p><h2>${escapeHtml(life.name.full || life.name.full_en || '')}</h2><p>${c.flag} ${escapeHtml(loc.name)} · ${life.year}</p><p>${isEn?'This is your starting point. Your choices and chance will shape what follows.':'這是你的人生起點。選擇與機遇，將改變接下來的故事。'}</p><p>${isEn?'Game estimates are not personal predictions.':'遊戲估算不能預測個人命運。'}</p><a href="/sources/">Sources & model limitations</a></div>`;
+ const s=window.SurfaceCopy,loc=localize(c);
+ return '<div class="birth-record"><p>'+s.birthCard+'</p><h2>'+escapeHtml(life.name.full||life.name.full_en||'')+'</h2><p>'+c.flag+' '+escapeHtml(loc.name)+' · '+life.year+'</p><p>'+s.birthInfo+'</p><p class="muted">'+s.shortNote+'</p></div>';
 }
 
 function showBirthCertModal(c) {
@@ -4128,7 +4121,7 @@ async function init() {
   injectFooter();      // v5.19: footer + 工具列
   registerServiceWorker(); // v5.19: PWA
   setupPWAInstall();   // v5.19: beforeinstallprompt
-  startRealtimeCounters(); // v5.19: 即時計數器（每秒更新）
+  if(document.querySelector('#counterBorn'))startRealtimeCounters();
   if (location.hash.includes('tree=')) loadFromHash();
   // v5.19 dev: hash 直接打開對應 modal（截圖 / 深連結用）
   if (location.hash === '#feedback') setTimeout(renderFeedbackModal, 200);
@@ -4136,14 +4129,14 @@ async function init() {
   if (location.hash === '#privacy') setTimeout(renderPrivacyModal, 200);
   if (location.hash === '#terms') setTimeout(renderTermsModal, 200);
 }
-init();
+init().catch(()=>{const el=document.querySelector('#gameLoadState');if(el){el.textContent=window.SurfaceCopy.error;const retry=document.createElement('button');retry.textContent=window.SurfaceCopy.reload;retry.onclick=()=>location.reload();el.append(retry);}});
 
 /* =====================================================================
    v5.19 新增：footer + 工具列（feedback / changelog / privacy / terms /
    contact / PWA install）+ 教學版模式 + 版本歷史
    ===================================================================== */
 
-const APP_VERSION = '1.1.0';
+const APP_VERSION = '1.2.0';
 const APP_BUILD = '2026-10-20';
 
 // 版本歷史（每個版本：v / date / items；每個 item 含 emoji badge + 文字）
@@ -4972,17 +4965,23 @@ function toast(msg, ms=2200) {
   setTimeout(() => { el.hidden = true; }, ms);
 }
 
-function launchEvent(name){ if(typeof window.gtag==='function') window.gtag('event',name,{language:LANG}); }
-function saveCurrentLife(){try{if(STATE.life)localStorage.setItem(STORAGE_KEY+':current',JSON.stringify({version:1,life:STATE.life,era:STATE.era,birthMode:STATE.birthMode}));}catch{}}
+function launchEvent(name,extra={}){ if(typeof window.siteEvent==='function')window.siteEvent(name,{language:LANG,...extra}); }
 function setupLaunch(){
-  const labels={en:['Quick play','Continue a life'],ja:['クイックプレイ','人生を続ける'],ko:['빠른 플레이','이어서 플레이'],'zh-Hant':['快速體驗','繼續人生']}; const l=labels[LANG]||labels.en;
-  const quick=document.createElement('button');quick.id='quickPlay';quick.className='ghost';quick.textContent=l[0];quick.onclick=()=>{document.querySelector('#lifeDuration').value='quick';startLifeWithCert();launchEvent('birth_start_click');};document.querySelector('.cta-row').append(quick);
-  const resume=document.createElement('button');resume.id='resumeLife';resume.className='ghost';resume.textContent=l[1];
-  try {const saved=JSON.parse(localStorage.getItem(STORAGE_KEY+':current')||'null');if(saved?.version===1 && saved.life && !saved.life.died && countryById(saved.life.country)){resume.onclick=()=>{STATE.life=saved.life;STATE.life.countryData=countryById(saved.life.country);STATE.era=saved.era;STATE.birthMode=saved.birthMode;STATE.paused=false;setView('life');startTicker();};document.querySelector('.cta-row').append(resume);}}catch{}
-  window.addEventListener('pagehide',saveCurrentLife);
-  document.querySelector('#countrySelect').setAttribute('aria-label','Birth country');
-  const selected=new URLSearchParams(location.search).get('country');if(countryById(selected)){STATE.selectedCountry=selected;renderIntro();}
-  document.querySelector('#btnFeedback')?.addEventListener('click',()=>location.assign('/contact/'));
+ const s=window.SurfaceCopy;
+ const primary=document.querySelector('#btnStart');primary.removeAttribute('data-t');primary.textContent=s.start;primary.disabled=false;
+ const quick=document.createElement('button');quick.id='quickPlay';quick.hidden=true;quick.onclick=()=>{document.querySelector('#lifeDuration').value='quick';startLifeWithCert();};document.querySelector('.cta-row').append(quick);
+ const resume=document.createElement('button');resume.id='resumeLife';resume.className='cta-btn';resume.textContent=s.resume;
+ try{const saved=JSON.parse(localStorage.getItem(STORAGE_KEY+':current')||'null');if(saved?.version===1&&saved.life&&!saved.life.died&&countryById(saved.life.country)){
+ resume.onclick=()=>{stopTicker();STATE.life=saved.life;STATE.life.countryData=countryById(saved.life.country);STATE.era=saved.era;STATE.birthMode=saved.birthMode;STATE.pendingDecision=null;STATE.paused=false;STATE.autoDecide=false;STATE.thoughtsEnabled=true;setView('life');startTicker();launchEvent('life_resumed');};
+ document.querySelector('.cta-row').prepend(resume);primary.className='text-button';const savedNote=document.createElement('p');savedNote.className='resume-note';savedNote.textContent=s.resumeNote+' · '+localize(countryById(saved.life.country)).name+' · '+s.sampleAge+' '+saved.life.age;document.querySelector('.cta-row').before(savedNote);
+ }}catch{}
+ window.addEventListener('pagehide',saveCurrentLife);
+ document.querySelector('#countrySelect').setAttribute('aria-label',s.name);
+ document.querySelector('#customizeLife').onclick=()=>{const settings=document.querySelector('#lifeSettings');settings.open=true;settings.scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'start'});document.querySelector('#countrySelect').focus({preventScroll:true});};
+ const selected=new URLSearchParams(location.search).get('country');if(countryById(selected)){STATE.selectedCountry=selected;document.querySelector('#lifeSettings').open=true;renderIntro();}
+ document.querySelector('#btnFeedback')?.addEventListener('click',()=>location.assign('/contact/'));
+ document.querySelector('#gameLoadState').textContent=s.ready;
+ document.documentElement.dataset.gameReady='true';
 }
 
 function downloadOriginalLifeCard(ending){

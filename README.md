@@ -23,6 +23,12 @@ Progress uses legacy localStorage keys for compatibility. Quick mode enables aut
 
 The bundled data is inherited game input with unverified observation years. It is disclosed as model weights; country fact pages remain withheld. See DATA_SOURCES.md. MIT notices remain, no original-site image/code was imported during this launch, and the historical demo is not deployed.
 
-Production verification on 2026-10-20 confirmed release 075fddc on the custom domain. Google backend setup remains blocked by browser connectivity. See IMPLEMENTATION_REPORT.md and LIVE_CHECKS.json.
+Historical first-launch evidence is in IMPLEMENTATION_REPORT.md and LIVE_CHECKS.json. The current v1.2.0 optimization record is OPTIMIZATION_REPORT.md; it supersedes earlier browser-connectivity and page-count notes.
 
-GA4 production public measurement configuration: site.config.json (G-NKD2PNDL3P), overridden by GA4_MEASUREMENT_ID when set. Tags load automatically on page load, without consent buttons. Property 559735136, stream 16163903474. GSC domain ownership is DNS verified; sitemap processed with 21 discovered pages.
+GA4 production public measurement configuration: site.config.json (G-NKD2PNDL3P), overridden by GA4_MEASUREMENT_ID when set. Tags load automatically on page load, without consent buttons. Property 559735136, stream 16163903474. GSC domain ownership is DNS verified. The sitemap now has 49 routes; GSC query performance is still processing as observed on 20 October. Backend indexing counts must be checked separately.
+
+## v1.2.0 experience and content
+
+Homepage: Quick default, progressive country settings, promoted local save and actual sample replay links. Comparison pages preserve countries and mode across copied URLs and equivalent-language navigation. Four-language task guides, original real-UI screenshots, source-field metadata and a reproducible sampler experiment are built statically. Numeric model inputs and Auto replay rules remain unchanged; corrected labels can change displayed story wording.
+
+Run browser task checks with PLAYWRIGHT_MODULE pointing at an installed Playwright module: `node tests/experience-browser.cjs`, `node tests/p1-browser.cjs`, and `node tests/release-browser.cjs`. Use fresh local browser contexts; these checks never use an existing user's profile. The last command captures documentation images, so rebuild afterward. `node scripts/generate-samples.cjs` regenerates the published sample records from the running local engine. `node scripts/model-experiment.mjs` records the actual sampler experiment. See MEASUREMENT.md and DESIGN.md for the measurement contract and design choices.

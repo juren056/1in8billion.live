@@ -1,0 +1,103 @@
+{
+  "seed": "birthplace-audit-v1",
+  "drawsPerMode": 20000,
+  "numericHash": "380452d9439df8d3686d4f5971f97037e2f3a37b2dd87cf910191ec81b6303b1",
+  "rows": [
+    {
+      "country": "IND",
+      "name": "India",
+      "mode": "Annual births",
+      "expected": 17.599486550565402,
+      "observed": 17.39,
+      "count": 3478
+    },
+    {
+      "country": "CHN",
+      "name": "China",
+      "mode": "Annual births",
+      "expected": 6.745770447700336,
+      "observed": 6.78,
+      "count": 1356
+    },
+    {
+      "country": "NGA",
+      "name": "Nigeria",
+      "mode": "Annual births",
+      "expected": 5.692110218752495,
+      "observed": 5.645,
+      "count": 1129
+    },
+    {
+      "country": "USA",
+      "name": "United States",
+      "mode": "Annual births",
+      "expected": 2.7722273493289666,
+      "observed": 2.73,
+      "count": 546
+    },
+    {
+      "country": "JPN",
+      "name": "Japan",
+      "mode": "Annual births",
+      "expected": 0.5683834791053182,
+      "observed": 0.57,
+      "count": 114
+    },
+    {
+      "country": "KOR",
+      "name": "South Korea",
+      "mode": "Annual births",
+      "expected": 0.1791776383542289,
+      "observed": 0.225,
+      "count": 45
+    },
+    {
+      "country": "IND",
+      "name": "India",
+      "mode": "Population",
+      "expected": 17.800896636289433,
+      "observed": 17.52,
+      "count": 3504
+    },
+    {
+      "country": "CHN",
+      "name": "China",
+      "mode": "Population",
+      "expected": 17.609218286547808,
+      "observed": 17.485,
+      "count": 3497
+    },
+    {
+      "country": "NGA",
+      "name": "Nigeria",
+      "mode": "Population",
+      "expected": 2.820809646378511,
+      "observed": 2.825,
+      "count": 565
+    },
+    {
+      "country": "USA",
+      "name": "United States",
+      "mode": "Population",
+      "expected": 4.251669650255402,
+      "observed": 4.02,
+      "count": 804
+    },
+    {
+      "country": "JPN",
+      "name": "Japan",
+      "mode": "Population",
+      "expected": 1.5395045550995106,
+      "observed": 1.495,
+      "count": 299
+    },
+    {
+      "country": "KOR",
+      "name": "South Korea",
+      "mode": "Population",
+      "expected": 0.6405658973703241,
+      "observed": 0.665,
+      "count": 133
+    }
+  ]
+}
