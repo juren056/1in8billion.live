@@ -13,7 +13,7 @@
 ## 必须保留的内容
 
 - 过去／现在／未来出生年仍为1990／2024／2080；取消“全部改2026”的旧要求。
-- 国家统计与观察年不改。countries.json原始字节SHA256：dfa553558debc42292981170d1e8f97e07c48e9e0c70d17308689a7b83beaa37；172国；12个既有Replay v1结果摘要全通过。
+- 国家统计与观察年不改。countries.json按Git的LF换行校验SHA256：3d1efffd059811e3315e54e311e9bfbb86a24ebd1e81761b21fc2f0df18cb072；Windows原始CRLF字节哈希为dfa553558debc42292981170d1e8f97e07c48e9e0c70d17308689a7b83beaa37。正式站已存在的JSON压缩产物哈希为ae41bd754f991448e898fabac762fdcfdef51affb8535cf30aea57339512ac3f，发布验收据此比较；172国；12个既有Replay v1结果摘要全通过。
 - 66个canonical页面、已有URL、蓝色品牌、温暖原创像素场景、免费PNG/分享/本地记录和GA4默认收集保留。
 - 保留全量中日韩字体（不做曾造成缺字的subset）；共享请求减少重复下载，没有宣称缩小原字体文件。
 - 真实收款保持关闭。未配置Stripe测试环境；回调验证为本地模拟，不能当成Stripe沙盒或真实支付成功。
@@ -30,6 +30,8 @@
 ## 发布与验收
 
 沿用GitHub main→Cloudflare自动构建，只推送一次最终版本，不另手动上传同一产物。发布后运行tests/playback-production.cjs，核对主域名release.json为实际提交、66URL/404、数据字节哈希、preview-only API、真实5秒节奏、四语等待/单次选择、计时器自然完成68岁样例、免费PNG与本地记录。结果分别写入production-http.json、production.json；只有实际生成成功记录才视为线上验收通过。
+
+首次a0f3d42构建未发布：新增测试错误地比较Windows CRLF原始哈希，Linux Git checkout使用LF，导致CI与Cloudflare构建失败；日志first-ci-failure.log有实际/期望哈希证据。修正测试为仅统一换行后比较Git原始文本，不修改数据文件。生产产物另按既有压缩JSON字节哈希核对。随后通过同一Git链发布修正提交，旧版本在失败期间继续服务。
 
 回滚代码目标为已存在的基线8334d285557cfa250a3b154949ac348120eabe5b；本轮没有数据库迁移、扣款或DNS变更。
 
