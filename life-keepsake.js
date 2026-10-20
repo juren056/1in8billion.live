@@ -26,7 +26,7 @@ export async function installKeepsake(bridge){
   intro.querySelector('.keepsake-person').append(intro.querySelector('.retention-actions'),intro.querySelector('#keepsakeStatus'));
   drawPortrait(document.querySelector('#keepsakePortrait'),life);paintScene(document.querySelector('#memoryRoom'),life,items);
   document.querySelector('#saveKeepsake').onclick=()=>downloadKeepsake(life,s,country,event).then(()=>{document.querySelector('#keepsakeStatus').textContent=s.saved;}).catch(()=>{document.querySelector('#keepsakeStatus').textContent=s.downloadFailed;});
-  document.querySelector('#againLife').onclick=()=>{pendingAgain=true;document.querySelector('#lifeDuration').value='quick';launchEvent('start_click',{play_mode:'quick'});startLifeWithCert();};
+  document.querySelector('#againLife').onclick=()=>{pendingAgain=true;document.querySelector('#lifeDuration').value='1hr';launchEvent('start_click',{play_mode:'manual'});startLifeWithCert();};
   document.querySelector('#anotherPlace').onclick=()=>{setView('intro');document.querySelector('#customizeLife').click();};
   document.querySelector('#keepsakeReplay')?.addEventListener('click',()=>p1CopyReplay());
   document.querySelectorAll('[data-memory]').forEach(a=>a.addEventListener('click',()=>{document.querySelector('#memoryEvent'+a.dataset.memory).focus({preventScroll:true});}));

@@ -25,3 +25,6 @@ export const guides={
  ['choosing-a-life-simulator','依照想要的體驗挑選人生模擬器','先完整玩過一段人生，再比較操作清晰度、結果保存方式與模型說明。',['短暫體驗可用自動模式；想參與選擇，則查看手動抉擇及其影響。','確認進度存在本機還是雲端、是否需要帳號，以及分享究竟保留什麼。','閱讀來源，分清實際觀測、模型輸入和虛構結果。'],'本站提供免費本機遊戲及相容的自動重現連結。國家數值的觀測年份尚未核實。名稱相似不代表同一團隊；本站沒有公開人生牆、帳號或雲端同步。']
  ]
 };
+
+export const startGuide={en:['Start a life at reading pace:5seconds per year. Customize the start to choose Watch for automatic viewing.','Confirm the birth card. Pause life and Make choices for me are separate controls.','Read pauses time. Required financial choices appear beside the current event and stop progress until answered.','Leave browser data intact to restore your life, pace and waiting choice.'],ja:['人生は読む速度（1年5秒）で始まります。自動で見る場合は開始設定で見る速度を選びます。','出生カードを確認します。一時停止と選択を任せる設定は別です。','読む間は時間が止まります。資金の選択は現在の出来事の下に表示され、回答まで進みません。','保存データを残すと、人生と速度・選択状態を復元できます。'],ko:['읽기 속도는1년5초입니다. 자동으로 보려면 시작 설정에서 보기 속도를 고릅니다.','출생 카드를 확인합니다. 일시 정지와 선택 맡기기는 별도입니다.','읽는 동안 시간이 멈춥니다. 재정 선택은 현재 사건 아래 표시되며 답할 때까지 기다립니다.','브라우저 데이터를 보존하면 삶과 속도 및 대기 중인 선택을 복원합니다.'],'zh-TW':['預設以閱讀節奏開始，每年5秒。若要自動觀看，可在自訂設定選擇快看。','確認出生卡，暫停人生與自動代選是分開的控制。','閱讀會暫停時間；財務選擇顯示在當前事件旁，作答前不會推進。','保留瀏覽器資料，繼續時恢復人生、節奏與待選狀態。']};
+for(const [lang,parts]of Object.entries(startGuide)){const page=guides[lang].find(x=>x[0]==='quick-play');page[2]=parts[0];page[3]=parts.slice(1);}
