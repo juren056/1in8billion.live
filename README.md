@@ -1,6 +1,6 @@
 # 1in8billion.live
 
-P1 release v1.1.0: 33 indexable pages, four localized country comparison tools, three pair pages, four practical guides, and deterministic Auto replay v1. See P1_REPORT.md for evidence and limitations. Replay engine/data changes must introduce a new version or preserve the v1 contract. Legacy saves without a seed remain usable but cannot be shared reproducibly.
+P1 release v1.1.0: 33 indexable pages, four localized country comparison tools, three pair pages, four practical guides, and deterministic Auto replay v1. See P1_REPORT.md for evidence and limitations. Replay engine/data changes must introduce a new version or preserve the v1 contract. Resumed or legacy saves remain usable but cannot be shared reproducibly because transient decision state is not fully serialized.
 
 Browser verification: run the dev server, then `node tests/p1-browser.cjs` with Playwright and Chrome installed. PLAYWRIGHT_MODULE can point to a bundled Playwright module. Standard Node/SEO checks: `npm run verify`.
 

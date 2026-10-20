@@ -27,7 +27,7 @@ Inherited observations lack verified years. Official World Bank endpoints were a
 
 Existing engine retained. replay-core.js supplies seeded streams and a strict v1 parser. p1-game.js isolates birth/year randomness from rendering. Replay v1 fixes choices to Auto; manual changes invalidate eligibility. Links contain only version, seed, country, era, language and education setting, excluding names, notes, family imports and localStorage records.
 
-Opening a link first presents an invitation. Unknown versions fail clearly. Legacy saves without seed metadata still work but are not retrospectively reproducible. Future rules/data changes must version the contract or preserve v1 behavior. Historical/future era settings remain fictional, not calibrated historical datasets. Manual-choice transcripts, cross-version migration and personalized server OG remain future work.
+Opening a link first presents an invitation. Unknown versions fail clearly. Resumed runs and legacy saves still work but cannot be shared reproducibly because their transient decision state is not fully serialized. Future rules/data changes must version the contract or preserve v1 behavior. Historical/future era settings remain fictional, not calibrated historical datasets. Manual-choice transcripts, cross-version migration and personalized server OG remain future work.
 
 ## Verification
 
