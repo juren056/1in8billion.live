@@ -3,3 +3,5 @@
 #playbackIdentity{display:none}@media(max-width:760px){#playbackIdentity{display:block;font-size:14px;line-height:1.6;color:#526c7d;overflow-wrap:anywhere;margin:0 0 12px}}
 
 .life-command-bar #btnPause,.life-command-bar #btnSkip{width:auto;height:auto;min-width:100px;white-space:nowrap;flex-shrink:0}.life-command-bar .cert-controls>button{flex-shrink:0;white-space:nowrap}.speed-menu>summary{list-style:none;white-space:nowrap}.speed-menu>summary::-webkit-details-marker{display:none}.speed-menu>summary::marker{content:""}.speed-menu>summary::after{content:" ▾"}.reference-note{padding:0 16px 16px;margin:0}.pending-choice h3{scroll-margin-top:170px}
+
+.life-command-bar .speed-options button[aria-pressed=true]{background:#086f87;color:#fff;border-color:#086f87}
