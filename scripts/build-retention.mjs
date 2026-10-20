@@ -2,7 +2,7 @@ import fs from 'node:fs';
 import {copy} from './build-experience.mjs';
 import {retentionCopy} from '../retention-copy.js';
 export function buildRetention({write,langs}){
- const stage=1;write('data/retention-config.json',JSON.stringify({stage,version:'1.5.0',dailyRules:'v1',timeZone:'UTC'}));
+ const stage=2;write('data/retention-config.json',JSON.stringify({stage,version:'1.6.0',dailyRules:'v1',timeZone:'UTC'}));
  for(const [lang,l]of Object.entries(langs)){
   const s=retentionCopy[lang],path='dist/'+l.prefix+'index.html';let html=fs.readFileSync(path,'utf8');
   html=html.replace('</body>','<script src="/retention-bootstrap.js" defer></script></body>');

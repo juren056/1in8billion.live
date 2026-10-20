@@ -18,3 +18,10 @@ Initial visual pass identified the legacy full certificate pushing the scene bel
 Critical static assets remain within the existing budget. Optional presentation CSS/modules are deferred and are additional bytes, not claimed removed bytes. The final report will list those separately. No field CWV or retention uplift is claimed.
 
 Deployment revision and production evidence are appended after acceptance. Batches 2 and 3 remain in progress.
+
+
+Batch 1 fix-list review: independent reviewer scored both audio first-interaction and finance-language findings resolved. Fresh-context regression tests cover each first audio setting, plus finance ages 18/25/35/50 across four languages. Commit 4b0e2b8 was pushed to main after a proxy TLS failure; a direct OpenSSL connection succeeded. Cloudflare production verification follows the build.
+
+## Batch 2 — v1.6.0
+
+Original keepsake room and portrait use the actual life state. Up to three memory objects (birth plus the latest two distinct recorded milestone types) link to the exact event; short lives do not gain invented family or careers. The biography uses recorded birthplace/year/age and cause. Trajectory plots preserve actual stored five-year samples and gaps, with an accessible numeric table; the pre-existing double-normalization of the assets display is fixed without changing simulation values. PNG download uses original local canvas artwork and factual memory labels. Replay retains v1 eligibility; new lives require the birth confirmation. Legacy controls and full records remain available in a disclosure. Four-language browser tests verify actual full endings, downloads, again events, short-life/missing-chart states, mobile overflow. Existing 12 proof outcomes are checked again after all extensions load.

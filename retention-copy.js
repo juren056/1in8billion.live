@@ -9,3 +9,6 @@ const choiceLabels={en:{manual:'Your choices',focus:'Choose this year’s focus'
 for(const [lang,labels]of Object.entries(choiceLabels))Object.assign(retentionCopy[lang],labels);
 const financeLabels={en:{finance:a=>`Financial choice at age ${a}`,financeDone:a=>`Financial choices recorded: ${a}`},ja:{finance:a=>`${a}歳の資金計画を選ぶ`,financeDone:a=>`資金計画を選んだ年齢：${a}`},ko:{finance:a=>`${a}세 재정 계획 선택`,financeDone:a=>`재정 계획을 선택한 나이: ${a}`},'zh-TW':{finance:a=>`選擇${a}歲的財務規劃`,financeDone:a=>`已選擇財務規劃的年齡：${a}`}};
 for(const [lang,labels]of Object.entries(financeLabels))Object.assign(retentionCopy[lang],labels);
+
+const collectionLabels={en:{recordLimit:'Counts cover up to 50 stored summaries. The latest 20 new lives retain memory and chart details; six recent records are shown.',copyFail:'Copy failed. Select and copy the invitation below.'},ja:{recordLimit:'集計は保存された最大50件の要約です。新しい20件は思い出とグラフも保存し、最近の6件を表示します。',copyFail:'コピーできません。下の招待URLを選んでコピーしてください。'},ko:{recordLimit:'저장된 요약 최대 50개를 집계합니다. 최근 새 인생 20개에 추억과 그래프를 보관하며 최근 6개를 표시합니다.',copyFail:'복사하지 못했습니다. 아래 초대 주소를 선택해 복사하세요.'},'zh-TW':{recordLimit:'統計最多50筆已存摘要；最近20段新人生保留回憶與圖表，這裡顯示最近6筆。',copyFail:'無法複製，請選取下方邀請網址複製。'}};
+for(const [lang,labels]of Object.entries(collectionLabels))Object.assign(retentionCopy[lang],labels);

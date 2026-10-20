@@ -1887,7 +1887,7 @@ function renderLifeTrajectory() {
     { key:'relationship', color:'#a855f7', en:'Relationship', zh:'關係' }
   ];
   // income 標準化：netAssets / 50 (cap 100)
-  const norm = (k, v) => k === 'income' ? Math.min(100, Math.max(0, v / 80)) : Math.max(0, Math.min(100, v));
+  const norm = (k, v) => Math.max(0, Math.min(100, v));
   let paths = '';
   lines.forEach(L => {
     const pts = traj.filter(p => p[L.key] != null).map(p => `${projX(p.age)},${projY(norm(L.key, p[L.key]))}`).join(' L ');
@@ -4136,7 +4136,7 @@ init().catch(()=>{const el=document.querySelector('#gameLoadState');if(el){el.te
    contact / PWA install）+ 教學版模式 + 版本歷史
    ===================================================================== */
 
-const APP_VERSION = '1.5.0';
+const APP_VERSION = '1.6.0';
 const APP_BUILD = '2026-10-20';
 
 // 版本歷史（每個版本：v / date / items；每個 item 含 emoji badge + 文字）
