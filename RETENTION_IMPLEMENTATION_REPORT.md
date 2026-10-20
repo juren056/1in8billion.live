@@ -48,3 +48,10 @@ Final static checks: npm run verify passes 62 canonical routes, 172 country inpu
 
 
 Independent finish outcome: Batch1 fix-list ship (both findings resolved), Batch2 ship at its reviewed scope, Batch3 fix-list ship (all four findings resolved; no further recapture required). Reviewer returns are read-only independent source/screenshot reviews; executable tests were run by the implementation task. No remaining item from those review lists is asserted as a guarantee about unrelated legacy dialogs.
+
+
+## Approved UX follow-up — batch1 v1.7.2
+
+User approved the subsequent three-batch UX plan. The sample replay block was offscreen by~2500px on a390px phone. Replace it with a deferred native dialog: centered desktop, mobile bottom sheet, explicit Cancel/Start, unfinished-progress warning, modal focus and Escape/back behavior. Native URL settings and same seed flow stay intact; no life is prepared until confirmation. Sample/daily/archive/share entry links on the same localized route use one entry handler. Opening/cancelling pauses then restores the current run without writing storage or changing replay eligibility. Confirmation focuses and scrolls the actual game view. New low-cardinality replay_entry_click/prompt_visible/confirm/cancel events use action for the entry source; old offscreen invitation-view semantics are retired for this release.
+
+Validation: replay-entry-browser passes4langs390/1440, checks button bounds BEFORE auto-scroll, native focus/Tab/Escape/back, explicit start and unchanged full unfinished life/localStorage after cancellation. All12actualcomplete-outcome digests pass after the new layer loads. npmverify62routes/16tests/resourcebudgets pass. No historical reports or user dirty changes are included in this release.
