@@ -64,3 +64,18 @@ First visitors see play/three-step scene/featured sample/comparison before optio
 Manual focus, finance and spend dialogs use four-language text, actual effect values and game-unit labels. Default financial selection is described accurately as the minimum asset-change rule, preserving original logic. Focus tips now match applyFocusEffects (no invented bonuses). Shared modal focus/Tab/Escape/close behavior restores prior pause/focus. Reopening Spend previously accumulated click handlers; cloning only those disposable controls before rebinding fixes repeated charges, without changing costs/effects. Latest-turning-point heading now matches its stored-event content.
 
 Validation: ux-flow-browser checks compact empty state, controls,4language finance ages18/25/35/50, modal close/focus and a single300unit charge after repeated openings; actual complete proof tests remain final release gates. Screenshots use disposable actual sample runs at age18.
+
+
+Batch2 release gate: all12actual full-outcome digests matched; commit6add273 pushed successfully to main.
+
+## UX batch3 — v1.8.1
+
+Four-language static operational answers now distinguish new/replay/continue, Auto/manual/speed/pause, and PNG/local-save/replay sharing. Existing quick-play, replay, Auto and speed guides gain useful answers without creating thin new routes. Actual birth/game/ending screenshots replace the previous version and carry origin metadata. Sources and inherited observation-year limitations remain explicit; no demographic input or numeric engine change.
+
+The clean same-session funnel is replay_entry_click → replay_prompt_visible → replay_confirm → replay_started → life_started → first_event_visible → life_completed. Cancel emits replay_cancel and creates no life. first_event_reached remains the older year-advance event; first_event_visible is separately named and requires viewport evidence. Do not compare historical offscreen replay_invitation_view directly with visible prompts afterv1.7.2. Segment analyses by release and run_type. Tests use isolated browser contexts and block GoogleTagManager, so QA assertions are not production visitors or evidence of retention uplift. Production GA4 remains default-on.
+
+Validation: npmverify passes62routes,172country inputs, canonical/hreflang/resources and16tests. Browser suites pass replay-entry, ux-flow, isolated funnel order/exactlyonce/privacy, return, keepsake, edge audio/no-JS, retention, experience, batch23 and p1 independent360/1440 withaudio. Growth selectors updated for the new primary control container. Asset totals home454176B, compare109566B, quickguide14740B; new deferred replay/UX modules21630B decoded,9713B summed gzip estimates, not measured CDN transfer or field CWV. One final mechanical UI detector returned[]. Shipping raster provenance scan24files,zero missing.
+
+GSC retry20October2026: homepage visibly already indexed; another Request indexing attempt failed with reCAPTCHA service connection error. No successful request is claimed. Prior sitemap resubmission succeeded with62discoveredURLs. Evidence audit/gsc-retry-recaptcha-failed.jpg.
+
+Final review: independent fresh-context finish reviewer disposition ship for the approved ordinary UX extension, no material fixes. Final12complete-outcome proof suite passed again afterv1.8.1 content changes. Production release endpoint confirms6add273 (v1.8.0 batch2); finalbatch publication follows documentation.

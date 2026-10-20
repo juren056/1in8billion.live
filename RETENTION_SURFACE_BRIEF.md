@@ -11,3 +11,7 @@ User-approved extension of the established 1in8billion.live identity. Preserve t
 - **Verification:** Fresh 390px/desktop and four-language tests; real audio context and error paths; original 12 full outcome digests and cross-context replay; no-JS static introductions; same baseline asset budgets with optional bytes separately reported.
 
 FINISH: unreviewed and undocumented is unfinished; this build ends with the finish review, the verdict, DESIGN.md, and every shipping raster carrying its provenance
+
+## Approved UX follow-up (20 October 2026)
+
+Preserve the blue identity and warm pixel art. Three batches: visible native replay confirmation with explicit replacement protection; compact home hierarchy, sticky existing play controls, nearby ending actions and four-language manual focus/finance/spend dialogs; static operational answers and accurately named visible-event analytics. Scope is an ordinary extension, code-led, no approved comp. Replay confirmation required viewports390/1440; home/game390/1440 and all four languages in executable tests. Preserve62URLs, numeric inputs, v1 outcomes, local records and default analytics. Legacy investment/account forms beyond focus/finance/spend remain outside this dialog cleanup. Browser QA blocks GoogleTagManager; local event assertions are not real visitor results.
