@@ -21,7 +21,7 @@ const STATE = {
   life: null,
   paused: false,
   speed: 1,
-  tickMs: 1500,  // v5.13：1 年 ≈ 1.5 秒（慢到能讀事件；8× 時約 15 秒跑完一生）
+  tickMs: 5000,  // v5.13：1 年 ≈ 1.5 秒（慢到能讀事件；8× 時約 15 秒跑完一生）
               // v5.25：依生命長度選擇（30min/1hr/1.5hr）動態調整 → 改為 STATE.lifeDurationMs
   ticker: null,
   pendingDecision: null,
@@ -826,9 +826,7 @@ function milestoneEvents(life, newAge) {
   // 5/15/30/50/70 暫停問題
   if ([5, 15, 30, 50, 70].includes(newAge) && !life.quotes[newAge]) {
     STATE.pendingDecision = { age: newAge, type: 'pause' };
-    if (STATE.thoughtsEnabled && !STATE.autoDecide && STATE.view === 'life') {
-      setTimeout(() => showPauseQuestion(), 50);
-    }
+    // Reflection is optional and is opened explicitly by the playback controls.
   }
   // v5.16：18/25/35/50 財務決策 — 改為手動觸發（不自動彈出）
   if ([18, 25, 35, 50].includes(newAge) && !life.financeDecisions?.find(d => d.age === newAge)) {
@@ -888,16 +886,16 @@ function startLife(countryCode, preparedLife) {
   STATE.speed = 1;
   // v5.25：依 duration 選擇調整 tickMs
   const dur = $('#lifeDuration')?.value || '1hr';
-  if (dur === 'quick') { STATE.tickMs = 180; STATE.autoDecide = true; STATE.thoughtsEnabled = false; }
-  else if (dur === '30min') STATE.tickMs = 600;       // 約 30 分鐘跑完一生
-  else if (dur === '1hr') STATE.tickMs = 1200;  // 預設約 1 小時
-  else if (dur === '90min') STATE.tickMs = 1800; // 約 1.5 小時
-  else STATE.tickMs = 1500;
+  if (dur === 'quick') { STATE.tickMs = 1000; STATE.autoDecide = true; STATE.thoughtsEnabled = false; }
+  else STATE.tickMs = 5000;
+  STATE.stepMode = false;
   setView('life');
   renderAll();
   startTicker();
 }
 function startTicker() {
+  stopTicker();
+  if (!STATE.life || STATE.life.died || STATE.stepMode || STATE.paused || STATE.pendingDecision?.type === 'finance') return;
   STATE.ticker = setInterval(() => tick(), STATE.tickMs / STATE.speed);
 }
 function stopTicker() {
@@ -912,34 +910,9 @@ function setSpeed(sp) {
 }
 function tick() {
   if (!STATE.life || STATE.life.died || STATE.paused) return;
-  // v5.33：5/15/30/50/70 暫停不阻擋 tick（顯示 modal 但生命繼續；用戶可手動互動）
-  // 原本：if (STATE.pendingDecision) return;
-  if (STATE.pendingDecision && !STATE.pendingDecision._dismissed) {
-    // 第一次彈出 modal（已透過 milestoneEvents 觸發）；不阻擋生命
-    STATE.pendingDecision._dismissed = true;
-    return;
-  }
+  if (STATE.pendingDecision?.type === 'finance') return;
   const c = STATE.life.countryData;
   const sex = STATE.life.sex;
-  // v5.9：快轉到下一個抉擇 — 跳過直到遇到 pause decision
-  if (STATE.fastForward) {
-    STATE.fastForward = false;
-    let tries = 0;
-    while (tries++ < 500) {
-      if (STATE.life.died || STATE.paused || STATE.pendingDecision) break;
-      saveCurrentLife();
-  STATE.life.age += 1;
-      STATE.life.yearOffset += 1;
-      if (simRandom() < pDie(STATE.life.age, c, sex)) { dieNow(); break; }
-      if ([5,15,30,50,70].includes(STATE.life.age)) {
-        STATE.pendingDecision = { age: STATE.life.age, type: 'pause' };
-        if (STATE.autoDecide) resolvePendingDecision();
-        break;
-      }
-    }
-    renderAll();
-    return;
-  }
   saveCurrentLife();
   STATE.life.age += 1;
   STATE.life.yearOffset += 1;
@@ -971,12 +944,7 @@ function tick() {
   if (STATE.life.age > maxAge) dieNow('自然衰老');
   // v5.20：每 5 年套用投資收益
   if (STATE.life.age % 5 === 0 && STATE.life.age > 0) applyInvestmentReturn();
-  // v5.20：每 5 年彈出財務管理 modal（25/30/35/40/45/50/55/60）
-  if (!STATE.autoDecide && !STATE.life.died && [25, 30, 35, 40, 45, 50, 55, 60].includes(STATE.life.age) && !STATE.life.financeModalShown?.includes(STATE.life.age)) {
-    STATE.life.financeModalShown = STATE.life.financeModalShown || [];
-    STATE.life.financeModalShown.push(STATE.life.age);
-    setTimeout(() => showFinanceModal(), 100);
-  }
+  // Financial decisions are queued by the playback controller, without timed modal races.
 }
 function dieNow(forcedCause) {
   const c = STATE.life.countryData;
@@ -1193,14 +1161,7 @@ function applyInvestmentReturn() {
 }
 
 /* v5.13：財務決策（18/25/35/50 歲彈出） */
-function showFinancialChoice() {
-  if (!STATE.life) return;
-  STATE.paused = true;
-  const age = STATE.life.age;
-  const isEn = LANG === 'en';
-  const modal = $('#financeModal');
-  if (!modal) return;
-  // v5.19：先建好 choices，再依據「快速決定」標記誰是預設
+function financialChoices(age, isEn = LANG === 'en') {
   let choices;
   if (age === 18) choices = [
     { id:'study_loan', text: isEn?'Take student loan to study':'學生貸款升學', delta:{net:-5000, knowledge:+10} },
@@ -1222,6 +1183,17 @@ function showFinancialChoice() {
     { id:'enjoy', text: isEn?'Enjoy life now':'及時行樂', delta:{net:-10000, happiness:+10} },
     { id:'give_back', text: isEn?'Donate to charity':'慈善捐贈', delta:{net:-15000, happiness:+15} },
   ];
+  return choices;
+}
+function showFinancialChoice() {
+  if (!STATE.life) return;
+  STATE.paused = true;
+  const age = STATE.life.age;
+  const isEn = LANG === 'en';
+  const modal = $('#financeModal');
+  if (!modal) return;
+  // v5.19：先建好 choices，再依據「快速決定」標記誰是預設
+  const choices = financialChoices(age, isEn);
   const q = $('#financeQuestion');
   if (q) q.textContent = isEn ? `Age ${age} — How do you want to handle your money?` : `${age} 歲——你要怎麼處理你的錢？`;
   const body = $('#financeBody');
@@ -1303,7 +1275,8 @@ function showSpendModal() {
 /* v5.19：抽出共用的「套用財務決策」邏輯（給按鈕和「快速決定」都用） */
 function applyFinanceChoice(choices, idx, isEn) {
   const choice = choices[idx];
-  if (!choice) return;
+  if (!choice || STATE.life.financeDecisions?.some(d => d.age === STATE.life.age)) return;
+  (STATE.life.financeDecisions ||= []).push({age:STATE.life.age,id:choice.id});
   const d = choice.delta || {};
   STATE.life.stats.netAssets = Math.max(-100000, (STATE.life.stats.netAssets || 0) + (d.net || 0));
   if (d.knowledge) STATE.life.stats.knowledge = Math.min(100, Math.max(0, STATE.life.stats.knowledge + d.knowledge));
@@ -4136,8 +4109,8 @@ init().catch(()=>{const el=document.querySelector('#gameLoadState');if(el){el.te
    contact / PWA install）+ 教學版模式 + 版本歷史
    ===================================================================== */
 
-const APP_VERSION = '1.9.0';
-const APP_BUILD = '2026-10-20';
+const APP_VERSION = '1.10.0';
+const APP_BUILD = '2026-10-21';
 
 // 版本歷史（每個版本：v / date / items；每個 item 含 emoji badge + 文字）
 // 為節省空間與維護成本，所有語言文字都用 i18n key；徽章 emoji 是視覺標記。
@@ -4972,9 +4945,9 @@ function setupLaunch(){
  const quick=document.createElement('button');quick.id='quickPlay';quick.hidden=true;quick.onclick=()=>{document.querySelector('#lifeDuration').value='quick';startLifeWithCert();};document.querySelector('.cta-row').append(quick);
  const resume=document.createElement('button');resume.id='resumeLife';resume.className='cta-btn';resume.textContent=s.resume;
  try{const saved=JSON.parse(localStorage.getItem(STORAGE_KEY+':current')||'null');if(saved?.version===1&&saved.life&&!saved.life.died&&countryById(saved.life.country)){
- resume.onclick=()=>{stopTicker();STATE.life=saved.life;STATE.life.countryData=countryById(saved.life.country);STATE.era=saved.era;STATE.birthMode=saved.birthMode;STATE.pendingDecision=null;STATE.paused=false;STATE.autoDecide=false;STATE.thoughtsEnabled=true;setView('life');startTicker();launchEvent('life_resumed');};
+ resume.onclick=()=>{stopTicker();STATE.life=saved.life;STATE.life.countryData=countryById(saved.life.country);STATE.era=saved.era;STATE.birthMode=saved.birthMode;STATE.pendingDecision=null;STATE.paused=false;STATE.autoDecide=false;STATE.thoughtsEnabled=true;setView('life');window.Playback?.restore(saved.playback);startTicker();launchEvent('life_resumed');};
  document.querySelector('.cta-row').prepend(resume);primary.className='text-button';const savedNote=document.createElement('p');savedNote.className='resume-note';savedNote.textContent=s.resumeNote+' · '+localize(countryById(saved.life.country)).name+' · '+s.sampleAge+' '+saved.life.age;document.querySelector('.cta-row').before(savedNote);
- }}catch{}
+ }}catch{window.playbackRestoreFailure=true;}
  window.addEventListener('pagehide',saveCurrentLife);
  document.querySelector('#countrySelect').setAttribute('aria-label',s.name);
  document.querySelector('#customizeLife').onclick=()=>{const settings=document.querySelector('#lifeSettings');settings.open=true;settings.scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'start'});document.querySelector('#countrySelect').focus({preventScroll:true});};

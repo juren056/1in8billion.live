@@ -1,0 +1,3 @@
+import test from 'node:test';import assert from 'node:assert/strict';import fs from 'node:fs';import{createHash}from'node:crypto';import{playbackCopy}from'../playback-copy.js';
+test('release preserves the exact inherited country data, not only record count',()=>{assert.equal(createHash('sha256').update(fs.readFileSync('data/countries.json')).digest('hex'),'dfa553558debc42292981170d1e8f97e07c48e9e0c70d17308689a7b83beaa37');});
+test('four playback languages provide the same complete operational vocabulary',()=>{const keys=Object.keys(playbackCopy.en).sort();for(const [lang,c]of Object.entries(playbackCopy)){assert.deepEqual(Object.keys(c).sort(),keys,lang);for(const value of Object.values(c))assert(typeof value==='string'&&value.trim(),lang);}});
