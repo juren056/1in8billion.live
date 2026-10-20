@@ -5,3 +5,6 @@
 - life-audio.js: original procedural four-chord ambient composition and optional quiet two-note event cue; generated locally with Web Audio oscillators/envelopes. No external audio recording, sample pack or third-party composition is imported.
 - Existing guide screenshots: actual disposable local game sessions. They are product evidence, not AI images, actual users or real biographies.
 - Existing brand/icon license and source attribution remain in ATTRIBUTIONS.md and LICENSE. This list does not grant rights to competitor marks or materials.
+
+
+v1.7 guide captures: public-assets/guide-quick-play-{en,ja,ko,zh-TW}.png and guide-ending-{en,ja,ko,zh-TW}.png are actual 390×844 disposable local sessions, captured by tests/retention-captures.cjs. The ending uses a replay invitation and its actual resulting life. guide-controls.png shows the actual live control surface. PNG metadata records screenshot origin; no image generation prompt is invented for browser captures. Pre-existing globe/icon derivatives retain user-supplied-image attribution; adding origin metadata does not modify their artwork or establish additional rights. The static scene preview derives only from life-scene.js. The runtime downloadable PNG is built locally from the current life and original scene, not a saved visitor photo or public upload.
