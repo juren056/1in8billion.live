@@ -1,3 +1,7 @@
+# v1.13.2 birth and material timestamp audit
+
+Current life births use the device-local current month. Calendar documentation review dates and model input observation years are now visibly separated on all public pages and in metadata. Guide labels distinguish the current text release from the actual screenshot capture release. Fixed sibling age presentation to compare two calendar years; no simulation inputs, outcomes, source editions or old saves were rewritten. Release labels share release-info.mjs.
+
 # v1.13.1 calendar verification follow-up
 
 Replay invitation dates now match all three eras (1990 / legacy 2024 / 2080), and intentional historical/future year-only records are distinguished from old now-mode records. Local completed memories display the full birth-to-ending range. Nine-language and cross-timezone regressions cover the corrections; see CALENDAR_RELEASE_REPORT.md.

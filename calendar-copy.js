@@ -11,4 +11,16 @@
  de:['Echtzeit','Geburtskalender','Ein neues Echtzeitleben beginnt im aktuellen Monat des Gerätekalenders. Der Geburtsmonat bleibt gespeichert; jedes simulierte Jahr verschiebt den Kalender um ein Jahr. Der Endmonat folgt aus der tatsächlichen simulierten Lebensdauer. Geteilte und tägliche Leben behalten den Monat des Links (tägliche Einladungen nutzen UTC). Beobachtungsjahre und Quellenausgaben bleiben unverändert.','Alter Kalender · Monat nicht erfasst','Gespeicherter Geburtsmonat','Simulierter Endmonat']
  };
  root.CalendarCopy=Object.fromEntries(Object.entries(rows).map(([lang,r])=>[lang,{now:r[0],title:r[1],help:r[2],legacy:r[3],birth:r[4],ending:r[5]}]));
+ const dates={
+ en:['Calendar documentation checked','Model input observation years','Unverified. The birth calendar does not update demographic observations.'],
+ ja:['出生カレンダーの説明を確認','モデル入力の観測年','未確認です。出生カレンダーを変えても人口統計の観測年は変わりません。'],
+ ko:['출생 달력 설명 확인','모델 입력 관측 연도','확인되지 않았습니다. 출생 달력 변경은 인구 통계 관측 연도를 갱신하지 않습니다.'],
+ 'zh-TW':['出生時間說明核驗日期','模型資料的觀測年份','未核實。出生時間更新不會改寫人口統計資料的觀測年份。'],
+ 'zh-CN':['出生时间说明核验日期','模型资料的观察年份','未核实。出生时间更新不会改写人口统计资料的观察年份。'],
+ es:['Documentación del calendario revisada','Años de observación del modelo','Sin verificar. El calendario de nacimiento no actualiza las observaciones demográficas.'],
+ 'pt-BR':['Documentação do calendário verificada','Anos de observação do modelo','Não verificados. O calendário de nascimento não atualiza as observações demográficas.'],
+ fr:['Documentation du calendrier vérifiée','Années d’observation du modèle','Non vérifiées. Le calendrier de naissance ne met pas à jour les observations démographiques.'],
+ de:['Kalenderdokumentation geprüft','Beobachtungsjahre der Modelldaten','Nicht verifiziert. Der Geburtskalender aktualisiert keine demografischen Beobachtungen.']
+ };
+ for(const[lang,r]of Object.entries(dates))Object.assign(root.CalendarCopy[lang],{reviewed:r[0],observed:r[1],unknown:r[2]});
 })(globalThis);

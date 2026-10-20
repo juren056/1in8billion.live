@@ -2045,7 +2045,7 @@ function renderLifeFamilyDetail() {
       </div>
     </div>
     ${life.family?.siblings?.length ? `<div class="fd-sib"><strong>${isEn ? 'Siblings' : '兄弟姊妹'}：</strong> ${life.family.siblings.map(s => {
-      const sAge = life.age - (s.birth?.year || life.year);
+      const sAge = (life.year + life.age) - (s.birth?.year ?? life.year);
       return `${s.name}（${sAge}${isEn?'yo':'歲'}）`;
     }).join('、')}</div>` : ''}
   `;
@@ -4113,7 +4113,7 @@ init().catch(()=>{const el=document.querySelector('#gameLoadState');if(el){el.te
    contact / PWA install）+ 教學版模式 + 版本歷史
    ===================================================================== */
 
-const APP_VERSION = '1.13.1';
+const APP_VERSION = '1.13.2';
 const APP_BUILD = '2026-10-21';
 
 // 版本歷史（每個版本：v / date / items；每個 item 含 emoji badge + 文字）
