@@ -1,0 +1,5 @@
+import {execFile} from 'node:child_process';import {promisify} from 'node:util';import fs from 'node:fs';
+const run=promisify(execFile);const routes=JSON.parse(fs.readFileSync('dist/routes.json'));
+const tasks=[...routes,'/favicon.ico','/public-assets/icon-96.png','/public-assets/og.png','/robots.txt','/sitemap.xml','/not-real-page/','/release.json'];const rows=[];
+async function worker(){while(tasks.length){const p=tasks.shift();let result;for(let i=0;i<2;i++){try{const {stdout}=await run('curl.exe',['--proxy','http://127.0.0.1:7890','--connect-timeout','8','--max-time','20','-sS','-w','\nSTATUS:%{http_code}:%{content_type}','https://1in8billion.live'+p],{maxBuffer:2e6});result={path:p,status:stdout.match(/STATUS:(\d+)/)?.[1],type:stdout.split('STATUS:')[1],canonical:p.endsWith('/')&&!p.includes('not-real')?stdout.includes('rel="canonical" href="https://1in8billion.live'+p+'"'):undefined};break;}catch(e){result={path:p,error:'network failure'};}}rows.push(result);console.log(JSON.stringify(result));}}
+await Promise.all(Array.from({length:4},worker));fs.writeFileSync('LIVE_CHECKS.json',JSON.stringify(rows,null,2));
