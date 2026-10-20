@@ -1,3 +1,4 @@
+import {buildRetention} from './build-retention.mjs';
 import {buildGrowth} from './build-growth.mjs';
 import {buildProvenance} from './build-provenance.mjs';
 import {prepareData,navigation,footerFor,homeExperience,enhanceOutput,copy,countryName} from './build-experience.mjs';
@@ -8,7 +9,7 @@ import path from 'node:path';
 const out='dist',origin='https://1in8billion.live';
 fs.mkdirSync(out,{recursive:true});
 const write=(p,s)=>{const dest=path.join(out,p);fs.mkdirSync(path.dirname(dest),{recursive:true});fs.writeFileSync(dest,s);};
-for(const file of ['app.js','replay-core.js','p1-game.js','compare.js','comparison-core.js','performance.js','experience.js','storage.js','site-nav.js','content.css','experience.css','gedcom.js','styles.css','launch.css','sw.js','manifest.json','LICENSE'])fs.copyFileSync(file,path.join(out,file));
+for(const file of ['retention-bootstrap.js','retention.js','retention-copy.js','retention-core.js','life-scene.js','life-audio.js','retention.css','app.js','replay-core.js','p1-game.js','compare.js','comparison-core.js','performance.js','experience.js','storage.js','site-nav.js','content.css','experience.css','gedcom.js','styles.css','launch.css','sw.js','manifest.json','LICENSE'])fs.copyFileSync(file,path.join(out,file));
 for(const dir of ['data','public-assets','vendor'])fs.cpSync(dir,path.join(out,dir),{recursive:true});
 const countries=JSON.parse(fs.readFileSync('data/countries.json')),dict=JSON.parse(fs.readFileSync('data/i18n.json'));
 prepareData(countries,dict,write);
@@ -33,6 +34,7 @@ for(const [slug,[title,body]] of Object.entries(pages)){routes.push('/'+slug+'/'
 buildP1({write,head,links,footer,routes,countries,langs,esc});
 buildGuides({write,head,links,footerFor,routes,langs,esc});
 buildGrowth({write,head,links,footerFor,routes,countries,langs,esc});
+buildRetention({write,langs});
 enhanceOutput({routes,write,countries});
 buildProvenance({write,countries});
 write('404.html',`<!doctype html><html lang="en"><head><title>Page not found</title><meta name="robots" content="noindex"><link rel="stylesheet" href="/launch.css"></head><body><main class="article"><h1>Page not found</h1><a href="/">Return to the simulator</a></main></body></html>`);
@@ -43,7 +45,7 @@ write('llms.txt',`# 1in8billion.live\nIndependent fictional life simulator.\n- [
 write('odds.js',`fetch('/data/countries.json').then(r=>r.json()).then(data=>{const select=document.querySelector('#oddsCountry'),output=document.querySelector('#oddsResult');const total=data.reduce((s,c)=>s+c.births,0);if(select){const update=()=>{const c=data.find(c=>c.id===select.value);output.textContent=' '+(100*c.births/total).toFixed(4)+'% · 1 / '+Math.round(total/c.births);};select.addEventListener('change',update);update();}});document.querySelector('#countrySearch')?.addEventListener('input',e=>{let n=0;document.querySelectorAll('.country-entry').forEach(a=>{a.hidden=!a.textContent.toLowerCase().includes(e.target.value.toLowerCase());if(!a.hidden)n++;});document.querySelector('#searchEmpty').hidden=n>0;});`);
 const siteConfig=JSON.parse(fs.readFileSync('site.config.json','utf8'));
 const ga=process.env.GA4_MEASUREMENT_ID||siteConfig.ga4MeasurementId||'';if(ga&&!/^G-[A-Z0-9]+$/.test(ga))throw Error('Invalid GA4 measurement ID');
-write('analytics-config.js',`window.SITE_RELEASE="1.4.0";window.GA4_ID=${JSON.stringify(ga)};\n`+fs.readFileSync('analytics-url.js','utf8')+'\n'+fs.readFileSync('scripts/analytics.js','utf8'));
+write('analytics-config.js',`window.SITE_RELEASE="1.5.0";window.GA4_ID=${JSON.stringify(ga)};\n`+fs.readFileSync('analytics-url.js','utf8')+'\n'+fs.readFileSync('scripts/analytics.js','utf8'));
 fs.copyFileSync('public-assets/favicon.ico',out+'/favicon.ico');
 write('routes.json',JSON.stringify(routes));console.log('Built '+routes.length+' indexable pages');
 
