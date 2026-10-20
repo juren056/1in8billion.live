@@ -1,10 +1,12 @@
 /* Presentation and activation measurement. This file does not change simulation random streams. */
 const experienceOriginalSetup=setupLaunch;
+let optionalGameTools=null;
+function loadOptionalGameTools(){if(optionalGameTools)return optionalGameTools;optionalGameTools=Promise.all(['/gedcom.js','/data/world-coords.js'].map(src=>new Promise((resolve,reject)=>{const script=document.createElement('script');script.src=src;script.onload=resolve;script.onerror=()=>{script.remove();reject(Error('Optional tools unavailable'));};document.head.append(script);}))).catch(error=>{optionalGameTools=null;throw error;});return optionalGameTools;}
 setupLaunch=function(){experienceOriginalSetup();const s=window.SurfaceCopy;
  const translateTree=root=>{if(!root)return;const walker=document.createTreeWalker(root,NodeFilter.SHOW_TEXT);while(walker.nextNode()){const node=walker.currentNode;if(node.parentElement?.closest('input,textarea,script,style,#endName,strong'))continue;node.textContent=localizeStory(node.textContent);}};
  const originalLife=renderLife;renderLife=function(...args){const out=originalLife(...args);for(const id of ['lifeLog','lifeLatestEvent'])translateTree(document.getElementById(id));for(const id of ['lifeBarNow','lifeBarEnd']){const el=document.getElementById(id);if(el)el.textContent=el.textContent.replace(/yo|歲/g,t('unit.years'));}return out;};
  const updateView=()=>document.body.classList.toggle('game-active',STATE.view!=='intro');
- const originalView=setView;setView=function(...args){const out=originalView(...args);updateView();return out;};updateView();
+ const originalView=setView;setView=function(...args){if(['tree','shelf'].includes(args[0])&&(!window.Gedcom||!window.WORLD_COORDS)){toast(s.loading);loadOptionalGameTools().then(()=>{originalView(...args);updateView();}).catch(()=>toast(s.error,5000));return;}const out=originalView(...args);updateView();return out;};updateView();
  let sawFirst=false;const originalTick=tick;tick=function(...args){const before=STATE.life?.age;const out=originalTick(...args);if(!sawFirst&&STATE.life?.age>0&&STATE.life.age!==before){sawFirst=true;launchEvent('first_event_reached');}return out;};
  const originalStart=startLife;startLife=function(...args){sawFirst=false;const out=originalStart(...args);saveCurrentLife();return out;};
  document.querySelectorAll('[data-view="lab"],[data-view="tree"],[data-view="shelf"]').forEach(b=>{b.title=s.controls;});

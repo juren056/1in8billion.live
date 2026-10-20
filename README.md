@@ -29,6 +29,8 @@ GA4 production public measurement configuration: site.config.json (G-NKD2PNDL3P)
 
 ## v1.2.0 experience and content
 
+v1.3.0 completes the tools/content and trust/performance follow-up: comparison CSV, field-source deep links, context links, full-outcome sample proofs, complete inherited-input provenance, deferred optional tools, asset budgets and official Web Vitals with release/run cohorts. See BATCH23_REPORT.md. `npm run check:assets` checks comparable first-party critical payloads; `node tests/performance-lab.cjs` records controlled local diagnostics. Neither is a production field CWV pass claim.
+
 Homepage: Quick default, progressive country settings, promoted local save and actual sample replay links. Comparison pages preserve countries and mode across copied URLs and equivalent-language navigation. Four-language task guides, original real-UI screenshots, source-field metadata and a reproducible sampler experiment are built statically. Numeric model inputs and Auto replay rules remain unchanged; corrected labels can change displayed story wording.
 
 Run browser task checks with PLAYWRIGHT_MODULE pointing at an installed Playwright module: `node tests/experience-browser.cjs`, `node tests/p1-browser.cjs`, and `node tests/release-browser.cjs`. Use fresh local browser contexts; these checks never use an existing user's profile. The last command captures documentation images, so rebuild afterward. `node scripts/generate-samples.cjs` regenerates the published sample records from the running local engine. `node scripts/model-experiment.mjs` records the actual sampler experiment. See MEASUREMENT.md and DESIGN.md for the measurement contract and design choices.

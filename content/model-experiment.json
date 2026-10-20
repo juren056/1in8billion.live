@@ -2,6 +2,7 @@
   "seed": "birthplace-audit-v1",
   "drawsPerMode": 20000,
   "numericHash": "380452d9439df8d3686d4f5971f97037e2f3a37b2dd87cf910191ec81b6303b1",
+  "sourceSnapshotHash": "dffaecfcf38da7e575f8d15f565a4c3d08cf8da7fe02fefb6bbe6468418e9c62",
   "rows": [
     {
       "country": "IND",

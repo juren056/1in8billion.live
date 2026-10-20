@@ -1,0 +1,6 @@
+export const batchCopy={
+ en:{download:'Download comparison CSV',dataLink:'Trace these model fields',nextSteps:'What would you like to do next?',learnOdds:'Understand the two draw modes',learnReplay:'Save or reproduce a life',whySamples:'How these samples were verified',relatedGuides:'Related guides',fieldLink:'Field provenance (English)',compareHelp:'Choose countries, read the result, then try a life in either place. Download CSV to keep this model comparison.'},
+ ja:{download:'比較をCSVで保存',dataLink:'モデル項目の出典を確認',nextSteps:'次に何をしますか？',learnOdds:'2つの抽選モードの違い',learnReplay:'人生の保存と再現',whySamples:'サンプルの検証方法',relatedGuides:'関連ガイド',fieldLink:'項目の出典（英語）',compareHelp:'国を選んで比較し、どちらかで人生を始めましょう。CSVでモデルの比較結果を保存できます。'},
+ ko:{download:'비교 CSV 내려받기',dataLink:'모델 항목의 출처 확인',nextSteps:'다음으로 무엇을 할까요?',learnOdds:'두 추첨 모드 이해하기',learnReplay:'인생 저장 및 재현',whySamples:'예시 검증 방법',relatedGuides:'관련 가이드',fieldLink:'항목 출처(영어)',compareHelp:'국가를 선택해 비교한 뒤 원하는 곳에서 인생을 시작하세요. CSV로 모델 비교 결과를 저장할 수 있습니다.'},
+ 'zh-TW':{download:'下載比較 CSV',dataLink:'追溯模型欄位來源',nextSteps:'接下來想做什麼？',learnOdds:'了解兩種抽取模式',learnReplay:'儲存或重現人生',whySamples:'範例如何驗證',relatedGuides:'相關指南',fieldLink:'欄位來源（英文）',compareHelp:'選擇國家、閱讀結果，再體驗其中一地的人生。可下載 CSV 留存這份模型比較。'}
+};

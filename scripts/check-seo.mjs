@@ -9,6 +9,8 @@ assert.ok(/<html lang="[^"]+"/.test(html));assert.ok(html.includes('name="descri
 for(const m of html.matchAll(/<link rel="alternate" hreflang="[^"]+" href="https:\/\/1in8billion.live([^"?]+)"/g))assert.ok(routes.includes(m[1]),'Missing alternate '+m[1]);
 for(const m of html.matchAll(/(?:src|href)="(\/[^"#?]*)"/g)){const target=m[1];assert.ok(fs.existsSync('dist'+target)||fs.existsSync('dist'+target+'index.html'),route+' missing '+target);}
 assert.ok(!html.includes('contact@born-somewhere'));
+for(const match of html.matchAll(/href="(\/[^"?#]*)#([^"=]+)"/g)){const [,target,id]=match;const file='dist'+target+(target.endsWith('/')?'index.html':'');if(fs.existsSync(file)&&file.endsWith('.html'))assert.ok(fs.readFileSync(file,'utf8').includes(`id="${id}"`),route+' missing fragment '+target+'#'+id);}
+const currentLang=html.match(/<html lang="([^"]+)"/)[1];for(const match of html.matchAll(/<link rel="alternate" hreflang="([^"]+)" href="https:\/\/1in8billion.live([^"?]+)"/g)){if(match[1]==='x-default')continue;const other=fs.readFileSync('dist'+match[2]+'index.html','utf8');assert.ok(other.includes(`hreflang="${currentLang}" href="https://1in8billion.live${route}"`),route+' missing reciprocal alternate '+match[2]);}
 }
 assert.equal((fs.readFileSync('dist/sitemap.xml','utf8').match(/<loc>/g)||[]).length,routes.length);
 assert.ok(fs.readFileSync('dist/404.html','utf8').includes('noindex'));

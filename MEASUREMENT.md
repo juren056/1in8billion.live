@@ -1,5 +1,9 @@
 # Measurement contract — v1.2.0
 
+v1.3.0 adds `release` to all events and coarse `run_type` to game events (new, replay, resumed), plus `comparison_download` after a real CSV download. Register release/run_type/metric_name/metric_rating as event-scoped custom dimensions and metric_value as a standard custom metric to compare versions in GA4 explorations. Filter by metric_name before averaging: CLS is a unitless score; LCP/INP/TTFB are milliseconds. Never sum mixed metric types into a performance score. Definitions take processing time and do not backfill missing historical parameters.
+
+`web_vital` is reported by the official self-hosted web-vitals 6.2.3 standard build after critical work. Parameters: metric_name, metric_rating, metric_value and metric_delta. Only real browser observations are reported. No selectors or attribution payloads are collected. The browser may not report INP until a qualifying interaction/visibility change; absent is not zero. Distinguish these first-party observations from Google's population-level CrUX/GSC field data.
+
 Analytics remains enabled on page load, as requested. Existing GA4 property and stream are retained. `page_location` excludes query strings and fragments. Interaction parameters are allowlisted to language, play_mode, mode, action and page_type; do not add names, story text, notes, family records or replay seeds.
 
 | Event | Actual trigger |

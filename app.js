@@ -4136,7 +4136,7 @@ init().catch(()=>{const el=document.querySelector('#gameLoadState');if(el){el.te
    contact / PWA install）+ 教學版模式 + 版本歷史
    ===================================================================== */
 
-const APP_VERSION = '1.2.0';
+const APP_VERSION = '1.3.0';
 const APP_BUILD = '2026-10-20';
 
 // 版本歷史（每個版本：v / date / items；每個 item 含 emoji badge + 文字）
@@ -4965,7 +4965,7 @@ function toast(msg, ms=2200) {
   setTimeout(() => { el.hidden = true; }, ms);
 }
 
-function launchEvent(name,extra={}){ if(typeof window.siteEvent==='function')window.siteEvent(name,{language:LANG,...extra}); }
+function launchEvent(name,extra={}){if(name==='replay_started')window.activeRunType='replay';if(name==='start_click')window.activeRunType='new';if(name==='life_resumed')window.activeRunType='resumed';if(typeof window.siteEvent==='function')window.siteEvent(name,{language:LANG,run_type:window.activeRunType||'new',...extra});}
 function setupLaunch(){
  const s=window.SurfaceCopy;
  const primary=document.querySelector('#btnStart');primary.removeAttribute('data-t');primary.textContent=s.start;primary.disabled=false;

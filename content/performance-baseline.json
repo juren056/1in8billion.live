@@ -1,0 +1,164 @@
+{
+  "revision": "29d5909f794c265a1dbbe15e652a1fa2afe30764",
+  "method": "Static critical CSS/JS + game data. Vendor Web Vitals loads later; screenshots and analytics network excluded. Gzip estimates are not measured CDN transfer.",
+  "routes": [
+    {
+      "route": "/",
+      "decodedBytes": 464232,
+      "gzipEstimateBytes": 134404,
+      "assets": [
+        {
+          "path": "/analytics-config.js",
+          "decodedBytes": 1275,
+          "gzipEstimateBytes": 716
+        },
+        {
+          "path": "/app.js",
+          "decodedBytes": 245603,
+          "gzipEstimateBytes": 74910
+        },
+        {
+          "path": "/content.css",
+          "decodedBytes": 4869,
+          "gzipEstimateBytes": 1674
+        },
+        {
+          "path": "/data/countries.json",
+          "decodedBytes": 82077,
+          "gzipEstimateBytes": 20211
+        },
+        {
+          "path": "/data/i18n/en.json",
+          "decodedBytes": 17200,
+          "gzipEstimateBytes": 6616
+        },
+        {
+          "path": "/data/world-coords.js",
+          "decodedBytes": 3137,
+          "gzipEstimateBytes": 1523
+        },
+        {
+          "path": "/experience.css",
+          "decodedBytes": 6644,
+          "gzipEstimateBytes": 2064
+        },
+        {
+          "path": "/experience.js",
+          "decodedBytes": 3167,
+          "gzipEstimateBytes": 1253
+        },
+        {
+          "path": "/gedcom.js",
+          "decodedBytes": 14755,
+          "gzipEstimateBytes": 4501
+        },
+        {
+          "path": "/launch.css",
+          "decodedBytes": 4027,
+          "gzipEstimateBytes": 1647
+        },
+        {
+          "path": "/p1-game.js",
+          "decodedBytes": 4946,
+          "gzipEstimateBytes": 1884
+        },
+        {
+          "path": "/replay-core.js",
+          "decodedBytes": 803,
+          "gzipEstimateBytes": 542
+        },
+        {
+          "path": "/site-nav.js",
+          "decodedBytes": 798,
+          "gzipEstimateBytes": 481
+        },
+        {
+          "path": "/storage.js",
+          "decodedBytes": 277,
+          "gzipEstimateBytes": 225
+        },
+        {
+          "path": "/styles.css",
+          "decodedBytes": 68963,
+          "gzipEstimateBytes": 13197
+        },
+        {
+          "path": "/ui-copy/en.js",
+          "decodedBytes": 5691,
+          "gzipEstimateBytes": 2960
+        }
+      ]
+    },
+    {
+      "route": "/compare/",
+      "decodedBytes": 102198,
+      "gzipEstimateBytes": 29049,
+      "assets": [
+        {
+          "path": "/analytics-config.js",
+          "decodedBytes": 1275,
+          "gzipEstimateBytes": 716
+        },
+        {
+          "path": "/compare.js",
+          "decodedBytes": 3461,
+          "gzipEstimateBytes": 1360
+        },
+        {
+          "path": "/content.css",
+          "decodedBytes": 4869,
+          "gzipEstimateBytes": 1674
+        },
+        {
+          "path": "/data/countries.json",
+          "decodedBytes": 82077,
+          "gzipEstimateBytes": 20211
+        },
+        {
+          "path": "/launch.css",
+          "decodedBytes": 4027,
+          "gzipEstimateBytes": 1647
+        },
+        {
+          "path": "/site-nav.js",
+          "decodedBytes": 798,
+          "gzipEstimateBytes": 481
+        },
+        {
+          "path": "/ui-copy/en.js",
+          "decodedBytes": 5691,
+          "gzipEstimateBytes": 2960
+        }
+      ]
+    },
+    {
+      "route": "/guides/quick-play/",
+      "decodedBytes": 10969,
+      "gzipEstimateBytes": 4518,
+      "assets": [
+        {
+          "path": "/analytics-config.js",
+          "decodedBytes": 1275,
+          "gzipEstimateBytes": 716
+        },
+        {
+          "path": "/content.css",
+          "decodedBytes": 4869,
+          "gzipEstimateBytes": 1674
+        },
+        {
+          "path": "/launch.css",
+          "decodedBytes": 4027,
+          "gzipEstimateBytes": 1647
+        },
+        {
+          "path": "/site-nav.js",
+          "decodedBytes": 798,
+          "gzipEstimateBytes": 481
+        }
+      ]
+    }
+  ],
+  "artifactRevision": "0b3a794731a34b5109b739dd5452b2df70bd0f5b",
+  "note": "Local v1.2.0 build; release.json predates its source commit. app.js verified against this source revision."
+}
