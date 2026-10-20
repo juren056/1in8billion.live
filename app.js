@@ -1639,7 +1639,7 @@ function renderProbTable() {
         }).join('')}
       </tbody>
     </table>
-    <p class="muted">${isEn ? 'Source: UN WPP 2024 (annual births / total population by country)' : '資料來源：聯合國《世界人口展望 2024》（各國年度出生數／總人口）'}</p>
+    <p class="muted">${isEn ? 'Inherited game weights; observation years unverified. See /sources/.' : '沿用遊戲權重，觀測年份未核實。請見 /sources/。'}</p>
   `;
 }
 
@@ -2215,7 +2215,7 @@ function renderCountryStats() {
     <table class="cs-table">
       <tbody>${rows.map(r => `<tr><td class="cs-k">${r[0]}</td><td class="cs-v">${r[1]}</td></tr>`).join('')}</tbody>
     </table>
-    <p class="muted cs-source">${isEn?'Sources: UN WPP 2024, WB WDI, WHO, UNESCO UIS, UNDP HDR, ILO, UNAIDS, UNODC, UNICEF, World Happiness Report 2024':'資料來源：聯合國《世界人口展望2024》、世界銀行WDI、WHO、UNESCO UIS、UNDP HDR、ILO、UNAIDS、UNODC、UNICEF、生活滿意度報告2024'}</p>
+    <p class="muted cs-source">${isEn?'Inherited estimates; individual source years and provenance unverified. See /sources/.':'沿用估算資料，個別來源及年份未核實。請見 /sources/。'}</p>
   `;
   // v5.11：存活曲線圖
   renderSurvivalCurve();
