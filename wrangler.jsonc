@@ -1,1 +1,22 @@
-{"name":"1in8billion-live","compatibility_date":"2026-10-20","build":{"command":"npm run verify"},"assets":{"directory":"./dist","not_found_handling":"404-page"}}
+{
+  "name": "1in8billion-live",
+  "compatibility_date": "2026-10-20",
+  "build": {
+    "command": "npm run verify"
+  },
+  "assets": {
+    "directory": "./dist",
+    "not_found_handling": "404-page",
+    "binding": "ASSETS",
+    "run_worker_first": [
+      "/api/*"
+    ]
+  },
+  "main": "src/worker.js",
+  "vars": {
+    "PUBLIC_ORIGIN": "https://1in8billion.live",
+    "KEEPSAKE_PREVIEW_ENABLED": "true",
+    "KEEPSAKE_CHECKOUT_ENABLED": "false",
+    "KEEPSAKE_FULFILLMENT_ENABLED": "true"
+  }
+}
