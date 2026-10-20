@@ -22,3 +22,8 @@ test('v2 replay records a fixed month and v1 shape and legacy date remain suppor
 test('PDF and poster snapshots validate all monthly dates and still accept legacy year-only snapshots',()=>{
  const life={year:2026,calendarMonth:'2026-10',age:68,died:true,log:[{age:0,text:'Born',kind:'birth'},{age:68,text:'End',kind:'death'}]};const s=snapshotLife(life);assert(validSnapshot(s));assert.equal(s.birthMonth,'2026-10');assert.equal(s.endMonth,'2094-10');assert.equal(s.events[1].month,'2094-10');assert(!validSnapshot({...s,endMonth:'2094-11'}));assert(!validSnapshot({...s,events:[{...s.events[0],month:'2024-10'}]}));assert(validSnapshot(snapshotLife({...life,calendarMonth:undefined,year:2024})));assert.equal(validSnapshot({...s,birthYear:9999,birthMonth:'9999-10',endYear:10067,endMonth:'9999-10'}),false);assert.equal(validSnapshot({...s,events:null}),false);
 });
+
+test('replay invitations show their actual era without treating historical and future runs as now',()=>{
+ for(const [era,date]of [['past','1990'],['now','2024'],['future','2080']])assert.equal(C.replayDate({era}),date);
+ assert.equal(C.replayDate({era:'now',calendarMonth:'2027-01'}),'2027-01');
+});

@@ -28,3 +28,11 @@
 ## 发布与回滚
 
 沿用已授权的 Git → Cloudflare Workers 自动发布，构建命令 `npm run verify`，站点 `https://1in8billion.live/`。发布后核对 `/release.json`、九语言实时出生和结局、月份示例、sitemap、静态素材及 404。前一版本为 `9f71a5c1e853ab3de8afbe4f42378d43b713279b`；本次不迁移或删除用户存档。
+
+## v1.13.1 · 再次核验与修正
+
+复核发现 v1 历史和未来重现邀请的确认文字统一回退到 2024，但实际开始年份分别为 1990 和 2080。现已使用共享规则显示对应年份，并区分主动选择的年精度模式与旧版实时记录；失败的重现启动也清理待用月份，避免带入下一次新开人生。
+
+本机收藏新增完整出生至结束年月，刷新后仍保持一致，不更改原存储键或模型输入。`npm run verify` 共 38 项测试通过。`tests/calendar-recheck-browser.cjs` 覆盖九语言 × 四种重现日期、实际开始、收藏起止日期及刷新、收藏链接月份，并覆盖 UTC+14 / UTC-10 月界与 UTC 每日人生。`tests/calendar-browser.cjs` 再次验证九语言跨月确认、续玩、结局、家谱、导出快照及原有 12 组 v1 完整结果摘要。
+
+本轮未修改 PDF/PNG 导出算法或示例数据；原有 27 份实际 PDF 排版证据保持适用。复核证据位于 `audit/calendar-recheck/`，发布沿用 Git → Cloudflare 自动流程；上一版为 `7dcd65805b35b4aabbea7b3bc05d7ec25d2e313e`。

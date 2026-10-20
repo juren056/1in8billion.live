@@ -7,7 +7,8 @@
  const range=life=>`${at(life)}–${at(life,life.deathAge??life.age??0)}`;
  function date(life,age=0){const value={year:Number(life.year)+age};if(valid(life.calendarMonth))value.month=Number(life.calendarMonth.slice(5));return value;}
  function personDate(d){return d?.year?String(d.year)+(d.month?'-'+String(d.month).padStart(2,'0'):''):'';}
- root.CalendarCore={valid,currentMonth,addYears,at,range,date,personDate,pending:undefined,
+ const replayDate=run=>valid(run?.calendarMonth)?run.calendarMonth:String(({past:1990,future:2080})[run?.era]||2024);
+ root.CalendarCore={valid,currentMonth,addYears,at,range,date,personDate,replayDate,pending:undefined,
   birthSpec(era){if(era==='past')return {year:1990};if(era==='future')return {year:2080};if(this.pending===null)return {year:2024};const month=valid(this.pending)?this.pending:currentMonth();return {year:Number(month.slice(0,4)),calendarMonth:month};}
  };
 })(globalThis);

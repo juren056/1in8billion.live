@@ -1,3 +1,7 @@
+# v1.13.1 calendar verification follow-up
+
+Replay invitation dates now match all three eras (1990 / legacy 2024 / 2080), and intentional historical/future year-only records are distinguished from old now-mode records. Local completed memories display the full birth-to-ending range. Nine-language and cross-timezone regressions cover the corrections; see CALENDAR_RELEASE_REPORT.md.
+
 # v1.13.0 real-time birth calendar
 
 New real-time births use the device-local current year and month, frozen when the birth card is generated. Annual simulation advances one year at a time; the ending uses the actual simulated lifespan, not average life expectancy. Replay v2 includes YYYYMM and daily invitations use the UTC month. Saved v1 runs keep their original 2024 baseline with no invented month; historical 1990 and future 2080 modes stay year-only. Statistical observation years, source editions, model weights and legacy storage keys are unchanged. Birth cards, current dates, family records, endings, free PNG, premium PNG/PDF, examples and localized guides use this shared calendar contract. See CALENDAR_RELEASE_REPORT.md.
