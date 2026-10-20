@@ -39,5 +39,6 @@ export async function installRetention(){
  if(config.stage>=2)await (await import('./life-keepsake.js')).installKeepsake(bridge);
  if(config.stage>=3)await (await import('./life-return.js')).installReturn(bridge);
  await (await import('./ux-flow.js')).installUX(bridge);
+ await (await import('./premium-keepsake/entry.js')).installPremium(bridge);
  return bridge;
 }

@@ -1,0 +1,7 @@
+# Keepsake surface contract
+
+User-approved ordinary extension of the existing blue identity and warm original pixel art. Code-led, specified purpose: optional one-life US$2.99 storybook/poster preview, free actions first, no live checkout. Product page mode Read/Persuade; preview mode Operate. A document spread and actual generated samples lead, then precise scope, local-data limits and FAQ. Phone single column, desktop spread beside product facts; the existing fonts/colors remain. No competing brand system or competitor assets.
+
+Preserve62URLs, gameRNG/replay/storage, GA4 and freePNG. Final files must have readable extractableCJK text and 3 genuinely different high-resolution poster layouts. Actual supplied twelve completed sample runs are test/demo evidence. Private snapshots stay only in a new localIndexedDB; anonymous payment commitments only go to the futureAPI. PhaseBmock passes cannot count as Stripe sandbox. PhaseC requires separate approval. Review390/1440,4languages,short/missing/longtext, storagefail, keyboard and readonly/privateURL handling. Finish needs independent reviewer and ordinary-extension documenter.
+
+Rendering gate: PDF full font embedding is intentional. pdf-lib/fontkit subsetting of this CJK font produced missing glyphs in Poppler despite extractable text; ship only the independently rendered full-embed result. Current PDF around10MB; font and renderer load on export only. Font is a renamed OFL derivative, quadratic outlines generated from NotoSansCJKjpRegular; source license remains. No font is sold as a separate download.
