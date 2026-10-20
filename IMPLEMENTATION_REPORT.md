@@ -57,3 +57,30 @@ GSC未验证所有权、sitemap未提交、收录未确认。GA4无本站真实m
 ## 剩余项
 
 GSC/GA4网络恢复后完成后台验证、sitemap提交与Realtime接收；审核正式统计来源后发布国家事实页；P1比较页和真正可复现分享；性能测量及少数动态内容本地化。
+
+## 生产验收追加 — 2026-10-20
+
+代码已经推送main，第一版075fddce505c9ea97cf76384a2675418e8e68d95，Cloudflare自动构建60c0b7b4-f3db-4f40-89c7-520f12c5b339，版本476410bf，面板Ready（37秒）。正式域名release.json返回相同提交，证明主域已更新。
+
+最后小修复264cae2：未配置真实GA4 ID时不显示误导的启用按钮，已推送并通过同一Git自动发布链。最终生效信息见本报告后续记录。
+
+线上逐URL结果：LIVE_CHECKS.json。19/21个可索引URL已实际响应200并核对self-canonical；how-it-works和ko首页遇本机SSL网络错误，不能等同服务端错误。图标ICO、96px PNG、OG PNG、sitemap、robots均200且MIME正确；未知路径真实404。www查询发生本机TLS错误，跳转未验证。未改动DNS。
+
+本地复测：自然生涯结束70岁，原创PNG下载1in8billion-life.png；确认出生卡保留同一角色；刷新出现Continue并恢复5岁存档；390px首屏CTA在y=502px。没有声称Lighthouse分数。
+
+CLI额外部署尝试因网络超时失败；成功证据来自Git构建与生产release.json。未重复成功手动上传同一版本。GSC/GA4仍被Google浏览器网络阻碍，未验证所有权、未提交sitemap、无本站真实GA4 ID、更未验证后台接收。已经向用户请求恢复Google后台访问。
+
+该追加记录保存在本地，避免仅为更新报告再次触发生产构建。代码最终版本以release.json为准。
+
+## 最终版本确认
+
+正式域名 https://1in8billion.live/release.json 已返回最终提交264cae233cbb143a09eadaafe4f9a37372dd303a，Git自动发布完成。先前“待最终部署”状态由此覆盖。GSC/GA4、www规范化与正式国家事实页的未完成状态保持不变。该报告追加、本地截图和LIVE_CHECKS.json保留在工作区，没有为了报告再触发部署。
+
+## Google 接入恢复执行 — 2026-10-20
+
+已在Cloudflare保留原Worker记录，仅新增Google提供的根域TXT验证记录（DNS only，TTL Auto）；变更前记录见DNS_BEFORE_GSC.md。GSC域名资源sc-domain:1in8billion.live已验证通过。sitemap.xml已提交，详情页显示“已成功处理站点地图”，发现21个网页。首页目前未索引，已启动请求编入索引，待结果。
+GA4独立媒体资源1in8billion.live已创建，网站数据流设置进行中；在读到真实衡量ID并发布、验证接收之前不宣称GA4完整接通。
+
+GSC进展：站点地图详情已成功处理，发现21页；首页实际检测2026-10-20 14:15显示“网址可编入Google索引”。手动索引提交返回Google错误，页面明确提示“无法连接到reCAPTCHA服务”；未把请求当作成功。已保存audit/gsc-sitemap.jpg和audit/gsc-live-test.jpg。GA4网站流已创建，名称1in8billion.live Web，网址https://1in8billion.live，stream ID 16163903474；仍在获取真实衡量ID，禁止复用其他站点G-GV12MN5V0R。
+
+已取得本站真实GA4衡量ID G-NKD2PNDL3P，property559735136、stream16163903474；已关闭增强型自动采集以避免游戏输入被自动跟踪。site.config.json作为可配置公开ID，GA4_MEASUREMENT_ID构建环境变量可覆盖；仅用户同意后加载Google标签。修复禁用后重新启用时ga-disable标记未复位的问题。发布和接收状态待最终追加。

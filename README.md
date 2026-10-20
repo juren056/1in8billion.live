@@ -20,3 +20,5 @@ Progress uses legacy localStorage keys for compatibility. Quick mode enables aut
 The bundled data is inherited game input with unverified observation years. It is disclosed as model weights; country fact pages remain withheld. See DATA_SOURCES.md. MIT notices remain, no original-site image/code was imported during this launch, and the historical demo is not deployed.
 
 Production verification on 2026-10-20 confirmed release 075fddc on the custom domain. Google backend setup remains blocked by browser connectivity. See IMPLEMENTATION_REPORT.md and LIVE_CHECKS.json.
+
+GA4 production public measurement configuration: site.config.json (G-NKD2PNDL3P), overridden by GA4_MEASUREMENT_ID when set. Tags load only after analytics consent. Property 559735136, stream 16163903474. GSC domain ownership is DNS verified; sitemap processed with 21 discovered pages.
