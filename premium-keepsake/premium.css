@@ -3,3 +3,15 @@
 .poster-examples{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px;align-items:start;margin-top:30px}.poster-examples figure{margin:0}.poster-examples img{width:100%;height:auto}.poster-examples figcaption{margin-top:12px;color:#526c7d}.book-specimen{padding:0;background:transparent;max-width:390px;margin:0 auto}.book-specimen figcaption{padding:16px;background:#fffdf7}.book-specimen img{display:block}@media(max-width:760px){.poster-examples{grid-template-columns:1fr}.poster-examples figure{max-width:420px}}
 
 .preview-cover-scene{display:block;width:100%;height:auto;margin:24px 0;image-rendering:pixelated}.selected-poster-previews{grid-column:1/-1}.selected-poster-previews canvas{display:block;width:100%;height:auto}.selected-poster-previews figure{max-width:100%}
+
+.premium-preview[open]{display:flex;flex-direction:column;overflow:hidden;padding:0}
+.premium-preview>.preview-toolbar{position:relative;top:auto;flex:none;padding:16px 24px;gap:12px;border-bottom:1px solid #aac4cf;flex-wrap:wrap}
+.preview-toolbar h2{font:600 23px/1.3 var(--serif,Georgia,serif);margin:0;flex:1}
+.preview-buttons{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.preview-buttons #premiumDemoDownload{max-width:260px}
+.preview-body{position:relative;min-height:0;overflow-y:auto;overscroll-behavior:contain;padding:0 24px 24px;scrollbar-gutter:stable}
+.preview-page-index{flex:none;display:flex;align-items:center;gap:12px;padding:10px 24px;font-size:14px;color:#35556b;border-bottom:1px solid #c5d9e3}
+.preview-page-index select{min-height:44px;min-width:0;flex:1;max-width:640px;font:inherit;padding:8px;background:#fff;color:#102d45;border:1px solid #aac4cf;border-radius:6px}
+.premium-preview>[role=status]:not(:empty){flex:none;margin:0;padding:12px 24px;background:#e2eef3;line-height:1.5}
+.premium-preview>#premiumRetry:not([hidden]){align-self:flex-start;margin:8px 24px;flex:none}
+@media(max-width:760px){.premium-preview>.preview-toolbar{padding:12px 16px}.preview-toolbar h2{font-size:21px;flex-basis:100%}.preview-buttons{width:100%;display:grid;grid-template-columns:1fr auto}.preview-buttons #premiumDemoDownload{max-width:none;min-width:0}.preview-buttons button{padding:10px;font-size:14px;line-height:1.4}.preview-page-index{padding:8px 16px;gap:8px}.preview-page-index select{max-width:calc(100% - 95px)}.preview-body{padding:0 16px 24px}.premium-preview>[role=status]:not(:empty){padding:8px 16px;font-size:14px}}

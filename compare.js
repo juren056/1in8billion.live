@@ -1,4 +1,5 @@
 import {calculateComparison,comparisonCSV} from './comparison-core.js';
+import {preserveTaskLinks} from './task-navigation.js';
 (async()=>{
  const root=document.querySelector('#comparison');if(!root)return;
  const s=window.SurfaceCopy,lang=document.documentElement.lang;
@@ -20,7 +21,7 @@ import {calculateComparison,comparisonCSV} from './comparison-core.js';
   for(const [side,c] of [['a',A],['b',B]]){document.querySelector('#barName'+side).textContent=name(c);document.querySelector('#barValue'+side).textContent=share(c).toFixed(4)+'%';document.querySelector('#bar'+side).style.width=100*weight(c)/Math.max(weight(A),weight(B))+'%';}
   for(const [id,c] of [['playA',A],['playB',B]]){const link=document.querySelector('#'+id);link.href=document.documentElement.dataset.playPath+'?country='+c.id;link.textContent=s.playIn+' '+name(c);}
   const url=new URL(location.href);url.searchParams.set('a',A.id);url.searchParams.set('b',B.id);url.searchParams.set('mode',mode.value);history.replaceState(null,'',url.pathname+url.search);
-  document.querySelectorAll('[data-locale]').forEach(link=>{const localized=new URL(link.href);localized.search=url.search;link.href=localized.href;});
+  preserveTaskLinks(document,url.href);
  }
  [a,b,mode].forEach(el=>el.addEventListener('change',()=>{update();window.siteEvent?.('compare_used',{mode:mode.value});}));
  document.querySelector('#swapCountries').onclick=()=>{[a.value,b.value]=[b.value,a.value];update();window.siteEvent?.('compare_used',{mode:mode.value,action:'swap'});};

@@ -8,17 +8,17 @@ web
 
 ## Product Purpose
 
-1in8billion.live is a free independent browser life simulator, with country-weight tools, practical guides and four supported public languages. Visitors can start a fictional life, make or automate choices, keep local progress and save/share compatible results.
+1in8billion.live is a free independent browser life simulator, with country-weight tools, practical guides and nine supported public languages. Visitors can start a fictional life, make or automate choices, keep local progress and save/share compatible results.
 
 The current requested outcome is visitor retention: help people begin, follow a life through meaningful moments, replay, share and return. This is the user's clarified meaning of 留客, not a request primarily about empty states.
 
 ## Users
 
-Current product supports English, Japanese, Korean and Traditional Chinese readers on phones and desktop browsers. Specific market segments beyond these existing audiences remain an open research question. Do not invent measured demographic segments or demand.
+Current product supports English, Japanese, Korean, Traditional and Simplified Chinese, Spanish, Brazilian Portuguese, French and German readers on phones and desktop browsers. Specific market segments beyond these existing audiences remain an open research question. Do not invent measured demographic segments or demand.
 
 ## Operating Context
 
-Vanilla HTML/CSS/JavaScript game, Node static build, existing Git-to-Cloudflare deployment. Production baseline v1.4.0, revision 00b216917f7dbd116fe166e4582e6bcdb8fa34a4, with 62 intended indexable routes. Discovery/indexing and retention are measured separately.
+Vanilla HTML/CSS/JavaScript game, Node static build, existing Git-to-Cloudflare deployment. Current release v1.12.0, with 226 intended indexable routes; previous production revision 55f0a962d8ac2f8673c7082a321195b627ecb826. Discovery/indexing and retention are measured separately.
 
 ## Capabilities and Constraints
 

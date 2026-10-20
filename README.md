@@ -1,3 +1,11 @@
+# v1.12.0 user journey and discoverability release
+
+Nine public languages and 226 canonical routes. This release fixes birth-card actions on small screens, preserves public comparison inputs across language changes, clarifies game guidance and model population units, and links every gameplay explanation from global navigation. Reading sections stay open by default. The keepsake preview has persistent download/close controls and page navigation, and uses lightweight poster previews without loading the full export font. PDF and full-resolution poster exports retain their original fonts and dimensions. Live payments remain closed.
+
+Acceptance: `npm run verify`, `node tests/task-acceptance-browser.cjs`, `node tests/task-recovery-browser.cjs`, `PROOF_ONLY=1 node tests/release-browser.cjs`, and the existing playback and 27-PDF acceptance checks. Browser checks block Google tags so synthetic sessions do not become traffic. `first_event_visible` reports the first actual recorded event visible in the current life, once per life and document, with no names or story text. Continue using release, locale, device, entry page and run type to compare cohorts; no traffic uplift is claimed.
+
+The previous production commit is 55f0a962d8ac2f8673c7082a321195b627ecb826. Model inputs, 1990/2024/2080 eras, Replay v1, storage keys and GA4 G-NKD2PNDL3P are preserved. Historical reports below describe their own releases.
+
 # v1.4.0 growth release
 
 62 indexable routes: 13 quality additions and 8 primary page upgrades from the 49-route v1.3 baseline. See SEO_GROWTH_REPORT.md for staged releases, GA4 evidence and limits. Run the default build for all P0-A/P0-B pages; GROWTH_STAGE=A reproduces the 52-route first-batch selection. P1 expansion still requires GSC evidence.

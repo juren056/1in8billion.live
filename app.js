@@ -71,11 +71,11 @@ function setLang(lang) {
 
 // ==== 國家 ====
 function countryById(id) { return COUNTRIES.find(c => c.id === id) || null; }
-function localize(c) {
+function localize(c, displayLang=document.documentElement.dataset.siteLocale||LANG) {
   if (!c) return null;
   return {
     ...c,
-    name: c.iso2 ? new Intl.DisplayNames([LANG],{type:'region'}).of(c.iso2) : (LANG==='en'?c.name_en:c.name_zh),
+    name: c.iso2 ? new Intl.DisplayNames([displayLang],{type:'region'}).of(c.iso2) : (LANG==='en'?c.name_en:c.name_zh),
     region_name: ({ja:{hi:'高所得',sa:'南アジア',eap:'東アジア・太平洋',ssa:'サハラ以南アフリカ',lac:'中南米',mena:'中東・北アフリカ',eca:'欧州・中央アジア'},ko:{hi:'고소득',sa:'남아시아',eap:'동아시아·태평양',ssa:'사하라 이남 아프리카',lac:'중남미',mena:'중동·북아프리카',eca:'유럽·중앙아시아'}})[LANG]?.[c.region] || (LANG==='en'?c.region_en:c.region_zh),
   };
 }
@@ -881,7 +881,7 @@ function startLife(countryCode, preparedLife) {
   if (!STATE.life) return;
   launchEvent('life_started',{play_mode:document.querySelector('#lifeDuration').value==='quick'?'quick':'manual'});
   STATE.life.log.push({ age: 0, kind: 'birth', icon: '👶', text: t('event.birth', '') });
-  logLife(t('log.born_in', localize(STATE.life.countryData).name, ''));
+  logLife(t('log.born_in', localize(STATE.life.countryData,LANG).name, ''));
   STATE.paused = false;
   STATE.speed = 1;
   // v5.25：依 duration 選擇調整 tickMs
@@ -2156,7 +2156,7 @@ function renderCountryStats() {
   // 16 個統計指標（依國家資料）
   const rows = [
     [isEn?'Annual births':'每年出生人數', Math.round(c.births || 240000).toLocaleString() + (isEn?' people':'人')],
-    [isEn?'Population':'人口', ((c.pop || 5000000)/1000000).toFixed(1) + (isEn?'M people':'百萬人')],
+    ['Model population weight', Number.isFinite(c.pop)?c.pop.toLocaleString(document.documentElement.dataset.siteLocale||LANG)+' · inherited units':'—'],
     [isEn?'Life expectancy F/M':'平均壽命 女/男', ((c.le || 70) + (isEn?'/':'/') + Math.max(0,(c.le||70) - 4)) + (isEn?' yrs':'歲')],
     [isEn?'Under-5 mortality':'5歲以下死亡率', ((c.u5 || 25) / 1000 * 100).toFixed(1) + '%'],
     [isEn?'GDP per capita (PPP)':'人均GDP（PPP）', '$' + Math.round(c.ppp || 10000).toLocaleString()],
@@ -4109,7 +4109,7 @@ init().catch(()=>{const el=document.querySelector('#gameLoadState');if(el){el.te
    contact / PWA install）+ 教學版模式 + 版本歷史
    ===================================================================== */
 
-const APP_VERSION = '1.11.1';
+const APP_VERSION = '1.12.0';
 const APP_BUILD = '2026-10-21';
 
 // 版本歷史（每個版本：v / date / items；每個 item 含 emoji badge + 文字）

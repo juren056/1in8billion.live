@@ -1,8 +1,8 @@
 import {playbackCopy} from './playback-copy.js';
 import {uxCopy} from './ux-copy.js';
 const ages=[18,25,35,50];
-export function installPlayback(bridge){
- const c=playbackCopy[bridge.lang]||playbackCopy.en,u=uxCopy[bridge.lang]||uxCopy.en,$=s=>document.querySelector(s);let modal=null,seeking=false,lastDecision='',lastControl='',reading=false,saveFailed=false;
+export async function installPlayback(bridge){
+ const displayLang=document.documentElement.dataset.siteLocale||bridge.lang;const {translateObject}=await import('./locale-runtime.js');await window.localeReady;const c=playbackCopy[displayLang]||translateObject(playbackCopy.en),u=uxCopy[displayLang]||translateObject(uxCopy.en),$=s=>document.querySelector(s);let modal=null,seeking=false,lastDecision='',lastControl='',reading=false,saveFailed=false;
  const emit=(name,extra={})=>bridge.event(name,{play_mode:STATE.autoDecide?'automatic':'manual',mode:STATE.stepMode?'step':STATE.tickMs===5000?'read':'watch',...extra});
  const css=document.createElement('link');css.rel='stylesheet';css.href='/playback.css';document.head.append(css);
  const bar=$('#lifeCommandBar'),status=$('#playState'),pause=$('#btnPause'),auto=$('#btnAuto'),seek=$('#btnSkip'),speed=$('.speed-menu');
