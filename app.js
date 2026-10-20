@@ -1,5 +1,5 @@
 /* born-somewhere v2
-   人生模擬遊戲：選一個出生地（172 國真實統計），從 0 歲活到當地平均壽命。
+   人生模擬遊戲：選一個出生地（172 國虛構模擬），從 0 歲活到當地平均壽命。
    參考原作 1in8b.life 的生命表、死因分布、決策點等核心機制。
    引擎是獨立重寫，不含原作程式碼。
 */
@@ -42,17 +42,17 @@ function t(key, ...vals) {
 }
 async function loadData() {
   if (!CACHE.countries) {
-    const r1 = await fetch('data/countries.json');
+    const r1 = await fetch('/data/countries.json');
     CACHE.countries = await r1.json();
     COUNTRIES = CACHE.countries;
   }
   if (!CACHE.i18n) {
-    const r2 = await fetch('data/i18n.json');
+    const r2 = await fetch('/data/i18n.json');
     CACHE.i18n = await r2.json();
     I18N = CACHE.i18n;
   }
   // 語言偏好
-  LANG = localStorage.getItem(STORAGE_KEY + ':lang') || detectLang();
+  LANG = document.documentElement.dataset.gameLang || 'en';
 }
 function detectLang() {
   const nav = (navigator.language || 'en').toLowerCase();
@@ -70,6 +70,9 @@ function setLang(lang) {
   LANG = lang;
   localStorage.setItem(STORAGE_KEY + ':lang', lang);
   document.documentElement.lang = lang;
+  const routes = {en:'/',ja:'/ja/',ko:'/ko/','zh-Hant':'/zh-tw/'};
+  saveCurrentLife();
+  if(routes[lang] && location.pathname !== routes[lang]) { location.assign(routes[lang]); return; }
   renderAll();
 }
 
@@ -881,9 +884,10 @@ function submitFeedback() {
   if ($('#feedbackEmail')) $('#feedbackEmail').value = '';
 }
 
-function startLife(countryCode) {
+function startLife(countryCode, preparedLife) {
   stopTicker();
-  STATE.life = newLife(countryCode);
+  STATE.life = preparedLife || newLife(countryCode);
+  launchEvent('life_started');
   if (!STATE.life) return;
   STATE.life.log.push({ age: 0, kind: 'birth', icon: '👶', text: t('event.birth', '') });
   logLife(t('log.born_in', localize(STATE.life.countryData).name, ''));
@@ -891,7 +895,8 @@ function startLife(countryCode) {
   STATE.speed = 1;
   // v5.25：依 duration 選擇調整 tickMs
   const dur = $('#lifeDuration')?.value || '1hr';
-  if (dur === '30min') STATE.tickMs = 600;       // 約 30 分鐘跑完一生
+  if (dur === 'quick') { STATE.tickMs = 180; STATE.autoDecide = true; STATE.thoughtsEnabled = false; }
+  else if (dur === '30min') STATE.tickMs = 600;       // 約 30 分鐘跑完一生
   else if (dur === '1hr') STATE.tickMs = 1200;  // 預設約 1 小時
   else if (dur === '90min') STATE.tickMs = 1800; // 約 1.5 小時
   else STATE.tickMs = 1500;
@@ -929,7 +934,8 @@ function tick() {
     let tries = 0;
     while (tries++ < 500) {
       if (STATE.life.died || STATE.paused || STATE.pendingDecision) break;
-      STATE.life.age += 1;
+      saveCurrentLife();
+  STATE.life.age += 1;
       STATE.life.yearOffset += 1;
       if (Math.random() < pDie(STATE.life.age, c, sex)) { dieNow(); break; }
       if ([5,15,30,50,70].includes(STATE.life.age)) {
@@ -941,6 +947,7 @@ function tick() {
     renderAll();
     return;
   }
+  saveCurrentLife();
   STATE.life.age += 1;
   STATE.life.yearOffset += 1;
   // 死亡判定
@@ -972,7 +979,7 @@ function tick() {
   // v5.20：每 5 年套用投資收益
   if (STATE.life.age % 5 === 0 && STATE.life.age > 0) applyInvestmentReturn();
   // v5.20：每 5 年彈出財務管理 modal（25/30/35/40/45/50/55/60）
-  if ([25, 30, 35, 40, 45, 50, 55, 60].includes(STATE.life.age) && !STATE.life.financeModalShown?.includes(STATE.life.age)) {
+  if (!STATE.autoDecide && !STATE.life.died && [25, 30, 35, 40, 45, 50, 55, 60].includes(STATE.life.age) && !STATE.life.financeModalShown?.includes(STATE.life.age)) {
     STATE.life.financeModalShown = STATE.life.financeModalShown || [];
     STATE.life.financeModalShown.push(STATE.life.age);
     setTimeout(() => showFinanceModal(), 100);
@@ -986,6 +993,8 @@ function dieNow(forcedCause) {
   STATE.life.deathAge = STATE.life.age;
   STATE.life.log.push({ age: STATE.life.age, kind: 'death', icon: '🕯️', text: t('log.died_of', cause) });
   savePastLife(STATE.life);
+  saveCurrentLife();
+  launchEvent('life_completed');
   stopTicker();
   STATE.view = 'end';
   renderAll();
@@ -1539,7 +1548,7 @@ function renderView(v) {
 // ==== 渲染 ====
 function renderAll() {
   document.documentElement.lang = LANG;
-  document.title = t('title');
+  // Static SEO title is preserved.
   // 通用翻譯
   $$('[data-t]').forEach(el => { el.textContent = t(el.dataset.t); });
   $$('[data-t-html]').forEach(el => { el.innerHTML = t(el.dataset.tHtml); });
@@ -1684,67 +1693,19 @@ function renderCountryCompare() {
 
 /* v5.19：完整出生登記卡 — 1in8b.life 風格 */
 function buildBirthCertCard(c, life) {
-  if (!c || !life) return '';
-  const isEn = LANG === 'en';
-  const loc = localize(c);
-  const fam = life.family || {};
-  const father = fam.parents?.find(p => p.sex === 'M');
-  const mother = fam.parents?.find(p => p.sex === 'F');
-  const fd = life.fatherDetail || {};
-  const md = life.motherDetail || {};
-  // 父母住房（依國家統計推測：urb%、agr% 推）
-  const housing = (() => {
-    const isRural = (life.stats.birthPlaceType === 'rural');
-    if (isRural) {
-      const typ = (c.agr || 30) > 50 ? (isEn ? 'Farm' : '農舍')
-                : (c.agr || 30) > 20 ? (isEn ? 'Village house' : '村莊平房')
-                : (isEn ? 'Suburban house' : '郊區住宅');
-      return typ;
-    }
-    // 城市
-    if ((c.ppp || 0) > 30000) return isEn ? 'Modern apartment' : '現代公寓';
-    if ((c.ppp || 0) > 10000) return isEn ? 'Apartment block' : '公寓大樓';
-    return isEn ? 'Slum / informal settlement' : '貧民窟／非正式住宅';
-  })();
-  const sexLabel = life.sex === 'M' ? t('sex.male') : t('sex.female');
-  const yr = life.year + life.yearOffset;
-  const u5pct = ((c.u5 || 0) / 1000 * 100);
-  return `
-    <div class="bc-stamp">${isEn ? 'OFFICIAL BIRTH REGISTRATION' : '出 生 登 記 證 明'}</div>
-    <div class="bc-header">
-      <div class="bc-flag">${c.flag}</div>
-      <div class="bc-name">${escapeHtml(loc.name)}</div>
-      <div class="bc-iso">${c.id}</div>
-    </div>
-    <div class="bc-reg">${isEn ? 'Reg. No.' : '登記編號'}：<b>${escapeHtml(life.regNumber || (c.id + '-' + yr + '-0000000'))}</b></div>
-    <div class="bc-reg">${isEn ? 'Date of Birth' : '出生日期'}：<b>${yr}-01-01</b></div>
-    <table class="bc-table">
-      <tbody>
-        <tr><td class="bc-k">${isEn ? 'Name' : '姓名'}</td><td class="bc-v">${escapeHtml(life.name.full || life.name.full_en || '—')}</td></tr>
-        <tr><td class="bc-k">${isEn ? 'Sex' : '性別'}</td><td class="bc-v">${sexLabel}</td></tr>
-        <tr><td class="bc-k">${isEn ? 'Country' : '出生國家'}</td><td class="bc-v">${c.flag} ${escapeHtml(loc.name)}</td></tr>
-        <tr><td class="bc-k">${isEn ? 'Place' : '出生地'}</td><td class="bc-v">${life.stats.birthPlaceType === 'rural' ? (isEn ? '🌾 Rural' : '🌾 鄉村') : (isEn ? '🏙️ Urban' : '🏙️ 城市')} · ${escapeHtml(loc.region_name || '')}</td></tr>
-        <tr><td class="bc-k">${isEn ? 'Household income' : '家境'}</td><td class="bc-v">${isEn ? 'Quartile' : '分位'} Q${life.stats.incomeQuartile || 2} / 4</td></tr>
-        <tr><td class="bc-k">${isEn ? "Father's age / job" : '父親年齡／工作'}</td><td class="bc-v">${father ? escapeHtml(father.name) : '—'}${fd.age ? ` · ${fd.age} ${isEn ? 'yrs' : '歲'}` : ''}${fd.job ? ` · ${escapeHtml(fd.job)}` : ''}</td></tr>
-        <tr><td class="bc-k">${isEn ? "Mother's age / job" : '母親年齡／工作'}</td><td class="bc-v">${mother ? escapeHtml(mother.name) : '—'}${md.age ? ` · ${md.age} ${isEn ? 'yrs' : '歲'}` : ''}${md.job ? ` · ${escapeHtml(md.job)}` : ''}</td></tr>
-        <tr><td class="bc-k">${isEn ? "Parents' housing" : '父母住房'}</td><td class="bc-v">${escapeHtml(housing)}</td></tr>
-        <tr><td class="bc-k">${isEn ? 'Religion' : '宗教'}</td><td class="bc-v">${escapeHtml(life.stats.religion || (isEn ? '—' : '未填'))}</td></tr>
-        <tr class="bc-stat"><td class="bc-k">${isEn ? 'Life expectancy' : '平均壽命'}</td><td class="bc-v">${c.le.toFixed(1)} ${isEn ? 'yrs' : '歲'}</td></tr>
-        <tr class="bc-stat"><td class="bc-k">${isEn ? 'Under-5 mortality' : '5 歲前死亡機率'}</td><td class="bc-v">${u5pct < 0.1 ? u5pct.toFixed(2) : u5pct.toFixed(1)}%</td></tr>
-        <tr class="bc-stat"><td class="bc-k">${isEn ? 'GDP per capita (PPP)' : '人均 GDP（PPP）'}</td><td class="bc-v">$${(c.ppp || 0).toLocaleString()}</td></tr>
-      </tbody>
-    </table>
-  `;
+ const loc=localize(c);const isEn=LANG==='en';
+ return `<div class="birth-record"><p>1in8billion.live · ${isEn?'Fictional character':'虛構角色'}</p><h2>${escapeHtml(life.name.full || life.name.full_en || '')}</h2><p>${c.flag} ${escapeHtml(loc.name)} · ${life.year}</p><p>${isEn?'This is your starting point. Your choices and chance will shape what follows.':'這是你的人生起點。選擇與機遇，將改變接下來的故事。'}</p><p>${isEn?'Game estimates are not personal predictions.':'遊戲估算不能預測個人命運。'}</p><a href="/sources/">Sources & model limitations</a></div>`;
 }
 
-/* v5.19：顯示出生登記卡 modal */
 function showBirthCertModal(c) {
   const modal = $('#birthCertModal');
   if (!modal) return;
   // 先建立一個臨時的 life 物件（不啟動 ticker、不切換視圖）
   const life = newLife(c.id);
   if (!life) return;
+  launchEvent('birth_generated');
   STATE.birthCertCountry = c;
+  STATE.birthCertLife = life;
   const body = $('#birthCertBody');
   if (body) body.innerHTML = buildBirthCertCard(c, life);
   modal.removeAttribute('hidden');
@@ -3681,8 +3642,9 @@ function wire() {
   const birthCertConfirm = $('#birthCertConfirm');
   if (birthCertConfirm) birthCertConfirm.addEventListener('click', () => {
     const c = STATE.birthCertCountry;
+    const prepared = STATE.birthCertLife;
     hideBirthCertModal();
-    if (c) startLife(c.id);
+    if (c) startLife(c.id, prepared);
   });
   // v5.19：出生卡 modal 的取消按鈕
   const birthCertCancel = $('#birthCertCancel');
@@ -4161,6 +4123,7 @@ async function init() {
   checkEduMode();      // v5.19: 教學版旗標 (?edu=1)
   wire();
   renderAll();
+  setupLaunch();
   injectHelpFab();
   injectFooter();      // v5.19: footer + 工具列
   registerServiceWorker(); // v5.19: PWA
@@ -4289,10 +4252,10 @@ function injectFooter() {
   if (!f) return;
   f.hidden = false;
   // 綁定事件
-  $('#btnFeedback')?.addEventListener('click', renderFeedbackModal);
+
   $('#btnChangelog')?.addEventListener('click', renderChangelogModal);
-  $('#btnPrivacy')?.addEventListener('click', e => { e.preventDefault(); renderPrivacyModal(); });
-  $('#btnTerms')?.addEventListener('click', e => { e.preventDefault(); renderTermsModal(); });
+  $('#btnPrivacy')?.addEventListener('click', e => { e.preventDefault(); location.assign('/privacy/'); });
+  $('#btnTerms')?.addEventListener('click', e => { e.preventDefault(); location.assign('/terms/'); });
   // contact 是 mailto，預設瀏覽器處理
   // install 按鈕在 setupPWAInstall() 處理
   // 套翻譯
@@ -4441,7 +4404,7 @@ function registerServiceWorker() {
   if (!('serviceWorker' in navigator)) return;
   // 開發/檔案模式跳過（sw.js 需 HTTP 協議）
   if (location.protocol === 'file:') return;
-  navigator.serviceWorker.register('sw.js').then(reg => {
+  navigator.serviceWorker.register('/sw.js').then(reg => {
     // 監聽更新
     reg.addEventListener('updatefound', () => {
       const ni = reg.installing;
@@ -4984,207 +4947,16 @@ function exportGEDCOM() {
 }
 
 /* ==== 生命證書下載為 PNG ==== */
-function downloadLifeCertPNG() {
-  if (!STATE.life) { toast(LANG==='en' ? 'No life' : '沒有當前人生'); return; }
-  const life = STATE.life;
-  const c = life.countryData;
-  const loc = c ? localize(c) : { name: life.country };
-  const W = 700, H = 480;
-  const svgParts = [];
-  svgParts.push(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}">`);
-  // 背景紙質
-  svgParts.push(`<rect width="${W}" height="${H}" fill="#faf7f0"/>`);
-  // 邊框
-  svgParts.push(`<rect x="6" y="6" width="${W-12}" height="${H-12}" fill="none" stroke="#8C1D3C" stroke-width="2" rx="8"/>`);
-  svgParts.push(`<rect x="14" y="14" width="${W-28}" height="${H-28}" fill="none" stroke="#0F6E68" stroke-width="1" rx="6"/>`);
-  // guilloche 簡化紋路
-  for (let r = 30; r < W; r += 28) {
-    svgParts.push(`<ellipse cx="${W/2}" cy="${H/2}" rx="${r}" ry="${r*0.6}" fill="none" stroke="#8C1D3C" stroke-width="0.3" opacity="0.18"/>`);
-  }
-  // 標題列
-  svgParts.push(`<rect x="20" y="40" width="${W-40}" height="60" fill="#8C1D3C"/>`);
-  svgParts.push(`<text x="40" y="80" font-size="24" fill="white" font-weight="bold">${c?.flag || '🏳️'} ${escapeHtml(loc.name)}</text>`);
-  svgParts.push(`<text x="${W-40}" y="80" font-size="20" fill="white" text-anchor="end">${life.year + life.yearOffset}</text>`);
-  // 姓名
-  svgParts.push(`<text x="${W/2}" y="160" font-size="36" fill="#8C1D3C" text-anchor="middle" font-weight="bold">${escapeHtml(life.name.full || life.name.full_en || '—')}</text>`);
-  if (life.name.full_en && life.name.full_en !== life.name.full) {
-    svgParts.push(`<text x="${W/2}" y="186" font-size="14" fill="#7a6a5a" text-anchor="middle" font-style="italic">${escapeHtml(life.name.full_en)}</text>`);
-  }
-  // 大字歲數
-  svgParts.push(`<text x="${W/2}" y="250" font-size="48" fill="#1a1a1a" text-anchor="middle" font-weight="bold">${life.deathAge || life.age} ${LANG==='en'?'yrs':'歲'}</text>`);
-  // 副標題
-  svgParts.push(`<text x="${W/2}" y="285" font-size="14" fill="#5a4a3a" text-anchor="middle">${LANG==='en'?'Life Expectancy':'預期壽命'} ${c?.le || '—'} ${LANG==='en'?'yrs':'歲'}</text>`);
-  // 詳情
-  const rowY = 320;
-  const rows = [
-    [LANG==='en'?'Sex':'性別', life.sex === 'M' ? t('sex.male') : t('sex.female')],
-    [LANG==='en'?'Born':'出生', life.year || '?'],
-    [LANG==='en'?'Died':'逝世', life.died ? `${life.year + life.yearOffset}` : '—'],
-    [LANG==='en'?'Cause':'原因', escapeHtml(life.cause || (LANG==='en'?'(still alive)':'仍在世'))]
-  ];
-  rows.forEach((r, i) => {
-    const yy = rowY + i * 28;
-    svgParts.push(`<text x="40" y="${yy}" font-size="13" fill="#5a4a3a">${r[0]}</text>`);
-    svgParts.push(`<text x="${W-40}" y="${yy}" font-size="14" fill="#1a1a1a" text-anchor="end">${r[1]}</text>`);
-  });
-  // 章戳
-  svgParts.push(`<circle cx="${W-110}" cy="430" r="36" fill="none" stroke="#8C1D3C" stroke-width="1.5" opacity="0.7"/>`);
-  svgParts.push(`<text x="${W-110}" y="425" font-size="10" fill="#8C1D3C" text-anchor="middle">${LANG==='en'?'BORN-SOMEWHERE':'選出生地'}</text>`);
-  svgParts.push(`<text x="${W-110}" y="440" font-size="8" fill="#8C1D3C" text-anchor="middle">EST. 2024</text>`);
-  // 底部
-  svgParts.push(`<text x="40" y="450" font-size="9" fill="#9a8a7a">${LANG==='en'?'Life certificate':'生命證書'} · born-somewhere v5.2 · ${LANG==='en'?'Real statistics':'真實統計'}</text>`);
-  svgParts.push(`</svg>`);
-  const svgStr = svgParts.join('');
-  // 轉成 PNG via canvas
-  const blob = new Blob([svgStr], { type: 'image/svg+xml;charset=utf-8' });
-  const url = URL.createObjectURL(blob);
-  const img = new Image();
-  img.onload = () => {
-    const scale = 2; // 高解析度
-    const canvas = document.createElement('canvas');
-    canvas.width = W * scale;
-    canvas.height = H * scale;
-    const ctx = canvas.getContext('2d');
-    ctx.scale(scale, scale);
-    ctx.drawImage(img, 0, 0);
-    canvas.toBlob(pngBlob => {
-      const pngUrl = URL.createObjectURL(pngBlob);
-      const a = document.createElement('a');
-      const safeName = (life.name.full || life.name.full_en || 'life').replace(/[\/\\<>:"|?*\u0000-\u001f]/g, '_');
-      a.href = pngUrl; a.download = `${safeName}-${LANG==='en'?'certificate':'證書'}-${Date.now()}.png`;
-      document.body.appendChild(a); a.click(); a.remove();
-      setTimeout(() => { URL.revokeObjectURL(url); URL.revokeObjectURL(pngUrl); }, 1000);
-      toast(LANG==='en'?'Certificate downloaded':'證書已下載');
-    }, 'image/png');
-  };
-  img.onerror = () => {
-    URL.revokeObjectURL(url);
-    toast(LANG==='en'?'Image conversion failed':'圖片轉換失敗');
-  };
-  img.src = url;
-}
+function downloadLifeCertPNG() { downloadOriginalLifeCard(true); }
 
-/* v5.12：分享出生卡（1in8b.life 風格登記證） */
-function downloadBirthCardPNG() {
-  if (!STATE.life) return;
-  const life = STATE.life;
-  const c = life.countryData;
-  if (!c) return;
-  const loc = localize(c);
-  const isEn = LANG === 'en';
-  const W = 800, H = 520;
-  const parts = [];
-  parts.push(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}">`);
-  // 背景
-  parts.push(`<rect width="${W}" height="${H}" fill="#faf7f0"/>`);
-  // guilloche
-  for (let r = 40; r < W; r += 24) {
-    parts.push(`<ellipse cx="${W/2}" cy="${H/2}" rx="${r}" ry="${r*0.5}" fill="none" stroke="#8C1D3C" stroke-width="0.4" opacity="0.15"/>`);
-  }
-  // 邊框
-  parts.push(`<rect x="6" y="6" width="${W-12}" height="${H-12}" fill="none" stroke="#8C1D3C" stroke-width="2.5" rx="10"/>`);
-  parts.push(`<rect x="14" y="14" width="${W-28}" height="${H-28}" fill="none" stroke="#0F6E68" stroke-width="1" rx="8"/>`);
-  // 標題
-  parts.push(`<rect x="20" y="30" width="${W-40}" height="60" fill="#8C1D3C"/>`);
-  parts.push(`<text x="36" y="68" font-size="22" fill="white" font-weight="bold">${c.flag} ${escapeHtml(loc.name)}</text>`);
-  parts.push(`<text x="${W-36}" y="68" font-size="18" fill="white" text-anchor="end">${life.year + life.yearOffset}</text>`);
-  // 註冊編號
-  parts.push(`<text x="${W/2}" y="120" font-size="11" fill="#8C1D3C" text-anchor="middle" font-weight="bold" letter-spacing="0.1em">${isEn?'BIRTH REGISTRATION':'出生登記'} · ${escapeHtml(life.regNumber || '')}</text>`);
-  // 名字
-  parts.push(`<text x="${W/2}" y="170" font-size="40" fill="#8C1D3C" text-anchor="middle" font-weight="bold">${escapeHtml(life.name?.full || '?')}</text>`);
-  if (life.name?.full_en && life.name.full_en !== life.name.full) {
-    parts.push(`<text x="${W/2}" y="195" font-size="14" fill="#7a6a5a" text-anchor="middle" font-style="italic">${escapeHtml(life.name.full_en)}</text>`);
-  }
-  // 大字年齡
-  parts.push(`<text x="${W/2}" y="270" font-size="56" fill="#1a1a1a" text-anchor="middle" font-weight="bold">${life.age} ${isEn?'yrs':'歲'}</text>`);
-  // 副標題
-  parts.push(`<text x="${W/2}" y="305" font-size="14" fill="#5a4a3a" text-anchor="middle">${isEn?'Life expectancy':'預期壽命'} ${c.le} ${isEn?'yrs':'歲'} · ${isEn?'Born in':'出生於'} ${escapeHtml(loc.name)}</text>`);
-  // 家庭背景
-  const fd = life.fatherDetail || {};
-  const md = life.motherDetail || {};
-  parts.push(`<line x1="60" y1="335" x2="${W-60}" y2="335" stroke="#d8cdb8" stroke-width="1"/>`);
-  parts.push(`<text x="${W/2}" y="362" font-size="13" fill="#8C1D3C" text-anchor="middle" font-weight="bold">${isEn?'👪 Family Background':'👪 出身家庭'}</text>`);
-  const fRows = [
-    [isEn?'Father':'父親', `${(life.family?.parents||[]).find(p=>p.sex==='M')?.name || '—'} · ${fd.age ? fd.age + (isEn?' yo':'歲') : ''}${fd.job ? ' · ' + fd.job : ''}`],
-    [isEn?'Mother':'母親', `${(life.family?.parents||[]).find(p=>p.sex==='F')?.name || '—'} · ${md.age ? md.age + (isEn?' yo':'歲') : ''}${md.job ? ' · ' + md.job : ''}`],
-    [isEn?'Religion · Place':'宗教 · 出生地', `${life.stats.religion || '—'} · ${life.stats.birthPlaceType === 'rural' ? (isEn?'🌾 Rural':'🌾 鄉村') : (isEn?'🏙️ Urban':'🏙️ 城市')}`]
-  ];
-  fRows.forEach((r, i) => {
-    const yy = 392 + i * 24;
-    parts.push(`<text x="60" y="${yy}" font-size="12" fill="#7a6a5a">${r[0]}</text>`);
-    parts.push(`<text x="160" y="${yy}" font-size="12" fill="#1a1a1a">${r[1]}</text>`);
-  });
-  // 底部 — 同伴
-  if (life.companions && life.companions.length) {
-    parts.push(`<text x="${W/2}" y="475" font-size="11" fill="#5a4a3a" text-anchor="middle">${isEn?'Born in the same second: ':'同一秒出生：'}${' '}${life.companions.slice(0,4).map(c=>c.flag + ' ' + (isEn?(c.nameEn||c.name):c.name)).join(' · ')}</text>`);
-  }
-  // 章戳
-  parts.push(`<circle cx="${W-110}" cy="${H-25}" r="20" fill="none" stroke="#8C1D3C" stroke-width="1.5" opacity="0.7"/>`);
-  parts.push(`<text x="${W-110}" y="${H-22}" font-size="8" fill="#8C1D3C" text-anchor="middle" font-weight="bold">BORN-SOMEWHERE</text>`);
-  parts.push(`<text x="${W-110}" y="${H-12}" font-size="7" fill="#8C1D3C" text-anchor="middle">EST. 2024</text>`);
-  // 底部 watermark
-  parts.push(`<text x="40" y="${H-12}" font-size="8" fill="#9a8a7a">${isEn?'Birth certificate · born-somewhere v5.12':'出生登記 · born-somewhere v5.12'} · ${isEn?'Real statistics':'真實統計'}</text>`);
-  parts.push(`</svg>`);
-  const svgStr = parts.join('');
-  const blob = new Blob([svgStr], { type: 'image/svg+xml;charset=utf-8' });
-  const url = URL.createObjectURL(blob);
-  const img = new Image();
-  img.onload = () => {
-    const scale = 2;
-    const canvas = document.createElement('canvas');
-    canvas.width = W * scale;
-    canvas.height = H * scale;
-    const ctx = canvas.getContext('2d');
-    ctx.scale(scale, scale);
-    ctx.drawImage(img, 0, 0);
-    canvas.toBlob(pngBlob => {
-      const pngUrl = URL.createObjectURL(pngBlob);
-      const a = document.createElement('a');
-      const safeName = (life.name?.full || life.name?.full_en || 'life').replace(/[\/\\<>:"|?*\u0000-\u001f]/g, '_');
-      a.href = pngUrl; a.download = `${safeName}-${isEn?'birth-card':'出生卡'}-${Date.now()}.png`;
-      document.body.appendChild(a); a.click(); a.remove();
-      setTimeout(() => { URL.revokeObjectURL(url); URL.revokeObjectURL(pngUrl); }, 1000);
-      toast(isEn ? 'Birth card downloaded' : '出生卡已下載');
-    }, 'image/png');
-  };
-  img.onerror = () => {
-    URL.revokeObjectURL(url);
-    toast(isEn ? 'Image conversion failed' : '圖片轉換失敗');
-  };
-  img.src = url;
-}
+function downloadBirthCardPNG() { downloadOriginalLifeCard(false); }
 
-/* v5.20：複製出生卡 base64 data URL 到剪貼簿（並顯示 toast） */
-function copyBirthCardShareURL() {
-  if (!STATE.life) return;
-  const life = STATE.life;
-  const c = life.countryData;
-  if (!c) return;
-  // 構建一個精簡版 life 物件，序列化後 base64 成 URL hash
-  try {
-    const minimal = {
-      name: life.name?.full || life.name?.full_en || '',
-      country: life.country,
-      year: life.year,
-      yearOffset: life.yearOffset,
-      age: life.age,
-      sex: life.sex,
-      regNumber: life.regNumber,
-      cause: life.cause
-    };
-    const json = JSON.stringify(minimal);
-    const b64 = btoa(unescape(encodeURIComponent(json)));
-    const url = `${location.origin}${location.pathname}#life=${b64}`;
-    const ok = navigator.clipboard?.writeText(url);
-    if (ok && typeof ok.then === 'function') {
-      ok.then(() => toast(t('share.linkCopied')))
-        .catch(() => toast(t('share.linkCopied')));
-    } else {
-      toast(t('share.linkCopied'));
-    }
-  } catch (e) {
-    // btoa 失敗時靜默
-  }
+async function copyBirthCardShareURL() {
+  const url = location.origin + location.pathname;
+  try { if(navigator.share) await navigator.share({title:'1in8billion.live',text:'Explore a fictional life. Free independent simulator.',url});
+  else { await navigator.clipboard.writeText(url); toast('Website link copied'); }
+  launchEvent('share_click');
+  } catch(e) { if(e.name!=='AbortError') toast('Copy this address: '+url); }
 }
 
 function toast(msg, ms=2200) {
@@ -5198,4 +4970,32 @@ function toast(msg, ms=2200) {
   el.textContent = msg;
   el.hidden = false;
   setTimeout(() => { el.hidden = true; }, ms);
+}
+
+function launchEvent(name){ if(typeof window.gtag==='function') window.gtag('event',name,{language:LANG}); }
+function saveCurrentLife(){try{if(STATE.life)localStorage.setItem(STORAGE_KEY+':current',JSON.stringify({version:1,life:STATE.life,era:STATE.era,birthMode:STATE.birthMode}));}catch{}}
+function setupLaunch(){
+  const labels={en:['Quick play','Continue a life'],ja:['クイックプレイ','人生を続ける'],ko:['빠른 플레이','이어서 플레이'],'zh-Hant':['快速體驗','繼續人生']}; const l=labels[LANG]||labels.en;
+  const quick=document.createElement('button');quick.id='quickPlay';quick.className='ghost';quick.textContent=l[0];quick.onclick=()=>{document.querySelector('#lifeDuration').value='quick';startLifeWithCert();launchEvent('birth_start_click');};document.querySelector('.cta-row').append(quick);
+  const resume=document.createElement('button');resume.id='resumeLife';resume.className='ghost';resume.textContent=l[1];
+  try {const saved=JSON.parse(localStorage.getItem(STORAGE_KEY+':current')||'null');if(saved?.version===1 && saved.life && !saved.life.died && countryById(saved.life.country)){resume.onclick=()=>{STATE.life=saved.life;STATE.life.countryData=countryById(saved.life.country);STATE.era=saved.era;STATE.birthMode=saved.birthMode;STATE.paused=false;setView('life');startTicker();};document.querySelector('.cta-row').append(resume);}}catch{}
+  window.addEventListener('pagehide',saveCurrentLife);
+  document.querySelector('#countrySelect').setAttribute('aria-label','Birth country');
+  const selected=new URLSearchParams(location.search).get('country');if(countryById(selected)){STATE.selectedCountry=selected;renderIntro();}
+  document.querySelector('#btnFeedback')?.addEventListener('click',()=>location.assign('/contact/'));
+}
+
+function downloadOriginalLifeCard(ending){
+ const life=STATE.life;if(!life)return;
+ const canvas=document.createElement('canvas');canvas.width=1200;canvas.height=800;const c=canvas.getContext('2d');
+ c.fillStyle='#061b32';c.fillRect(0,0,1200,800);c.fillStyle='#37d7ed';c.fillRect(64,64,8,672);
+ const text=(value,x,y,size,color='#eff8fc')=>{c.fillStyle=color;c.font=`${size}px sans-serif`;c.fillText(String(value),x,y,1030);};
+ text('1in8billion.live',112,110,32,'#37d7ed');text(ending?'A life, remembered.':'A life, beginning.',112,210,52);
+ text(life.name.full||life.name.full_en||'Fictional character',112,300,48);
+ text(localize(life.countryData).name+' · '+life.year,112,365,30);
+ text(ending?'Age '+(life.deathAge??life.age):'Age 0',112,425,30);
+ c.strokeStyle='#498297';c.lineWidth=3;c.beginPath();c.moveTo(112,540);c.lineTo(1080,540);c.stroke();
+ const events=(life.log||[]).filter(e=>e.kind==='milestone').slice(-5);events.forEach((e,i)=>{const x=135+i*210;c.fillStyle='#37d7ed';c.beginPath();c.arc(x,540,8,0,Math.PI*2);c.fill();text('Age '+e.age,x-20,590,22);});
+ text('Fictional simulation. Averages do not define a person.',112,685,23,'#b1d1df');text('https://1in8billion.live/',112,735,24,'#37d7ed');
+ canvas.toBlob(blob=>{if(!blob){toast('Image export failed');return;}const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='1in8billion-life.png';a.click();setTimeout(()=>URL.revokeObjectURL(url),3000);launchEvent('share_image_download');},'image/png');
 }
