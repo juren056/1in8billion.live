@@ -1786,7 +1786,7 @@ function renderThisYear() {
   if (!wrap) return;
   const evt = STATE.life.latestEvent;
   const isEn = LANG === 'en';
-  if (!evt) { wrap.innerHTML = `<span class="muted">${isEn ? '(no major event this year yet)':'（今年尚無重大事件）'}</span>`; return; }
+  if (!evt) { wrap.innerHTML = `<span class="muted">${t('life.noMajorEvent')}</span>`; return; }
   wrap.innerHTML = `
     <div class="ty-event">
       <span class="ty-icon">${evt.icon}</span>

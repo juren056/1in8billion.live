@@ -16,7 +16,9 @@ for(const [lang,c] of Object.entries(seoLocales))test(lang+' final home and land
    const text=html.replace(/<(script|style)\b[^>]*>[\s\S]*?<\/\1>/g,'').replace(/<[^>]*>/g,' ');
    if(lang!=='en')assert(!/Family Tree|Not started|Past life records|Import GEDCOM|Country B \(compare/.test(text),route+' static untranslated UI');
    assert(!/\{(?:age|le|n)\}|\blab\.(?:country|sex|run|start)\b/.test(text),route+' raw UI template');
-   assert.equal(Object.keys(reviewedUi[lang]).length,50);
+   assert.equal(Object.keys(reviewedUi[lang]).length,51);
+   assert(reviewedUi[lang]['life.noMajorEvent']);
+   if(lang!=='en')assert.notEqual(reviewedUi[lang]['life.noMajorEvent'],reviewedUi.en['life.noMajorEvent']);
   }
  }
 });

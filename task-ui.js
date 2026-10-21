@@ -11,6 +11,8 @@ export function readingNavigation(root=document.querySelector('main')){
 readingNavigation();
 export function installTaskUI(){
  const c=currentCopy(),lang=document.documentElement.dataset.siteLocale||document.documentElement.lang;
+ const endValues=()=>{const life=STATE.life;if(!life)return;const values={age:life.age,le:life.stats?.lifeExpectancy??life.countryData?.le??'—',n:STATE.pastLives.length};for(const key of ['end.lifespan','end.lifespan_le','end.past_count'])for(const el of document.querySelectorAll('#view-end [data-t="'+key+'"]')){const text=t(key);el.textContent=(window.translateUI?.(text)||text).replace(/\{(age|le|n)\}/g,(_,name)=>values[name]);}};
+ const oldEnd=window.renderEnd;window.renderEnd=function(...args){const result=oldEnd(...args);endValues();return result;};
  const seenEvents=new WeakSet();let eventInView=false;
  const markEvent=()=>{const life=STATE.life;if(eventInView&&!document.hidden&&life?.latestEvent?.age>0&&!seenEvents.has(life)){seenEvents.add(life);window.Retention.event('first_event_visible');}};
  new IntersectionObserver(entries=>{eventInView=entries[0].isIntersecting;markEvent();},{threshold:.5}).observe($('#lifeThisYear'));
