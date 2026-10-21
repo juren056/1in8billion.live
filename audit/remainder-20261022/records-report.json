@@ -1,0 +1,65 @@
+[
+  {
+    "prefix": "",
+    "realV2Date": true,
+    "missingDateFallback": true,
+    "storageUnchanged": true,
+    "nativeCompare": true
+  },
+  {
+    "prefix": "zh-cn/",
+    "realV2Date": true,
+    "missingDateFallback": true,
+    "storageUnchanged": true,
+    "nativeCompare": true
+  },
+  {
+    "prefix": "zh-tw/",
+    "realV2Date": true,
+    "missingDateFallback": true,
+    "storageUnchanged": true,
+    "nativeCompare": true
+  },
+  {
+    "prefix": "ja/",
+    "realV2Date": true,
+    "missingDateFallback": true,
+    "storageUnchanged": true,
+    "nativeCompare": true
+  },
+  {
+    "prefix": "ko/",
+    "realV2Date": true,
+    "missingDateFallback": true,
+    "storageUnchanged": true,
+    "nativeCompare": true
+  },
+  {
+    "prefix": "es/",
+    "realV2Date": true,
+    "missingDateFallback": true,
+    "storageUnchanged": true,
+    "nativeCompare": true
+  },
+  {
+    "prefix": "pt-br/",
+    "realV2Date": true,
+    "missingDateFallback": true,
+    "storageUnchanged": true,
+    "nativeCompare": true
+  },
+  {
+    "prefix": "fr/",
+    "realV2Date": true,
+    "missingDateFallback": true,
+    "storageUnchanged": true,
+    "nativeCompare": true
+  },
+  {
+    "prefix": "de/",
+    "realV2Date": true,
+    "missingDateFallback": true,
+    "storageUnchanged": true,
+    "nativeCompare": true
+  }
+]

@@ -1,0 +1,80 @@
+{
+  "base": "http://127.0.0.1:4186",
+  "rows": [
+    {
+      "prefix": "",
+      "retryInPlace": true,
+      "attempts": 2,
+      "disabledUntilReady": true,
+      "initialTableReadable": true,
+      "swapAndCSV": true
+    },
+    {
+      "prefix": "zh-cn/",
+      "retryInPlace": true,
+      "attempts": 2,
+      "disabledUntilReady": true,
+      "initialTableReadable": true,
+      "swapAndCSV": true
+    },
+    {
+      "prefix": "zh-tw/",
+      "retryInPlace": true,
+      "attempts": 2,
+      "disabledUntilReady": true,
+      "initialTableReadable": true,
+      "swapAndCSV": true
+    },
+    {
+      "prefix": "ja/",
+      "retryInPlace": true,
+      "attempts": 2,
+      "disabledUntilReady": true,
+      "initialTableReadable": true,
+      "swapAndCSV": true
+    },
+    {
+      "prefix": "ko/",
+      "retryInPlace": true,
+      "attempts": 2,
+      "disabledUntilReady": true,
+      "initialTableReadable": true,
+      "swapAndCSV": true
+    },
+    {
+      "prefix": "es/",
+      "retryInPlace": true,
+      "attempts": 2,
+      "disabledUntilReady": true,
+      "initialTableReadable": true,
+      "swapAndCSV": true
+    },
+    {
+      "prefix": "pt-br/",
+      "retryInPlace": true,
+      "attempts": 2,
+      "disabledUntilReady": true,
+      "initialTableReadable": true,
+      "swapAndCSV": true
+    },
+    {
+      "prefix": "fr/",
+      "retryInPlace": true,
+      "attempts": 2,
+      "disabledUntilReady": true,
+      "initialTableReadable": true,
+      "swapAndCSV": true
+    },
+    {
+      "prefix": "de/",
+      "retryInPlace": true,
+      "attempts": 2,
+      "disabledUntilReady": true,
+      "initialTableReadable": true,
+      "swapAndCSV": true
+    }
+  ],
+  "layouts": [],
+  "heldRequest": true,
+  "errors": []
+}

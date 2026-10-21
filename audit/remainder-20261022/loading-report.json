@@ -1,0 +1,15 @@
+{
+  "method": "Local CPU4x, country data delayed1500ms, not field CWV",
+  "rows": [
+    {
+      "width": 390,
+      "cls": 0.021940389759417537,
+      "lcp": 764
+    },
+    {
+      "width": 1440,
+      "cls": 0.023393650886943798,
+      "lcp": 416
+    }
+  ]
+}

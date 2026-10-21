@@ -1,0 +1,24 @@
+[
+  {
+    "mode": "slow",
+    "enabledBeforeData": true,
+    "selected": "JPN",
+    "status": "",
+    "retryButtons": 0,
+    "errors": []
+  },
+  {
+    "mode": "failed",
+    "enabledBeforeData": true,
+    "selected": "JPN",
+    "status": "无法加载交互式数据。初始表仍然可读。重新加载以重试。",
+    "retryButtons": 0,
+    "errors": []
+  },
+  {
+    "mode": "odds-failed",
+    "output": "0.5684% · 日本 · 年出生人数",
+    "retryButtons": 0,
+    "errors": []
+  }
+]

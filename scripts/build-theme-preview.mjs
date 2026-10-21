@@ -1,3 +1,4 @@
+import {comparisonStateCopy} from '../comparison-state-copy.js';
 import fs from'node:fs';
 import{themeCopy,themeIds,studyCopy}from'../theme-copy.js';
 import{locales}from'../locale-runtime.js';
@@ -13,6 +14,7 @@ export function buildThemePreview(routes,{preview=false}={}){
  const init=fs.readFileSync('theme-init.js','utf8');const themeCss=fs.readFileSync('theme-system.css','utf8');fs.writeFileSync('dist/theme-shell.css',(themeCss.slice(0,themeCss.indexOf('html[data-design-system]'))+fs.readFileSync('theme-shell.css','utf8')).replace(/\/\*[\s\S]*?\*\//g,'').replace(/\s*([{}:;,])\s*/g,'$1').trim());
  const ledger=[];
  for(const route of [...routes,'/keepsake/success/','/keepsake/cancel/','/404.html']){const path=route==='/404.html'?'dist/404.html':'dist'+route+'index.html';let h=fs.readFileSync(path,'utf8');const lang=h.match(/<html lang="([^"]+)"/)?.[1]||'en',c=themeCopy[lang]||themeCopy.en,base='/'+(locales[lang]?.[0]||''),home=h.includes('id="view-intro"');
+ if(h.includes('id="compareRetry"')){const labels=comparisonStateCopy[lang]||comparisonStateCopy.en;h=h.replace(/(<p id="compareLoadStatus"[^>]*>)[\s\S]*?(<\/p>)/,(_,start,end)=>start+esc(labels[0])+end).replace(/(<button id="compareRetry"[^>]*>)[\s\S]*?(<\/button>)/,(_,start,end)=>start+esc(labels[2])+end);}
  const menu=`<details id="appearanceMenu" class="appearance-menu" data-initially-open="true"><summary>${icon}<span>${c[0]}</span></summary><div class="appearance-options">${themeIds.map((id,i)=>`<button type="button" data-appearance-choice="${id}" aria-pressed="${id==='blue'}"><img src="/public-assets/themes/${id}-thumb.webp" alt="" width="160" height="90" loading="lazy"><span>${c[i+1]}</span></button>`).join('')}</div></details><span id="appearanceStatus" class="theme-sr" role="status"></span>`;
  h=h.replace(/(<html[^>]*)(>)/,'$1 data-design-system="1"$2').replace('<head>',`<head><script>${init};window.ThemeLabels=${JSON.stringify({copy:c,study:studyCopy[lang]})};</script>`).replace('</head>',`<link rel="stylesheet" href="/${home?'theme-system':'theme-shell'}.css"><script type="module" src="/site-theme.js"></script></head>`);
  if(['/keepsake/success/','/keepsake/cancel/'].includes(route)){const labels=Object.fromEntries(Object.entries(locales).map(([code,[prefix]])=>{const home=fs.readFileSync('dist/'+prefix+'index.html','utf8'),nav=home.match(/<nav class="site-links"[\s\S]*?<\/nav>/)?.[0]||'';return[code,[...nav.matchAll(/<a[^>]*>([^<]+)<\/a>/g)].map(m=>m[1])];}));h=h.replace('</head>',`<script>window.ThemeNavigation=${JSON.stringify(labels)}</script></head>`);}

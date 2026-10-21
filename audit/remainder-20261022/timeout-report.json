@@ -1,0 +1,10 @@
+{
+  "elapsed": 15479,
+  "attempts": 4,
+  "real15SecondTimeout": true,
+  "http500": true,
+  "malformedJSON": true,
+  "retryRecoveredInPlace": true,
+  "originalQuery": true,
+  "singleSwapHandler": true
+}
