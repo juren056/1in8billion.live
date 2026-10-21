@@ -1,0 +1,7 @@
+# Keepsake readiness and checkout continuity
+
+Mode: Operate; ordinary hardening of the accepted four-theme studio and order workspace. Preserve existing typography, materials, nine languages, expanded content and six export designs.
+THESIS: a file or purchase action must correspond to a successfully prepared, current artwork; asynchronous checkout and export must retain that selected record.
+FIRST VIEWPORT: inherited artifact preview, existing status/retry and settings. Errors retain the recorded life, clear busy state and disable unavailable export/checkout. No new panel, marketing copy or appearance is introduced.
+SIGNATURE: edits invalidate a pending preview immediately; checkout captures the clicked record/design and locks its controls until navigation or recoverable failure. An old order request cannot overwrite a newly selected recovery state.
+QUALITY BAR: nine-language sample/art failure and in-place recovery; exports unavailable until current preview; busy clears on load failure; one checkout at a time, fixed selection and persistent error; bounded entitlement check with manual retry; order/design locked during file generation and restored on failure. All payments in tests are explicitly mocked; no claim of new Stripe acceptance. Existing rules, statistics, stored facts, server authorization and credentials remain unchanged. Use actual template-rendered previews and labeled synthetic callback fixtures in captures.

@@ -1,0 +1,153 @@
+{
+  "base": "http://127.0.0.1:4186",
+  "rows": [
+    {
+      "prefix": "",
+      "fault": "samples",
+      "busyCleared": true,
+      "failedExportsDisabled": true,
+      "recovered": true,
+      "debounceGuard": true
+    },
+    {
+      "prefix": "",
+      "fault": "art",
+      "busyCleared": true,
+      "failedExportsDisabled": true,
+      "recovered": true,
+      "debounceGuard": true
+    },
+    {
+      "prefix": "zh-cn/",
+      "fault": "samples",
+      "busyCleared": true,
+      "failedExportsDisabled": true,
+      "recovered": true,
+      "debounceGuard": true
+    },
+    {
+      "prefix": "zh-cn/",
+      "fault": "art",
+      "busyCleared": true,
+      "failedExportsDisabled": true,
+      "recovered": true,
+      "debounceGuard": true
+    },
+    {
+      "prefix": "zh-tw/",
+      "fault": "samples",
+      "busyCleared": true,
+      "failedExportsDisabled": true,
+      "recovered": true,
+      "debounceGuard": true
+    },
+    {
+      "prefix": "zh-tw/",
+      "fault": "art",
+      "busyCleared": true,
+      "failedExportsDisabled": true,
+      "recovered": true,
+      "debounceGuard": true
+    },
+    {
+      "prefix": "ja/",
+      "fault": "samples",
+      "busyCleared": true,
+      "failedExportsDisabled": true,
+      "recovered": true,
+      "debounceGuard": true
+    },
+    {
+      "prefix": "ja/",
+      "fault": "art",
+      "busyCleared": true,
+      "failedExportsDisabled": true,
+      "recovered": true,
+      "debounceGuard": true
+    },
+    {
+      "prefix": "ko/",
+      "fault": "samples",
+      "busyCleared": true,
+      "failedExportsDisabled": true,
+      "recovered": true,
+      "debounceGuard": true
+    },
+    {
+      "prefix": "ko/",
+      "fault": "art",
+      "busyCleared": true,
+      "failedExportsDisabled": true,
+      "recovered": true,
+      "debounceGuard": true
+    },
+    {
+      "prefix": "es/",
+      "fault": "samples",
+      "busyCleared": true,
+      "failedExportsDisabled": true,
+      "recovered": true,
+      "debounceGuard": true
+    },
+    {
+      "prefix": "es/",
+      "fault": "art",
+      "busyCleared": true,
+      "failedExportsDisabled": true,
+      "recovered": true,
+      "debounceGuard": true
+    },
+    {
+      "prefix": "pt-br/",
+      "fault": "samples",
+      "busyCleared": true,
+      "failedExportsDisabled": true,
+      "recovered": true,
+      "debounceGuard": true
+    },
+    {
+      "prefix": "pt-br/",
+      "fault": "art",
+      "busyCleared": true,
+      "failedExportsDisabled": true,
+      "recovered": true,
+      "debounceGuard": true
+    },
+    {
+      "prefix": "fr/",
+      "fault": "samples",
+      "busyCleared": true,
+      "failedExportsDisabled": true,
+      "recovered": true,
+      "debounceGuard": true
+    },
+    {
+      "prefix": "fr/",
+      "fault": "art",
+      "busyCleared": true,
+      "failedExportsDisabled": true,
+      "recovered": true,
+      "debounceGuard": true
+    },
+    {
+      "prefix": "de/",
+      "fault": "samples",
+      "busyCleared": true,
+      "failedExportsDisabled": true,
+      "recovered": true,
+      "debounceGuard": true
+    },
+    {
+      "prefix": "de/",
+      "fault": "art",
+      "busyCleared": true,
+      "failedExportsDisabled": true,
+      "recovered": true,
+      "debounceGuard": true
+    }
+  ],
+  "errors": [],
+  "checkout": "MOCK client only; selection captured, all controls locked, retry error retained; no Stripe transaction",
+  "order": "MOCK entitlement only; stale response ignored, real15s timeout, export lock and recovery",
+  "healthCalls": 2
+}

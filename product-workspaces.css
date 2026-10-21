@@ -83,6 +83,10 @@
 [data-design-system] #studioCanvas{background:var(--t-soft);border:1px solid var(--t-line);border-radius:20px;padding:32px;min-height:420px}
 [data-design-system] .studio-controls{padding:26px;background:var(--t-paper);border:1px solid var(--t-line);border-radius:20px;display:block}
 [data-design-system] .studio-controls h2{font:600 28px var(--t-display)}
+[data-design-system] .premium-product{color:var(--t-ink)}
+[data-design-system] .studio-controls :is(h2,label,legend){color:var(--t-ink)}
+[data-design-system] .keepsake-introduction>p:last-child{color:var(--t-muted)}
+[data-design-system] .studio-artifact>#studioRetry{background:var(--t-paper);color:var(--t-ink);border-color:var(--t-line)}
 [data-design-system] .studio-controls :is(input[type=text],textarea,select){background:var(--t-page);color:var(--t-ink);border:1px solid var(--t-line);border-radius:10px;padding:12px}
 [data-design-system] .studio-controls :is(button:not(.template-choice)){min-height:44px;padding:12px 16px;border:1px solid var(--t-line);border-radius:10px;background:var(--t-soft);color:var(--t-ink)}
 [data-design-system] .studio-controls button.studio-primary{background:var(--t-action);color:var(--t-on-action)}

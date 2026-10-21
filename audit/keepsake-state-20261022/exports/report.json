@@ -1,0 +1,13 @@
+{
+  "base": "http://127.0.0.1:4186",
+  "png": [
+    2880,
+    2880
+  ],
+  "pages": 15,
+  "paper": "Letter",
+  "geometry": "all612x792",
+  "demo": true,
+  "paid": false,
+  "syntheticTitleAnd200CharacterNote": true
+}

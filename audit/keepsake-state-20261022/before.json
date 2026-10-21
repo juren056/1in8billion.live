@@ -1,0 +1,16 @@
+[
+  {
+    "fault": "samples",
+    "ready": "false",
+    "busy": "true",
+    "pngDisabled": true,
+    "pdfDisabled": true
+  },
+  {
+    "fault": "art",
+    "ready": "false",
+    "busy": "false",
+    "pngDisabled": false,
+    "pdfDisabled": false
+  }
+]

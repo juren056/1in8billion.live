@@ -1,0 +1,554 @@
+[
+  {
+    "theme": "blue",
+    "results": [
+      {
+        "selector": ".premium-product h1",
+        "text": "人生纪念包",
+        "color": "rgb(17, 43, 72)",
+        "background": "rgb(239, 247, 254)",
+        "ratio": 13.264607906612284
+      },
+      {
+        "selector": ".studio-controls h2",
+        "text": "把这段人生，好好留下",
+        "color": "rgb(17, 43, 72)",
+        "background": "rgb(255, 255, 255)",
+        "ratio": 14.354451437356385
+      },
+      {
+        "selector": ".studio-controls label",
+        "text": "已完成示例日本美国印度",
+        "color": "rgb(17, 43, 72)",
+        "background": "rgb(255, 255, 255)",
+        "ratio": 14.354451437356385
+      },
+      {
+        "selector": ".studio-controls label",
+        "text": "自定义标题（选填）",
+        "color": "rgb(17, 43, 72)",
+        "background": "rgb(255, 255, 255)",
+        "ratio": 14.354451437356385
+      },
+      {
+        "selector": ".studio-controls label",
+        "text": "留下一句寄语0 / 200",
+        "color": "rgb(17, 43, 72)",
+        "background": "rgb(255, 255, 255)",
+        "ratio": 14.354451437356385
+      },
+      {
+        "selector": ".studio-controls label",
+        "text": "配色方案蓝色鼠尾草绿琥珀",
+        "color": "rgb(17, 43, 72)",
+        "background": "rgb(255, 255, 255)",
+        "ratio": 14.354451437356385
+      },
+      {
+        "selector": ".studio-controls label",
+        "text": "图片比例9:16 · 2160 × 38401:1 · 28",
+        "color": "rgb(17, 43, 72)",
+        "background": "rgb(255, 255, 255)",
+        "ratio": 14.354451437356385
+      },
+      {
+        "selector": ".studio-controls label",
+        "text": "PDF 纸张A4Letter",
+        "color": "rgb(17, 43, 72)",
+        "background": "rgb(255, 255, 255)",
+        "ratio": 14.354451437356385
+      },
+      {
+        "selector": ".studio-controls label",
+        "text": "打印友好页面",
+        "color": "rgb(17, 43, 72)",
+        "background": "rgb(255, 255, 255)",
+        "ratio": 14.354451437356385
+      },
+      {
+        "selector": ".studio-controls legend",
+        "text": "选择风格",
+        "color": "rgb(17, 43, 72)",
+        "background": "rgb(255, 255, 255)",
+        "ratio": 14.354451437356385
+      },
+      {
+        "selector": ".studio-controls legend",
+        "text": "制作专属卡片",
+        "color": "rgb(17, 43, 72)",
+        "background": "rgb(255, 255, 255)",
+        "ratio": 14.354451437356385
+      },
+      {
+        "selector": ".keepsake-introduction>p:last-child",
+        "text": "选择风格 · 制作专属卡片",
+        "color": "rgb(64, 93, 120)",
+        "background": "rgb(239, 247, 254)",
+        "ratio": 6.352180468134876
+      },
+      {
+        "selector": ".studio-fact-note",
+        "text": "只能编辑标题、寄语与设计，人生事实保持不变。",
+        "color": "rgb(64, 93, 120)",
+        "background": "rgb(255, 255, 255)",
+        "ratio": 6.874086794960025
+      },
+      {
+        "selector": ".free-compare p",
+        "text": "完整游戏、普通 PNG、重现链接及浏览器存档保持免费。",
+        "color": "rgb(17, 43, 72)",
+        "background": "rgb(239, 247, 254)",
+        "ratio": 13.264607906612284
+      },
+      {
+        "selector": ".free-compare p",
+        "text": "六款收藏风格、三种高清比例、多页纪念册，可选标题与寄语。每段",
+        "color": "rgb(17, 43, 72)",
+        "background": "rgb(239, 247, 254)",
+        "ratio": 13.264607906612284
+      },
+      {
+        "selector": ".premium-product details p",
+        "text": "仅 Stripe 测试模式，不会真实扣款。包含一段已完成人生",
+        "color": "rgb(17, 43, 72)",
+        "background": "rgb(239, 247, 254)",
+        "ratio": 13.264607906612284
+      },
+      {
+        "selector": ".premium-product details p",
+        "text": "不会。页数取决于实际记录的事件，较短的人生会生成较短的纪念册",
+        "color": "rgb(17, 43, 72)",
+        "background": "rgb(239, 247, 254)",
+        "ratio": 13.264607906612284
+      },
+      {
+        "selector": ".premium-product details p",
+        "text": "不包含。礼包提供PDF与PNG纪念作品，不含视频、账号、公开",
+        "color": "rgb(17, 43, 72)",
+        "background": "rgb(239, 247, 254)",
+        "ratio": 13.264607906612284
+      },
+      {
+        "selector": ".premium-product details p",
+        "text": "可以。现有的免费游戏、回忆 PNG、重现链接和本地收藏功能均",
+        "color": "rgb(17, 43, 72)",
+        "background": "rgb(239, 247, 254)",
+        "ratio": 13.264607906612284
+      }
+    ]
+  },
+  {
+    "theme": "journal",
+    "results": [
+      {
+        "selector": ".premium-product h1",
+        "text": "人生纪念包",
+        "color": "rgb(45, 54, 46)",
+        "background": "rgb(244, 237, 224)",
+        "ratio": 10.744447161599254
+      },
+      {
+        "selector": ".studio-controls h2",
+        "text": "把这段人生，好好留下",
+        "color": "rgb(45, 54, 46)",
+        "background": "rgb(255, 250, 240)",
+        "ratio": 12.023916225718656
+      },
+      {
+        "selector": ".studio-controls label",
+        "text": "已完成示例日本美国印度",
+        "color": "rgb(45, 54, 46)",
+        "background": "rgb(255, 250, 240)",
+        "ratio": 12.023916225718656
+      },
+      {
+        "selector": ".studio-controls label",
+        "text": "自定义标题（选填）",
+        "color": "rgb(45, 54, 46)",
+        "background": "rgb(255, 250, 240)",
+        "ratio": 12.023916225718656
+      },
+      {
+        "selector": ".studio-controls label",
+        "text": "留下一句寄语0 / 200",
+        "color": "rgb(45, 54, 46)",
+        "background": "rgb(255, 250, 240)",
+        "ratio": 12.023916225718656
+      },
+      {
+        "selector": ".studio-controls label",
+        "text": "配色方案蓝色鼠尾草绿琥珀",
+        "color": "rgb(45, 54, 46)",
+        "background": "rgb(255, 250, 240)",
+        "ratio": 12.023916225718656
+      },
+      {
+        "selector": ".studio-controls label",
+        "text": "图片比例9:16 · 2160 × 38401:1 · 28",
+        "color": "rgb(45, 54, 46)",
+        "background": "rgb(255, 250, 240)",
+        "ratio": 12.023916225718656
+      },
+      {
+        "selector": ".studio-controls label",
+        "text": "PDF 纸张A4Letter",
+        "color": "rgb(45, 54, 46)",
+        "background": "rgb(255, 250, 240)",
+        "ratio": 12.023916225718656
+      },
+      {
+        "selector": ".studio-controls label",
+        "text": "打印友好页面",
+        "color": "rgb(45, 54, 46)",
+        "background": "rgb(255, 250, 240)",
+        "ratio": 12.023916225718656
+      },
+      {
+        "selector": ".studio-controls legend",
+        "text": "选择风格",
+        "color": "rgb(45, 54, 46)",
+        "background": "rgb(255, 250, 240)",
+        "ratio": 12.023916225718656
+      },
+      {
+        "selector": ".studio-controls legend",
+        "text": "制作专属卡片",
+        "color": "rgb(45, 54, 46)",
+        "background": "rgb(255, 250, 240)",
+        "ratio": 12.023916225718656
+      },
+      {
+        "selector": ".keepsake-introduction>p:last-child",
+        "text": "选择风格 · 制作专属卡片",
+        "color": "rgb(92, 98, 84)",
+        "background": "rgb(244, 237, 224)",
+        "ratio": 5.4161634103740575
+      },
+      {
+        "selector": ".studio-fact-note",
+        "text": "只能编辑标题、寄语与设计，人生事实保持不变。",
+        "color": "rgb(92, 98, 84)",
+        "background": "rgb(255, 250, 240)",
+        "ratio": 6.061130380341228
+      },
+      {
+        "selector": ".free-compare p",
+        "text": "完整游戏、普通 PNG、重现链接及浏览器存档保持免费。",
+        "color": "rgb(45, 54, 46)",
+        "background": "rgb(244, 237, 224)",
+        "ratio": 10.744447161599254
+      },
+      {
+        "selector": ".free-compare p",
+        "text": "六款收藏风格、三种高清比例、多页纪念册，可选标题与寄语。每段",
+        "color": "rgb(45, 54, 46)",
+        "background": "rgb(244, 237, 224)",
+        "ratio": 10.744447161599254
+      },
+      {
+        "selector": ".premium-product details p",
+        "text": "仅 Stripe 测试模式，不会真实扣款。包含一段已完成人生",
+        "color": "rgb(45, 54, 46)",
+        "background": "rgb(244, 237, 224)",
+        "ratio": 10.744447161599254
+      },
+      {
+        "selector": ".premium-product details p",
+        "text": "不会。页数取决于实际记录的事件，较短的人生会生成较短的纪念册",
+        "color": "rgb(45, 54, 46)",
+        "background": "rgb(244, 237, 224)",
+        "ratio": 10.744447161599254
+      },
+      {
+        "selector": ".premium-product details p",
+        "text": "不包含。礼包提供PDF与PNG纪念作品，不含视频、账号、公开",
+        "color": "rgb(45, 54, 46)",
+        "background": "rgb(244, 237, 224)",
+        "ratio": 10.744447161599254
+      },
+      {
+        "selector": ".premium-product details p",
+        "text": "可以。现有的免费游戏、回忆 PNG、重现链接和本地收藏功能均",
+        "color": "rgb(45, 54, 46)",
+        "background": "rgb(244, 237, 224)",
+        "ratio": 10.744447161599254
+      }
+    ]
+  },
+  {
+    "theme": "editorial",
+    "results": [
+      {
+        "selector": ".premium-product h1",
+        "text": "人生纪念包",
+        "color": "rgb(24, 43, 58)",
+        "background": "rgb(248, 250, 251)",
+        "ratio": 13.876671925530529
+      },
+      {
+        "selector": ".studio-controls h2",
+        "text": "把这段人生，好好留下",
+        "color": "rgb(24, 43, 58)",
+        "background": "rgb(255, 255, 255)",
+        "ratio": 14.527981028657424
+      },
+      {
+        "selector": ".studio-controls label",
+        "text": "已完成示例日本美国印度",
+        "color": "rgb(24, 43, 58)",
+        "background": "rgb(255, 255, 255)",
+        "ratio": 14.527981028657424
+      },
+      {
+        "selector": ".studio-controls label",
+        "text": "自定义标题（选填）",
+        "color": "rgb(24, 43, 58)",
+        "background": "rgb(255, 255, 255)",
+        "ratio": 14.527981028657424
+      },
+      {
+        "selector": ".studio-controls label",
+        "text": "留下一句寄语0 / 200",
+        "color": "rgb(24, 43, 58)",
+        "background": "rgb(255, 255, 255)",
+        "ratio": 14.527981028657424
+      },
+      {
+        "selector": ".studio-controls label",
+        "text": "配色方案蓝色鼠尾草绿琥珀",
+        "color": "rgb(24, 43, 58)",
+        "background": "rgb(255, 255, 255)",
+        "ratio": 14.527981028657424
+      },
+      {
+        "selector": ".studio-controls label",
+        "text": "图片比例9:16 · 2160 × 38401:1 · 28",
+        "color": "rgb(24, 43, 58)",
+        "background": "rgb(255, 255, 255)",
+        "ratio": 14.527981028657424
+      },
+      {
+        "selector": ".studio-controls label",
+        "text": "PDF 纸张A4Letter",
+        "color": "rgb(24, 43, 58)",
+        "background": "rgb(255, 255, 255)",
+        "ratio": 14.527981028657424
+      },
+      {
+        "selector": ".studio-controls label",
+        "text": "打印友好页面",
+        "color": "rgb(24, 43, 58)",
+        "background": "rgb(255, 255, 255)",
+        "ratio": 14.527981028657424
+      },
+      {
+        "selector": ".studio-controls legend",
+        "text": "选择风格",
+        "color": "rgb(24, 43, 58)",
+        "background": "rgb(255, 255, 255)",
+        "ratio": 14.527981028657424
+      },
+      {
+        "selector": ".studio-controls legend",
+        "text": "制作专属卡片",
+        "color": "rgb(24, 43, 58)",
+        "background": "rgb(255, 255, 255)",
+        "ratio": 14.527981028657424
+      },
+      {
+        "selector": ".keepsake-introduction>p:last-child",
+        "text": "选择风格 · 制作专属卡片",
+        "color": "rgb(74, 91, 105)",
+        "background": "rgb(248, 250, 251)",
+        "ratio": 6.704982257241287
+      },
+      {
+        "selector": ".studio-fact-note",
+        "text": "只能编辑标题、寄语与设计，人生事实保持不变。",
+        "color": "rgb(74, 91, 105)",
+        "background": "rgb(255, 255, 255)",
+        "ratio": 7.019684226408048
+      },
+      {
+        "selector": ".free-compare p",
+        "text": "完整游戏、普通 PNG、重现链接及浏览器存档保持免费。",
+        "color": "rgb(24, 43, 58)",
+        "background": "rgb(248, 250, 251)",
+        "ratio": 13.876671925530529
+      },
+      {
+        "selector": ".free-compare p",
+        "text": "六款收藏风格、三种高清比例、多页纪念册，可选标题与寄语。每段",
+        "color": "rgb(24, 43, 58)",
+        "background": "rgb(248, 250, 251)",
+        "ratio": 13.876671925530529
+      },
+      {
+        "selector": ".premium-product details p",
+        "text": "仅 Stripe 测试模式，不会真实扣款。包含一段已完成人生",
+        "color": "rgb(24, 43, 58)",
+        "background": "rgb(248, 250, 251)",
+        "ratio": 13.876671925530529
+      },
+      {
+        "selector": ".premium-product details p",
+        "text": "不会。页数取决于实际记录的事件，较短的人生会生成较短的纪念册",
+        "color": "rgb(24, 43, 58)",
+        "background": "rgb(248, 250, 251)",
+        "ratio": 13.876671925530529
+      },
+      {
+        "selector": ".premium-product details p",
+        "text": "不包含。礼包提供PDF与PNG纪念作品，不含视频、账号、公开",
+        "color": "rgb(24, 43, 58)",
+        "background": "rgb(248, 250, 251)",
+        "ratio": 13.876671925530529
+      },
+      {
+        "selector": ".premium-product details p",
+        "text": "可以。现有的免费游戏、回忆 PNG、重现链接和本地收藏功能均",
+        "color": "rgb(24, 43, 58)",
+        "background": "rgb(248, 250, 251)",
+        "ratio": 13.876671925530529
+      }
+    ]
+  },
+  {
+    "theme": "night",
+    "results": [
+      {
+        "selector": ".premium-product h1",
+        "text": "人生纪念包",
+        "color": "rgb(247, 244, 235)",
+        "background": "rgb(7, 21, 34)",
+        "ratio": 16.758604194444743
+      },
+      {
+        "selector": ".studio-controls h2",
+        "text": "把这段人生，好好留下",
+        "color": "rgb(247, 244, 235)",
+        "background": "rgb(16, 37, 54)",
+        "ratio": 14.25057625643518
+      },
+      {
+        "selector": ".studio-controls label",
+        "text": "已完成示例日本美国印度",
+        "color": "rgb(247, 244, 235)",
+        "background": "rgb(16, 37, 54)",
+        "ratio": 14.25057625643518
+      },
+      {
+        "selector": ".studio-controls label",
+        "text": "自定义标题（选填）",
+        "color": "rgb(247, 244, 235)",
+        "background": "rgb(16, 37, 54)",
+        "ratio": 14.25057625643518
+      },
+      {
+        "selector": ".studio-controls label",
+        "text": "留下一句寄语0 / 200",
+        "color": "rgb(247, 244, 235)",
+        "background": "rgb(16, 37, 54)",
+        "ratio": 14.25057625643518
+      },
+      {
+        "selector": ".studio-controls label",
+        "text": "配色方案蓝色鼠尾草绿琥珀",
+        "color": "rgb(247, 244, 235)",
+        "background": "rgb(16, 37, 54)",
+        "ratio": 14.25057625643518
+      },
+      {
+        "selector": ".studio-controls label",
+        "text": "图片比例9:16 · 2160 × 38401:1 · 28",
+        "color": "rgb(247, 244, 235)",
+        "background": "rgb(16, 37, 54)",
+        "ratio": 14.25057625643518
+      },
+      {
+        "selector": ".studio-controls label",
+        "text": "PDF 纸张A4Letter",
+        "color": "rgb(247, 244, 235)",
+        "background": "rgb(16, 37, 54)",
+        "ratio": 14.25057625643518
+      },
+      {
+        "selector": ".studio-controls label",
+        "text": "打印友好页面",
+        "color": "rgb(247, 244, 235)",
+        "background": "rgb(16, 37, 54)",
+        "ratio": 14.25057625643518
+      },
+      {
+        "selector": ".studio-controls legend",
+        "text": "选择风格",
+        "color": "rgb(247, 244, 235)",
+        "background": "rgb(16, 37, 54)",
+        "ratio": 14.25057625643518
+      },
+      {
+        "selector": ".studio-controls legend",
+        "text": "制作专属卡片",
+        "color": "rgb(247, 244, 235)",
+        "background": "rgb(16, 37, 54)",
+        "ratio": 14.25057625643518
+      },
+      {
+        "selector": ".keepsake-introduction>p:last-child",
+        "text": "选择风格 · 制作专属卡片",
+        "color": "rgb(183, 202, 217)",
+        "background": "rgb(7, 21, 34)",
+        "ratio": 10.93876585288269
+      },
+      {
+        "selector": ".studio-fact-note",
+        "text": "只能编辑标题、寄语与设计，人生事实保持不变。",
+        "color": "rgb(183, 202, 217)",
+        "background": "rgb(16, 37, 54)",
+        "ratio": 9.301712429574977
+      },
+      {
+        "selector": ".free-compare p",
+        "text": "完整游戏、普通 PNG、重现链接及浏览器存档保持免费。",
+        "color": "rgb(247, 244, 235)",
+        "background": "rgb(7, 21, 34)",
+        "ratio": 16.758604194444743
+      },
+      {
+        "selector": ".free-compare p",
+        "text": "六款收藏风格、三种高清比例、多页纪念册，可选标题与寄语。每段",
+        "color": "rgb(247, 244, 235)",
+        "background": "rgb(7, 21, 34)",
+        "ratio": 16.758604194444743
+      },
+      {
+        "selector": ".premium-product details p",
+        "text": "仅 Stripe 测试模式，不会真实扣款。包含一段已完成人生",
+        "color": "rgb(247, 244, 235)",
+        "background": "rgb(7, 21, 34)",
+        "ratio": 16.758604194444743
+      },
+      {
+        "selector": ".premium-product details p",
+        "text": "不会。页数取决于实际记录的事件，较短的人生会生成较短的纪念册",
+        "color": "rgb(247, 244, 235)",
+        "background": "rgb(7, 21, 34)",
+        "ratio": 16.758604194444743
+      },
+      {
+        "selector": ".premium-product details p",
+        "text": "不包含。礼包提供PDF与PNG纪念作品，不含视频、账号、公开",
+        "color": "rgb(247, 244, 235)",
+        "background": "rgb(7, 21, 34)",
+        "ratio": 16.758604194444743
+      },
+      {
+        "selector": ".premium-product details p",
+        "text": "可以。现有的免费游戏、回忆 PNG、重现链接和本地收藏功能均",
+        "color": "rgb(247, 244, 235)",
+        "background": "rgb(7, 21, 34)",
+        "ratio": 16.758604194444743
+      }
+    ]
+  }
+]
