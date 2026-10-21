@@ -15,8 +15,7 @@
   "main": "src/worker.js",
   "vars": {
     "PUBLIC_ORIGIN": "https://1in8billion.live",
-    "KEEPSAKE_PREVIEW_ENABLED": "true",
-    "KEEPSAKE_CHECKOUT_ENABLED": "false",
-    "KEEPSAKE_FULFILLMENT_ENABLED": "true"
-  }
+    "KEEPSAKE_PREVIEW_ENABLED": "true"
+  },
+  "keep_vars": true
 }

@@ -1,12 +1,14 @@
 import{studioCopy}from'./template-copy.js';import{templates,getTemplate,templateLabel}from'./templates/index.js';import{assembleTemplateData,recommendTemplate}from'./template-data.js';import{renderCard}from'./render-card.js';import{buildDocument}from'./build-document.js';import{restore,preflight}from'./storage.js';
 import{openPreview}from'./preview.js';
+import{installTestPurchase}from'./test-purchase.js';
 const root=document.querySelector('.keepsake-studio'),lang=document.documentElement.lang,c=studioCopy[lang]||studioCopy.en,$=id=>document.getElementById(id);
 if(root){
  let snapshot,localRow,samplesPromise,selected='cinematic-poster',revision=0,pending=false,exporting=false,renderPromise;
  const inputs=['studioTitle','studioNote','studioPalette','studioRatio','studioPaper','studioPrint'];
  const customization=()=>({title:$('studioTitle').value,note:$('studioNote').value,palette:$('studioPalette').value});
+ const purchase=installTestPurchase({getLocal:()=>snapshot?localRow:null,getDesign:()=>({templateId:selected,...customization(),ratio:$('studioRatio').value,paper:$('studioPaper').value,printFriendly:$('studioPrint').checked}),isBusy:()=>pending||exporting});
  const event=action=>window.siteEvent?.('keepsake_design_action',{language:lang,action});
- const enable=()=>{for(const id of['studioPNG','studioPDF'])$(id).disabled=!snapshot||pending||exporting;for(const id of inputs)$(id).disabled=!snapshot||exporting;for(const id of['sampleCountry','studioUseOwn','studioReset','premiumOpenSample'])$(id).disabled=exporting;root.querySelectorAll('[data-template]').forEach(button=>button.disabled=exporting);};
+ const enable=()=>{for(const id of['studioPNG','studioPDF'])$(id).disabled=!snapshot||pending||exporting;for(const id of inputs)$(id).disabled=!snapshot||exporting;for(const id of['sampleCountry','studioUseOwn','studioReset','premiumOpenSample'])$(id).disabled=exporting;root.querySelectorAll('[data-template]').forEach(button=>button.disabled=exporting);purchase.refresh();};
  const status=(text,error=false)=>{$('studioStatus').textContent=text;$('studioRetry').hidden=!error;};
  async function allSamples(){if(!samplesPromise)samplesPromise=fetch('/data/premium-samples.json',{signal:AbortSignal.timeout(15000)}).then(response=>{if(!response.ok)throw Error('sample_unavailable');return response.json();}).catch(error=>{samplesPromise=null;throw error;});return samplesPromise;}
  async function paint(){if(!snapshot)return;const current=++revision;pending=true;enable();$('studioCanvas').setAttribute('aria-busy','true');status(c.loading);try{
