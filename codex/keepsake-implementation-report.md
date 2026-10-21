@@ -40,3 +40,11 @@ Live payment remains **closed**, per the user's prior instruction to finish prev
 ## Release
 
 Target version: **1.16.0**, existing Git → main → Cloudflare build chain. Rollback point: `11a7a58bf58b4b78399a660f9e797d13b5e0e401`, retained in branch `codex/rollback-keepsake-20261021`. Production acceptance is appended after the actual build and primary-domain check; a local build alone is not deployment proof.
+
+## Continuation audit · v1.16.3
+
+T01–T13 remain complete within the authorized preview/demo phase. The user-requested counter explanatory paragraph, public calendar section and original-site FAQ were removed in v1.16.1; corresponding nine-language production checks passed. v1.16.2 restored a visible reduced-motion reveal.
+
+This audit found and closed remaining reveal recovery gaps: music-module initialization no longer gates reveal registration; scene import/drawing failure or timeout releases the card; skip, reroll and any modal-close path dispose previous timers and ignore stale imports; audio failures do not block card interaction. Ordinary and reduced-motion repeated reroll, skip, completion and cancellation pass. Fault injection confirms a failed music module preserves reveal, failed canvas rendering unlocks the card, and closing the modal leaves no later mutation. The 68-test verify suite and 15 unchanged legacy replay outcome digests plus original free PNG and preserved ending pass. Engine, probability data, date calculations, analytics IDs and storage schema are unchanged.
+
+Remaining external prerequisites are deliberately open: Stripe configuration and seller/tax/refund details for live commerce. No purchase or live payment acceptance is claimed. Prior GSC submission evidence does not guarantee indexing; Google processing remains external. Production version/build acceptance for this continuation is recorded locally under `audit/continuation-*` after actual deployment.
