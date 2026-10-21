@@ -18,7 +18,7 @@ Current product supports English, Japanese, Korean, Traditional and Simplified C
 
 ## Operating Context
 
-Vanilla HTML/CSS/JavaScript game, Node static build, existing Git-to-Cloudflare deployment. Current release v1.13.2, with 226 intended indexable routes; previous production revision 55f0a962d8ac2f8673c7082a321195b627ecb826. Discovery/indexing and retention are measured separately.
+Vanilla HTML/CSS/JavaScript game, Node static build, existing Git-to-Cloudflare deployment. Current release v1.14.0, with 226 intended indexable routes; previous production revision 55f0a962d8ac2f8673c7082a321195b627ecb826. Discovery/indexing and retention are measured separately.
 
 ## Capabilities and Constraints
 

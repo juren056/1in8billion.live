@@ -1,3 +1,7 @@
+# v1.14.0 clearer choices and story-led keepsakes
+
+Reviewed Chinese task guidance now matches the actual controls. Financial choices disclose current assets, post-choice balances and the exact existing default target/rule in nine languages. The birth record leads first play, with playback grouped separately from optional model strategies. Keepsake previews/PDFs summarize repeated event templates and highlight recorded milestones while retaining the complete original chronology. Blue branding, open content sections, calendar semantics, source inputs, saved data and replay outcomes are preserved. Payments remain preview-only. See CLARITY_RELEASE_REPORT.md.
+
 # v1.13.2 birth and material timestamp audit
 
 Current life births use the device-local current month. Calendar documentation review dates and model input observation years are now visibly separated on all public pages and in metadata. Guide labels distinguish the current text release from the actual screenshot capture release. Fixed sibling age presentation to compare two calendar years; no simulation inputs, outcomes, source editions or old saves were rewritten. Release labels share release-info.mjs.
