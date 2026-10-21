@@ -1,3 +1,7 @@
+# v1.14.1 search favicon and snippet eligibility
+
+All public pages now declare the stable 96px circular PNG as their single favicon. The ICO fallback file remains accessible and the SVG remains the brand/PWA artwork. Runtime loading and no-JavaScript fallback messages use static data-nosnippet containers so they do not become search descriptions. Google recrawl and favicon processing remain external; eligibility is not a display guarantee. See FAVICON_SEARCH_REPORT.md.
+
 # v1.14.0 clearer choices and story-led keepsakes
 
 Reviewed Chinese task guidance now matches the actual controls. Financial choices disclose current assets, post-choice balances and the exact existing default target/rule in nine languages. The birth record leads first play, with playback grouped separately from optional model strategies. Keepsake previews/PDFs summarize repeated event templates and highlight recorded milestones while retaining the complete original chronology. Blue branding, open content sections, calendar semantics, source inputs, saved data and replay outcomes are preserved. Payments remain preview-only. See CLARITY_RELEASE_REPORT.md.
