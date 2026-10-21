@@ -24,3 +24,13 @@ Wrangler now uses `keep_vars:true`; checkout/fulfillment switches are managed in
 `npm run verify` covers SQLite-backed D1 and **simulated** provider checks: amount/price, signature, environment, claim binding, idempotency, repeats/late events, refund/dispute, rate limits and independent stop-new switch. Browser simulations verify the local-life checkout entry, design/language persistence, no personal text posted, unpaid return lock, pending retry, refreshed entitlement and actual PDF/current card/three legacy poster downloads. Font/storage/in-app-browser failures stop session creation. These do **not** establish Stripe sandbox end-to-end payment or webhook delivery.
 
 A real Stripe sandbox receipt, matching D1 paid row, verified webhook and return download remain pending the missing configuration. Live charging remains closed; seller/tax/refund/download rules and live-mode integration are separate requirements. Official fulfillment source: https://docs.stripe.com/checkout/fulfillment.md?payment-ui=stripe-hosted .
+
+## Provisioning after explicit user authorization · v1.16.5
+
+Created dedicated `1in8billion-keepsake-test` D1, ID `4a38f0a0-81ca-4c68-8c9e-fec415638941`; applied `0001_keepsake.sql` remotely and verified all three business tables. Bound it as ORDERS in Wrangler. Generated ORDER_SIGNING_SECRET from 32 random bytes and sent it directly to Cloudflare stdin without printing or saving its value. Preserve this secret for existing claims.
+
+Created the sandbox-only product `prod_VTu8xV9JkcmmpA` and its active one-time USD 2.99 price `price_1USwKVLYvwXgXyhf16vQk4uH`, recorded as the public STRIPE_PRICE_ID setting. Test checkout switch is enabled in the runtime dashboard; complete server test configuration is still required before health can advertise checkout availability.
+
+Inspected existing sandbox webhook `we_1USvSMLYvwXgXyhfSafSXP1m`. Its URL was incorrectly `http://1in8billion.live//api/stripe/webhook`; corrected the same endpoint to `https://1in8billion.live/api/stripe/webhook` and renamed it `1in8billion keepsake TEST`, preserving its signing secret and all seven required events. The corrected endpoint and active status were verified in the Stripe UI; local proof `audit/stripe-webhook-corrected.jpg`.
+
+Wrangler's initial active Secret list was empty, despite the user's prior entry; after provisioning it contained the newly generated ORDER_SIGNING_SECRET. STRIPE_SECRET_KEY and STRIPE_WEBHOOK_SECRET must actually be saved/deployed as Secrets on this Worker before a genuine sandbox Checkout can be created. No secret values were requested in chat or copied from browser authentication state.

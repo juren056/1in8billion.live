@@ -15,7 +15,16 @@
   "main": "src/worker.js",
   "vars": {
     "PUBLIC_ORIGIN": "https://1in8billion.live",
-    "KEEPSAKE_PREVIEW_ENABLED": "true"
+    "KEEPSAKE_PREVIEW_ENABLED": "true",
+    "STRIPE_PRICE_ID": "price_1USwKVLYvwXgXyhf16vQk4uH"
   },
-  "keep_vars": true
+  "keep_vars": true,
+  "d1_databases": [
+    {
+      "binding": "ORDERS",
+      "database_name": "1in8billion-keepsake-test",
+      "database_id": "4a38f0a0-81ca-4c68-8c9e-fec415638941",
+      "migrations_dir": "migrations"
+    }
+  ]
 }
