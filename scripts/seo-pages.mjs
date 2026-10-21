@@ -1,3 +1,5 @@
+import {guideExample} from '../content/seo-guide-examples.mjs';
+import {seoPresentation} from './seo-presentation.mjs';
 import fs from 'node:fs';
 import assert from 'node:assert/strict';
 import {seoLocales,seoTypes,seoLinks,seoHomeTitles} from '../content/seo-pages.mjs';
@@ -5,11 +7,13 @@ import {staticNavigation} from './static-navigation.mjs';
 const escape=s=>s.replaceAll('&','&amp;').replaceAll('"','&quot;').replaceAll('<','&lt;');
 export function applyPageSeo(routes){
  fs.copyFileSync('game-load-guard.js','dist/game-load-guard.js');
+ const countries=JSON.parse(fs.readFileSync('data/countries.json','utf8'));
  for(const route of routes){
   const path='dist'+route+'index.html';let h=fs.readFileSync(path,'utf8');
   const lang=h.match(/<html lang="([^"]+)"/)[1],c=seoLocales[lang];
-  h=staticNavigation(h,lang);fs.writeFileSync(path,h);
+  h=seoPresentation(staticNavigation(h,lang),route,lang,countries.length);fs.writeFileSync(path,h);
   const task=route.slice(1+c.prefix.length),i=seoTypes.indexOf(task);
+  h=h.replace('</main>',guideExample(task,lang,c.prefix,countries)+'</main>');fs.writeFileSync(path,h);
   if(task==='about/'){
    const label=({en:'Maintenance and contact','zh-CN':'维护与联系','zh-TW':'維護與聯絡',ja:'保守とお問い合わせ',ko:'유지 관리 및 문의',es:'Mantenimiento y contacto','pt-BR':'Manutenção e contato',fr:'Maintenance et contact',de:'Pflege und Kontakt'})[lang];
    const body=`<section data-project-identity><h2>${label}</h2><p><a href="https://github.com/juren056/1in8billion.live">GitHub · juren056/1in8billion.live</a> · <a href="mailto:support@1in8billion.live">support@1in8billion.live</a></p><p><a href="https://github.com/juren056/1in8billion.live/commits/main/">Git</a> · <a href="/release.json">release.json</a> · <a href="/${c.prefix}sources/#provenance">${escape(seoLinks[lang][1])}</a></p></section>`;

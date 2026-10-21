@@ -1,3 +1,4 @@
+import{commerceCopy}from'./commerce-copy.js';
 import{paymentCopy}from'./payment-copy.js';
 import{localeCopy}from'./locale-copy.js';
 import{studioCopy}from'./template-copy.js';
@@ -15,3 +16,5 @@ for(const[lang,labels]of Object.entries(editorialCopy))Object.assign(copy[lang],
 for(const[lang,c]of Object.entries(studioCopy)){copy[lang].paidBody=c.premiumDetail;copy[lang].faq[2][1]=c.excludedScope;}
 
 for(const[lang,c]of Object.entries(copy)){c.status=paymentCopy(lang).notice;c.faq[0][1]=paymentCopy(lang).notice+' '+paymentCopy(lang).own;}
+
+for(const[lang,c]of Object.entries(copy)){const policy=commerceCopy(lang);c.steps=[policy.steps];c.recovery=policy.storage;c.refund=policy.sales;}

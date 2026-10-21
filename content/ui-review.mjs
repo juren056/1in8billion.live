@@ -1,3 +1,4 @@
+import {reviewSeoCopy} from './seo-reviewed-copy.mjs';
 // Presentation-only corrections. Never apply these to stored events, seeds or engine text.
 const keys=['tree.title','tree.hint','tree.root','tree.mode','tree.ancestor','tree.descendant','tree.both','tree.depth','tree.g2','tree.g3','tree.g4','tree.g5','tree.empty','tree.loading','tree.refresh','io.export','io.import','io.imported','io.exported','tree.spouse','tree.spouseLink','tree.noteAdoptive','tree.noteFoster','lab.familyStats','lab.famOrphan','lab.famTwoParents','lab.famFull','lab.famAdopted','lab.famAdoptedHint','lab.famAvgSib','lab.famAvgSibHint','lab.famAvgGP','lab.famAvgGPHint','lab.famFostered','lab.famFosteredHint','tree.caste.SC','tree.caste.ST','tree.caste.OBC','tree.caste.GEN','tree.casteMarker','tree.caste','tree.migration','life.familyHead','life.familyHint','life.familyGo','lab.countryB','tree.search','tree.searchPh','end.pastRecords','end.pastNote'];
 const rows={
@@ -21,5 +22,5 @@ export function reviewDictionary(dict,lang){
  // EN and traditional Chinese are both source surfaces for the locale enhancer.
  for(const key of Object.keys(reviewedUi.en)){dict[reviewedUi.en[key]]=target[key];dict[reviewedUi['zh-TW'][key]]=target[key];}
  for(const key of ['io.imported','io.exported'])dict[reviewedUi.en[key].replace('{}','__V0__')]=target[key].replace('{}','__V0__');
- return dict;
+ return reviewSeoCopy(dict,lang);
 }

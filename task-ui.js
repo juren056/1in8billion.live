@@ -1,7 +1,7 @@
 import {currentCopy,countryStatLabels,panelLabels} from './task-copy.js';
 const $=s=>document.querySelector(s);
 export function readingNavigation(root=document.querySelector('main')){
- if(!root||root.querySelector('.reading-navigation')||root.querySelector('#view-intro'))return;
+ if(!root||root.matches?.('#view-intro')||root.querySelector('.reading-navigation')||root.querySelector('#view-intro'))return;
  const headings=[...root.querySelectorAll(':scope>section>h2,:scope>h2')].slice(0,9);if(headings.length<2)return;
  const nav=document.createElement('nav');nav.className='reading-navigation';nav.setAttribute('aria-label',currentCopy().contents);
  const title=document.createElement('strong');title.textContent=currentCopy().contents;nav.append(title);

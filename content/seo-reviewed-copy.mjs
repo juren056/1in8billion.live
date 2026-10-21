@@ -1,0 +1,59 @@
+import {countryPages} from './growth.mjs';
+import {paymentCopy} from '../premium-keepsake/payment-copy.js';
+const languages=['zh-CN','es','pt-BR','fr','de'];
+// These are presentation corrections; field identifiers and numeric inputs remain intact.
+const entries=[
+ ['__V0__% of covered annual birth weights',[
+  '涵盖的年度出生权重的 __V0__%','__V0__% de los pesos anuales de nacimientos incluidos','__V0__% dos pesos anuais de nascimentos incluídos','__V0__% des poids annuels de naissances couverts','__V0__% der erfassten jährlichen Geburtsgewichte']],
+ ['__V0__ inherited population units',[
+  '__V0__ 个沿用人口单位','__V0__ unidades de población heredadas','__V0__ unidades de população herdadas','__V0__ unités de population d’origine','__V0__ übernommene Bevölkerungseinheiten']],
+ ['In this simulator’s inherited dataset, __V0__ accounts for',[
+  '在本模拟器沿用的数据中，__V0__ 占','En los datos heredados del simulador, __V0__ representa','Nos dados herdados do simulador, __V0__ representa','Dans les données reprises par le simulateur, __V0__ représente','In den übernommenen Simulatordaten entfallen auf __V0__']],
+ [', approximately 1 in __V0__ random birth draws. Population mode gives __V1__%. These are game-model shares with',[
+  '，约相当于每 __V0__ 次随机出生抽签中的1次。人口模式占比为 __V1__%。这些是游戏模型占比，其','; aproximadamente 1 de cada __V0__ sorteos de nacimiento. El modo población da __V1__%. Son proporciones del modelo con','; cerca de 1 em __V0__ sorteios de nascimento. O modo população resulta em __V1__%. São proporções do modelo com','; soit environ 1 tirage de naissance sur __V0__. Le mode population donne __V1__%. Ce sont des parts du modèle dont les','; ungefähr 1 von __V0__ Geburtsziehungen. Im Bevölkerungsmodus sind es __V1__%. Diese Modellanteile haben']],
+ ['The birth share is __V0__ times the population share in this snapshot. This quotient compares two normalized weights; it is not a crude birth rate, fertility rate or causal explanation.',[
+  '此快照的出生占比为人口占比的 __V0__ 倍。这个比值比较两种归一化权重，不是粗出生率、生育率，也不是因果解释。','La proporción de nacimientos es __V0__ veces la de población en esta instantánea. El cociente compara pesos normalizados; no es una tasa de natalidad, fecundidad ni explicación causal.','A proporção de nascimentos é __V0__ vezes a de população neste snapshot. A razão compara pesos normalizados; não é taxa de natalidade, fecundidade ou explicação causal.','La part des naissances vaut __V0__ fois la part de population dans cet instantané. Ce quotient compare deux poids normalisés ; ce n’est ni un taux de natalité, ni de fécondité, ni une explication causale.','Der Geburtsanteil beträgt hier das __V0__-Fache des Bevölkerungsanteils. Der Quotient vergleicht normierte Gewichte; er ist weder Geburtenrate noch Fertilitätsrate oder kausale Erklärung.']],
+ ['Both totals cover __V0__ countries and territories, not a verified complete global birth register. Population units appear to be thousands, but their statistical basis and year remain unverified. A common unit cancels within its own share. Approximate 1 in N is the rounded reciprocal of the share, not a promise of one result every N attempts.',[
+  '两种总量均涵盖 __V0__ 个国家和地区，并非经核实的全球完整出生登记。人口单位似为千人，但其统计口径和年份尚未核实。同一占比计算中的公共单位会相消。“约每N次中1次”是占比倒数的四舍五入值，不保证每N次尝试必有1次。','Ambos totales abarcan __V0__ países y territorios, no un registro mundial completo verificado. La población parece expresada en miles, pero la base y el año no están verificados. La unidad común se cancela dentro de cada proporción. «1 de cada N» es el recíproco redondeado, no una garantía cada N intentos.','Os totais incluem __V0__ países e territórios, não um registro mundial completo verificado. A população parece estar em milhares, mas a base e o ano não foram verificados. A unidade comum se cancela em cada proporção. «1 em N» é o inverso arredondado, não uma garantia a cada N tentativas.','Les totaux couvrent __V0__ pays et territoires, sans constituer un registre mondial complet vérifié. La population semble exprimée en milliers, mais sa base et son année ne sont pas vérifiées. L’unité commune s’annule dans chaque part. «1 sur N» est l’inverse arrondi, pas une garantie tous les N essais.','Beide Summen erfassen __V0__ Länder und Gebiete, kein geprüftes vollständiges Weltregister. Bevölkerungswerte scheinen in Tausend angegeben; Grundlage und Jahr sind ungeprüft. Die gemeinsame Einheit kürzt sich innerhalb des Anteils heraus. «1 von N» ist der gerundete Kehrwert, keine Garantie alle N Versuche.']],
+ ['Linking these resources does not mean the bundled data has been checked against them.',[
+  '列出这些资源，并不代表本站已用它们核实所附数据。','Enlazar estos recursos no significa que se hayan contrastado con los datos incluidos.','Os links não significam que os dados incluídos tenham sido conferidos com essas fontes.','Ces liens ne signifient pas que les données fournies ont été vérifiées auprès de ces sources.','Die verlinkten Quellen bedeuten nicht, dass die mitgelieferten Daten damit abgeglichen wurden.']],
+ ['Life expectancy, education and income fields are inherited estimates. Events, careers, relationships and mortality are simplified fictional game mechanisms, not validated forecasts or medical advice. Missing values must not be interpreted as zero.',[
+  '预期寿命、教育和收入字段沿用原项目的估算值。事件、职业、关系和死亡机制都是简化的虚构游戏规则，不是经过验证的预测或医疗建议。缺失值不代表零。','Los campos de esperanza de vida, educación e ingresos son estimaciones heredadas del proyecto original. Los eventos, carreras, relaciones y mortalidad son mecanismos ficticios simplificados, no pronósticos validados ni consejos médicos. Un valor ausente no equivale a cero.','Os campos de expectativa de vida, educação e renda são estimativas herdadas do projeto original. Eventos, carreiras, relações e mortalidade são mecanismos fictícios simplificados, não previsões validadas nem orientação médica. Valores ausentes não equivalem a zero.','Les champs d’espérance de vie, d’éducation et de revenu sont des estimations reprises du projet d’origine. Événements, carrières, relations et mortalité sont des mécanismes fictifs simplifiés, pas des prévisions validées ni des conseils médicaux. Une valeur manquante ne vaut pas zéro.','Lebenserwartung, Bildung und Einkommen sind Schätzwerte aus dem ursprünglichen Projekt. Ereignisse, Berufe, Beziehungen und Sterblichkeit sind vereinfachte fiktive Spielmechanismen, keine geprüften Prognosen oder medizinischen Ratschläge. Fehlende Werte sind nicht null.']],
+ ['For a short first visit, try automatic decisions. For agency, inspect manual decision options and their effects.',[
+  '首次短暂体验可尝试自动决策；想亲自决定人生走向时，请查看手动选项及其影响。','Para una primera visita breve, prueba decisiones automáticas. Para decidir por tu cuenta, revisa las opciones manuales y sus efectos.','Na primeira visita curta, experimente decisões automáticas. Para decidir por conta própria, veja as opções manuais e seus efeitos.','Pour une première visite courte, essayez les décisions automatiques. Pour garder la main, examinez les choix manuels et leurs effets.','Für einen kurzen ersten Besuch eignen sich automatische Entscheidungen. Für eigene Entscheidungen sieh dir die manuellen Optionen und ihre Auswirkungen an.']],
+ ['. Records retain the inherited values and unknown years. Life expectancy, schooling and PPP are game inputs, not an individual forecast, a salary or a real-life national ranking.',[
+  '。记录保留原项目数值，未知年份维持未知。预期寿命、教育年限和购买力平价是游戏输入，并非个人预测、工资或现实国家排名。','. Los registros conservan los valores heredados y los años desconocidos. La esperanza de vida, escolaridad y PPA son entradas del juego, no un pronóstico individual, salario ni clasificación real de países.','. Os registros preservam valores herdados e anos desconhecidos. Expectativa de vida, escolaridade e PPC são entradas do jogo, não previsões individuais, salários ou rankings reais de países.','. Les fiches conservent les valeurs d’origine et les années inconnues. Espérance de vie, scolarité et PPA sont des paramètres du jeu, pas une prévision individuelle, un salaire ou un classement réel des pays.','. Die Datensätze behalten übernommene Werte und unbekannte Jahre. Lebenserwartung, Schuljahre und KKP sind Spieleingaben, keine individuelle Prognose, kein Gehalt und keine Rangliste realer Länder.']],
+ ['Undocumented or unverified inherited unit',[
+  '沿用原项目单位，未记录或未核实','Unidad heredada sin documentar o verificar','Unidade herdada não documentada ou verificada','Unité d’origine non documentée ou non vérifiée','Übernommene, nicht dokumentierte oder ungeprüfte Einheit']],
+ ['inherited units, apparently thousands; unverified',[
+  '沿用原项目单位，似为千人；尚未核实','Unidades heredadas, aparentemente miles; sin verificar','Unidades herdadas, aparentemente milhares; não verificadas','Unités d’origine, apparemment en milliers ; non vérifiées','Übernommene Einheit, offenbar Tausend; ungeprüft']],
+ ['Country annual birth weight ÷ sum of covered annual birth weights. Population and birth weights have different denominators.',[
+  '某国年度出生权重 ÷ 数据涵盖国家的年度出生权重总和。人口权重与出生权重使用不同分母。','Peso anual de nacimientos del país ÷ suma de los pesos anuales de los países incluidos. Población y nacimientos usan denominadores diferentes.','Peso anual de nascimentos do país ÷ soma dos pesos anuais dos países incluídos. População e nascimentos usam denominadores diferentes.','Poids annuel des naissances du pays ÷ somme des poids annuels des pays couverts. Population et naissances ont des dénominateurs différents.','Jährliches Geburtsgewicht des Landes ÷ Summe der jährlichen Geburtsgewichte erfasster Länder. Bevölkerung und Geburten haben unterschiedliche Nenner.']]
+];
+const chineseCountries=[
+ ['为什么要比较日本的两种占比？','日本说明，同一国家在现有人口中的占比可能不同于年度出生权重占比。两条柱形应一起读：出生柱回答“随机新生儿出生地”的问题，人口柱回答“随机在世者所在地”的问题。两者都不是某个具体日本人存在的概率。','先重放已完成的日本样例，再开始新的人生。样例是可复现的虚构故事，不代表新角色的预期结局年龄。'],
+ ['较大的出生权重能决定结局吗？','印度在数据涵盖的出生权重中占比较大，只会影响随机抽中印度的频率，不会确定角色的家庭、教育选择或结局。解读出生占比前，应同时查看人口柱；出生占比并不是国家面积的指标。','已完成的印度样例只展示一段故事。指定印度重新开始会固定国家，并生成不同的虚构角色。'],
+ ['直接选择美国会改变什么？','直接选择美国会跳过本次出生地抽签。表中的模型占比仍描述随机抽签，不会因此变为100%。可对比日本的出生与人口权重关系，或对比出生权重更大的印度。','公开的美国样例采用固定种子自动运行。可重放以检验复现，也可开始新的美国角色体验不同故事。'],
+ ['出生占比较小，为什么仍值得体验？','韩国较小的年度出生权重只影响抽中概率，不是人生价值或质量评分。与日本对比有助于理解小占比，并区分加权抽签与各国等概率抽签。即使随机抽中较少，仍可直接选择这两个国家。','先比较两种权重模式，再指定韩国并阅读出生卡。游戏结局不能作为韩国现实统计预测。'],
+ ['为什么中国的人口规模不能代替出生权重？','中国的案例说明，较大的人口输入不能代替年度出生输入，两者使用不同总量。本页不对现行生育政策、近期出生数或真实儿童未来作判断；原项目数据的观测年尚未核实。','分别用两种模式对比中国与美国，再各开始一段虚构人生。结果差异体现游戏变化，两段故事不能证明现实国家差异。'],
+ ['尼日利亚的出生与人口占比对比说明什么？','尼日利亚可用来观察年度出生权重与人口权重的占比差异。出生占比大于人口占比只描述所附输入，不能据此得出现实出生率，也不能解释某个家庭为何生育。','先阅读尼日利亚与美国对比，再指定尼日利亚。调快节奏前先看最初事件。游戏可能出现早逝，单次结局不是真实儿童的预测或证据。']
+];
+export function reviewSeoCopy(dict,lang){
+ const index=languages.indexOf(lang);if(index<0)return dict;
+ for(const [source,values]of entries){
+  dict[source]=values[index];
+  // Exact pre-generated entries take precedence over patterns at runtime.
+  if(source.includes('__V')){
+   const escaped=source.replace(/[.*+?^${}()|[\]\\]/g,'\\$&').replace(/__V\d+__/g,'(.+?)'),re=new RegExp('^'+escaped+'$');
+   for(const key of Object.keys(dict)){if(key.includes('__V'))continue;const m=key.match(re);if(m)dict[key]=values[index].replace(/__V(\d+)__/g,(_,n)=>dict[m[+n+1]]||m[+n+1]);}
+  }
+ }
+ const fieldPrefix=['沿用的模型字段','Campo heredado del modelo','Campo herdado do modelo','Champ hérité du modèle','Übernommenes Modellfeld'][index];
+ for(const key of Object.keys(dict))if(key.startsWith('Inherited model field '))dict[key]=fieldPrefix+' '+key.slice('Inherited model field '.length);
+ dict[paymentCopy('en').notice]=paymentCopy(lang).notice;
+ if(lang==='zh-CN'){
+  Object.assign(dict,{'8 billion alive':'80亿在世者','MIT license':'MIT许可证','High Income':'高收入地区','unverified observation years':'观测年份尚未核实',', not current official odds.':'，不代表现行官方概率。','Inputs, limitations and attribution':'输入、限制与来源','inherited population units; apparently thousands, unverified':'沿用的人口单位，似为千人，尚未核实'});
+  for(let i=0;i<countryPages.length;i++)for(const [j,key]of ['question','text','task'].entries())dict[countryPages[i][key]]=chineseCountries[i][j];
+ }
+ return dict;
+}
