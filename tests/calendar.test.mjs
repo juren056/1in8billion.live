@@ -12,7 +12,7 @@ test('real-time births freeze the local month; endings use actual age including 
 test('all public descriptions document calendar semantics and all nine demos contain explicit monthly dates',()=>{
  for(const route of JSON.parse(fs.readFileSync('dist/routes.json'))){const html=fs.readFileSync('dist'+route+'index.html','utf8');assert(html.includes('id="birth-calendar"'),route);assert(!/#run=v1\.sample(?:jp|us|in)\./.test(html),route+' uses monthly examples');}
  for(const s of JSON.parse(fs.readFileSync('dist/data/premium-samples.json'))){assert(validSnapshot(s));assert.match(s.birthMonth,/^\d{4}-\d{2}$/);assert.equal(s.endMonth,CalendarCore.addYears(s.birthMonth,s.age));}
- for(const [lang,prefix]of [['zh-CN','zh-cn'],['es','es'],['pt-BR','pt-br'],['fr','fr'],['de','de']])assert(fs.readFileSync(`dist/${prefix}/keepsake/index.html`,'utf8').includes(`/premium/book-${lang}.webp`));
+ for(const [lang,prefix]of [['zh-CN','zh-cn'],['es','es'],['pt-BR','pt-br'],['fr','fr'],['de','de']]){assert(fs.existsSync(`dist/public-assets/premium/book-${lang}.webp`));assert(fs.readFileSync(`dist/${prefix}/keepsake/index.html`,'utf8').includes('/keepsake/thumbnails/cinematic-poster.png'));}
 });
 test('v2 replay records a fixed month and v1 shape and legacy date remain supported',()=>{
  const run={seed:'sampleus',country:'USA',era:'now',lang:'en',edu:false,calendarMonth:'2026-12'};assert.deepEqual(ReplayCore.parse(ReplayCore.encode(run)),run);

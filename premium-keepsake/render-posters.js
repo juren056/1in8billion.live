@@ -1,9 +1,11 @@
 import{distinctMilestones}from'./editorial.js';
+import{renderCard}from'./render-card.js';
 import{bookStyles}from'./book-styles.js';
 import{drawScene,drawActor,drawPortrait}from'../life-scene.js';import{wrapWords}from'./build-document.js';
 import{prepareFont}from'./font.js';
 let fontReady;async function posterFont(){fontReady??=prepareFont().then(bytes=>new FontFace('NotoKeepsake',bytes).load()).then(f=>document.fonts.add(f)).catch(e=>{fontReady=null;throw e;});return fontReady;}
-export async function renderPoster(doc,variant=0,{demo=true,preview=false}={}){
+export async function renderPoster(doc,variant=0,{demo=true,preview=false,templateId,ratio='9:16',customization=doc.customization||{}}={}){
+ if(templateId)return renderCard(doc.snapshot,{templateId,ratio,customization,demo,preview});
  if(!preview)await posterFont();const s=doc.snapshot,c=doc.copy,canvas=document.createElement('canvas');const logicalWidth=variant===1?2400:1800,logicalHeight=variant===1?1600:2400,scale=preview?.2:1;canvas.width=logicalWidth*scale;canvas.height=logicalHeight*scale;const x=canvas.getContext('2d');if(!x)throw Error('canvas_unavailable');x.scale(scale,scale);const design=bookStyles[doc.style]||bookStyles.editorial,w=logicalWidth,h=logicalHeight;x.fillStyle=variant===2?'#061b32':`rgb(${design.paper.map(v=>Math.round(v*255)).join(',')})`;x.fillRect(0,0,w,h);x.fillStyle=variant===2?'#edf5f8':'#102d45';
  const write=(text,left,top,size=40,width=w-160)=>{x.font=`${doc.style==='warm'?'italic ':''}${size>=50?'600 ':''}${size}px "NotoKeepsake",sans-serif`;for(const line of wrapWords(text,line=>x.measureText(line).width<=width)){x.fillText(line,left,top,width);top+=size*1.5;}return top;};
  write('1in8billion.live',80,100,34);write(c.posterNames[variant],80,190,52);let y=write(s.name,80,340,Math.min(72,Math.max(24,Math.floor((w-160)*2/Math.max(1,[...s.name].length)))));y=write(`${s.countryName} | ${s.birthMonth||s.birthYear} - ${s.endMonth||s.endYear} | ${c.age} ${s.age}`,80,y+65,34);

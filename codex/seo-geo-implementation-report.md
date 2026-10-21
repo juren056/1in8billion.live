@@ -67,3 +67,11 @@ GA4通用选择器中选中本站资源后返回“缺少权限”；没有用�
 回滚：从基线分支建立新工作分支，或对本轮提交执行受审查的revert后正常推送main；不得reset当前含用户未提交文档的工作区。也可在Cloudflare部署历史选择已存在的基线部署。此次无数据库迁移或收费状态变更。
 
 官方依据：Google的[摘要说明](https://developers.google.com/search/docs/appearance/snippet)、[sitemap规范](https://developers.google.com/search/docs/crawling-indexing/sitemaps/build-sitemap)、[OpenAI爬虫区分](https://developers.openai.com/api/docs/bots)、[Cloudflare静态301规则](https://developers.cloudflare.com/workers/static-assets/redirects/)。收录、图标展示、排名和AI引用均需外部系统处理，提交不等于获批。
+
+## v1.15.0 实际发布验收补记
+
+Git main revision：`11a7a58bf58b4b78399a660f9e797d13b5e0e401`。GitHub verify和Cloudflare Workers Builds均success。线上226个canonical页面、九首页描述、sitemap226条、六个精确301、真实404、图标响应及关闭付款已实测通过。英/简中/德三条线上日本详情→已开始日本人生通过。
+
+GSC sitemap重新提交后显示“已成功提交站点地图”，原记录成功、发现226页。2026-10-21 15:53首页实时测试显示“网址可编入Google索引”。单独重新索引请求返回reCAPTCHA服务无法连接及提交错误，未声称受理。截图和原始HTTP结果保存在本地audit目录。
+
+线上移动代理样本：LCP首页4240ms、对比1648ms、纪念包3020ms；首页TTFB2800ms。CLS三页均小于0.001。首页菜单INP样本48ms，另两页没有报告有效INP样本。这是单次代理网络与4倍CPU实验室观察，不是字段p75，首页传输延迟仍需后续真实用户数据诊断。

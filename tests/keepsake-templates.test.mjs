@@ -1,0 +1,21 @@
+import test from'node:test';import assert from'node:assert/strict';import fs from'node:fs';
+import{buildDocument}from'../premium-keepsake/build-document.js';
+import{assembleTemplateData,recommendTemplate}from'../premium-keepsake/template-data.js';import{templates}from'../premium-keepsake/templates/index.js';import{studioCopy,styleNames,styleUses}from'../premium-keepsake/template-copy.js';
+const samples=JSON.parse(fs.readFileSync('content/premium-samples.json'));
+test('six template definitions share real data and declare three output ratios without removing legacy posters',()=>{
+ assert.equal(templates.length,6);assert.equal(new Set(templates.map(t=>t.id)).size,6);
+ for(const t of templates){assert.equal(typeof t.render,'function');assert.deepEqual(t.supportedAspectRatios,['9:16','1:1','16:9']);assert.deepEqual(t.editableFields,['title','note','palette']);assert(t.premiumOnly);assert(t.name&&t.category&&t.previewLabel);assert(fs.existsSync('.'+t.thumbnail));}
+});
+test('Japan, US and India template data traces every selected fact to the same immutable completed record',()=>{
+ for(const country of['JPN','USA','IND']){const s=samples.find(s=>s.lang==='en'&&s.country===country),before=JSON.stringify(s),d=assembleTemplateData(s);assert.equal(d.age,s.age);assert.equal(d.start,s.birthMonth);assert.equal(d.end,s.endMonth);assert.equal(d.name,s.name);assert(d.featuredMilestones.length>=3&&d.featuredMilestones.length<=5);assert.deepEqual(d.events.map(({sourceIndex,...e})=>e),s.events);let previous=-1;for(const event of d.featuredMilestones){assert.deepEqual(s.events[event.sourceIndex],Object.fromEntries(Object.entries(event).filter(([key])=>key!=='sourceIndex')));assert(event.sourceIndex>previous);previous=event.sourceIndex;}assert.equal(JSON.stringify(s),before);assert(templates.some(t=>t.id===recommendTemplate(d).id));}
+});
+test('short lives and missing fields do not acquire invented occupations, degrees, cities or outcomes',()=>{
+ const s={...samples[0],name:'A'.repeat(180),age:0,endYear:samples[0].birthYear,endMonth:samples[0].birthMonth,events:[{age:0,month:samples[0].birthMonth,text:'Only recorded birth.',kind:'birth',category:'event'}],trajectory:[],cause:''},d=assembleTemplateData(s,{title:'<script>personal title</script>',note:'My own words',palette:'untrusted'});
+ assert.equal(d.featuredMilestones.length,1);assert.equal(d.city,null);assert.equal(d.education,null);assert.equal(d.career,null);assert.equal(d.cause,null);assert.deepEqual(d.metrics,[]);assert.equal(d.palette,'blue');assert.equal(d.name,s.name);assert.equal(d.note,'My own words');assert.equal(s.name,'A'.repeat(180));assert.throws(()=>assembleTemplateData({...s,completed:false}));
+ const sparse=assembleTemplateData({...s,name:undefined,country:undefined,countryName:undefined});assert.equal(sparse.name,sparse.copy.fallback);assert.equal(sparse.countryName,sparse.copy.fallback);assert.equal(sparse.headline,sparse.copy.fallback);assert(!/undefined|null/.test(sparse.summaryLine));
+ const document=buildDocument({...s,name:undefined,country:undefined,countryName:undefined});assert(!/undefined|null/.test(JSON.stringify(document.pages)));assert.equal(document.snapshot.name,sparse.copy.fallback);assert.equal(document.snapshot.countryName,sparse.copy.fallback);
+});
+test('nine locales expose factual, masked and payment-closed studio controls on the existing canonical URL',()=>{
+ const prefixes={en:'',ja:'ja/',ko:'ko/','zh-TW':'zh-tw/','zh-CN':'zh-cn/',es:'es/','pt-BR':'pt-br/',fr:'fr/',de:'de/'};
+ for(const[lang,prefix]of Object.entries(prefixes)){assert(studioCopy[lang].locked&&studioCopy[lang].factNote&&studioCopy[lang].fiction);assert.equal(styleNames[lang].length,6);assert.equal(styleUses[lang].length,6);const html=fs.readFileSync('dist/'+prefix+'keepsake/index.html','utf8');assert(html.includes('id="studioPNG"'));assert(html.includes('id="studioPDF"'));assert.equal((html.match(/data-template="/g)||[]).length,6);assert(html.includes('class="keepsake-studio" data-clarity-mask="true"'));assert(html.includes(studioCopy[lang].locked));assert(!html.includes('checkout.stripe.com'));assert.equal((html.match(/data-keepsake-faq="/g)||[]).length,4);assert(html.includes(studioCopy[lang].excludedScope));if(lang!=='en')assert(!html.includes(studioCopy.en.premiumDetail));}
+});

@@ -1,0 +1,6 @@
+import{render as clean}from'./clean-modern.js';import{render as cinematic}from'./cinematic-poster.js';import{render as editorial}from'./editorial-magazine.js';import{render as journal}from'./journal-scrapbook.js';import{render as minimal}from'./minimal-data.js';import{render as archive}from'./archive-certificate.js';
+import{styleNames,styleUses}from'../template-copy.js';
+const ids=['clean-modern','cinematic-poster','editorial-magazine','journal-scrapbook','minimal-data','archive-certificate'];
+export const templates=ids.map((id,index)=>Object.freeze({id,name:styleNames.en[index],category:id.split('-')[0],previewLabel:styleUses.en[index],premiumOnly:true,supportedAspectRatios:['9:16','1:1','16:9'],editableFields:['title','note','palette'],thumbnail:'/public-assets/keepsake/thumbnails/'+id+'.png',bookStyle:['editorial','editorial','editorial','warm','archive','archive'][index],render:[clean,cinematic,editorial,journal,minimal,archive][index]}));
+export const getTemplate=id=>templates.find(template=>template.id===id)||templates[0];
+export function templateLabel(template,lang='en'){const i=ids.indexOf(template.id);return{name:(styleNames[lang]||styleNames.en)[i],use:(styleUses[lang]||styleUses.en)[i]};}

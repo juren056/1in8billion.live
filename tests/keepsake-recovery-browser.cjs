@@ -1,0 +1,8 @@
+const{chromium}=require(process.env.PLAYWRIGHT_MODULE||'C:/Users/lenovo/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/playwright'),assert=require('node:assert/strict'),fs=require('node:fs');
+(async()=>{const browser=await chromium.launch({channel:'chrome'}),rows=[];try{for(const fault of['samples','font','missing-local']){
+ const page=await browser.newPage({viewport:{width:390,height:844},serviceWorkers:'block'}),target=fault==='samples'?'**/data/premium-samples.json':'**/vendor/keepsake/Oswald.ttf';
+ if(fault!=='missing-local')await page.route(target,route=>fault==='samples'?route.fulfill({status:503,body:'Unavailable'}):route.abort());
+ await page.goto('http://127.0.0.1:4186/zh-cn/keepsake/'+(fault==='missing-local'?'#local=00000000-0000-4000-8000-000000000000':''));await page.locator('#studioRetry').waitFor({state:'visible'});assert(!(await page.locator('#studioStatus').innerText()).includes('undefined'));
+ if(fault==='missing-local'){await page.locator('#sampleCountry').selectOption('USA');}else{await page.unroute(target);await page.locator('#studioRetry').click();}
+ await page.waitForFunction(()=>document.querySelector('.keepsake-studio').dataset.ready==='true');assert(await page.locator('#studioPNG').isEnabled());assert(await page.locator('#studioCanvas canvas').isVisible());rows.push({fault,recovered:true});await page.close();
+ }fs.writeFileSync('audit/keepsake-20261021/recovery.json',JSON.stringify(rows,null,2));console.log('PASS sample outage, font failure and missing-local-life recovery');}finally{await browser.close();}})().catch(e=>{console.error(e);process.exitCode=1;});

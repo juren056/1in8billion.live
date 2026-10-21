@@ -1,4 +1,5 @@
 import{localeCopy}from'./locale-copy.js';
+import{studioCopy}from'./template-copy.js';
 import{editorialCopy}from'./editorial-copy.js';
 const make=(v)=>Object.fromEntries(['title','subtitle','price','status','sample','own','free','preview','intent','thanks','loading','error','close','downloadDemo','pages','posters','scope','local','refund','support','model','demo','notRecorded','cover','profile','origin','early','work','family','timeline','ending','method','age','country','year','freeTitle','paidTitle','freeBody','paidBody','how','steps','faqTitle','faq','limits','recovery','precheck','posterNames','offer','sampleNote'].map((k,i)=>[k,v[i]]));
 export const copy={
@@ -10,3 +11,4 @@ export const copy={
 
 Object.assign(copy,localeCopy);
 for(const[lang,labels]of Object.entries(editorialCopy))Object.assign(copy[lang],labels);
+for(const[lang,c]of Object.entries(studioCopy)){copy[lang].paidBody=c.premiumDetail;copy[lang].faq[2][1]=c.excludedScope;}

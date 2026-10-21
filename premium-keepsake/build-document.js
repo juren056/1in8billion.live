@@ -1,10 +1,11 @@
-import{copy}from'./translations.js';import{validSnapshot}from'./schema.js';import{displayCountry}from'../country-labels.js';
+import{assembleTemplateData}from'./template-data.js';
+import{copy}from'./translations.js';import{validSnapshot}from'./schema.js';
 import{eventGroups,groupEntry}from'./editorial.js';
 export function wrapWords(value,fits){const out=[];for(const paragraph of String(value).split('\n')){let line='';for(const{segment}of new Intl.Segmenter(undefined,{granularity:'word'}).segment(paragraph)){if(fits(line+segment)){line+=segment;continue;}if(line.trim()){out.push(line.trimEnd());line='';}if(fits(segment.trimStart())){line=segment.trimStart();continue;}for(const ch of segment.trimStart()){if(!fits(line+ch)&&line){out.push(line);line='';}line+=ch;}}out.push(line.trimEnd());}return out;}
 // Full-width CJK glyphs occupy more space than Latin characters. This estimate
 // deliberately reserves more room than the PDF's measured line wrapping needs.
 export function lines(value,width=52){return wrapWords(value,line=>[...line].reduce((n,ch)=>n+(/[\p{Script=Han}\p{Script=Hiragana}\p{Script=Katakana}\p{Script=Hangul}\uFF01-\uFF60]/u.test(ch)?2:1),0)<=width);}
-export function buildDocument(s){if(!validSnapshot(s))throw Error('invalid_snapshot');s={...s,countryName:displayCountry(s.country,s.lang,s.countryName)};const c=copy[s.lang],pages=[],add=(title,paragraphs,kind='text')=>pages.push({title,paragraphs,lines:paragraphs.flatMap(p=>lines(p)),kind});const event=e=>`${e.month?e.month+' · ':''}${c.age} ${e.age}  ${e.text}`;
+export function buildDocument(s){if(!validSnapshot(s))throw Error('invalid_snapshot');const mapped=assembleTemplateData(s);s={...s,name:mapped.name,countryName:mapped.countryName};const c=copy[mapped.lang],pages=[],add=(title,paragraphs,kind='text')=>pages.push({title,paragraphs,lines:paragraphs.flatMap(p=>lines(p)),kind});const event=e=>`${e.month?e.month+' · ':''}${c.age} ${e.age}  ${e.text}`;
  add(c.cover,[s.name,`${s.countryName} | ${s.birthMonth||s.birthYear} - ${s.endMonth||s.endYear}`,`${c.age} ${s.age}`,c.demo], 'cover');
  add(c.profile,[s.name,`${c.country}: ${s.countryName}`,`${c.year}: ${s.birthMonth||s.birthYear} - ${s.endMonth||s.endYear}`,`${c.age}: ${s.age}`,c.origin,c.model]);
  // Lead with recorded milestones; repeated templates have a separate reading

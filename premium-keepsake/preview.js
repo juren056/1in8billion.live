@@ -21,6 +21,4 @@ const download=(blob,name)=>{const url=URL.createObjectURL(blob),a=document.crea
 document.querySelector('#premiumDemoDownload').onclick=async()=>{if(busy||row||!doc)return;retryAction=()=>document.querySelector('#premiumDemoDownload').click();setBusy(true);status.textContent=task.loadingExport;retry.hidden=true;try{const {renderPDF}=await import('./render-pdf.js');const blob=await renderPDF(doc,{demo:true});download(blob,`1in8billion-demo-${lang}.pdf`);event('keepsake_demo_download','pdf');status.textContent='';}catch{status.textContent=c.error;retry.hidden=false;event('keepsake_render_error','pdf_failed');}finally{setBusy(false);}};
 document.querySelectorAll('[data-demo-poster]').forEach(btn=>btn.onclick=async()=>{if(busy||row||!doc)return;retryAction=()=>btn.click();setBusy(true);status.textContent=task.loadingExport;retry.hidden=true;try{const {renderPoster}=await import('./render-posters.js');const result=await renderPoster(doc,+btn.dataset.demoPoster,{demo:true});download(result.blob,`1in8billion-demo-poster-${+btn.dataset.demoPoster+1}.png`);event('keepsake_demo_download','poster');status.textContent='';}catch{status.textContent=c.error;retry.hidden=false;event('keepsake_render_error','poster_failed');}finally{setBusy(false);}});
 dialog.addEventListener('close',()=>{document.querySelector('#premiumPosterDownloads').hidden=!!row;});
-if(location.hash.startsWith('#local='))open(true);
-
-window.addEventListener('hashchange',()=>{if(location.hash.startsWith('#local='))open(true);});
+export{open as openPreview};

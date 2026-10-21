@@ -48,6 +48,7 @@ enhanceOutput({routes,write,countries});
 buildProvenance({write,countries});
 buildPremium({write,head,links,footerFor,routes,langs,esc});
 buildExpansion({routes});
+await import('./build-keepsake-studio.mjs').then(m=>m.buildKeepsakeStudio());
 await import('./build-calendar.mjs').then(m=>m.buildCalendar(routes));
 applyPageSeo(routes);
 if(siteConfig.clarityProjectId)clarityPrivacy(routes);
