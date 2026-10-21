@@ -25,3 +25,8 @@ Pause new orders with KEEPSAKE_CHECKOUT_ENABLED=false while leaving KEEPSAKE_FUL
 Official references checked 2026-10-20: https://docs.stripe.com/webhooks , https://docs.stripe.com/checkout/fulfillment , https://developers.cloudflare.com/workers/static-assets/ .
 
 The studio now saves selected design settings with the local order before redirecting. Callback delivery includes all six current templates/three image ratios, selected-style PDF and the three legacy posters. The entire customization/return surface is masked. See codex/test-payment-delivery-audit.md for exact simulated versus sandbox acceptance. Wrangler keep_vars preserves dashboard-managed switches and additional variables; the actual ORDERS binding must also be recorded in wrangler.jsonc before future Git deploys.
+
+
+### Current acceptance update · 2026-10-21 / v1.16.6
+
+The historical missing-configuration and sandbox-blocked statements above are superseded: dedicated D1 is bound/migrated, all three Secrets are deployed, the USD 2.99 sandbox price and HTTPS webhook are configured, and public health advertises test checkout. A genuine production-UI Stripe sandbox order passed cancel, declined card, successful payment, verified webhook/D1 paid entitlement, restored design and actual 2880px PNG / 15-page Letter PDF download. See codex/test-payment-delivery-audit.md for the evidence boundary. Callback controls now support nine languages and return to the saved local keepsake. Refund/dispute/async/repeat event coverage remains simulated. Live sales remain blocked pending the separately listed commercial and live-mode requirements.
