@@ -175,7 +175,7 @@
 </section>
 
 <!-- LIFE -->
-<section id="view-life" class="view">
+<section id="view-life" data-clarity-mask="true" class="view">
   <div class="life-cert" id="lifeCert">
     <div class="cert-band" id="lifeCertBand">
       <span class="cert-flag" id="lifeFlag">🇹🇼</span>
@@ -314,7 +314,7 @@
 </section>
 
 <!-- END -->
-<section id="view-end" class="view">
+<section id="view-end" data-clarity-mask="true" class="view">
   <div class="end-cert" id="endCert">
     <canvas id="certCanvas"></canvas>
     <div class="cert-band">
@@ -367,7 +367,7 @@
 </section>
 
 <!-- TREE (族譜) -->
-<section id="view-tree" class="view">
+<section id="view-tree" data-clarity-mask="true" class="view">
   <h2 class="tree-title" data-t="tree.title">族譜</h2>
   <p class="tree-hint" data-t="tree.hint">你出生在一個怎樣的家庭？這裡是依統計與文化脈絡生成的家族圖。</p>
 
@@ -418,7 +418,7 @@
 </section>
 
 <!-- SHELF -->
-<section id="view-shelf" class="view">
+<section id="view-shelf" data-clarity-mask="true" class="view">
   <h2 class="shelf-title" data-t="shelf.title">過去生命的書架</h2>
   <p class="shelf-hint" data-t="shelf.click">點書本看細節</p>
   <div id="shelfGrid" class="shelf-grid"></div>
@@ -513,7 +513,7 @@
 </footer>
 
 <!-- 暫停問題 modal -->
-<div id="pauseModal" class="modal" hidden>
+<div id="pauseModal" data-clarity-mask="true" class="modal" hidden>
   <div class="modal-card">
     <h2 class="modal-q" id="pauseQuestion">如果 15 歲的你能記得一件事⋯</h2>
     <p class="modal-help" data-t="pause.placeholder">不寫也可以，這段會留在你腦海。</p>
@@ -544,7 +544,7 @@
 </div>
 
 <!-- v5.19：出生登記卡 modal（1in8b.life 風格） -->
-<div id="birthCertModal" class="modal bc-modal" hidden>
+<div id="birthCertModal" data-clarity-mask="true" class="modal bc-modal" hidden>
   <div class="modal-card bc-card">
     <div class="bc-toolbar">
       <button id="birthCertCancel" class="ghost bc-close" data-t="intro.bc.cancel">取消</button>
@@ -581,7 +581,7 @@
 </div>
 
 <!-- v5.24：提供意見 modal（真實表單） -->
-<div id="feedbackModal" class="modal" hidden>
+<div id="feedbackModal" data-clarity-mask="true" class="modal" hidden>
   <div class="modal-card">
     <button class="lm-close" onclick="document.getElementById('feedbackModal').setAttribute('hidden','')">×</button>
     <h2 class="modal-q" data-t="feedback.title">提供意見</h2>

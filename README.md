@@ -1,3 +1,7 @@
+# v1.14.2 Microsoft Clarity integration
+
+Clarity project z10y02dkut loads once asynchronously on public pages, independently from the existing GA4 loader. No visitor consent prompt or consent override was added. Existing GA4 functions, ID and events remain unchanged. Private game/family/local-collection/preview areas use recording masks and localized privacy pages disclose Clarity. See CLARITY_INSTALL_REPORT.md for verification and vendor-response limitations.
+
 # v1.14.1 search favicon and snippet eligibility
 
 All public pages now declare the stable 96px circular PNG as their single favicon. The ICO fallback file remains accessible and the SVG remains the brand/PWA artwork. Runtime loading and no-JavaScript fallback messages use static data-nosnippet containers so they do not become search descriptions. Google recrawl and favicon processing remain external; eligibility is not a display guarantee. See FAVICON_SEARCH_REPORT.md.

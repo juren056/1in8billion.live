@@ -10,7 +10,7 @@ export function installReturn(bridge){
  const validRun=r=>r?.eligible&&/^\w{1,40}$/.test(r.seed)&&countryById(r.country)&&['en','ja','ko','zh-Hant'].includes(r.lang)&&['now','past','future'].includes(r.era);
  const rich=()=>{const value=read(KEY,{});return value.version===1&&Array.isArray(value.records)?value.records.filter(r=>r&&typeof r.id==='string'&&Number.isFinite(r.year)&&Array.isArray(r.memories)&&Array.isArray(r.trajectory)).map(r=>({...r,run:validRun(r.run)?r.run:null})).slice(0,20):[];};
  const identity=r=>[r.ts,r.country,r.name,r.age].join('|');
- const collection=document.createElement('section');collection.id='localCollection';collection.className='local-collection';
+ const collection=document.createElement('section');collection.id='localCollection';collection.setAttribute('data-clarity-mask','true');collection.className='local-collection';
  const daily=document.createElement('section');daily.id='dailyLife';daily.className='daily-life';
  const intro=document.querySelector('.home-life-intro'),comparison=document.querySelector('.compare-prompt');comparison.after(daily,collection);let returning=false;
  const dailyURL=()=>replayUrl({...today,lang:lang==='zh-TW'?'zh-Hant':lang,era:'now',edu:0},location.origin,'daily');
