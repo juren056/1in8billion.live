@@ -8,18 +8,22 @@ try{
   const p=await b.newPage({viewport:{width,height:900},serviceWorkers:'block'});p.on('pageerror',e=>errors.push(e.message));
   await (await p.context().newCDPSession(p)).send('Emulation.setCPUThrottlingRate',{rate:4});
   await p.route('**/experience-upgrade.js',async r=>{await new Promise(resolve=>setTimeout(resolve,1200));await r.continue();});
+  await p.route('**/app.js',async r=>{await new Promise(resolve=>setTimeout(resolve,2500));await r.continue();});
   await p.route(/\/(?:retention|experience-media)\.css$/,async r=>{await new Promise(resolve=>setTimeout(resolve,2000));await r.continue();});
   await p.addInitScript(()=>{window.qaShifts=[];new PerformanceObserver(list=>{for(const s of list.getEntries())if(!s.hadRecentInput)qaShifts.push({value:s.value,time:s.startTime,sources:s.sources.map(x=>x.node?.id||x.node?.className||x.node?.tagName)});}).observe({type:'layout-shift',buffered:true});});
   await p.goto(base+'/'+prefix);await p.waitForFunction(()=>document.documentElement.dataset.gameReady==='true');await p.evaluate(()=>window.retentionReady);await p.evaluate(()=>window.localeReady);await p.waitForTimeout(1600);
   assert.equal(await p.locator('.world-clock').count(),1);assert.equal(await p.locator('#view-intro .reading-navigation').count(),0);
+  await p.waitForFunction(()=>document.documentElement.dataset.birthRevealReady==='true');assert(!await p.evaluate(()=>document.documentElement.dataset.experiencePartial));
   assert(await p.locator('#btnStart').isEnabled());assert(await p.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
+  const paint=await p.evaluate(()=>({fcp:performance.getEntriesByName('first-contentful-paint')[0]?.startTime,engineEnd:performance.getEntriesByType('resource').find(r=>r.name.endsWith('/app.js'))?.responseEnd}));
+  assert(paint.fcp>0&&paint.fcp<paint.engineEnd,'Static content should paint before the deliberately delayed engine download: '+JSON.stringify(paint));
   const shifts=await p.evaluate(()=>qaShifts),total=shifts.reduce((n,s)=>n+s.value,0);assert(total<.1,JSON.stringify({prefix,width,total,shifts}));
   if(prefix)assert(!(await p.locator('body').innerText()).includes('Stripe test mode only.'));
   await p.screenshot({path:out+'/home-'+(prefix?'zh-cn':'en')+'-'+width+'.png'});
   await p.locator('#countrySelect').selectOption('JPN');await p.locator('#btnStartSelected').click();await p.waitForFunction(()=>!document.querySelector('#birthCertConfirm').disabled);await p.locator('#birthCertConfirm').click();
   assert.equal(await p.evaluate(()=>STATE.life.country),'JPN');assert(await p.locator('#view-life').isVisible());
   const frame=await p.locator('.home-preview-frame').evaluate(el=>({width:el.style.width,aspect:getComputedStyle(el).aspectRatio}));assert.equal(frame.aspect,'16 / 9');
-  rows.push({prefix,width,layoutShiftSum:total,shifts,gameStart:'JPN'});await p.close();console.log('PASS layout and game start',prefix||'en',width,total);
+  rows.push({prefix,width,layoutShiftSum:total,shifts,paint,gameStart:'JPN'});await p.close();console.log('PASS layout and game start',prefix||'en',width,total,paint);
  }
  let expected;
  for(const prefix of ['', 'zh-cn/','es/','pt-br/','fr/','de/']){

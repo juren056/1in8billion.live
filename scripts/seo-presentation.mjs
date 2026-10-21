@@ -11,6 +11,8 @@ export function seoPresentation(html,route,lang,coverage){
  html=html.replace(/<section data-commerce-policy>[\s\S]*?<\/section>/,`<section data-commerce-policy><h2>${policy.heading}</h2><p>${policy.sales}</p><p>${policy.storage}</p><p><a href="mailto:support@1in8billion.live">support@1in8billion.live</a></p></section>`);
  // Critical dimensions and styles must be present before first paint.
  if(/id="view-intro"/.test(html)){
+  // Keep ordered classic dependencies, but let static content paint while they load.
+  html=html.replace(/<script\b[^>]*\bsrc="[^"]+"[^>]*>/g,tag=>/\b(?:defer|async)\b|type="module"/.test(tag)?tag:tag.replace('>',' defer>'));
   const optional=['retention.css','experience-media.css'].map(file=>`<link rel="stylesheet" href="/${file}" media="print" onload="this.media='all'"><noscript><link rel="stylesheet" href="/${file}"></noscript>`).join('');
   html=html.replace('<link rel="stylesheet" href="/experience-upgrade.css">','').replace('</head>',`<style data-home-critical>${homeCriticalCss}</style>${optional}<link rel="stylesheet" href="/experience-upgrade.css"></head>`);
   const labels=arrivalCopy[lang]||arrivalCopy.en;
