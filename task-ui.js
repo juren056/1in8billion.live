@@ -22,7 +22,7 @@ export function installTaskUI(){
  const stats=$('#lifeCountryStats');stats.after(note);
  const oldBirth=window.buildBirthCertCard;window.buildBirthCertCard=function(country,life){
   const template=document.createElement('template');template.innerHTML=oldBirth(country,life);
-  const quartile=template.content.querySelectorAll('.birth-story>p')[1];if(quartile)quartile.textContent=c.quartile.replace('{n}',Number.isFinite(life.stats?.incomeQuartile)?life.stats.incomeQuartile:'—');
+  const quartile=template.content.querySelector('.family-quartile');if(quartile)quartile.textContent=c.quartile.replace('{n}',Number.isFinite(life.stats?.incomeQuartile)?life.stats.incomeQuartile:'—');
   const estimate=template.content.querySelector('.birth-record .muted');if(estimate)estimate.textContent=c.estimate;
   template.content.querySelectorAll('h2').forEach(h=>h.dataset.noTranslate='');return template.innerHTML;
  };

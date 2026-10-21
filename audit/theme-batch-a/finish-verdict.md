@@ -1,0 +1,38 @@
+# Batch A finish verdict — correction round 1 and final gate confirmation
+
+## 1. Disposition
+
+Final confirmation date: **2026-10-22 (Asia/Shanghai)**. Rechecked the refreshed final-gate evidence after the first-paint shell fix; F1–F6 remain resolved.
+
+**ship**, scoped to resolution of F1–F6 from `finish-review.md` and acceptance of the local Batch A preview. All six findings are **resolved**. This is a verdict pass over the listed fixes, not a new whole-site review or authorization to deploy. B/C production migrations remain deferred.
+
+## 2. Finding scores
+
+| Finding | Score | Evidence and reason |
+| --- | --- | --- |
+| F1 — theme/shell contrast | resolved | Refreshed English/Chinese night viewport captures now show light headings, copy, brand, navigation, selectors and counters on dark surfaces. Menu is readable in the light themes; the final shell removes the redundant legacy header Music control while retaining in-game audio. `theme-system.css` uses isolated `--t-*` tokens; the supplied `study-report.json` computes passing contrast for the named heading, copy, brand, form, counter, shared-life surfaces across four themes and both widths. Full pages retain readable text after the hero. |
+| F2 — mobile navigation / duplicate gallery shell | resolved | `mobile-menu.png` shows six distinct spacious navigation targets and one current-page marker; `mobile-appearance.png` shows all four theme choices and selected state. Closed 390 captures remove the former crammed horizontal navigation and duplicate toggle pattern. All twelve refreshed gallery captures omit the old game-only buttons and duplicate selector clutter. `site-theme.js` supplies one explicit toggle with expanded state, controlled navigation target and Escape/focus handling. |
+| F3 — six meaningful sample studies | resolved | The twelve refreshed `preview-{home,birth,life,ending,studio,compare}-{390,1440}.png` captures and `design-preview.js` show separate actionable states: sample reveal/confirm into life, age/date/event/history, true Play/Pause, ending replay/keepsake transitions, six selected-template controls with a large actual rendered specimen, and two-sample labelled comparison. The home study provides sample entry and a real-home exit. Irrelevant event controls are hidden outside life; stopping clears timer state. The explicit read-only sample notice remains. `study-report.json` reports ready/no-overflow for all twelve and successful transitions; supplied implementation and transition evidence support the behavior. This resolves the A05 prototype finding; it does not accept B production journeys. |
+| F4 — four real compositions | resolved | Refreshed desktop first viewports now differ in region structure: blue retains scene/stack with the start area beside it; journal uses the horizontal country-start strip across its paper composition; editorial separates title/story, right start column and lower specimen exhibition; night focuses the country form above a smaller specimen stack on the right against dusk. Mobile preserves readable common task order with themed material/art treatment. These are material composition changes, beyond the original color/border variants, while retaining the shared product content. |
+| F5 — random versus country start | resolved | English captures explicitly say “Start a random life”; Chinese says “随机开始人生”. The country selector and “Begin here” action remain clearly separate. The redundant visible jump link has gone. Supplied `flow-report.json` reports resume/dock continuity; the fix does not add a second engine start implementation. |
+| F6 — honest route/prototype coverage | resolved | `route-coverage.json` attaches the home matrix/report/capture paths, marks unchecked inner bodies as deferred C, and separates dynamic sample prototypes from deferred B production migrations with source/evidence fields. `study-coverage.json` identifies nine locale builds and the six sample study views without claiming production migration. The old blanket null evidence / ambiguous prototype-or-next-batch status is removed for the delivered scope. |
+
+## 3. Evidence checked
+
+Opened all 16 refreshed home viewport captures and all 16 refreshed home full pages (English/Simplified Chinese × blue/journal/editorial/night × 390/1440). Opened all twelve refreshed study captures and both mobile menu/appearance captures. Reviewed the updated theme tokens/navigation, study renderer and gallery builder, `study-report.json`, `route-coverage.json`, `study-coverage.json`, and supplied `flow-report.json`.
+
+The full pages serve section coverage and broad regression checks; the separate viewport images establish readable first-view controls and changed compositions. The old unsuffixed `preview-*.png` captures were superseded by this round's width-suffixed evidence. No malformed/blank capture prevents this verdict; the unrevealed birth study is its intentional initial state, and the studio now shows its rendered specimen.
+
+## 4. Remaining obligations at this review scope
+
+No listed fix remains partial or unresolved. No additional design correction is requested by this verdict. Continue the required design documentation and local Batch A handoff; preserve the no-deployment boundary. Do not describe this verdict as completion of the full redesign or visual verification of all 226 route bodies.
+
+## 5. Limits
+
+This pass scores F1–F6 only and does not reopen unrelated defects. The reviewer had no browser: functional transition, keyboard, image failure, saved-life invariance and resume/dock evidence comes from the supplied browser reports and code inspection, not independent live interaction. Visual captures cover English and Simplified Chinese; the refreshed 180-layout report covers nine locales × four themes × 360/390/768/1440/1920 widths, with zero reported overflow/errors. Exact contrast figures are supplied computed checks, corroborated visually for the corrected surfaces. Resource budgets, SEO and regression test passes were reported by the build thread and are outside this design verdict. Checkout/export quality, the remaining production journeys, all inner-page migrations and deployment are not accepted by this verdict.
+
+## Final gate confirmation evidence
+
+After the shell first-paint changes, reopened all 16 final home viewport captures, all 16 final home full-page captures and all 12 final study captures. The final desktop shell has the brand, language and appearance controls in stable order with public navigation on the right; mobile retains the single menu pattern. The gallery now also visibly includes its native global-language control. The obsolete header Music action is absent. The corrected theme contrast, distinct compositions, random/country start distinction and meaningful sample-study states remain visible; none of these changes reopens F1–F6.
+
+Read the refreshed report summaries: `browser-report.json` contains 180 cases with zero overflow and zero errors; `study-report.json` contains twelve ready studies, successful transitions and zero errors. `loading-report.json` records four local Chrome cases at CPU 4x with a two-second optional-CSS delay: CLS 0.001438–0.006998 and LCP 316–976 ms. These are supplied local loading observations supporting the shell fix, not independently collected field Core Web Vitals, a public Lighthouse score or a guarantee of deployed performance. First-paint CSS now explicitly hides obsolete `.topnav`/`.topright` and assigns desktop shell order/flex; refreshed stable captures preserve the accepted layout. The earlier fix scores and no-deployment/B–C scope limits remain unchanged.

@@ -1,0 +1,11 @@
+# Batch B design documentation merge
+
+Updated only `DESIGN.md`, `.impeccable/design.json` and this record. Existing Batch A world and historical production/keepsake prose are retained. The merge documents implemented B behavior rather than declaring the full redesign or production release complete.
+
+Source review: `product-workspaces.css`, `game-workspace.js`, `modern-life-art.js`, `life-scene.js`, `playback.js`, `premium-keepsake/checkout-return.js`, `premium-keepsake/order-state-copy.js`, `PRODUCT.md`, `.impeccable/surfaces/theme-batch-b.md`, the master plan, B acceptance record, finish verdict and original atlas provenance.
+
+Added extracted workspace typography roles; component-specific radii (10/12/14/16/18/20/24px and the intentional 100px pending-return capsule); useful component token mappings; actual life/studio/order layouts; B shadow/motion metadata; six self-contained component preview snippets. These document existing CSS literals, not new runtime custom properties. Four semantic palettes remain unchanged. The sidecar remains schemaVersion 2 with primitive tokens owned by DESIGN.md frontmatter, and narrative copied from that document.
+
+Behavior boundaries recorded: stable identity-hash artwork independent of engine RNG; symbolic scenes; a deferred pending choice stays unresolved/paused and can be reopened; actual six-template studio with immutable completed facts; explicit order states and fresh server authorization for paid exports. Local mocks and real Stripe TEST delivery are distinguished. Nonactive preview acceptance does not authorize live charging, C migration, final Git deployment or production-domain old-order acceptance.
+
+Verification: JSON parsing passed; lightweight frontmatter indentation/token-reference checks passed; all 13 sidecar component references resolve; color/typography metadata keys match frontmatter; canonical eight sections remain in order; B radius roles and narrative parity passed; `git diff --check -- DESIGN.md .impeccable/design.json` reported no whitespace errors. PyYAML was unavailable, so this was not a full YAML schema/linter run. No browser or product regression rerun was performed for this documentation-only change. Existing unrelated snippet/token drift was not repaired.

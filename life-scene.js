@@ -1,3 +1,4 @@
+import {paintModernScene,paintModernActor,paintModernPortrait} from './modern-life-art.js';
 // Original pixel scene artwork. Display only: no engine random calls or mutations.
 export function ageStage(age){return age<5?0:age<12?1:age<18?2:age<60?3:4;}
 const hash=value=>[...String(value)].reduce((h,c)=>(Math.imul(h,31)+c.charCodeAt(0))>>>0,7);
@@ -10,7 +11,7 @@ function person(ctx,life,x,y,scale=2,blink=false){
  r(-6,-body,12,body-3,shirt);r(-9,-body+1,3,8,shirt);r(6,-body+1,3,8,shirt);r(-9,-body+9,3,3,skin);r(6,-body+9,3,3,skin);r(-5,-3,4,5,'#394c63');r(1,-3,4,5,'#394c63');r(-6,2,5,2,'#34343e');r(1,2,5,2,'#34343e');
  if(stage===4){r(-6,-body-8,6,4,'#d7dedc');r(1,-body-8,6,4,'#d7dedc');r(-1,-body-7,2,1,'#59666c');}
 }
-export function drawScene(canvas,life={},kind=sceneKind(life),items=[]){
+function legacyScene(canvas,life={},kind=sceneKind(life),items=[]){
  canvas.width=384;canvas.height=216;const c=canvas.getContext('2d');if(!c)return;c.imageSmoothingEnabled=false;
  const r=(x,y,w,h,color)=>{c.fillStyle=color;c.fillRect(x,y,w,h);};
  const line=(x,y,w,h)=>r(x,y,w,h,'#b49a78');
@@ -36,8 +37,13 @@ export function drawScene(canvas,life={},kind=sceneKind(life),items=[]){
  if(kind==='quiet'||kind==='memory'){r(289,133,21,6,'#a8875a');r(291,117,5,16,'#a8875a');r(292,139,4,24,'#a8875a');r(305,139,4,24,'#a8875a');}
  items.forEach((item,i)=>{const x=171+i*46;if(item.key==='school'){r(x,84,23,17,'#648894');r(x+4,86,17,13,'#f1e3c7');}else if(item.key==='work'){r(x,85,24,16,'#9b6850');r(x+7,81,10,4,'#62564c');}else if(['partner','child'].includes(item.key)){r(x,79,27,22,'#8b7058');r(x+3,82,21,16,'#e9dfc7');r(x+7,85,4,5,'#bb9270');r(x+15,85,4,5,'#b28c68');r(x+6,90,15,6,'#7b9992');}else if(item.key==='birth'){r(x,82,21,18,'#eee4cf');r(x+4,86,12,1,'#a8a38d');r(x+4,90,12,1,'#a8a38d');}});
 }
-export function drawActor(canvas,life={}){canvas.width=384;canvas.height=216;const c=canvas.getContext('2d');if(!c)return;c.imageSmoothingEnabled=false;person(c,life,kindX(life),180,life.age<5?1.6:2);}
-export function drawPortrait(canvas,life={}){canvas.width=112;canvas.height=112;const c=canvas.getContext('2d');c.fillStyle='#e8dfc8';c.fillRect(0,0,112,112);c.fillStyle='#b8d4d4';c.fillRect(8,8,96,96);person(c,life,56,91,2.5);}
+function legacyActor(canvas,life={}){canvas.width=384;canvas.height=216;const c=canvas.getContext('2d');if(!c)return;c.imageSmoothingEnabled=false;person(c,life,kindX(life),180,life.age<5?1.6:2);}
+function legacyPortrait(canvas,life={}){canvas.width=112;canvas.height=112;const c=canvas.getContext('2d');c.fillStyle='#e8dfc8';c.fillRect(0,0,112,112);c.fillStyle='#b8d4d4';c.fillRect(8,8,96,96);person(c,life,56,91,2.5);}
 const kindX=life=>life?.age<18?278:245;
-export function sceneMarkup(label){return `<div class="pixel-stage"><canvas class="scene-room" width="384" height="216" role="img" aria-label="${label}"></canvas><canvas class="scene-person" width="384" height="216" aria-hidden="true"></canvas></div>`;}
+export function sceneMarkup(label){return `<div class="pixel-stage modern-stage"><canvas class="scene-room" width="384" height="216" role="img" aria-label="${label}"></canvas><canvas class="scene-person" width="384" height="216" aria-hidden="true"></canvas></div>`;}
 export function paintScene(root,life,items=[]){drawScene(root.querySelector('.scene-room'),life,sceneKind(life),items);drawActor(root.querySelector('.scene-person'),life);root.dataset.ageStage=ageStage(life.age||0);}
+
+const modern=()=>typeof document!=='undefined'&&document.documentElement.hasAttribute('data-design-system');
+export function drawScene(canvas,life={},kind=sceneKind(life),items=[]){return modern()?paintModernScene(canvas,life,kind):legacyScene(canvas,life,kind,items);}
+export function drawActor(canvas,life={}){return modern()?paintModernActor(canvas,life):legacyActor(canvas,life);}
+export function drawPortrait(canvas,life={}){return modern()?paintModernPortrait(canvas,life):legacyPortrait(canvas,life);}

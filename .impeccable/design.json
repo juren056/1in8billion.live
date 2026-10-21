@@ -1,0 +1,930 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-10-21T18:40:52.154674Z",
+  "title": "Design System: 1in8billion.live",
+  "extensions": {
+    "colorMeta": {
+      "legacy-page": {
+        "role": "neutral",
+        "displayName": "legacy page",
+        "tonalRamp": [
+          "oklch(15% 0.0094 222.06)",
+          "oklch(26% 0.0094 222.06)",
+          "oklch(38% 0.0094 222.06)",
+          "oklch(49% 0.0094 222.06)",
+          "oklch(61% 0.0094 222.06)",
+          "oklch(72% 0.0094 222.06)",
+          "oklch(84% 0.0094 222.06)",
+          "oklch(95% 0.0094 222.06)"
+        ]
+      },
+      "legacy-paper": {
+        "role": "neutral",
+        "displayName": "legacy paper",
+        "tonalRamp": [
+          "oklch(15% 0.0000 89.88)",
+          "oklch(26% 0.0000 89.88)",
+          "oklch(38% 0.0000 89.88)",
+          "oklch(49% 0.0000 89.88)",
+          "oklch(61% 0.0000 89.88)",
+          "oklch(72% 0.0000 89.88)",
+          "oklch(84% 0.0000 89.88)",
+          "oklch(95% 0.0000 89.88)"
+        ]
+      },
+      "legacy-navigation": {
+        "role": "neutral",
+        "displayName": "legacy navigation",
+        "tonalRamp": [
+          "oklch(15% 0.0528 252.63)",
+          "oklch(26% 0.0528 252.63)",
+          "oklch(38% 0.0528 252.63)",
+          "oklch(49% 0.0528 252.63)",
+          "oklch(61% 0.0528 252.63)",
+          "oklch(72% 0.0528 252.63)",
+          "oklch(84% 0.0528 252.63)",
+          "oklch(95% 0.0528 252.63)"
+        ]
+      },
+      "legacy-ink": {
+        "role": "neutral",
+        "displayName": "legacy ink",
+        "tonalRamp": [
+          "oklch(15% 0.0561 246.43)",
+          "oklch(26% 0.0561 246.43)",
+          "oklch(38% 0.0561 246.43)",
+          "oklch(49% 0.0561 246.43)",
+          "oklch(61% 0.0561 246.43)",
+          "oklch(72% 0.0561 246.43)",
+          "oklch(84% 0.0561 246.43)",
+          "oklch(95% 0.0561 246.43)"
+        ]
+      },
+      "legacy-muted": {
+        "role": "neutral",
+        "displayName": "legacy muted",
+        "tonalRamp": [
+          "oklch(15% 0.0408 237.25)",
+          "oklch(26% 0.0408 237.25)",
+          "oklch(38% 0.0408 237.25)",
+          "oklch(49% 0.0408 237.25)",
+          "oklch(61% 0.0408 237.25)",
+          "oklch(72% 0.0408 237.25)",
+          "oklch(84% 0.0408 237.25)",
+          "oklch(95% 0.0408 237.25)"
+        ]
+      },
+      "legacy-action": {
+        "role": "primary",
+        "displayName": "legacy action",
+        "tonalRamp": [
+          "oklch(15% 0.0895 220.18)",
+          "oklch(26% 0.0895 220.18)",
+          "oklch(38% 0.0895 220.18)",
+          "oklch(49% 0.0895 220.18)",
+          "oklch(61% 0.0895 220.18)",
+          "oklch(72% 0.0895 220.18)",
+          "oklch(84% 0.0895 220.18)",
+          "oklch(95% 0.0895 220.18)"
+        ]
+      },
+      "legacy-line": {
+        "role": "neutral",
+        "displayName": "legacy line",
+        "tonalRamp": [
+          "oklch(15% 0.0256 229.16)",
+          "oklch(26% 0.0256 229.16)",
+          "oklch(38% 0.0256 229.16)",
+          "oklch(49% 0.0256 229.16)",
+          "oklch(61% 0.0256 229.16)",
+          "oklch(72% 0.0256 229.16)",
+          "oklch(84% 0.0256 229.16)",
+          "oklch(95% 0.0256 229.16)"
+        ]
+      },
+      "blue-page": {
+        "role": "neutral",
+        "displayName": "blue page",
+        "tonalRamp": [
+          "oklch(15% 0.0127 244.25)",
+          "oklch(26% 0.0127 244.25)",
+          "oklch(38% 0.0127 244.25)",
+          "oklch(49% 0.0127 244.25)",
+          "oklch(61% 0.0127 244.25)",
+          "oklch(72% 0.0127 244.25)",
+          "oklch(84% 0.0127 244.25)",
+          "oklch(95% 0.0127 244.25)"
+        ]
+      },
+      "blue-paper": {
+        "role": "neutral",
+        "displayName": "blue paper",
+        "tonalRamp": [
+          "oklch(15% 0.0000 89.88)",
+          "oklch(26% 0.0000 89.88)",
+          "oklch(38% 0.0000 89.88)",
+          "oklch(49% 0.0000 89.88)",
+          "oklch(61% 0.0000 89.88)",
+          "oklch(72% 0.0000 89.88)",
+          "oklch(84% 0.0000 89.88)",
+          "oklch(95% 0.0000 89.88)"
+        ]
+      },
+      "blue-ink": {
+        "role": "neutral",
+        "displayName": "blue ink",
+        "tonalRamp": [
+          "oklch(15% 0.0624 252.99)",
+          "oklch(26% 0.0624 252.99)",
+          "oklch(38% 0.0624 252.99)",
+          "oklch(49% 0.0624 252.99)",
+          "oklch(61% 0.0624 252.99)",
+          "oklch(72% 0.0624 252.99)",
+          "oklch(84% 0.0624 252.99)",
+          "oklch(95% 0.0624 252.99)"
+        ]
+      },
+      "blue-muted": {
+        "role": "neutral",
+        "displayName": "blue muted",
+        "tonalRamp": [
+          "oklch(15% 0.0560 247.34)",
+          "oklch(26% 0.0560 247.34)",
+          "oklch(38% 0.0560 247.34)",
+          "oklch(49% 0.0560 247.34)",
+          "oklch(61% 0.0560 247.34)",
+          "oklch(72% 0.0560 247.34)",
+          "oklch(84% 0.0560 247.34)",
+          "oklch(95% 0.0560 247.34)"
+        ]
+      },
+      "blue-action": {
+        "role": "primary",
+        "displayName": "blue action",
+        "tonalRamp": [
+          "oklch(15% 0.2024 260.07)",
+          "oklch(26% 0.2024 260.07)",
+          "oklch(38% 0.2024 260.07)",
+          "oklch(49% 0.2024 260.07)",
+          "oklch(61% 0.2024 260.07)",
+          "oklch(72% 0.2024 260.07)",
+          "oklch(84% 0.2024 260.07)",
+          "oklch(95% 0.2024 260.07)"
+        ]
+      },
+      "blue-on-action": {
+        "role": "neutral",
+        "displayName": "blue on action",
+        "tonalRamp": [
+          "oklch(15% 0.0000 89.88)",
+          "oklch(26% 0.0000 89.88)",
+          "oklch(38% 0.0000 89.88)",
+          "oklch(49% 0.0000 89.88)",
+          "oklch(61% 0.0000 89.88)",
+          "oklch(72% 0.0000 89.88)",
+          "oklch(84% 0.0000 89.88)",
+          "oklch(95% 0.0000 89.88)"
+        ]
+      },
+      "blue-line": {
+        "role": "neutral",
+        "displayName": "blue line",
+        "tonalRamp": [
+          "oklch(15% 0.0323 243.77)",
+          "oklch(26% 0.0323 243.77)",
+          "oklch(38% 0.0323 243.77)",
+          "oklch(49% 0.0323 243.77)",
+          "oklch(61% 0.0323 243.77)",
+          "oklch(72% 0.0323 243.77)",
+          "oklch(84% 0.0323 243.77)",
+          "oklch(95% 0.0323 243.77)"
+        ]
+      },
+      "blue-soft": {
+        "role": "neutral",
+        "displayName": "blue soft",
+        "tonalRamp": [
+          "oklch(15% 0.0266 246.35)",
+          "oklch(26% 0.0266 246.35)",
+          "oklch(38% 0.0266 246.35)",
+          "oklch(49% 0.0266 246.35)",
+          "oklch(61% 0.0266 246.35)",
+          "oklch(72% 0.0266 246.35)",
+          "oklch(84% 0.0266 246.35)",
+          "oklch(95% 0.0266 246.35)"
+        ]
+      },
+      "blue-focus": {
+        "role": "neutral",
+        "displayName": "blue focus",
+        "tonalRamp": [
+          "oklch(15% 0.2024 260.07)",
+          "oklch(26% 0.2024 260.07)",
+          "oklch(38% 0.2024 260.07)",
+          "oklch(49% 0.2024 260.07)",
+          "oklch(61% 0.2024 260.07)",
+          "oklch(72% 0.2024 260.07)",
+          "oklch(84% 0.2024 260.07)",
+          "oklch(95% 0.2024 260.07)"
+        ]
+      },
+      "journal-page": {
+        "role": "neutral",
+        "displayName": "journal page",
+        "tonalRamp": [
+          "oklch(15% 0.0188 83.06)",
+          "oklch(26% 0.0188 83.06)",
+          "oklch(38% 0.0188 83.06)",
+          "oklch(49% 0.0188 83.06)",
+          "oklch(61% 0.0188 83.06)",
+          "oklch(72% 0.0188 83.06)",
+          "oklch(84% 0.0188 83.06)",
+          "oklch(95% 0.0188 83.06)"
+        ]
+      },
+      "journal-paper": {
+        "role": "neutral",
+        "displayName": "journal paper",
+        "tonalRamp": [
+          "oklch(15% 0.0142 84.58)",
+          "oklch(26% 0.0142 84.58)",
+          "oklch(38% 0.0142 84.58)",
+          "oklch(49% 0.0142 84.58)",
+          "oklch(61% 0.0142 84.58)",
+          "oklch(72% 0.0142 84.58)",
+          "oklch(84% 0.0142 84.58)",
+          "oklch(95% 0.0142 84.58)"
+        ]
+      },
+      "journal-ink": {
+        "role": "neutral",
+        "displayName": "journal ink",
+        "tonalRamp": [
+          "oklch(15% 0.0186 148.26)",
+          "oklch(26% 0.0186 148.26)",
+          "oklch(38% 0.0186 148.26)",
+          "oklch(49% 0.0186 148.26)",
+          "oklch(61% 0.0186 148.26)",
+          "oklch(72% 0.0186 148.26)",
+          "oklch(84% 0.0186 148.26)",
+          "oklch(95% 0.0186 148.26)"
+        ]
+      },
+      "journal-muted": {
+        "role": "neutral",
+        "displayName": "journal muted",
+        "tonalRamp": [
+          "oklch(15% 0.0231 126.19)",
+          "oklch(26% 0.0231 126.19)",
+          "oklch(38% 0.0231 126.19)",
+          "oklch(49% 0.0231 126.19)",
+          "oklch(61% 0.0231 126.19)",
+          "oklch(72% 0.0231 126.19)",
+          "oklch(84% 0.0231 126.19)",
+          "oklch(95% 0.0231 126.19)"
+        ]
+      },
+      "journal-action": {
+        "role": "primary",
+        "displayName": "journal action",
+        "tonalRamp": [
+          "oklch(15% 0.0522 178.48)",
+          "oklch(26% 0.0522 178.48)",
+          "oklch(38% 0.0522 178.48)",
+          "oklch(49% 0.0522 178.48)",
+          "oklch(61% 0.0522 178.48)",
+          "oklch(72% 0.0522 178.48)",
+          "oklch(84% 0.0522 178.48)",
+          "oklch(95% 0.0522 178.48)"
+        ]
+      },
+      "journal-on-action": {
+        "role": "neutral",
+        "displayName": "journal on action",
+        "tonalRamp": [
+          "oklch(15% 0.0000 89.88)",
+          "oklch(26% 0.0000 89.88)",
+          "oklch(38% 0.0000 89.88)",
+          "oklch(49% 0.0000 89.88)",
+          "oklch(61% 0.0000 89.88)",
+          "oklch(72% 0.0000 89.88)",
+          "oklch(84% 0.0000 89.88)",
+          "oklch(95% 0.0000 89.88)"
+        ]
+      },
+      "journal-line": {
+        "role": "neutral",
+        "displayName": "journal line",
+        "tonalRamp": [
+          "oklch(15% 0.0421 86.73)",
+          "oklch(26% 0.0421 86.73)",
+          "oklch(38% 0.0421 86.73)",
+          "oklch(49% 0.0421 86.73)",
+          "oklch(61% 0.0421 86.73)",
+          "oklch(72% 0.0421 86.73)",
+          "oklch(84% 0.0421 86.73)",
+          "oklch(95% 0.0421 86.73)"
+        ]
+      },
+      "journal-soft": {
+        "role": "neutral",
+        "displayName": "journal soft",
+        "tonalRamp": [
+          "oklch(15% 0.0288 84.59)",
+          "oklch(26% 0.0288 84.59)",
+          "oklch(38% 0.0288 84.59)",
+          "oklch(49% 0.0288 84.59)",
+          "oklch(61% 0.0288 84.59)",
+          "oklch(72% 0.0288 84.59)",
+          "oklch(84% 0.0288 84.59)",
+          "oklch(95% 0.0288 84.59)"
+        ]
+      },
+      "journal-focus": {
+        "role": "neutral",
+        "displayName": "journal focus",
+        "tonalRamp": [
+          "oklch(15% 0.0751 187.57)",
+          "oklch(26% 0.0751 187.57)",
+          "oklch(38% 0.0751 187.57)",
+          "oklch(49% 0.0751 187.57)",
+          "oklch(61% 0.0751 187.57)",
+          "oklch(72% 0.0751 187.57)",
+          "oklch(84% 0.0751 187.57)",
+          "oklch(95% 0.0751 187.57)"
+        ]
+      },
+      "editorial-page": {
+        "role": "neutral",
+        "displayName": "editorial page",
+        "tonalRamp": [
+          "oklch(15% 0.0025 228.78)",
+          "oklch(26% 0.0025 228.78)",
+          "oklch(38% 0.0025 228.78)",
+          "oklch(49% 0.0025 228.78)",
+          "oklch(61% 0.0025 228.78)",
+          "oklch(72% 0.0025 228.78)",
+          "oklch(84% 0.0025 228.78)",
+          "oklch(95% 0.0025 228.78)"
+        ]
+      },
+      "editorial-paper": {
+        "role": "neutral",
+        "displayName": "editorial paper",
+        "tonalRamp": [
+          "oklch(15% 0.0000 89.88)",
+          "oklch(26% 0.0000 89.88)",
+          "oklch(38% 0.0000 89.88)",
+          "oklch(49% 0.0000 89.88)",
+          "oklch(61% 0.0000 89.88)",
+          "oklch(72% 0.0000 89.88)",
+          "oklch(84% 0.0000 89.88)",
+          "oklch(95% 0.0000 89.88)"
+        ]
+      },
+      "editorial-ink": {
+        "role": "neutral",
+        "displayName": "editorial ink",
+        "tonalRamp": [
+          "oklch(15% 0.0373 243.48)",
+          "oklch(26% 0.0373 243.48)",
+          "oklch(38% 0.0373 243.48)",
+          "oklch(49% 0.0373 243.48)",
+          "oklch(61% 0.0373 243.48)",
+          "oklch(72% 0.0373 243.48)",
+          "oklch(84% 0.0373 243.48)",
+          "oklch(95% 0.0373 243.48)"
+        ]
+      },
+      "editorial-muted": {
+        "role": "neutral",
+        "displayName": "editorial muted",
+        "tonalRamp": [
+          "oklch(15% 0.0310 243.30)",
+          "oklch(26% 0.0310 243.30)",
+          "oklch(38% 0.0310 243.30)",
+          "oklch(49% 0.0310 243.30)",
+          "oklch(61% 0.0310 243.30)",
+          "oklch(72% 0.0310 243.30)",
+          "oklch(84% 0.0310 243.30)",
+          "oklch(95% 0.0310 243.30)"
+        ]
+      },
+      "editorial-action": {
+        "role": "primary",
+        "displayName": "editorial action",
+        "tonalRamp": [
+          "oklch(15% 0.1645 258.27)",
+          "oklch(26% 0.1645 258.27)",
+          "oklch(38% 0.1645 258.27)",
+          "oklch(49% 0.1645 258.27)",
+          "oklch(61% 0.1645 258.27)",
+          "oklch(72% 0.1645 258.27)",
+          "oklch(84% 0.1645 258.27)",
+          "oklch(95% 0.1645 258.27)"
+        ]
+      },
+      "editorial-on-action": {
+        "role": "neutral",
+        "displayName": "editorial on action",
+        "tonalRamp": [
+          "oklch(15% 0.0000 89.88)",
+          "oklch(26% 0.0000 89.88)",
+          "oklch(38% 0.0000 89.88)",
+          "oklch(49% 0.0000 89.88)",
+          "oklch(61% 0.0000 89.88)",
+          "oklch(72% 0.0000 89.88)",
+          "oklch(84% 0.0000 89.88)",
+          "oklch(95% 0.0000 89.88)"
+        ]
+      },
+      "editorial-line": {
+        "role": "neutral",
+        "displayName": "editorial line",
+        "tonalRamp": [
+          "oklch(15% 0.0173 236.74)",
+          "oklch(26% 0.0173 236.74)",
+          "oklch(38% 0.0173 236.74)",
+          "oklch(49% 0.0173 236.74)",
+          "oklch(61% 0.0173 236.74)",
+          "oklch(72% 0.0173 236.74)",
+          "oklch(84% 0.0173 236.74)",
+          "oklch(95% 0.0173 236.74)"
+        ]
+      },
+      "editorial-soft": {
+        "role": "neutral",
+        "displayName": "editorial soft",
+        "tonalRamp": [
+          "oklch(15% 0.0076 241.67)",
+          "oklch(26% 0.0076 241.67)",
+          "oklch(38% 0.0076 241.67)",
+          "oklch(49% 0.0076 241.67)",
+          "oklch(61% 0.0076 241.67)",
+          "oklch(72% 0.0076 241.67)",
+          "oklch(84% 0.0076 241.67)",
+          "oklch(95% 0.0076 241.67)"
+        ]
+      },
+      "editorial-focus": {
+        "role": "neutral",
+        "displayName": "editorial focus",
+        "tonalRamp": [
+          "oklch(15% 0.1645 258.27)",
+          "oklch(26% 0.1645 258.27)",
+          "oklch(38% 0.1645 258.27)",
+          "oklch(49% 0.1645 258.27)",
+          "oklch(61% 0.1645 258.27)",
+          "oklch(72% 0.1645 258.27)",
+          "oklch(84% 0.1645 258.27)",
+          "oklch(95% 0.1645 258.27)"
+        ]
+      },
+      "night-page": {
+        "role": "neutral",
+        "displayName": "night page",
+        "tonalRamp": [
+          "oklch(15% 0.0332 247.83)",
+          "oklch(26% 0.0332 247.83)",
+          "oklch(38% 0.0332 247.83)",
+          "oklch(49% 0.0332 247.83)",
+          "oklch(61% 0.0332 247.83)",
+          "oklch(72% 0.0332 247.83)",
+          "oklch(84% 0.0332 247.83)",
+          "oklch(95% 0.0332 247.83)"
+        ]
+      },
+      "night-paper": {
+        "role": "neutral",
+        "displayName": "night paper",
+        "tonalRamp": [
+          "oklch(15% 0.0421 244.94)",
+          "oklch(26% 0.0421 244.94)",
+          "oklch(38% 0.0421 244.94)",
+          "oklch(49% 0.0421 244.94)",
+          "oklch(61% 0.0421 244.94)",
+          "oklch(72% 0.0421 244.94)",
+          "oklch(84% 0.0421 244.94)",
+          "oklch(95% 0.0421 244.94)"
+        ]
+      },
+      "night-ink": {
+        "role": "neutral",
+        "displayName": "night ink",
+        "tonalRamp": [
+          "oklch(15% 0.0123 91.52)",
+          "oklch(26% 0.0123 91.52)",
+          "oklch(38% 0.0123 91.52)",
+          "oklch(49% 0.0123 91.52)",
+          "oklch(61% 0.0123 91.52)",
+          "oklch(72% 0.0123 91.52)",
+          "oklch(84% 0.0123 91.52)",
+          "oklch(95% 0.0123 91.52)"
+        ]
+      },
+      "night-muted": {
+        "role": "neutral",
+        "displayName": "night muted",
+        "tonalRamp": [
+          "oklch(15% 0.0295 241.67)",
+          "oklch(26% 0.0295 241.67)",
+          "oklch(38% 0.0295 241.67)",
+          "oklch(49% 0.0295 241.67)",
+          "oklch(61% 0.0295 241.67)",
+          "oklch(72% 0.0295 241.67)",
+          "oklch(84% 0.0295 241.67)",
+          "oklch(95% 0.0295 241.67)"
+        ]
+      },
+      "night-action": {
+        "role": "primary",
+        "displayName": "night action",
+        "tonalRamp": [
+          "oklch(15% 0.1182 82.70)",
+          "oklch(26% 0.1182 82.70)",
+          "oklch(38% 0.1182 82.70)",
+          "oklch(49% 0.1182 82.70)",
+          "oklch(61% 0.1182 82.70)",
+          "oklch(72% 0.1182 82.70)",
+          "oklch(84% 0.1182 82.70)",
+          "oklch(95% 0.1182 82.70)"
+        ]
+      },
+      "night-on-action": {
+        "role": "neutral",
+        "displayName": "night on action",
+        "tonalRamp": [
+          "oklch(15% 0.0349 255.85)",
+          "oklch(26% 0.0349 255.85)",
+          "oklch(38% 0.0349 255.85)",
+          "oklch(49% 0.0349 255.85)",
+          "oklch(61% 0.0349 255.85)",
+          "oklch(72% 0.0349 255.85)",
+          "oklch(84% 0.0349 255.85)",
+          "oklch(95% 0.0349 255.85)"
+        ]
+      },
+      "night-line": {
+        "role": "neutral",
+        "displayName": "night line",
+        "tonalRamp": [
+          "oklch(15% 0.0411 239.88)",
+          "oklch(26% 0.0411 239.88)",
+          "oklch(38% 0.0411 239.88)",
+          "oklch(49% 0.0411 239.88)",
+          "oklch(61% 0.0411 239.88)",
+          "oklch(72% 0.0411 239.88)",
+          "oklch(84% 0.0411 239.88)",
+          "oklch(95% 0.0411 239.88)"
+        ]
+      },
+      "night-soft": {
+        "role": "neutral",
+        "displayName": "night soft",
+        "tonalRamp": [
+          "oklch(15% 0.0439 242.19)",
+          "oklch(26% 0.0439 242.19)",
+          "oklch(38% 0.0439 242.19)",
+          "oklch(49% 0.0439 242.19)",
+          "oklch(61% 0.0439 242.19)",
+          "oklch(72% 0.0439 242.19)",
+          "oklch(84% 0.0439 242.19)",
+          "oklch(95% 0.0439 242.19)"
+        ]
+      },
+      "night-focus": {
+        "role": "neutral",
+        "displayName": "night focus",
+        "tonalRamp": [
+          "oklch(15% 0.1008 82.98)",
+          "oklch(26% 0.1008 82.98)",
+          "oklch(38% 0.1008 82.98)",
+          "oklch(49% 0.1008 82.98)",
+          "oklch(61% 0.1008 82.98)",
+          "oklch(72% 0.1008 82.98)",
+          "oklch(84% 0.1008 82.98)",
+          "oklch(95% 0.1008 82.98)"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Bodoni Moda story display",
+        "purpose": "Home hero; local-script fallback remains browser supplied."
+      },
+      "headline": {
+        "displayName": "Story section heading",
+        "purpose": "Home story sections."
+      },
+      "body": {
+        "displayName": "Local UI body",
+        "purpose": "Hero copy; 16px mobile override."
+      },
+      "label": {
+        "displayName": "Control label",
+        "purpose": "Readable country and utility labels."
+      },
+      "workspace-title": {
+        "displayName": "Workspace story heading",
+        "purpose": "Real life workspace heading; extracted from product-workspaces.css."
+      },
+      "current-event": {
+        "displayName": "Current event narrative",
+        "purpose": "Current event at 20px desktop and 18px mobile."
+      },
+      "reading-title": {
+        "displayName": "Reading Title",
+        "purpose": "Batch C role extracted from reading-system.css; see DESIGN.md Typography for responsive scope."
+      },
+      "reading-title-editorial": {
+        "displayName": "Reading Title Editorial",
+        "purpose": "Batch C role extracted from reading-system.css; see DESIGN.md Typography for responsive scope."
+      },
+      "reading-body": {
+        "displayName": "Reading Body",
+        "purpose": "Batch C role extracted from reading-system.css; see DESIGN.md Typography for responsive scope."
+      },
+      "reading-lead": {
+        "displayName": "Reading Lead",
+        "purpose": "Batch C role extracted from reading-system.css; see DESIGN.md Typography for responsive scope."
+      },
+      "reading-lead-mobile": {
+        "displayName": "Reading Lead Mobile",
+        "purpose": "Batch C role extracted from reading-system.css; see DESIGN.md Typography for responsive scope."
+      },
+      "reading-h2": {
+        "displayName": "Reading H2",
+        "purpose": "Batch C role extracted from reading-system.css; see DESIGN.md Typography for responsive scope."
+      },
+      "reading-h3": {
+        "displayName": "Reading H3",
+        "purpose": "Batch C role extracted from reading-system.css; see DESIGN.md Typography for responsive scope."
+      },
+      "tool-result": {
+        "displayName": "Tool Result",
+        "purpose": "Batch C role extracted from reading-system.css; see DESIGN.md Typography for responsive scope."
+      },
+      "calculator-output": {
+        "displayName": "Calculator Output",
+        "purpose": "Batch C role extracted from reading-system.css; see DESIGN.md Typography for responsive scope."
+      },
+      "guide-card-title": {
+        "displayName": "Guide Card Title",
+        "purpose": "Batch C role extracted from reading-system.css; see DESIGN.md Typography for responsive scope."
+      },
+      "contents-link": {
+        "displayName": "Contents Link",
+        "purpose": "Batch C role extracted from reading-system.css; see DESIGN.md Typography for responsive scope."
+      },
+      "contents-heading": {
+        "displayName": "Contents Heading",
+        "purpose": "Batch C role extracted from reading-system.css; see DESIGN.md Typography for responsive scope."
+      },
+      "reading-table": {
+        "displayName": "Reading Table",
+        "purpose": "Batch C role extracted from reading-system.css; see DESIGN.md Typography for responsive scope."
+      },
+      "reading-caption": {
+        "displayName": "Reading Caption",
+        "purpose": "Batch C role extracted from reading-system.css; see DESIGN.md Typography for responsive scope."
+      },
+      "metric-compact": {
+        "displayName": "Metric Compact",
+        "purpose": "Batch C role extracted from reading-system.css; see DESIGN.md Typography for responsive scope."
+      }
+    },
+    "shadows": [
+      {
+        "name": "start-panel",
+        "value": "0 10px 30px #0d294014",
+        "purpose": "Blue paper start panel."
+      },
+      {
+        "name": "specimen-stack",
+        "value": "0 20px 40px #081e3c38",
+        "purpose": "Home collectible depth."
+      },
+      {
+        "name": "dock",
+        "value": "0 12px 35px #07152233",
+        "purpose": "Floating continuation surface."
+      },
+      {
+        "name": "workspace-popover",
+        "value": "0 12px 30px #00192b18",
+        "purpose": "Sound/speed option surface."
+      },
+      {
+        "name": "workspace-dialog",
+        "value": "0 24px 80px #00152538",
+        "purpose": "Birth and task dialog over blurred navy scrim."
+      },
+      {
+        "name": "pending-return",
+        "value": "0 8px 24px #00192b30",
+        "purpose": "Persistent pending decision return action."
+      }
+    ],
+    "motion": [
+      {
+        "name": "reduced-motion",
+        "value": "animation:none;transition:none;scroll-behavior:auto",
+        "purpose": "Preview prefers-reduced-motion override; no invented duration scale."
+      },
+      {
+        "name": "birth-shuffle",
+        "value": "reveal-shuffle .28s ease-in-out infinite alternate",
+        "purpose": "Only while birth is rolling; transform translateY(-5px) rotate(2deg), opacity .65; cancelable and disabled under reduced motion."
+      },
+      {
+        "name": "template-selection",
+        "value": "border-color .15s",
+        "purpose": "Template choice border transition; disabled under reduced motion."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "wide",
+        "value": "1600px"
+      },
+      {
+        "name": "compact",
+        "value": "1100px"
+      },
+      {
+        "name": "mobile",
+        "value": "760px"
+      },
+      {
+        "name": "reading-compact",
+        "value": "900px"
+      },
+      {
+        "name": "reading-mobile",
+        "value": "650px"
+      }
+    ],
+    "scope": {
+      "production": "Historical baseline v1.16.9; current A/B/C candidate is locally implemented in normal production builds. Exact-Git deployment and production-domain acceptance pending.",
+      "preview": "THEME_PREVIEW adds noindex sample studies/prototypes; normal builds omit them and preview-wide noindex. Earlier nonactive Cloudflare version previews remain scoped evidence.",
+      "deferred": "Exact-Git deployment, production-domain acceptance and C04 new-UI/old-paid-order verification. Live charging remains closed.",
+      "source": "theme-system.css; theme-shell.css; product-workspaces.css; game-workspace.js; modern-life-art.js; life-scene.js; playback.js; premium-keepsake/checkout-return.js; premium-keepsake/order-state-copy.js; reading-system.css; scripts/build-reading-system.mjs; scripts/build-theme-preview.mjs",
+      "ramps": "Synthesized OKLCH swatch metadata only; not implemented CSS scales.",
+      "loading": "Full theme-system.css on home/gallery; generated palette + theme-shell.css on nonhome; native per-page head labels; home start/readiness/retry/dock in home-start-dock.js.",
+      "batchB": "B01–B05 scoped local UI acceptance plus independently evidenced actual Stripe TEST chain. finish-verdict.md ships scored fixes 1–8, not full website or production.",
+      "direction": ".impeccable/surfaces/theme-batch-b.md; codex/cinematic-redesign-plan-20261021.md; .impeccable/surfaces/theme-batch-c.md",
+      "evidence": "codex/theme-batch-b-acceptance-20261022.md; audit/theme-batch-b/finish-verdict.md; content/life-art-provenance.json; audit/theme-batch-c/finish-review.md; audit/theme-batch-c/reading-report.json; audit/theme-batch-c/publication-report.json",
+      "candidate": "Actual initial sandbox proof identifies 5e2bf5f6-8fc9-4648-bad0-67fc6206d540; acceptance addendum records refreshed nonactive 4d13f9f4-b352-482d-bf6c-9775fd8a7b17 with paid status, preserved design and another authorized download.",
+      "radiusStrategy": "B component roles document CSS literals 10/12/14/16/18/20/24px; 100px capsule only for pending-choice return. No new runtime radius custom properties claimed. C metric track is 3px on a 10px bar; reading notes/tables 12px and comparison/calculator 16px.",
+      "lifeArtwork": "Original symbolic gouache atlases; stage follows age/employment/ending; stable identity hash chooses character independent of engine RNG. Text/actions survive missing images; free PNG waits for art readiness.",
+      "batchC": "Normal-build shared shell and Read/Operate body migration implemented locally. Supplied review requires only persistence fix 1; production approval remains pending.",
+      "authority": "Approved four-theme user reference world; code-led implementation, no generated-comp approval or concept seed claimed."
+    }
+  },
+  "components": [
+    {
+      "name": "Primary action",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Random-start or primary destination action.",
+      "html": "<button class=\"ds-primary\">Start a random life</button>",
+      "css": ".ds-primary{font-family:var(--t-ui,'Segoe UI','Microsoft YaHei',sans-serif);color:var(--t-ink,#112b48);background:var(--t-action,#075bd6);color:var(--t-on-action,#fff);border:0;border-radius:9px;padding:13px 23px;min-height:48px;font-weight:650;cursor:pointer}.ds-primary:disabled{opacity:.55;cursor:wait}.ds-primary:focus-visible,.ds-text:focus-visible,.ds-country:focus-visible,.ds-nav a:focus-visible,.ds-choice:focus-visible{outline:3px solid var(--t-focus,#075bd6);outline-offset:4px}"
+    },
+    {
+      "name": "Text action",
+      "kind": "button",
+      "refersTo": "button-text",
+      "description": "Underlined secondary action.",
+      "html": "<button class=\"ds-text\">Explore sample lives</button>",
+      "css": ".ds-text{font-family:var(--t-ui,'Segoe UI','Microsoft YaHei',sans-serif);color:var(--t-ink,#112b48);background:transparent;border:0;text-decoration:underline;text-underline-offset:5px;min-height:44px;cursor:pointer}.ds-primary:focus-visible,.ds-text:focus-visible,.ds-country:focus-visible,.ds-nav a:focus-visible,.ds-choice:focus-visible{outline:3px solid var(--t-focus,#075bd6);outline-offset:4px}"
+    },
+    {
+      "name": "Country field",
+      "kind": "input",
+      "refersTo": "input-country",
+      "description": "One real country selection surface.",
+      "html": "<label class=\"ds-label\" for=\"ds-country\">Choose a birthplace</label><select class=\"ds-country\" id=\"ds-country\"><option>Japan</option><option>United States</option><option>India</option></select>",
+      "css": ".ds-label{display:block;font-family:var(--t-ui,'Segoe UI','Microsoft YaHei',sans-serif);color:var(--t-ink,#112b48);font-size:14px;font-weight:650;margin-bottom:9px}.ds-country{font-family:var(--t-ui,'Segoe UI','Microsoft YaHei',sans-serif);color:var(--t-ink,#112b48);background:var(--t-paper,#fff);border:1px solid var(--t-line,#b7cbdc);border-radius:9px;padding:10px 12px;min-height:46px}.ds-primary:focus-visible,.ds-text:focus-visible,.ds-country:focus-visible,.ds-nav a:focus-visible,.ds-choice:focus-visible{outline:3px solid var(--t-focus,#075bd6);outline-offset:4px}"
+    },
+    {
+      "name": "Global navigation",
+      "kind": "nav",
+      "refersTo": "navigation",
+      "description": "Current-page marker and pointer affordance.",
+      "html": "<nav class=\"ds-nav\"><a href=\"#\" aria-current=\"page\">Home</a><a href=\"#\">Compare</a></nav>",
+      "css": ".ds-nav{display:flex;gap:20px}.ds-nav a{font-family:var(--t-ui,'Segoe UI','Microsoft YaHei',sans-serif);color:var(--t-ink,#112b48);font-size:14px;font-weight:600;text-decoration:none;display:inline-flex;align-items:center;min-height:44px;padding:10px 0;border-bottom:2px solid transparent}.ds-nav a:hover,.ds-nav a[aria-current=page]{border-color:var(--t-action,#075bd6)}.ds-primary:focus-visible,.ds-text:focus-visible,.ds-country:focus-visible,.ds-nav a:focus-visible,.ds-choice:focus-visible{outline:3px solid var(--t-focus,#075bd6);outline-offset:4px}"
+    },
+    {
+      "name": "Appearance choice",
+      "kind": "custom",
+      "refersTo": "appearance-choice",
+      "description": "Pressed theme selection tile; image intentionally omitted from the isolated tile.",
+      "html": "<button class=\"ds-choice\" aria-pressed=\"true\">Clear blue</button>",
+      "css": ".ds-choice{font-family:var(--t-ui,'Segoe UI','Microsoft YaHei',sans-serif);color:var(--t-ink,#112b48);background:var(--t-page,#eff7fe);border:2px solid transparent;border-radius:10px;padding:6px;min-height:44px;cursor:pointer}.ds-choice[aria-pressed=true]{border-color:var(--t-action,#075bd6)}.ds-primary:focus-visible,.ds-text:focus-visible,.ds-country:focus-visible,.ds-nav a:focus-visible,.ds-choice:focus-visible{outline:3px solid var(--t-focus,#075bd6);outline-offset:4px}"
+    },
+    {
+      "name": "Sample card",
+      "kind": "card",
+      "refersTo": "sample-card",
+      "description": "Completed-life text on a flat paper surface.",
+      "html": "<article class=\"ds-card\"><p>Completed sample outcome</p><h3>A life in Japan</h3><p class=\"ds-date\">Birth — ending</p></article>",
+      "css": ".ds-card{font-family:var(--t-ui,'Segoe UI','Microsoft YaHei',sans-serif);color:var(--t-ink,#112b48);background:var(--t-paper,#fff);border:0;border-radius:14px;overflow:hidden;padding:0 0 24px}.ds-card>*{margin-left:22px;margin-right:22px}.ds-card h3{font:600 36px var(--t-display,Georgia,serif);margin-top:12px;margin-bottom:4px}.ds-date{font-variant-numeric:tabular-nums;color:var(--t-muted,#405d78);font-size:14px}.ds-primary:focus-visible,.ds-text:focus-visible,.ds-country:focus-visible,.ds-nav a:focus-visible,.ds-choice:focus-visible{outline:3px solid var(--t-focus,#075bd6);outline-offset:4px}"
+    },
+    {
+      "name": "Start panel",
+      "kind": "custom",
+      "refersTo": "start-panel",
+      "description": "Paper surface enclosing the real country controls.",
+      "html": "<section class=\"ds-panel\"><strong>Choose a birthplace</strong><p>Begin here</p></section>",
+      "css": ".ds-panel{font-family:var(--t-ui,'Segoe UI','Microsoft YaHei',sans-serif);color:var(--t-ink,#112b48);max-width:540px;background:var(--t-paper,#fff);padding:18px;border-radius:14px;box-shadow:0 10px 30px #0d294014}.ds-panel strong{font-size:14px;font-weight:650}.ds-primary:focus-visible,.ds-text:focus-visible,.ds-country:focus-visible,.ds-nav a:focus-visible,.ds-choice:focus-visible{outline:3px solid var(--t-focus,#075bd6);outline-offset:4px}"
+    },
+    {
+      "name": "Playback action",
+      "kind": "button",
+      "refersTo": "playback-action",
+      "description": "Existing controller owns real pause/resume; disabled while waiting for a decision.",
+      "html": "<button class=\"b-play\">Pause</button>",
+      "css": ".b-play{font-family:var(--t-ui,'Segoe UI','Microsoft YaHei',sans-serif);color:var(--t-ink,#112b48);background:var(--t-action,#075bd6);color:var(--t-on-action,#fff);border:1px solid var(--t-action,#075bd6);border-radius:10px;padding:10px 14px;min-height:44px;min-width:100px;cursor:pointer}.b-play:disabled{opacity:.5;cursor:default}.b-play:focus-visible{outline:3px solid var(--t-focus,#075bd6);outline-offset:4px}"
+    },
+    {
+      "name": "Current event",
+      "kind": "card",
+      "refersTo": "current-event",
+      "description": "Flat outlined active event; narrative text uses actual engine output.",
+      "html": "<section class=\"b-event\"><h4>This year</h4><p>Your recorded event appears here.</p></section>",
+      "css": ".b-event{font-family:var(--t-ui,'Segoe UI','Microsoft YaHei',sans-serif);color:var(--t-ink,#112b48);background:var(--t-paper,#fff);border:1px solid var(--t-line,#b7cbdc);border-radius:16px;padding:22px 24px}.b-event h4{font-size:13px;letter-spacing:.04em;color:var(--t-muted,#405d78);margin:0 0 12px}.b-event p{font-size:20px;line-height:1.6;margin:0}@media(max-width:760px){.b-event{padding:20px}.b-event p{font-size:18px}}"
+    },
+    {
+      "name": "Pending decision",
+      "kind": "custom",
+      "refersTo": "pending-decision",
+      "description": "Waiting question stays unresolved when set aside; effects are real in the application. Tile is illustrative, with no simulated facts.",
+      "html": "<section class=\"b-decision\"><h3>A decision is waiting</h3><button class=\"b-option\"><strong>Recorded choice</strong><span>Actual effects appear in the application.</span></button><button class=\"b-defer\">Set aside for now</button></section>",
+      "css": ".b-decision{font-family:var(--t-ui,'Segoe UI','Microsoft YaHei',sans-serif);color:var(--t-ink,#112b48);background:var(--t-paper,#fff);border:1px solid var(--t-action,#075bd6);border-radius:18px;padding:26px}.b-decision h3{font:600 27px/1.3 var(--t-display,Georgia,serif);margin:0 0 12px}.b-option{font-family:var(--t-ui,'Segoe UI','Microsoft YaHei',sans-serif);color:var(--t-ink,#112b48);display:grid;gap:8px;width:100%;text-align:start;background:var(--t-page,#eff7fe);border:1px solid var(--t-line,#b7cbdc);border-radius:12px;padding:18px;min-height:70px;cursor:pointer}.b-option strong{font-size:17px}.b-option span{font-size:13px;line-height:1.6}.b-option:hover{border-color:var(--t-action,#075bd6);background:var(--t-soft,#dcecfb)}.b-defer{font-family:var(--t-ui,'Segoe UI','Microsoft YaHei',sans-serif);color:var(--t-ink,#112b48);background:transparent;border:1px solid var(--t-line,#b7cbdc);border-radius:10px;padding:12px 16px;min-height:44px;margin-top:14px;text-decoration:underline;text-underline-offset:4px;cursor:pointer}.b-option:focus-visible,.b-defer:focus-visible{outline:3px solid var(--t-focus,#075bd6);outline-offset:4px}"
+    },
+    {
+      "name": "Pending choice return",
+      "kind": "button",
+      "refersTo": "pending-return",
+      "description": "Capsule return affordance; fixed at safe-area bottom in the application. Preview omits viewport positioning.",
+      "html": "<button class=\"b-return\">Return to the pending choice</button>",
+      "css": ".b-return{font-family:var(--t-ui,'Segoe UI','Microsoft YaHei',sans-serif);color:var(--t-ink,#112b48);border:1px solid var(--t-action,#075bd6);border-radius:100px;background:var(--t-action,#075bd6);color:var(--t-on-action,#fff);padding:16px 24px;box-shadow:0 8px 24px #00192b30;font-size:16px;line-height:1.4;font-weight:600;max-width:100%;cursor:pointer}.b-return:focus-visible{outline:3px solid var(--t-focus,#075bd6);outline-offset:4px}"
+    },
+    {
+      "name": "Studio control surface",
+      "kind": "custom",
+      "refersTo": "studio-controls",
+      "description": "Paper editor beside the large selected work; artwork and six actual templates remain independent from website appearance.",
+      "html": "<section class=\"b-studio\"><h2>Customize your keepsake</h2><label>Title<input type=\"text\" value=\"A story worth keeping\"></label><button>Preview your design</button></section>",
+      "css": ".b-studio{font-family:var(--t-ui,'Segoe UI','Microsoft YaHei',sans-serif);color:var(--t-ink,#112b48);padding:26px;background:var(--t-paper,#fff);border:1px solid var(--t-line,#b7cbdc);border-radius:20px}.b-studio h2{font:600 28px var(--t-display,Georgia,serif)}.b-studio label{display:grid;gap:8px}.b-studio input{font-family:var(--t-ui,'Segoe UI','Microsoft YaHei',sans-serif);color:var(--t-ink,#112b48);background:var(--t-page,#eff7fe);border:1px solid var(--t-line,#b7cbdc);border-radius:10px;padding:12px;min-width:0}.b-studio button{font-family:var(--t-ui,'Segoe UI','Microsoft YaHei',sans-serif);color:var(--t-ink,#112b48);min-height:44px;padding:12px 16px;border:1px solid var(--t-line,#b7cbdc);border-radius:10px;background:var(--t-soft,#dcecfb);margin-top:16px;cursor:pointer}.b-studio input:focus-visible,.b-studio button:focus-visible{outline:3px solid var(--t-focus,#075bd6);outline-offset:4px}"
+    },
+    {
+      "name": "Order design surface",
+      "kind": "custom",
+      "refersTo": "order-design",
+      "description": "Recoverable order design settings. Status text alone never grants export rights.",
+      "html": "<section class=\"b-order\"><label>Card design<select><option>Cinematic poster</option><option>Editorial magazine</option></select></label></section>",
+      "css": ".b-order{font-family:var(--t-ui,'Segoe UI','Microsoft YaHei',sans-serif);color:var(--t-ink,#112b48);padding:24px;background:var(--t-paper,#fff);border:1px solid var(--t-line,#b7cbdc);border-radius:16px}.b-order label{display:grid;gap:12px;font-size:15px}.b-order select{font-family:var(--t-ui,'Segoe UI','Microsoft YaHei',sans-serif);color:var(--t-ink,#112b48);background:var(--t-page,#eff7fe);border:1px solid var(--t-line,#b7cbdc);padding:12px;border-radius:10px;min-height:48px;width:100%;max-width:100%}.b-order select:focus-visible{outline:3px solid var(--t-focus,#075bd6);outline-offset:4px}"
+    }
+  ],
+  "narrative": {
+    "northStar": "A birthplace becomes a story worth keeping",
+    "overview": "A birthplace becomes a story worth keeping. The locally implemented A/B/C world pairs scenic original artwork with readable life stories, real start controls and actual collectible specimens. Clear blue (default), travel journal, modern editorial and cinema at dusk are four distinct compositions within one product. Batch B extends this world into real birth, playback, decision, ending, studio and order surfaces; Batch C carries it through reading pages, comparison and odds tools, country discovery, callbacks and 404.\n\nThis is the current local normal production-build candidate, with all four themes and A/B/C surfaces implemented. THEME_PREVIEW now adds only noindex sample studies/prototypes; the shared shell and reading/tool body migration run in normal builds. Exact-Git deployment and production-domain acceptance remain pending, including C04 new-UI/old-paid-order export verification. Historical production v1.16.9 and earlier opt-in/nonactive preview evidence do not establish this candidate as deployed. Batch B local UI and actual Stripe TEST delivery retain their scoped acceptance; live charging remains closed. Direction is code-led from the approved reference world; no generated-comp approval or concept seed is claimed. The existing keepsake system remains independently documented below.",
+    "keyCharacteristics": [
+      "Four scenic worlds with stable product meaning.",
+      "Locally hosted display lettering and readable local UI stacks.",
+      "Real sample facts, visible controls and expanded core content.",
+      "Symbolic gouache life stages, readable operating surfaces and work-first studio previews.",
+      "Quiet expanded reading rooms and native data tools across all four themes."
+    ],
+    "rules": [
+      {
+        "name": "The Independent Appearance Rule",
+        "body": "Website appearance never selects an export template or recolors PNG/PDF artifacts.",
+        "section": "colors"
+      },
+      {
+        "name": "The Stable Meaning Rule",
+        "body": "Theme changes alter presentation; start, continue, saved lives, simulation streams and order meaning stay stable.",
+        "section": "components"
+      },
+      {
+        "name": "The Recorded Life Rule",
+        "body": "Symbolic scenery and personal writing never supply missing facts for a completed record.",
+        "section": "components"
+      }
+    ],
+    "dos": [
+      "Do keep story facts tied to actual sample or completed-life events.",
+      "Do retain readable local-script controls, visible focus and expanded core content.",
+      "Do adapt composition by theme while preserving mobile task order.",
+      "Do keep pending decisions paused when set aside, and give the selected studio work first-viewport authority."
+    ],
+    "donts": [
+      "Don't describe locally implemented A/B/C or nonactive version-preview acceptance as exact-Git deployment, production-domain acceptance or live payment approval.",
+      "Don't copy reference screenshots, invented people, popularity claims or competitor media into the product.",
+      "Don't couple website themes to the six keepsake export templates.",
+      "Don't treat order UI mocks, redirect success or a client-side paid label as export authorization."
+    ]
+  }
+}

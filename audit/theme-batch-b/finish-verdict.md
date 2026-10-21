@@ -1,0 +1,18 @@
+## verdict
+
+- 1 — resolved. All eight birth captures reopened: settled content/art, readable cancel/start, and night header/footer now share the navy modal surface. Earlier pale bars are gone. Four-theme life/ending captures remain readable; sampled critical text in workspace-report.json is above 4.5:1 (minimum 5.416:1).
+- 2 — resolved. Studio captures reopened at original resolution: selected large work precedes six-template selection on phone and sits beside its compact selector on desktop. Expanded customization remains available. Refreshed life aliases and all four-theme life captures visibly place the stage before current event/playback; this is verified from captures, not source ordering alone.
+- 3 — resolved. zh-CN studio retains localized checkout/storage instructions. Prior source review verified nine separate native commerce-copy entries and installation. This resolves the reported untranslated prose, not native-language proofreading of every rendered locale.
+- 4 — resolved. All birth captures show one resource rank, its explanation and the original birth narrative. Cancel/reroll/start remain reachable.
+- 5 — resolved. Life captures retain a 1px event outline and authored globe/reroll icons. Correction preserved: appearance half-disc was already authored SVG in scripts/build-theme-preview.mjs, not a Unicode glyph.
+- 6 — resolved. Phone ratio control visibly displays the complete “9:16 · 2160 × 3840” on its own line.
+- 7 — resolved for the documented sandbox test version. Read codex/theme-batch-b-acceptance-20261022.md, sandbox-d1-evidence.json and sandbox-files.json; opened actual sandbox-paid-card.png, sandbox-old-order-card.png and PDF cover/middle/last renders. Acceptance records real personal life to studio, Stripe TEST cancel/pending, declined official test card, successful official test card, paid webhook, authorized PNG/PDF, reload and old paid-order recovery/download. D1 records new/old orders paid at 299 USD cents and the fresh processed webhook. Actual PNG is 2880×2880; PDF is 15 Letter pages. Renders show Chinese title/note, Ramos Avery, recorded dates, source/page number and no DEMO watermark. order-390/order-1440 show readable status/design/download/recovery UI but are explicitly mocks, not payment proof. Live charging remains closed.
+- 8 — resolved. .impeccable/surfaces/theme-batch-b.md supplies direction/QUALITY BAR and continues the documented user-pinned code-led world without claiming a random seed or approved generated comp. All four original critique images were opened in the preceding pass; scenic/material ambition is distinct from factual feature obligations.
+
+All original required capture paths were reopened, plus four-theme life/ending extensions, both order UI captures and five paid-delivery renders. No missing/malformed required capture or material fix-induced regression was found. Provided-file review only; no browser, server, capture or second detector run.
+
+## remaining
+
+Clear for the scored fixes and evidenced Batch B local UI plus documented independent-version sandbox chain. This ship covers the scored fixes, not the whole surface. The latest CSS/lazy-art candidate’s native preview refresh remains a separate final build check; actual sandbox proof identifies version 5e2bf5f6-8fc9-4648-bad0-67fc6206d540 rather than proving every later candidate byte. This does not approve production activation, the full website, C inner-page migration, C04 production new-UI/legacy-order verification, or real payments. Worker authorization/renderers remain outside the visual review’s independent implementation audit.
+
+disposition: ship

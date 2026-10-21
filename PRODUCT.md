@@ -18,7 +18,7 @@ Current product supports English, Japanese, Korean, Traditional and Simplified C
 
 ## Operating Context
 
-Vanilla HTML/CSS/JavaScript game, Node static build, existing Git-to-Cloudflare deployment. Current release v1.14.2, with 226 intended indexable routes; previous production revision 55f0a962d8ac2f8673c7082a321195b627ecb826. Discovery/indexing and retention are measured separately.
+Vanilla HTML/CSS/JavaScript game, Node static build, existing Git-to-Cloudflare deployment. Historical release record: v1.14.2, with 226 intended indexable routes and previous production revision 55f0a962d8ac2f8673c7082a321195b627ecb826. The later pre-redesign production baseline is recorded as v1.16.9 in the theme acceptance records. The current four-theme A/B/C implementation is a local normal production-build candidate; exact-Git deployment and production-domain acceptance remain pending. Discovery/indexing and retention are measured separately.
 
 ## Capabilities and Constraints
 
@@ -31,7 +31,9 @@ Vanilla HTML/CSS/JavaScript game, Node static build, existing Git-to-Cloudflare 
 
 ## Brand Commitments
 
-User confirmed on 20 October 2026: retain the blue brand and add warm original pixel scenes to the life experience. Existing brand name and independent-project identity remain.
+Latest scope clarification, 21 October 2026: redesign the entire site's visual system and interactions into a modern product, including all public page templates and dynamic game, collection, studio, order, loading and error states. The supplied cinematic navy/gold reference sets the direction. Earlier pixel-scene preservation is not a visual constraint on this redesign; the life stage and character presentation are also in scope. Preserve the brand identity and independent-project truth, the model inputs, rules/random streams, date semantics, saves/replays and server-verified payment/fulfillment. Replace page structures, controls and interaction patterns where needed. Content stays expanded by default. This records the scope decision; A/B/C are now locally implemented as described below, while exact-Git production deployment and acceptance remain pending.
+
+Theme extension requested 21 October 2026, implemented locally through Batch C on 22 October 2026: four visual worlds are clear blue (default), travel journal/scrapbook, modern editorial and cinematic night. Homepage composition and artwork vary; other pages inherit the theme's design language with stable task structure. Theme changes are presentation-only, preserve gameplay and private records, persist locally, and remain independent of keepsake export templates. The shared SEO routes and semantic content remain. All four themes are locally implemented across A homepage compositions, B birth/life/decision/ending/studio/order surfaces and C reading/tool bodies, with a shared shell on callbacks and 404. Normal production builds include this world; THEME_PREVIEW adds sample studies/prototypes that normal builds exclude. The implementation follows the approved user reference world and code-led direction; no generated-comp approval or concept seed is claimed. Local C evidence covers expanded reading content, contained tables, comparison/odds tools, country discovery and nine public locale paths. Exact-Git deployment and production-domain acceptance, including C04 new-UI/old-paid-order export verification, remain pending. Actual Stripe TEST payment/webhook/server-authorized delivery retains its scoped B evidence; live charging remains closed. Website themes stay independent of the six export templates, and do not alter simulation/calendar semantics, statistical inputs, saves or replay compatibility.
 
 ## Evidence on Hand
 
