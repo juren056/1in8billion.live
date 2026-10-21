@@ -29,7 +29,7 @@ test('replay invitations show their actual era without treating historical and f
  assert.equal(C.replayDate({era:'now',calendarMonth:'2027-01'}),'2027-01');
 });
 test('calendar material dates distinguish real documentation checks from unverified observation years',()=>{
- for(const route of JSON.parse(fs.readFileSync('dist/routes.json'))){const html=fs.readFileSync('dist'+route+'index.html','utf8');assert(html.includes('class="calendar-dates"'),route);assert(html.includes(`datetime="${release.calendarReviewed}"`),route);assert(html.includes(`v${release.version}`),route);assert(!html.includes('UI · v1.11.1'),route);}
+ for(const route of JSON.parse(fs.readFileSync('dist/routes.json'))){const html=fs.readFileSync('dist'+route+'index.html','utf8');assert(!html.includes('class="calendar-dates"'),route);assert(!html.includes('UI · v1.11.1'),route);}
  for(const name of ['model-metadata','provenance','retention-config']){const data=JSON.parse(fs.readFileSync(`dist/data/${name}.json`));assert.equal(data.calendar.reviewed,release.calendarReviewed);assert.equal(data.calendar.release,release.version);assert.equal(data.calendar.statisticalObservationYears,'unchanged');if(data.records)assert(data.records.every(r=>Object.values(r.observationYears).every(y=>y===null)));}
  assert.equal(JSON.parse(fs.readFileSync('dist/release.json')).version,release.version);assert(fs.readFileSync('app.js','utf8').includes(`APP_VERSION = '${release.version}'`));
 });

@@ -24,7 +24,7 @@ for(const [lang,c] of Object.entries(seoLocales))test(lang+' final home and land
 });
 test('calendar detail is concentrated in help while every public deep link survives',()=>{
  const routes=JSON.parse(fs.readFileSync('dist/routes.json'));
- for(const route of routes){const html=fs.readFileSync('dist'+route+'index.html','utf8');assert(html.includes('id="birth-calendar"'));if(!route.endsWith('/how-it-works/')&&!route.endsWith('/guides/quick-play/'))assert(html.includes('how-it-works/#birth-calendar'));}
+ for(const route of routes){const html=fs.readFileSync('dist'+route+'index.html','utf8');assert(html.includes('id="birth-calendar"'));assert(!html.includes('class="calendar-help"'));}
 });
 test('historical crawler 404s redirect only to existing canonical pages',()=>{
  const redirects=JSON.parse(fs.readFileSync('content/legacy-redirects.json'));

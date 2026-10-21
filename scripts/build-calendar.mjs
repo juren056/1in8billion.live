@@ -10,7 +10,7 @@ export function buildCalendar(routes){
   html=html.replace(/#run=v1\.([a-z0-9]+)\.([A-Z]{3})\.now\.(en|ja|ko|zh-Hant)\.0/g,(token,seed,country,internal)=>{const s=samples.find(s=>s.seed===seed&&s.country===country&&s.lang===(internal==='zh-Hant'?'zh-TW':internal));return s?.calendarMonth?`#run=v2.${seed}.${country}.now.${internal}.0.${s.calendarMonth.replace('-','')}`:token;});
   const editorial=seoLocales[lang],helpPath='/'+editorial.prefix+'how-it-works/';
   const detailed=route===helpPath||route==='/'+editorial.prefix+'guides/quick-play/';
-  const section=`<section class="calendar-help" style="max-width:76ch;padding:24px 0" id="birth-calendar"><h2>${c.title}</h2><p>${detailed?c.help:editorial.short+' <a href="'+helpPath+'#birth-calendar">'+editorial.link+'</a>'}</p><dl class="calendar-dates"><dt>${c.reviewed}</dt><dd><time datetime="${release.calendarReviewed}">${release.calendarReviewed}</time> · v${release.version}</dd><dt>${c.observed}</dt><dd>${c.unknown}</dd></dl></section>`;
+  const section='<span id="birth-calendar" hidden></span>';
   if(html.includes('id="view-intro"'))html=html.replace('<section class="home-life-intro">',section+'<section class="home-life-intro">');
   else html=html.replace('</main>',section+'</main>');
   html=html.replace(/<button([^>]*data-era="now"[^>]*)>[^<]*<\/button>/g,(_,attrs)=>'<button'+attrs.replace(/ data-t="[^"]*"/,'')+'>'+c.now+'</button>');
