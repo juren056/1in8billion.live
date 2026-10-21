@@ -1,6 +1,7 @@
 import {commerceCopy} from '../premium-keepsake/commerce-copy.js';
 import {paymentCopy} from '../premium-keepsake/payment-copy.js';
 import {arrivalCopy} from '../arrival-copy.js';
+import {homeCriticalCss} from './home-critical-css.mjs';
 const origin='https://1in8billion.live';
 const text=s=>s.replace(/<[^>]*>/g,'').replace(/&amp;/g,'&').replace(/&quot;/g,'"').replace(/&#39;|&apos;/g,"'").replace(/&lt;/g,'<').replace(/&gt;/g,'>').trim();
 export function seoPresentation(html,route,lang,coverage){
@@ -10,7 +11,8 @@ export function seoPresentation(html,route,lang,coverage){
  html=html.replace(/<section data-commerce-policy>[\s\S]*?<\/section>/,`<section data-commerce-policy><h2>${policy.heading}</h2><p>${policy.sales}</p><p>${policy.storage}</p><p><a href="mailto:support@1in8billion.live">support@1in8billion.live</a></p></section>`);
  // Critical dimensions and styles must be present before first paint.
  if(/id="view-intro"/.test(html)){
-  html=html.replace('<link rel="stylesheet" href="/experience-upgrade.css">','').replace('</head>','<link rel="stylesheet" href="/retention.css"><link rel="stylesheet" href="/experience-media.css"><link rel="stylesheet" href="/experience-upgrade.css"></head>');
+  const optional=['retention.css','experience-media.css'].map(file=>`<link rel="stylesheet" href="/${file}" media="print" onload="this.media='all'"><noscript><link rel="stylesheet" href="/${file}"></noscript>`).join('');
+  html=html.replace('<link rel="stylesheet" href="/experience-upgrade.css">','').replace('</head>',`<style data-home-critical>${homeCriticalCss}</style>${optional}<link rel="stylesheet" href="/experience-upgrade.css"></head>`);
   const labels=arrivalCopy[lang]||arrivalCopy.en;
   const clock=`<section class="world-clock"><dl>${labels.map((label,i)=>`<div><dt>${label}</dt><dd id="arrival${['Births','Seconds','Countries'][i]}">${i===2?coverage:0}</dd></div>`).join('')}</dl></section>`;
   // Insert after the hero, immediately before the controls section that follows it.

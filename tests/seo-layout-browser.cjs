@@ -8,6 +8,7 @@ try{
   const p=await b.newPage({viewport:{width,height:900},serviceWorkers:'block'});p.on('pageerror',e=>errors.push(e.message));
   await (await p.context().newCDPSession(p)).send('Emulation.setCPUThrottlingRate',{rate:4});
   await p.route('**/experience-upgrade.js',async r=>{await new Promise(resolve=>setTimeout(resolve,1200));await r.continue();});
+  await p.route(/\/(?:retention|experience-media)\.css$/,async r=>{await new Promise(resolve=>setTimeout(resolve,2000));await r.continue();});
   await p.addInitScript(()=>{window.qaShifts=[];new PerformanceObserver(list=>{for(const s of list.getEntries())if(!s.hadRecentInput)qaShifts.push({value:s.value,time:s.startTime,sources:s.sources.map(x=>x.node?.id||x.node?.className||x.node?.tagName)});}).observe({type:'layout-shift',buffered:true});});
   await p.goto(base+'/'+prefix);await p.waitForFunction(()=>document.documentElement.dataset.gameReady==='true');await p.evaluate(()=>window.retentionReady);await p.evaluate(()=>window.localeReady);await p.waitForTimeout(1600);
   assert.equal(await p.locator('.world-clock').count(),1);assert.equal(await p.locator('#view-intro .reading-navigation').count(),0);

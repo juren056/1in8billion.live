@@ -21,7 +21,7 @@ test('localized structured breadcrumbs match visible parents and current canonic
 test('home counters and their layout styles exist before JavaScript starts',()=>{
  for(const c of Object.values(seoLocales)){
   const html=read('/'+c.prefix);for(const id of ['arrivalBirths','arrivalSeconds','arrivalCountries'])assert.equal([...html.matchAll(new RegExp('id="'+id+'"','g'))].length,1);
-  const head=html.slice(0,html.indexOf('</head>'));assert(head.includes('href="/retention.css"'));assert(head.includes('href="/experience-media.css"'));assert(html.includes('class="home-preview-frame"'));
+  const head=html.slice(0,html.indexOf('</head>'));assert(head.includes('data-home-critical'));assert(head.includes('href="/retention.css" media="print"'));assert(head.includes('href="/experience-media.css" media="print"'));assert(html.includes('class="home-preview-frame"'));
  }
 });
 test('both short guides contain useful native tasks and a dataset-derived worked example',()=>{
