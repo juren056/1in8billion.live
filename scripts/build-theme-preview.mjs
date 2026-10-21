@@ -2,12 +2,14 @@ import fs from'node:fs';
 import{themeCopy,themeIds,studyCopy}from'../theme-copy.js';
 import{locales}from'../locale-runtime.js';
 import{buildDesignGallery}from'./build-design-gallery.mjs';
+import{release}from'../release-info.mjs';
+import{toolCopy}from'../tool-workspace-copy.js';
 import{migrateReadingPages}from'./build-reading-system.mjs';
 import{displayCountry}from'../country-labels.js';
 const esc=s=>String(s).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('"','&quot;');
 const icon='<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 0 0 18z" fill="currentColor" stroke="none"/></svg>';
 export function buildThemePreview(routes,{preview=false}={}){
- for(const file of['reading-system.css','theme-home.js','theme-studio.js','modern-life-art.js','product-workspaces.css','game-workspace.js','game-workspace-copy.js','theme-copy.js','site-theme.js','home-start-dock.js','theme-system.css'])fs.copyFileSync(file,'dist/'+file);
+ for(const file of['tool-workspace.js','tool-workspace-copy.js','reading-system.css','theme-home.js','theme-studio.js','modern-life-art.js','product-workspaces.css','game-workspace.js','game-workspace-copy.js','theme-copy.js','site-theme.js','home-start-dock.js','theme-system.css'])fs.copyFileSync(file,'dist/'+file);
  const init=fs.readFileSync('theme-init.js','utf8');const themeCss=fs.readFileSync('theme-system.css','utf8');fs.writeFileSync('dist/theme-shell.css',(themeCss.slice(0,themeCss.indexOf('html[data-design-system]'))+fs.readFileSync('theme-shell.css','utf8')).replace(/\/\*[\s\S]*?\*\//g,'').replace(/\s*([{}:;,])\s*/g,'$1').trim());
  const ledger=[];
  for(const route of [...routes,'/keepsake/success/','/keepsake/cancel/','/404.html']){const path=route==='/404.html'?'dist/404.html':'dist'+route+'index.html';let h=fs.readFileSync(path,'utf8');const lang=h.match(/<html lang="([^"]+)"/)?.[1]||'en',c=themeCopy[lang]||themeCopy.en,base='/'+(locales[lang]?.[0]||''),home=h.includes('id="view-intro"');
@@ -16,10 +18,13 @@ export function buildThemePreview(routes,{preview=false}={}){
  if(['/keepsake/success/','/keepsake/cancel/'].includes(route)){const labels=Object.fromEntries(Object.entries(locales).map(([code,[prefix]])=>{const home=fs.readFileSync('dist/'+prefix+'index.html','utf8'),nav=home.match(/<nav class="site-links"[\s\S]*?<\/nav>/)?.[0]||'';return[code,[...nav.matchAll(/<a[^>]*>([^<]+)<\/a>/g)].map(m=>m[1])];}));h=h.replace('</head>',`<script>window.ThemeNavigation=${JSON.stringify(labels)}</script></head>`);}
  if(route.includes('/keepsake/'))h=h.replace('</head>','<link rel="stylesheet" href="/product-workspaces.css"></head>');
  if(!home)h=h.replace('<link rel="stylesheet" href="/launch.css">',`<link rel="stylesheet" href="/launch.css" media="print" onload="this.media='all'"><noscript><link rel="stylesheet" href="/launch.css"></noscript>`);
- if(!h.includes('</header>')){const reference=fs.readFileSync('dist'+base+'index.html','utf8'),nav=(reference.match(/<nav class="site-links"[\s\S]*?<\/nav>/)?.[0]||'').replace(/ aria-current="page"/g,'')+(reference.match(/<details class="language-menu global-language"[\s\S]*?<\/details>/)?.[0]||'');h=h.replace('<body>',`<body><header class="topbar"><a class="brand" href="${base}">1in8billion.live</a>${nav}</header>`);}
+ if(!h.includes('</header>')){const reference=fs.readFileSync('dist'+base+'index.html','utf8'),nav=(reference.match(/<nav class="site-links"[\s\S]*?<\/nav>/)?.[0]||'').replace(/ aria-current="page"/g,'').replace(/<a href="#gameTools">[\s\S]*?<\/a>/g,'')+(reference.match(/<details class="language-menu global-language"[\s\S]*?<\/details>/)?.[0]||'');h=h.replace('<body>',`<body><header class="topbar"><a class="brand" href="${base}">1in8billion.live</a>${nav}</header>`);}
  h=h.replaceAll('<summary>🌐','<summary><svg aria-hidden="true" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="12" r="9"/><ellipse cx="12" cy="12" rx="4" ry="9"/><path d="M3 12h18"/></svg>');
  h=h.replace('</header>',menu+'</header>').replaceAll(`href="${route}"`, `href="${route}" aria-current="page"`);
  if(home){
+ h=h.replace(/(<span class="footer-ver">)v[^<]*/,`$1v${release.version} · `);
+ const tools=toolCopy[lang]||toolCopy.en;let buttons=0;const legacy=h.match(/<nav class="topnav"[^>]*>[\s\S]*?<\/nav>/)?.[0];if(legacy){const moved=legacy.replace(/<nav[^>]*>/,`<nav id="gameTools" class="game-tools" aria-label="${esc(tools.nav[0])}">`).replace(/(<button[^>]*)(>)[\s\S]*?<\/button>/g,(_,start,end)=>start.replace(/ data-t="[^"]*"/,'')+end+esc(tools.nav[++buttons])+'</button>');h=h.replace(legacy,'').replace('<section id="view-life"',moved+'<section id="view-life"');h=h.replace(/(<nav class="site-links"[\s\S]*?)(<\/nav>)/,`$1<a href="#gameTools">${esc(tools.nav[0])}</a>$2`);}
+
  for(const file of ['launch.css','content.css','experience.css','experience-upgrade.css'])h=h.replace('<link rel="stylesheet" href="/'+file+'">',`<link rel="stylesheet" href="/${file}" media="print" onload="this.media='all'"><noscript><link rel="stylesheet" href="/${file}"></noscript>`);
  h=h.replace(/(<button id="btnStart"[^>]*>)[^<]*(<\/button>)/,`$1${studyCopy[lang][0]}$2`).replace(/(<button id="customizeLife"[^>]*>)[^<]*(<\/button>)/,'$1$2');
  const start=/<div class="hero experience-hero">([\s\S]*?)<aside class="hero-world"[\s\S]*?<\/aside><\/div>/;

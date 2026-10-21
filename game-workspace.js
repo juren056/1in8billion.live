@@ -1,4 +1,5 @@
 // Layout adapters only. The existing controllers retain every action and save key.
+import {installToolWorkspace} from './tool-workspace.js';
 import {workspaceCopy} from './game-workspace-copy.js';
 export function installGameWorkspace(){
  const root=document.documentElement,lang=root.dataset.siteLocale||root.lang,c=workspaceCopy[lang]||workspaceCopy.en;
@@ -10,5 +11,6 @@ export function installGameWorkspace(){
  const secondary=document.querySelector('#lifeSecondary');if(secondary)secondary.open=true;
  const apply=()=>{const end=document.querySelector('#endingIntro');if(end){end.dataset.workspace='ending';const reference=document.querySelector('#endLe');if(reference)reference.textContent=String(STATE.life.countryData.le);const more=document.querySelector('#endShowMore9');if(more)more.disabled=loadPastLives().length<=5;const offer=end.querySelector('.premium-offer-prominent');if(offer){const title=offer.querySelector('h2,h3');if(title)title.textContent=c[4];}}};
  const old=window.renderEnd;window.renderEnd=function(...args){const result=old(...args);apply();return result;};apply();
+ installToolWorkspace();
  root.dataset.gameWorkspace='ready';
 }

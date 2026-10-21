@@ -1,0 +1,11 @@
+{
+  "layouts": 0,
+  "rows": [],
+  "errors": [],
+  "pausePreservesLife": true,
+  "batchGuard": true,
+  "shelfKeyboard": true,
+  "deleteCancelAndConfirm": true,
+  "mobileImageRetry": true,
+  "dockModalRecovery": true
+}

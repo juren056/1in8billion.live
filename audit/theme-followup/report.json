@@ -1,0 +1,1524 @@
+{
+  "layouts": 216,
+  "rows": [
+    {
+      "prefix": "",
+      "theme": "blue",
+      "view": "lab",
+      "width": 390,
+      "overflow": false
+    },
+    {
+      "prefix": "",
+      "theme": "blue",
+      "view": "tree",
+      "width": 390,
+      "overflow": false
+    },
+    {
+      "prefix": "",
+      "theme": "blue",
+      "view": "shelf",
+      "width": 390,
+      "overflow": false
+    },
+    {
+      "prefix": "",
+      "theme": "journal",
+      "view": "lab",
+      "width": 390,
+      "overflow": false
+    },
+    {
+      "prefix": "",
+      "theme": "journal",
+      "view": "tree",
+      "width": 390,
+      "overflow": false
+    },
+    {
+      "prefix": "",
+      "theme": "journal",
+      "view": "shelf",
+      "width": 390,
+      "overflow": false
+    },
+    {
+      "prefix": "",
+      "theme": "editorial",
+      "view": "lab",
+      "width": 390,
+      "overflow": false
+    },
+    {
+      "prefix": "",
+      "theme": "editorial",
+      "view": "tree",
+      "width": 390,
+      "overflow": false
+    },
+    {
+      "prefix": "",
+      "theme": "editorial",
+      "view": "shelf",
+      "width": 390,
+      "overflow": false
+    },
+    {
+      "prefix": "",
+      "theme": "night",
+      "view": "lab",
+      "width": 390,
+      "overflow": false
+    },
+    {
+      "prefix": "",
+      "theme": "night",
+      "view": "tree",
+      "width": 390,
+      "overflow": false
+    },
+    {
+      "prefix": "",
+      "theme": "night",
+      "view": "shelf",
+      "width": 390,
+      "overflow": false
+    },
+    {
+      "prefix": "",
+      "theme": "blue",
+      "view": "lab",
+      "width": 1440,
+      "overflow": false
+    },
+    {
+      "prefix": "",
+      "theme": "blue",
+      "view": "tree",
+      "width": 1440,
+      "overflow": false
+    },
+    {
+      "prefix": "",
+      "theme": "blue",
+      "view": "shelf",
+      "width": 1440,
+      "overflow": false
+    },
+    {
+      "prefix": "",
+      "theme": "journal",
+      "view": "lab",
+      "width": 1440,
+      "overflow": false
+    },
+    {
+      "prefix": "",
+      "theme": "journal",
+      "view": "tree",
+      "width": 1440,
+      "overflow": false
+    },
+    {
+      "prefix": "",
+      "theme": "journal",
+      "view": "shelf",
+      "width": 1440,
+      "overflow": false
+    },
+    {
+      "prefix": "",
+      "theme": "editorial",
+      "view": "lab",
+      "width": 1440,
+      "overflow": false
+    },
+    {
+      "prefix": "",
+      "theme": "editorial",
+      "view": "tree",
+      "width": 1440,
+      "overflow": false
+    },
+    {
+      "prefix": "",
+      "theme": "editorial",
+      "view": "shelf",
+      "width": 1440,
+      "overflow": false
+    },
+    {
+      "prefix": "",
+      "theme": "night",
+      "view": "lab",
+      "width": 1440,
+      "overflow": false
+    },
+    {
+      "prefix": "",
+      "theme": "night",
+      "view": "tree",
+      "width": 1440,
+      "overflow": false
+    },
+    {
+      "prefix": "",
+      "theme": "night",
+      "view": "shelf",
+      "width": 1440,
+      "overflow": false
+    },
+    {
+      "prefix": "zh-cn/",
+      "theme": "blue",
+      "view": "lab",
+      "width": 390,
+      "overflow": false
+    },
+    {
+      "prefix": "zh-cn/",
+      "theme": "blue",
+      "view": "tree",
+      "width": 390,
+      "overflow": false
+    },
+    {
+      "prefix": "zh-cn/",
+      "theme": "blue",
+      "view": "shelf",
+      "width": 390,
+      "overflow": false
+    },
+    {
+      "prefix": "zh-cn/",
+      "theme": "journal",
+      "view": "lab",
+      "width": 390,
+      "overflow": false
+    },
+    {
+      "prefix": "zh-cn/",
+      "theme": "journal",
+      "view": "tree",
+      "width": 390,
+      "overflow": false
+    },
+    {
+      "prefix": "zh-cn/",
+      "theme": "journal",
+      "view": "shelf",
+      "width": 390,
+      "overflow": false
+    },
+    {
+      "prefix": "zh-cn/",
+      "theme": "editorial",
+      "view": "lab",
+      "width": 390,
+      "overflow": false
+    },
+    {
+      "prefix": "zh-cn/",
+      "theme": "editorial",
+      "view": "tree",
+      "width": 390,
+      "overflow": false
+    },
+    {
+      "prefix": "zh-cn/",
+      "theme": "editorial",
+      "view": "shelf",
+      "width": 390,
+      "overflow": false
+    },
+    {
+      "prefix": "zh-cn/",
+      "theme": "night",
+      "view": "lab",
+      "width": 390,
+      "overflow": false
+    },
+    {
+      "prefix": "zh-cn/",
+      "theme": "night",
+      "view": "tree",
+      "width": 390,
+      "overflow": false
+    },
+    {
+      "prefix": "zh-cn/",
+      "theme": "night",
+      "view": "shelf",
+      "width": 390,
+      "overflow": false
+    },
+    {
+      "prefix": "zh-cn/",
+      "theme": "blue",
+      "view": "lab",
+      "width": 1440,
+      "overflow": false
+    },
+    {
+      "prefix": "zh-cn/",
+      "theme": "blue",
+      "view": "tree",
+      "width": 1440,
+      "overflow": false
+    },
+    {
+      "prefix": "zh-cn/",
+      "theme": "blue",
+      "view": "shelf",
+      "width": 1440,
+      "overflow": false
+    },
+    {
+      "prefix": "zh-cn/",
+      "theme": "journal",
+      "view": "lab",
+      "width": 1440,
+      "overflow": false
+    },
+    {
+      "prefix": "zh-cn/",
+      "theme": "journal",
+      "view": "tree",
+      "width": 1440,
+      "overflow": false
+    },
+    {
+      "prefix": "zh-cn/",
+      "theme": "journal",
+      "view": "shelf",
+      "width": 1440,
+      "overflow": false
+    },
+    {
+      "prefix": "zh-cn/",
+      "theme": "editorial",
+      "view": "lab",
+      "width": 1440,
+      "overflow": false
+    },
+    {
+      "prefix": "zh-cn/",
+      "theme": "editorial",
+      "view": "tree",
+      "width": 1440,
+      "overflow": false
+    },
+    {
+      "prefix": "zh-cn/",
+      "theme": "editorial",
+      "view": "shelf",
+      "width": 1440,
+      "overflow": false
+    },
+    {
+      "prefix": "zh-cn/",
+      "theme": "night",
+      "view": "lab",
+      "width": 1440,
+      "overflow": false
+    },
+    {
+      "prefix": "zh-cn/",
+      "theme": "night",
+      "view": "tree",
+      "width": 1440,
+      "overflow": false
+    },
+    {
+      "prefix": "zh-cn/",
+      "theme": "night",
+      "view": "shelf",
+      "width": 1440,
+      "overflow": false
+    },
+    {
+      "prefix": "ja/",
+      "theme": "blue",
+      "view": "lab",
+      "width": 390,
+      "overflow": false
+    },
+    {
+      "prefix": "ja/",
+      "theme": "blue",
+      "view": "tree",
+      "width": 390,
+      "overflow": false
+    },
+    {
+      "prefix": "ja/",
+      "theme": "blue",
+      "view": "shelf",
+      "width": 390,
+      "overflow": false
+    },
+    {
+      "prefix": "ja/",
+      "theme": "journal",
+      "view": "lab",
+      "width": 390,
+      "overflow": false
+    },
+    {
+      "prefix": "ja/",
+      "theme": "journal",
+      "view": "tree",
+      "width": 390,
+      "overflow": false
+    },
+    {
+      "prefix": "ja/",
+      "theme": "journal",
+      "view": "shelf",
+      "width": 390,
+      "overflow": false
+    },
+    {
+      "prefix": "ja/",
+      "theme": "editorial",
+      "view": "lab",
+      "width": 390,
+      "overflow": false
+    },
+    {
+      "prefix": "ja/",
+      "theme": "editorial",
+      "view": "tree",
+      "width": 390,
+      "overflow": false
+    },
+    {
+      "prefix": "ja/",
+      "theme": "editorial",
+      "view": "shelf",
+      "width": 390,
+      "overflow": false
+    },
+    {
+      "prefix": "ja/",
+      "theme": "night",
+      "view": "lab",
+      "width": 390,
+      "overflow": false
+    },
+    {
+      "prefix": "ja/",
+      "theme": "night",
+      "view": "tree",
+      "width": 390,
+      "overflow": false
+    },
+    {
+      "prefix": "ja/",
+      "theme": "night",
+      "view": "shelf",
+      "width": 390,
+      "overflow": false
+    },
+    {
+      "prefix": "ja/",
+      "theme": "blue",
+      "view": "lab",
+      "width": 1440,
+      "overflow": false
+    },
+    {
+      "prefix": "ja/",
+      "theme": "blue",
+      "view": "tree",
+      "width": 1440,
+      "overflow": false
+    },
+    {
+      "prefix": "ja/",
+      "theme": "blue",
+      "view": "shelf",
+      "width": 1440,
+      "overflow": false
+    },
+    {
+      "prefix": "ja/",
+      "theme": "journal",
+      "view": "lab",
+      "width": 1440,
+      "overflow": false
+    },
+    {
+      "prefix": "ja/",
+      "theme": "journal",
+      "view": "tree",
+      "width": 1440,
+      "overflow": false
+    },
+    {
+      "prefix": "ja/",
+      "theme": "journal",
+      "view": "shelf",
+      "width": 1440,
+      "overflow": false
+    },
+    {
+      "prefix": "ja/",
+      "theme": "editorial",
+      "view": "lab",
+      "width": 1440,
+      "overflow": false
+    },
+    {
+      "prefix": "ja/",
+      "theme": "editorial",
+      "view": "tree",
+      "width": 1440,
+      "overflow": false
+    },
+    {
+      "prefix": "ja/",
+      "theme": "editorial",
+      "view": "shelf",
+      "width": 1440,
+      "overflow": false
+    },
+    {
+      "prefix": "ja/",
+      "theme": "night",
+      "view": "lab",
+      "width": 1440,
+      "overflow": false
+    },
+    {
+      "prefix": "ja/",
+      "theme": "night",
+      "view": "tree",
+      "width": 1440,
+      "overflow": false
+    },
+    {
+      "prefix": "ja/",
+      "theme": "night",
+      "view": "shelf",
+      "width": 1440,
+      "overflow": false
+    },
+    {
+      "prefix": "ko/",
+      "theme": "blue",
+      "view": "lab",
+      "width": 390,
+      "overflow": false
+    },
+    {
+      "prefix": "ko/",
+      "theme": "blue",
+      "view": "tree",
+      "width": 390,
+      "overflow": false
+    },
+    {
+      "prefix": "ko/",
+      "theme": "blue",
+      "view": "shelf",
+      "width": 390,
+      "overflow": false
+    },
+    {
+      "prefix": "ko/",
+      "theme": "journal",
+      "view": "lab",
+      "width": 390,
+      "overflow": false
+    },
+    {
+      "prefix": "ko/",
+      "theme": "journal",
+      "view": "tree",
+      "width": 390,
+      "overflow": false
+    },
+    {
+      "prefix": "ko/",
+      "theme": "journal",
+      "view": "shelf",
+      "width": 390,
+      "overflow": false
+    },
+    {
+      "prefix": "ko/",
+      "theme": "editorial",
+      "view": "lab",
+      "width": 390,
+      "overflow": false
+    },
+    {
+      "prefix": "ko/",
+      "theme": "editorial",
+      "view": "tree",
+      "width": 390,
+      "overflow": false
+    },
+    {
+      "prefix": "ko/",
+      "theme": "editorial",
+      "view": "shelf",
+      "width": 390,
+      "overflow": false
+    },
+    {
+      "prefix": "ko/",
+      "theme": "night",
+      "view": "lab",
+      "width": 390,
+      "overflow": false
+    },
+    {
+      "prefix": "ko/",
+      "theme": "night",
+      "view": "tree",
+      "width": 390,
+      "overflow": false
+    },
+    {
+      "prefix": "ko/",
+      "theme": "night",
+      "view": "shelf",
+      "width": 390,
+      "overflow": false
+    },
+    {
+      "prefix": "ko/",
+      "theme": "blue",
+      "view": "lab",
+      "width": 1440,
+      "overflow": false
+    },
+    {
+      "prefix": "ko/",
+      "theme": "blue",
+      "view": "tree",
+      "width": 1440,
+      "overflow": false
+    },
+    {
+      "prefix": "ko/",
+      "theme": "blue",
+      "view": "shelf",
+      "width": 1440,
+      "overflow": false
+    },
+    {
+      "prefix": "ko/",
+      "theme": "journal",
+      "view": "lab",
+      "width": 1440,
+      "overflow": false
+    },
+    {
+      "prefix": "ko/",
+      "theme": "journal",
+      "view": "tree",
+      "width": 1440,
+      "overflow": false
+    },
+    {
+      "prefix": "ko/",
+      "theme": "journal",
+      "view": "shelf",
+      "width": 1440,
+      "overflow": false
+    },
+    {
+      "prefix": "ko/",
+      "theme": "editorial",
+      "view": "lab",
+      "width": 1440,
+      "overflow": false
+    },
+    {
+      "prefix": "ko/",
+      "theme": "editorial",
+      "view": "tree",
+      "width": 1440,
+      "overflow": false
+    },
+    {
+      "prefix": "ko/",
+      "theme": "editorial",
+      "view": "shelf",
+      "width": 1440,
+      "overflow": false
+    },
+    {
+      "prefix": "ko/",
+      "theme": "night",
+      "view": "lab",
+      "width": 1440,
+      "overflow": false
+    },
+    {
+      "prefix": "ko/",
+      "theme": "night",
+      "view": "tree",
+      "width": 1440,
+      "overflow": false
+    },
+    {
+      "prefix": "ko/",
+      "theme": "night",
+      "view": "shelf",
+      "width": 1440,
+      "overflow": false
+    },
+    {
+      "prefix": "zh-tw/",
+      "theme": "blue",
+      "view": "lab",
+      "width": 390,
+      "overflow": false
+    },
+    {
+      "prefix": "zh-tw/",
+      "theme": "blue",
+      "view": "tree",
+      "width": 390,
+      "overflow": false
+    },
+    {
+      "prefix": "zh-tw/",
+      "theme": "blue",
+      "view": "shelf",
+      "width": 390,
+      "overflow": false
+    },
+    {
+      "prefix": "zh-tw/",
+      "theme": "journal",
+      "view": "lab",
+      "width": 390,
+      "overflow": false
+    },
+    {
+      "prefix": "zh-tw/",
+      "theme": "journal",
+      "view": "tree",
+      "width": 390,
+      "overflow": false
+    },
+    {
+      "prefix": "zh-tw/",
+      "theme": "journal",
+      "view": "shelf",
+      "width": 390,
+      "overflow": false
+    },
+    {
+      "prefix": "zh-tw/",
+      "theme": "editorial",
+      "view": "lab",
+      "width": 390,
+      "overflow": false
+    },
+    {
+      "prefix": "zh-tw/",
+      "theme": "editorial",
+      "view": "tree",
+      "width": 390,
+      "overflow": false
+    },
+    {
+      "prefix": "zh-tw/",
+      "theme": "editorial",
+      "view": "shelf",
+      "width": 390,
+      "overflow": false
+    },
+    {
+      "prefix": "zh-tw/",
+      "theme": "night",
+      "view": "lab",
+      "width": 390,
+      "overflow": false
+    },
+    {
+      "prefix": "zh-tw/",
+      "theme": "night",
+      "view": "tree",
+      "width": 390,
+      "overflow": false
+    },
+    {
+      "prefix": "zh-tw/",
+      "theme": "night",
+      "view": "shelf",
+      "width": 390,
+      "overflow": false
+    },
+    {
+      "prefix": "zh-tw/",
+      "theme": "blue",
+      "view": "lab",
+      "width": 1440,
+      "overflow": false
+    },
+    {
+      "prefix": "zh-tw/",
+      "theme": "blue",
+      "view": "tree",
+      "width": 1440,
+      "overflow": false
+    },
+    {
+      "prefix": "zh-tw/",
+      "theme": "blue",
+      "view": "shelf",
+      "width": 1440,
+      "overflow": false
+    },
+    {
+      "prefix": "zh-tw/",
+      "theme": "journal",
+      "view": "lab",
+      "width": 1440,
+      "overflow": false
+    },
+    {
+      "prefix": "zh-tw/",
+      "theme": "journal",
+      "view": "tree",
+      "width": 1440,
+      "overflow": false
+    },
+    {
+      "prefix": "zh-tw/",
+      "theme": "journal",
+      "view": "shelf",
+      "width": 1440,
+      "overflow": false
+    },
+    {
+      "prefix": "zh-tw/",
+      "theme": "editorial",
+      "view": "lab",
+      "width": 1440,
+      "overflow": false
+    },
+    {
+      "prefix": "zh-tw/",
+      "theme": "editorial",
+      "view": "tree",
+      "width": 1440,
+      "overflow": false
+    },
+    {
+      "prefix": "zh-tw/",
+      "theme": "editorial",
+      "view": "shelf",
+      "width": 1440,
+      "overflow": false
+    },
+    {
+      "prefix": "zh-tw/",
+      "theme": "night",
+      "view": "lab",
+      "width": 1440,
+      "overflow": false
+    },
+    {
+      "prefix": "zh-tw/",
+      "theme": "night",
+      "view": "tree",
+      "width": 1440,
+      "overflow": false
+    },
+    {
+      "prefix": "zh-tw/",
+      "theme": "night",
+      "view": "shelf",
+      "width": 1440,
+      "overflow": false
+    },
+    {
+      "prefix": "es/",
+      "theme": "blue",
+      "view": "lab",
+      "width": 390,
+      "overflow": false
+    },
+    {
+      "prefix": "es/",
+      "theme": "blue",
+      "view": "tree",
+      "width": 390,
+      "overflow": false
+    },
+    {
+      "prefix": "es/",
+      "theme": "blue",
+      "view": "shelf",
+      "width": 390,
+      "overflow": false
+    },
+    {
+      "prefix": "es/",
+      "theme": "journal",
+      "view": "lab",
+      "width": 390,
+      "overflow": false
+    },
+    {
+      "prefix": "es/",
+      "theme": "journal",
+      "view": "tree",
+      "width": 390,
+      "overflow": false
+    },
+    {
+      "prefix": "es/",
+      "theme": "journal",
+      "view": "shelf",
+      "width": 390,
+      "overflow": false
+    },
+    {
+      "prefix": "es/",
+      "theme": "editorial",
+      "view": "lab",
+      "width": 390,
+      "overflow": false
+    },
+    {
+      "prefix": "es/",
+      "theme": "editorial",
+      "view": "tree",
+      "width": 390,
+      "overflow": false
+    },
+    {
+      "prefix": "es/",
+      "theme": "editorial",
+      "view": "shelf",
+      "width": 390,
+      "overflow": false
+    },
+    {
+      "prefix": "es/",
+      "theme": "night",
+      "view": "lab",
+      "width": 390,
+      "overflow": false
+    },
+    {
+      "prefix": "es/",
+      "theme": "night",
+      "view": "tree",
+      "width": 390,
+      "overflow": false
+    },
+    {
+      "prefix": "es/",
+      "theme": "night",
+      "view": "shelf",
+      "width": 390,
+      "overflow": false
+    },
+    {
+      "prefix": "es/",
+      "theme": "blue",
+      "view": "lab",
+      "width": 1440,
+      "overflow": false
+    },
+    {
+      "prefix": "es/",
+      "theme": "blue",
+      "view": "tree",
+      "width": 1440,
+      "overflow": false
+    },
+    {
+      "prefix": "es/",
+      "theme": "blue",
+      "view": "shelf",
+      "width": 1440,
+      "overflow": false
+    },
+    {
+      "prefix": "es/",
+      "theme": "journal",
+      "view": "lab",
+      "width": 1440,
+      "overflow": false
+    },
+    {
+      "prefix": "es/",
+      "theme": "journal",
+      "view": "tree",
+      "width": 1440,
+      "overflow": false
+    },
+    {
+      "prefix": "es/",
+      "theme": "journal",
+      "view": "shelf",
+      "width": 1440,
+      "overflow": false
+    },
+    {
+      "prefix": "es/",
+      "theme": "editorial",
+      "view": "lab",
+      "width": 1440,
+      "overflow": false
+    },
+    {
+      "prefix": "es/",
+      "theme": "editorial",
+      "view": "tree",
+      "width": 1440,
+      "overflow": false
+    },
+    {
+      "prefix": "es/",
+      "theme": "editorial",
+      "view": "shelf",
+      "width": 1440,
+      "overflow": false
+    },
+    {
+      "prefix": "es/",
+      "theme": "night",
+      "view": "lab",
+      "width": 1440,
+      "overflow": false
+    },
+    {
+      "prefix": "es/",
+      "theme": "night",
+      "view": "tree",
+      "width": 1440,
+      "overflow": false
+    },
+    {
+      "prefix": "es/",
+      "theme": "night",
+      "view": "shelf",
+      "width": 1440,
+      "overflow": false
+    },
+    {
+      "prefix": "pt-br/",
+      "theme": "blue",
+      "view": "lab",
+      "width": 390,
+      "overflow": false
+    },
+    {
+      "prefix": "pt-br/",
+      "theme": "blue",
+      "view": "tree",
+      "width": 390,
+      "overflow": false
+    },
+    {
+      "prefix": "pt-br/",
+      "theme": "blue",
+      "view": "shelf",
+      "width": 390,
+      "overflow": false
+    },
+    {
+      "prefix": "pt-br/",
+      "theme": "journal",
+      "view": "lab",
+      "width": 390,
+      "overflow": false
+    },
+    {
+      "prefix": "pt-br/",
+      "theme": "journal",
+      "view": "tree",
+      "width": 390,
+      "overflow": false
+    },
+    {
+      "prefix": "pt-br/",
+      "theme": "journal",
+      "view": "shelf",
+      "width": 390,
+      "overflow": false
+    },
+    {
+      "prefix": "pt-br/",
+      "theme": "editorial",
+      "view": "lab",
+      "width": 390,
+      "overflow": false
+    },
+    {
+      "prefix": "pt-br/",
+      "theme": "editorial",
+      "view": "tree",
+      "width": 390,
+      "overflow": false
+    },
+    {
+      "prefix": "pt-br/",
+      "theme": "editorial",
+      "view": "shelf",
+      "width": 390,
+      "overflow": false
+    },
+    {
+      "prefix": "pt-br/",
+      "theme": "night",
+      "view": "lab",
+      "width": 390,
+      "overflow": false
+    },
+    {
+      "prefix": "pt-br/",
+      "theme": "night",
+      "view": "tree",
+      "width": 390,
+      "overflow": false
+    },
+    {
+      "prefix": "pt-br/",
+      "theme": "night",
+      "view": "shelf",
+      "width": 390,
+      "overflow": false
+    },
+    {
+      "prefix": "pt-br/",
+      "theme": "blue",
+      "view": "lab",
+      "width": 1440,
+      "overflow": false
+    },
+    {
+      "prefix": "pt-br/",
+      "theme": "blue",
+      "view": "tree",
+      "width": 1440,
+      "overflow": false
+    },
+    {
+      "prefix": "pt-br/",
+      "theme": "blue",
+      "view": "shelf",
+      "width": 1440,
+      "overflow": false
+    },
+    {
+      "prefix": "pt-br/",
+      "theme": "journal",
+      "view": "lab",
+      "width": 1440,
+      "overflow": false
+    },
+    {
+      "prefix": "pt-br/",
+      "theme": "journal",
+      "view": "tree",
+      "width": 1440,
+      "overflow": false
+    },
+    {
+      "prefix": "pt-br/",
+      "theme": "journal",
+      "view": "shelf",
+      "width": 1440,
+      "overflow": false
+    },
+    {
+      "prefix": "pt-br/",
+      "theme": "editorial",
+      "view": "lab",
+      "width": 1440,
+      "overflow": false
+    },
+    {
+      "prefix": "pt-br/",
+      "theme": "editorial",
+      "view": "tree",
+      "width": 1440,
+      "overflow": false
+    },
+    {
+      "prefix": "pt-br/",
+      "theme": "editorial",
+      "view": "shelf",
+      "width": 1440,
+      "overflow": false
+    },
+    {
+      "prefix": "pt-br/",
+      "theme": "night",
+      "view": "lab",
+      "width": 1440,
+      "overflow": false
+    },
+    {
+      "prefix": "pt-br/",
+      "theme": "night",
+      "view": "tree",
+      "width": 1440,
+      "overflow": false
+    },
+    {
+      "prefix": "pt-br/",
+      "theme": "night",
+      "view": "shelf",
+      "width": 1440,
+      "overflow": false
+    },
+    {
+      "prefix": "fr/",
+      "theme": "blue",
+      "view": "lab",
+      "width": 390,
+      "overflow": false
+    },
+    {
+      "prefix": "fr/",
+      "theme": "blue",
+      "view": "tree",
+      "width": 390,
+      "overflow": false
+    },
+    {
+      "prefix": "fr/",
+      "theme": "blue",
+      "view": "shelf",
+      "width": 390,
+      "overflow": false
+    },
+    {
+      "prefix": "fr/",
+      "theme": "journal",
+      "view": "lab",
+      "width": 390,
+      "overflow": false
+    },
+    {
+      "prefix": "fr/",
+      "theme": "journal",
+      "view": "tree",
+      "width": 390,
+      "overflow": false
+    },
+    {
+      "prefix": "fr/",
+      "theme": "journal",
+      "view": "shelf",
+      "width": 390,
+      "overflow": false
+    },
+    {
+      "prefix": "fr/",
+      "theme": "editorial",
+      "view": "lab",
+      "width": 390,
+      "overflow": false
+    },
+    {
+      "prefix": "fr/",
+      "theme": "editorial",
+      "view": "tree",
+      "width": 390,
+      "overflow": false
+    },
+    {
+      "prefix": "fr/",
+      "theme": "editorial",
+      "view": "shelf",
+      "width": 390,
+      "overflow": false
+    },
+    {
+      "prefix": "fr/",
+      "theme": "night",
+      "view": "lab",
+      "width": 390,
+      "overflow": false
+    },
+    {
+      "prefix": "fr/",
+      "theme": "night",
+      "view": "tree",
+      "width": 390,
+      "overflow": false
+    },
+    {
+      "prefix": "fr/",
+      "theme": "night",
+      "view": "shelf",
+      "width": 390,
+      "overflow": false
+    },
+    {
+      "prefix": "fr/",
+      "theme": "blue",
+      "view": "lab",
+      "width": 1440,
+      "overflow": false
+    },
+    {
+      "prefix": "fr/",
+      "theme": "blue",
+      "view": "tree",
+      "width": 1440,
+      "overflow": false
+    },
+    {
+      "prefix": "fr/",
+      "theme": "blue",
+      "view": "shelf",
+      "width": 1440,
+      "overflow": false
+    },
+    {
+      "prefix": "fr/",
+      "theme": "journal",
+      "view": "lab",
+      "width": 1440,
+      "overflow": false
+    },
+    {
+      "prefix": "fr/",
+      "theme": "journal",
+      "view": "tree",
+      "width": 1440,
+      "overflow": false
+    },
+    {
+      "prefix": "fr/",
+      "theme": "journal",
+      "view": "shelf",
+      "width": 1440,
+      "overflow": false
+    },
+    {
+      "prefix": "fr/",
+      "theme": "editorial",
+      "view": "lab",
+      "width": 1440,
+      "overflow": false
+    },
+    {
+      "prefix": "fr/",
+      "theme": "editorial",
+      "view": "tree",
+      "width": 1440,
+      "overflow": false
+    },
+    {
+      "prefix": "fr/",
+      "theme": "editorial",
+      "view": "shelf",
+      "width": 1440,
+      "overflow": false
+    },
+    {
+      "prefix": "fr/",
+      "theme": "night",
+      "view": "lab",
+      "width": 1440,
+      "overflow": false
+    },
+    {
+      "prefix": "fr/",
+      "theme": "night",
+      "view": "tree",
+      "width": 1440,
+      "overflow": false
+    },
+    {
+      "prefix": "fr/",
+      "theme": "night",
+      "view": "shelf",
+      "width": 1440,
+      "overflow": false
+    },
+    {
+      "prefix": "de/",
+      "theme": "blue",
+      "view": "lab",
+      "width": 390,
+      "overflow": false
+    },
+    {
+      "prefix": "de/",
+      "theme": "blue",
+      "view": "tree",
+      "width": 390,
+      "overflow": false
+    },
+    {
+      "prefix": "de/",
+      "theme": "blue",
+      "view": "shelf",
+      "width": 390,
+      "overflow": false
+    },
+    {
+      "prefix": "de/",
+      "theme": "journal",
+      "view": "lab",
+      "width": 390,
+      "overflow": false
+    },
+    {
+      "prefix": "de/",
+      "theme": "journal",
+      "view": "tree",
+      "width": 390,
+      "overflow": false
+    },
+    {
+      "prefix": "de/",
+      "theme": "journal",
+      "view": "shelf",
+      "width": 390,
+      "overflow": false
+    },
+    {
+      "prefix": "de/",
+      "theme": "editorial",
+      "view": "lab",
+      "width": 390,
+      "overflow": false
+    },
+    {
+      "prefix": "de/",
+      "theme": "editorial",
+      "view": "tree",
+      "width": 390,
+      "overflow": false
+    },
+    {
+      "prefix": "de/",
+      "theme": "editorial",
+      "view": "shelf",
+      "width": 390,
+      "overflow": false
+    },
+    {
+      "prefix": "de/",
+      "theme": "night",
+      "view": "lab",
+      "width": 390,
+      "overflow": false
+    },
+    {
+      "prefix": "de/",
+      "theme": "night",
+      "view": "tree",
+      "width": 390,
+      "overflow": false
+    },
+    {
+      "prefix": "de/",
+      "theme": "night",
+      "view": "shelf",
+      "width": 390,
+      "overflow": false
+    },
+    {
+      "prefix": "de/",
+      "theme": "blue",
+      "view": "lab",
+      "width": 1440,
+      "overflow": false
+    },
+    {
+      "prefix": "de/",
+      "theme": "blue",
+      "view": "tree",
+      "width": 1440,
+      "overflow": false
+    },
+    {
+      "prefix": "de/",
+      "theme": "blue",
+      "view": "shelf",
+      "width": 1440,
+      "overflow": false
+    },
+    {
+      "prefix": "de/",
+      "theme": "journal",
+      "view": "lab",
+      "width": 1440,
+      "overflow": false
+    },
+    {
+      "prefix": "de/",
+      "theme": "journal",
+      "view": "tree",
+      "width": 1440,
+      "overflow": false
+    },
+    {
+      "prefix": "de/",
+      "theme": "journal",
+      "view": "shelf",
+      "width": 1440,
+      "overflow": false
+    },
+    {
+      "prefix": "de/",
+      "theme": "editorial",
+      "view": "lab",
+      "width": 1440,
+      "overflow": false
+    },
+    {
+      "prefix": "de/",
+      "theme": "editorial",
+      "view": "tree",
+      "width": 1440,
+      "overflow": false
+    },
+    {
+      "prefix": "de/",
+      "theme": "editorial",
+      "view": "shelf",
+      "width": 1440,
+      "overflow": false
+    },
+    {
+      "prefix": "de/",
+      "theme": "night",
+      "view": "lab",
+      "width": 1440,
+      "overflow": false
+    },
+    {
+      "prefix": "de/",
+      "theme": "night",
+      "view": "tree",
+      "width": 1440,
+      "overflow": false
+    },
+    {
+      "prefix": "de/",
+      "theme": "night",
+      "view": "shelf",
+      "width": 1440,
+      "overflow": false
+    }
+  ],
+  "errors": [],
+  "pausePreservesLife": true,
+  "batchGuard": true,
+  "shelfKeyboard": true,
+  "deleteCancelAndConfirm": true,
+  "mobileImageRetry": true,
+  "dockModalRecovery": true
+}

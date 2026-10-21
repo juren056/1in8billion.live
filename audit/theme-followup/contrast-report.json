@@ -1,0 +1,22 @@
+[
+  {
+    "theme": "blue",
+    "color": "rgb(64, 93, 120)",
+    "background": "rgb(255, 255, 255)"
+  },
+  {
+    "theme": "journal",
+    "color": "rgb(92, 98, 84)",
+    "background": "rgb(255, 250, 240)"
+  },
+  {
+    "theme": "editorial",
+    "color": "rgb(74, 91, 105)",
+    "background": "rgb(255, 255, 255)"
+  },
+  {
+    "theme": "night",
+    "color": "rgb(183, 202, 217)",
+    "background": "rgb(16, 37, 54)"
+  }
+]

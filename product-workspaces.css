@@ -139,3 +139,48 @@ html[data-design-system] :is(.reference-note,.keepsake-heading>p,.keepsake-scene
 html[data-design-system] .pending-options button span{color:var(--t-ink)}
 html[data-design-system] .life-secondary>:is(div,section){background:var(--t-paper);color:var(--t-ink);border-color:var(--t-line);padding:24px;border-radius:14px;margin:20px 0}
 html[data-design-system] .life-secondary :is(h4,.cs-source,.muted){color:var(--t-muted)}
+
+/* Secondary game tasks retain their real controllers and share the same materials. */
+[data-design-system] .game-tools{display:flex;flex-wrap:wrap;gap:8px;padding:24px 0;border-block:1px solid var(--t-line);margin:28px 0;scroll-margin-top:20px}
+[data-design-system] .game-tools button{transition:none;letter-spacing:0;font-family:var(--t-ui);white-space:normal;overflow-wrap:anywhere;min-width:0;background:var(--t-paper);color:var(--t-ink);border:1px solid var(--t-line);padding:10px 16px;min-height:44px}
+[data-design-system] .game-tools button[aria-current=page]{background:var(--t-action);color:var(--t-on-action);border-color:var(--t-action)}
+[data-design-system] :is(#view-lab,#view-tree,#view-shelf,.life-modal){--ink:var(--t-ink);--ink-2:var(--t-muted);--ink-3:var(--t-muted);--bg:var(--t-page);--bg-2:var(--t-paper);--bg-3:var(--t-soft);--paper:var(--t-paper);--line:var(--t-line);--accent:var(--t-action);color:var(--t-ink)}
+[data-design-system] :is(#view-lab,#view-tree,#view-shelf){max-width:1240px;margin:auto;padding:28px 0 64px}
+[data-design-system] :is(.lab-title,.tree-title,.shelf-title){font:600 clamp(28px,4vw,44px)/1.2 var(--t-display);color:var(--t-ink);margin:0 0 18px}
+[data-design-system] :is(.lab-sub,.tree-hint,.shelf-hint){max-width:72ch;font-size:16px;color:var(--t-muted);margin-bottom:28px}
+[data-design-system] :is(.lab-controls,.lab-section,.lab-stat,.tree-controls,.tree-canvas,.memorial-wall,.shared-feed){background:var(--t-paper);color:var(--t-ink);border:1px solid var(--t-line);border-radius:14px;box-shadow:none;padding:24px}
+[data-design-system] .lab-stats{grid-template-columns:repeat(auto-fit,minmax(140px,1fr))}
+[data-design-system] .lab-results{grid-template-columns:1fr;min-width:0}
+[data-design-system] .lab-section{overflow-x:auto;max-width:100%}
+[data-design-system] .lab-compare{min-width:500px;width:100%;font-variant-numeric:tabular-nums}
+[data-design-system] .lab-compare :is(th,td){padding:14px;text-align:start;border-bottom:1px solid var(--t-line)}
+[data-design-system] .lab-compare th{background:var(--t-soft)}
+[data-design-system] .lab-row label{min-width:0;flex:1 1 160px}
+[data-design-system] .tree-controls{display:flex;flex-wrap:wrap;gap:18px;align-items:end;margin-bottom:24px}
+[data-design-system] .tree-controls label{flex:1 1 160px;max-width:100%}
+[data-design-system] :is(.tree-controls,.lab-row) :is(input,select){display:block;width:100%;margin-top:8px;min-width:0}
+[data-design-system] .tree-canvas{overflow:auto;max-width:100%;padding:20px}
+[data-design-system] .tree-canvas .node-rect{fill:var(--t-paper)}
+[data-design-system] .tree-canvas text{fill:var(--t-ink)}
+[data-design-system] .tree-canvas .tree-link{stroke:var(--t-muted)}
+[data-design-system] .tool-empty,[data-design-system] .tool-notice{padding:24px;background:var(--t-soft);border-radius:12px;color:var(--t-ink);line-height:1.7;max-width:75ch}
+[data-design-system] .shelf-grid{grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:24px}
+[data-design-system] .shelf-cover{display:flex;flex-direction:column;height:auto;min-height:260px;padding:0 0 24px;background:var(--t-paper);border:1px solid var(--t-line);color:var(--t-ink);border-radius:14px;overflow:hidden;box-shadow:none}
+[data-design-system] .shelf-cover>img{width:100%;height:130px;object-fit:cover;display:block}
+[data-design-system] .shelf-spine{display:none}[data-design-system] .shelf-info{position:static;padding:0 20px;color:var(--t-ink)}
+[data-design-system] .shelf-flag{position:static;padding:16px 20px 8px;font-size:22px}
+[data-design-system] .shelf-name{font:600 23px/1.3 var(--t-display);overflow-wrap:anywhere}
+[data-design-system] .shelf-meta{color:var(--t-muted);margin-top:12px}
+[data-design-system] .life-modal{animation:none}
+[data-design-system] .life-modal-card{background:var(--t-paper);color:var(--t-ink);padding:32px;max-width:900px;border-radius:16px;max-height:90dvh}
+[data-design-system] :is(.shelf-manage,.memorial-actions,.tree-controls) button{background:var(--t-paper);color:var(--t-ink);border:1px solid var(--t-line)}
+[data-design-system] :is(.tree-controls,.lab-row) :is(input,select){background:var(--t-paper);color:var(--t-ink);border:1px solid var(--t-line)}
+[data-design-system] .tree-controls input::placeholder{color:var(--t-muted)}
+[data-design-system] :is(.memorial-name,.memorial-country,.memorial-summary,.lm-title,.ql-text){color:var(--t-ink)}
+[data-design-system] :is(.memorial-years,.memorial-counter,.memorial-candle-display,.memorial-stats,.lm-meta,.ql-age){color:var(--t-muted)}
+[data-design-system] .memorial-summary{border-left:0;padding-left:0}
+[data-design-system] :is(.memorial-subtitle,.memorial-empty){color:var(--t-muted)}
+[data-design-system] .memorial-nav button{background:var(--t-paper);color:var(--t-ink);border:1px solid var(--t-line)}
+[data-design-system] .memorial-nav button:disabled{opacity:1;color:var(--t-muted)}
+[data-design-system] .memorial-card{background:var(--t-paper);border-color:var(--t-line);box-shadow:none}
+@media(max-width:760px){[data-design-system] .game-tools{gap:8px;margin:20px 0;padding:18px 0}[data-design-system] .game-tools button{flex:1 1 30%;padding:10px;font-size:14px}[data-design-system] :is(.lab-controls,.lab-section,.tree-controls){padding:20px}[data-design-system] :is(.lab-compare-causes,.fam-stats-grid){grid-template-columns:1fr}[data-design-system] .life-modal-card{padding:24px;width:calc(100% - 32px)}}

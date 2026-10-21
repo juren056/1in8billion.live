@@ -1,0 +1,56 @@
+[
+  {
+    "prefix": "",
+    "text": "0 yrs · United States",
+    "expected": "0 yrs · United States",
+    "syntheticBoundary": true
+  },
+  {
+    "prefix": "zh-cn/",
+    "text": "0 岁 · 美国",
+    "expected": "0 岁 · 美国",
+    "syntheticBoundary": true
+  },
+  {
+    "prefix": "zh-tw/",
+    "text": "0 歲 · 美國",
+    "expected": "0 歲 · 美國",
+    "syntheticBoundary": true
+  },
+  {
+    "prefix": "ja/",
+    "text": "0 歳 · アメリカ合衆国",
+    "expected": "0 歳 · アメリカ合衆国",
+    "syntheticBoundary": true
+  },
+  {
+    "prefix": "ko/",
+    "text": "0 세 · 미국",
+    "expected": "0 세 · 미국",
+    "syntheticBoundary": true
+  },
+  {
+    "prefix": "es/",
+    "text": "0 años · Estados Unidos",
+    "expected": "0 años · Estados Unidos",
+    "syntheticBoundary": true
+  },
+  {
+    "prefix": "pt-br/",
+    "text": "0 anos · Estados Unidos",
+    "expected": "0 anos · Estados Unidos",
+    "syntheticBoundary": true
+  },
+  {
+    "prefix": "fr/",
+    "text": "0 ans · États-Unis",
+    "expected": "0 ans · États-Unis",
+    "syntheticBoundary": true
+  },
+  {
+    "prefix": "de/",
+    "text": "0 Jahre · Vereinigte Staaten",
+    "expected": "0 Jahre · Vereinigte Staaten",
+    "syntheticBoundary": true
+  }
+]
