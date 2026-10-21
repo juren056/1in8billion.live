@@ -1,3 +1,7 @@
+# v1.15.0 SEO intent and crawl recovery
+
+Nine homepages and six landing-page types now share explicit localized search/social metadata. Calendar details remain in help with shorter disclosures elsewhere. Fifty family/history UI labels are reviewed across nine locales; odds selections survive language changes. Failed or stalled loading offers recovery without changing saves. Six historical `/undefined/` paths observed in Cloudflare Googlebot reports redirect precisely to existing canonical pages. No model inputs, replay rules, analytics IDs, H1s or payment availability changed. See `codex/seo-geo-implementation-report.md` for tests, evidence and external limitations.
+
 # v1.14.2 Microsoft Clarity integration
 
 Clarity project z10y02dkut loads once asynchronously on public pages, independently from the existing GA4 loader. No visitor consent prompt or consent override was added. Existing GA4 functions, ID and events remain unchanged. Private game/family/local-collection/preview areas use recording masks and localized privacy pages disclose Clarity. See CLARITY_INSTALL_REPORT.md for verification and vendor-response limitations.

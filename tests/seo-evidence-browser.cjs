@@ -1,0 +1,13 @@
+const{chromium}=require(process.env.PLAYWRIGHT_MODULE||'C:/Users/lenovo/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/playwright'),assert=require('node:assert/strict'),fs=require('node:fs');
+const base=process.env.SEO_BASE||'http://127.0.0.1:4186',out='audit/seo-geo-20261021/drafts';
+(async()=>{fs.mkdirSync(out,{recursive:true});const b=await chromium.launch({channel:'chrome',headless:true}),rows=[];try{
+ for(const country of['JPN','USA','IND','CHN','NGA']){
+  const context=await b.newContext({viewport:{width:1000,height:850},reducedMotion:'reduce',...(country==='JPN'?{recordVideo:{dir:out,size:{width:1000,height:850}}}:{})}),p=await context.newPage();
+  const url=base+'/#run=v2.seodemo.'+country+'.now.en.0.202610';await p.goto(url);await p.evaluate(()=>window.retentionReady);await p.locator('#startReplay').click();await p.evaluate(()=>{stopTicker();for(let i=0;i<12&&!STATE.life.died;i++)tick();});await p.waitForTimeout(1200);
+  if(country==='JPN'){await p.evaluate(()=>{for(let i=0;i<30&&!STATE.life.died;i++)tick();});await p.waitForTimeout(1200);}
+  const result=await p.evaluate(()=>{let i=0;while(!STATE.life.died&&i++<200)tick();const l=STATE.life;return{country:l.country,name:l.name.full,age:l.age,cause:l.cause,birthMonth:l.calendarMonth,ending:CalendarCore.range(l),events:l.log.length,modelOnly:true};});assert(await p.locator('#view-end').isVisible());await p.screenshot({path:out+'/ending-'+country+'.png',fullPage:false});rows.push({...result,replay:url.replace(base,'https://1in8billion.live'),screenshot:'ending-'+country+'.png'});if(country==='JPN')await p.waitForTimeout(1000);await context.close();
+ }
+ const p=await b.newPage({acceptDownloads:true});await p.goto(base+'/compare/?a=JPN&b=USA&mode=births');await p.waitForFunction(()=>document.querySelector('#downloadComparison')&&!document.querySelector('#downloadComparison').disabled);const download=p.waitForEvent('download');await p.locator('#downloadComparison').click();await(await download).saveAs(out+'/japan-us-births.csv');await p.locator('#compareMode').selectOption('population');const pop=p.waitForEvent('download');await p.locator('#downloadComparison').click();await(await pop).saveAs(out+'/japan-us-population.csv');await p.close();
+ fs.writeFileSync(out+'/five-actual-lives.json',JSON.stringify({warning:'Controlled fictional examples, not real people or national outcome research. Same replay seed, five fixed countries. Video uses advanced ticks for demonstration, not normal game pace. Not published to any external community.',rows},null,2));
+ console.log('PASS five actual endings, original screen recording and both model CSV downloads');
+}finally{await b.close();}})().catch(e=>{console.error(e);process.exitCode=1;});

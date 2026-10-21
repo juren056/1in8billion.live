@@ -42,7 +42,8 @@ function t(key, ...vals) {
 }
 async function loadData() {
   LANG = document.documentElement.dataset.gameLang || 'en';
-  const responses=await Promise.all([fetch('/data/countries.json'),fetch('/data/i18n/'+LANG+'.json')]);
+  const signal=AbortSignal.timeout(15000);
+  const responses=await Promise.all([fetch('/data/countries.json',{signal}),fetch('/data/i18n/'+LANG+'.json',{signal})]);
   if(responses.some(r=>!r.ok))throw Error('Game data unavailable');
   const [countries,translations]=await Promise.all(responses.map(r=>r.json()));
   COUNTRIES=countries;CACHE.countries=countries;I18N={[LANG]:translations};CACHE.i18n=I18N;
@@ -3600,7 +3601,9 @@ function wire() {
   // 開始按鈕（v5.19：先顯示出生登記卡 modal，等使用者確認才 startLife）
   const start = $('#btnStart');
   if (start) start.addEventListener('click', () => {
-    startLifeWithCert();
+    const linked=new URLSearchParams(location.search).get('country');
+    const selected=linked&&countryById(STATE.selectedCountry);
+    if(selected)showBirthCertModal(selected);else startLifeWithCert();
   });
   // 選特定國家開始（v5.19：同樣先顯示出生卡）
   const startSelected = $('#btnStartSelected');
@@ -4113,7 +4116,7 @@ init().catch(()=>{const el=document.querySelector('#gameLoadState');if(el){el.te
    contact / PWA install）+ 教學版模式 + 版本歷史
    ===================================================================== */
 
-const APP_VERSION = '1.14.2';
+const APP_VERSION = '1.15.0';
 const APP_BUILD = '2026-10-21';
 
 // 版本歷史（每個版本：v / date / items；每個 item 含 emoji badge + 文字）
