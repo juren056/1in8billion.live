@@ -1,3 +1,4 @@
+import{conversionCopy}from'../premium-keepsake/conversion-copy.js';
 import {comparisonStateCopy} from '../comparison-state-copy.js';
 import fs from'node:fs';
 import{themeCopy,themeIds,studyCopy}from'../theme-copy.js';
@@ -26,23 +27,26 @@ export function buildThemePreview(routes,{preview=false}={}){
  h=h.replace('</header>',menu+'</header>').replaceAll(`href="${route}"`, `href="${route}" aria-current="page"`);
  if(home){
  h=h.replace(/(<span class="footer-ver">)v[^<]*/,`$1v${release.version} · `);
+ const v=conversionCopy(lang);
  const tools=toolCopy[lang]||toolCopy.en;let buttons=0;const legacy=h.match(/<nav class="topnav"[^>]*>[\s\S]*?<\/nav>/)?.[0];if(legacy){const moved=legacy.replace(/<nav[^>]*>/,`<nav id="gameTools" class="game-tools" aria-label="${esc(tools.nav[0])}">`).replace(/(<button[^>]*)(>)[\s\S]*?<\/button>/g,(_,start,end)=>start.replace(/ data-t="[^"]*"/,'')+end+esc(tools.nav[++buttons])+'</button>');h=h.replace(legacy,'').replace('<section id="view-life"',moved+'<section id="view-life"');h=h.replace(/(<nav class="site-links"[\s\S]*?)(<\/nav>)/,`$1<a href="#gameTools">${esc(tools.nav[0])}</a>$2`);}
 
  for(const file of ['launch.css','content.css','experience.css','experience-upgrade.css'])h=h.replace('<link rel="stylesheet" href="/'+file+'">',`<link rel="stylesheet" href="/${file}" media="print" onload="this.media='all'"><noscript><link rel="stylesheet" href="/${file}"></noscript>`);
  h=h.replace(/(<button id="btnStart"[^>]*>)[^<]*(<\/button>)/,`$1${studyCopy[lang][0]}$2`).replace(/(<button id="customizeLife"[^>]*>)[^<]*(<\/button>)/,'$1$2');
  const start=/<div class="hero experience-hero">([\s\S]*?)<aside class="hero-world"[\s\S]*?<\/aside><\/div>/;
  h=h.replace(start,(_,left)=>`<div class="theme-hero"><div class="theme-scenery"><div></div><script>{const image=new Image();image.width=1536;image.height=1024;image.alt=${JSON.stringify(c[15])};image.fetchPriority="high";image.dataset.themeArt="";image.src='/public-assets/themes/'+document.documentElement.dataset.appearance+(matchMedia('(max-width:760px)').matches?'-mobile':'')+'.webp';document.currentScript.previousElementSibling.append(image);}</script><noscript><img src="/public-assets/themes/blue-mobile.webp" alt="${c[15]}" width="768" height="512"></noscript><button class="art-retry" hidden>${c[16]}</button></div>${left}<div class="theme-book" aria-hidden="true"><img src="/public-assets/keepsake/thumbnails/journal-scrapbook.png" width="270" height="480" alt=""><img src="/public-assets/keepsake/thumbnails/clean-modern.png" width="270" height="480" alt=""><img src="/public-assets/keepsake/thumbnails/editorial-magazine.png" width="270" height="480" alt=""></div></div>`);
+ h=h.replace('<p class="play-policy">',`<a class="keepsake-hero-link" href="${base}keepsake/">${v.preview} <span aria-hidden="true">→</span></a><p class="keepsake-hero-price">${v.once}</p><p class="play-policy">`);
  // Move the real country selector and action before scripts initialize; there is still one of each.
  h=h.replace(/<select id="countrySelect"[^>]*><\/select>/,'').replace(/<button id="btnStartSelected"[^>]*>[\s\S]*?<\/button>/,'').replace(/<h3 data-t="intro.pick">[^<]*<\/h3>/,'');
  h=h.replace('<p class="play-policy">',`<div class="theme-start"><label for="countrySelect">${c[5]}</label><div><select id="countrySelect" class="country-pick" aria-label="${c[5]}"></select><button id="btnStartSelected" type="button">${c[6]} <span aria-hidden="true">→</span></button></div></div><p class="play-policy">`);
  // Sample cards already carry their own record-derived scene artwork.
 
- const showcase=`<section class="theme-keepsake"><div><h2>${c[8]}</h2><p>${c[9]}</p><a class="primary-link" href="${base}keepsake/">${c[10]} <span aria-hidden="true">→</span></a></div><div class="theme-specimens">${['cinematic-poster','journal-scrapbook','minimal-data'].map(id=>`<img src="/public-assets/keepsake/thumbnails/${id}.png" width="270" height="480" alt="${id}" loading="lazy">`).join('')}</div></section>`;
- h=h.replace(/(<section class="compare-prompt">[\s\S]*?<\/section>)/,'$1'+showcase);
+ const showcase=`<section class="theme-keepsake"><div><h2>${c[8]}</h2><p>${v.premiumDetail}</p><p>US$2.99 · ${v.once}</p><a class="primary-link" href="${base}keepsake/">${c[10]} <span aria-hidden="true">→</span></a></div><div class="theme-specimens">${['cinematic-poster','journal-scrapbook','minimal-data'].map(id=>`<img src="/public-assets/keepsake/thumbnails/${id}.png" width="270" height="480" alt="${id}" loading="lazy">`).join('')}</div></section>`;
+ h=h.replace(/(<div class="theme-hero">[\s\S]*?<div class="theme-book"[\s\S]*?<\/div><\/div>)/,'$1'+showcase);
  const explore=`<section class="theme-explore"><h2>${c[5]}</h2><div>${[['JPN','blue'],['USA','night'],['IND','india'],['CHN','china'],['CAN','canada'],['FRA','editorial']].map(([id,art])=>`<a href="${base}?country=${id}"><img src="/public-assets/themes/${art}-mobile.webp" alt="${c[15]}" width="384" height="216" loading="lazy"><span>${esc(displayCountry(id,lang,id))} <span aria-hidden="true">→</span></span></a>`).join('')}</div></section>`;
  h=h.replace(showcase,showcase+explore);
  h=h.replace('</body>',`<div id="startDock" class="start-dock" hidden><a href="#view-intro">1in8billion.live</a><button type="button">${c[11]}</button></div></body>`);
  }
+ if(home||route.includes('/keepsake/'))h=h.replace('</head>',`<link rel="stylesheet" href="/premium-keepsake/conversion.css"${home?' media="print" onload="this.media=\'all\'"':''}></head>`);
  fs.writeFileSync(path,h);
  const group=home?'home':route.includes('/keepsake/')?'keepsake':route.includes('/countries/')?'country':route.includes('/compare/')?'compare':route.includes('/guides/')?'guide':'reading';
  ledger.push({route,language:lang,template:group,source:home?'scripts/build-experience.mjs':group==='keepsake'?'scripts/build-keepsake-studio.mjs':'scripts/build-expansion.mjs',sharedShell:'four-theme',body:home?'home':group==='keepsake'?'product-workspace':'reading-system',browserEvidence:home?{report:'audit/theme-batch-a/browser-report.json',locale:lang,widths:[360,390,768,1440,1920],themes:themeIds,visualCapture:['en','zh-CN'].includes(lang)?'audit/theme-batch-a/'+(lang==='en'?'en':'zh')+'-{theme}-{width}-viewport.png':null}:null,visualStatus:home?(['en','zh-CN'].includes(lang)?'A/B captured':'A layout checked'):group==='keepsake'?'B workspace/export evidence':'C representative template matrix; static coverage all routes'});

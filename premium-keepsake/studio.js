@@ -1,9 +1,11 @@
+import{conversionCopy}from'./conversion-copy.js';import{copy as bookCopy}from'./translations.js';
 import{studioCopy}from'./template-copy.js';import{templates,getTemplate,templateLabel}from'./templates/index.js';import{assembleTemplateData,recommendTemplate}from'./template-data.js';import{renderCard}from'./render-card.js';import{buildDocument}from'./build-document.js';import{restore,preflight}from'./storage.js';
 import{openPreview}from'./preview.js';
 import{installTestPurchase}from'./test-purchase.js';
 const root=document.querySelector('.keepsake-studio'),lang=document.documentElement.lang,c=studioCopy[lang]||studioCopy.en,$=id=>document.getElementById(id);
 if(root){
  let snapshot,localRow,samplesPromise,selected='cinematic-poster',revision=0,pending=false,exporting=false,renderPromise;
+ const v=conversionCopy(lang),seen=new Set();
  const inputs=['studioTitle','studioNote','studioPalette','studioRatio','studioPaper','studioPrint'];
  const customization=()=>({title:$('studioTitle').value,note:$('studioNote').value,palette:$('studioPalette').value});
  const purchase=installTestPurchase({getLocal:()=>snapshot?localRow:null,getDesign:()=>({templateId:selected,...customization(),ratio:$('studioRatio').value,paper:$('studioPaper').value,printFriendly:$('studioPrint').checked}),isBusy:()=>pending||exporting||root.dataset.ready!=='true',onPendingChange:()=>enable()});
@@ -16,7 +18,7 @@ if(root){
   result.canvas.setAttribute('role','img');result.canvas.setAttribute('aria-label',templateLabel(result.templateId?getTemplate(result.templateId):getTemplate(selected),lang).name+' · '+result.data.summaryLine+' · '+c.demo);
   $('studioCanvas').replaceChildren(result.canvas);$('studioCaption').textContent=(localRow?c.own:c.sample)+' · '+result.data.name+' · '+result.data.countryName+' · '+result.data.start+' — '+result.data.end+' · '+c.demo;
   const recommendation=recommendTemplate(result.data);$('studioRecommendation').textContent=c.recommended+': '+templateLabel(getTemplate(recommendation.id),lang).name+' · '+c[recommendation.reason];
-  status(c.switched);root.dataset.ready='true';root.dataset.activeTemplate=selected;root.dataset.ratio=$('studioRatio').value;root.dataset.previewRevision=String(current);
+  $('studioSource').textContent=(localRow?v.own:v.example)+' · '+result.data.name+' · '+result.data.countryName;$('studioContents').textContent=result.data.recordCount+' '+result.data.copy.events+' · '+buildDocument(snapshot).pages.length+' '+bookCopy[lang].pages;document.querySelector('.studio-sample-label').hidden=!!localRow;$('studioUseOwn').hidden=!!localRow||!location.hash.startsWith('#local=');$('studioShowExamples').hidden=!localRow;if(localRow&&!seen.has(localRow.id)){seen.add(localRow.id);window.siteEvent?.('keepsake_preview_ready',{language:lang,action:'own_life'});}status(c.switched);root.dataset.ready='true';root.dataset.activeTemplate=selected;root.dataset.ratio=$('studioRatio').value;root.dataset.previewRevision=String(current);
  }catch{if(current===revision){root.dataset.ready='false';status(c.renderFailed,true);event('render_error');}}finally{if(current===revision){pending=false;$('studioCanvas').setAttribute('aria-busy','false');enable();}}}
  const repaint=()=>{renderPromise=paint();return renderPromise;};
  async function load(own=false){const current=++revision;pending=true;snapshot=undefined;root.dataset.ready='false';$('studioCanvas').setAttribute('aria-busy','true');enable();status(c.loading);try{
@@ -24,6 +26,7 @@ if(root){
   else{const all=await allSamples();if(current!==revision)return;const country=$('sampleCountry').value;const source=all.find(row=>row.lang===lang&&row.country===country)||all.find(row=>row.lang==='en'&&row.country===country);if(!source)throw Error('sample_unavailable');localRow=null;snapshot={...source,lang,events:source.events.map(event=>({...event,text:window.translateUI?.(event.text)||event.text}))};}
   $('studioTitle').value='';$('studioNote').value='';$('studioNoteCount').textContent='0 / 200';$('premiumOpenSample').onclick=()=>openPreview(!!localRow);$('premiumOpenOwn').hidden=true;await repaint();
  }catch{if(current===revision){pending=false;$('studioCanvas').setAttribute('aria-busy','false');status(c.error,true);enable();}}}
+ $('studioBook').onclick=()=>openPreview(!!localRow);$('studioShowExamples').onclick=()=>load(false);
  $('sampleCountry').addEventListener('change',()=>{if(!exporting)load(false);});
  root.querySelectorAll('[data-template]').forEach(button=>button.addEventListener('click',()=>{if(exporting)return;selected=button.dataset.template;root.querySelectorAll('[data-template]').forEach(option=>option.setAttribute('aria-pressed',String(option===button)));repaint();event('style_select');}));
  let timer;for(const id of['studioTitle','studioNote'])$(id).addEventListener('input',()=>{clearTimeout(timer);revision++;root.dataset.ready='false';enable();$('studioNoteCount').textContent=[...$('studioNote').value].length+' / 200';timer=setTimeout(repaint,150);});
