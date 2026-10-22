@@ -1,7 +1,7 @@
 {
   "date": "2026-10-23",
-  "targetVersion": "1.23.0",
-  "automatedTests": 100,
+  "targetVersion": "1.23.1",
+  "automatedTests": 101,
   "publicSeoPages": 226,
   "countries": 172,
   "browserStates": 1080,
@@ -34,5 +34,7 @@
   "edgeChecks": 7,
   "runtimeChecks": 7,
   "crossLocaleStateAndExport": true,
-  "productionStatus": "Await Git deployment and separate production receipt; no charge authorized"
+  "productionStatus": "Await Git deployment and separate production receipt; no charge authorized",
+  "displayOnlyFollowup": "18 parental occupations localized in nine languages; numerical records unchanged",
+  "exactReplayProofVersion": "1.23.0 (before display-only occupational label patch)"
 }
