@@ -3620,7 +3620,7 @@ function wire() {
     const c = STATE.birthCertCountry;
     const prepared = STATE.birthCertLife;
     hideBirthCertModal();
-    if (c) startLife(c.id, prepared);
+    if (c) {startLife(c.id, prepared);const born=STATE.life;queueMicrotask(()=>{if(STATE.life!==born||!born||born.died)return;STATE.paused=true;stopTicker();renderLife();saveCurrentLife();window.pendingBirthArrival=born;document.dispatchEvent(new CustomEvent('rebirth:arrived',{detail:{life:born}}));});}
   });
   // v5.19：出生卡 modal 的取消按鈕
   const birthCertCancel = $('#birthCertCancel');
@@ -4120,7 +4120,7 @@ init().catch(()=>{const el=document.querySelector('#gameLoadState');if(el){el.te
    contact / PWA install）+ 教學版模式 + 版本歷史
    ===================================================================== */
 
-const APP_VERSION = '1.21.1';
+const APP_VERSION = '1.21.2';
 const APP_BUILD = '2026-10-21';
 
 // 版本歷史（每個版本：v / date / items；每個 item 含 emoji badge + 文字）

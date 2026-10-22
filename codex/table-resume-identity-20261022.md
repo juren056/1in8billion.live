@@ -1,4 +1,4 @@
-# Tables, continuation and character identity — v1.21.1
+# Tables, continuation and character identity — v1.21.2
 
 Requested scope: execute the three approved batches in order. Preserve simulation rules, country data, calendar rules, nine languages, four appearances, existing saves, expanded reading sections, analytics and payment configuration.
 
@@ -10,7 +10,7 @@ Requested scope: execute the three approved batches in order. Preserve simulatio
 
 ## Corrections found during acceptance
 
-- Production latency exposed a late-loading reveal dependency in character assignment. The core birth/start UI now marks new lives before optional modules run; the registered presentation selector records the identity immediately when available, with first-draw completion as fallback. Legacy saves remain unmarked and retain original behavior. Delayed-module coverage was added.
+- Production latency exposed a late-loading reveal dependency in character assignment. The core birth/start UI now marks new lives before optional modules run; the registered presentation selector records the identity immediately when available, with first-draw completion as fallback. Legacy saves remain unmarked and retain original behavior. The initial pause and arrival event also moved to the core birth-confirmation handler; late UI receives its onboarding cue without starting the clock. Delayed-module coverage checks a real 5.5-second reading pause.
 
 - Completed-life restoration initially called playback rendering for unbuilt live-game controls. Playback now skips that work outside the live view for a completed life. The continuation suite records page errors and fails on any error.
 - A generated sheet's figure spacing did not exactly follow quarter boundaries. The importer finds transparent gaps and checks full figure bounds; it never replaces the six legacy identities. All final sprites were decoded and reviewed.
