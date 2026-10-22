@@ -787,7 +787,8 @@ function milestoneEvents(life, newAge) {
     events.push({ age: newAge, kind: 'social', icon: '🌿', text: LANG === 'en' ? 'You identify as indigenous; get education & health support.' : '你被認定為原住民後裔，獲得教育補助與健康資源。' });
   }
   // 戰爭/衝突（教學版過濾掉）
-  const wh = life.countryData?.wh || 0;
+  // Unknown conflict-field units are quarantined in new rules; legacy playback stays exact.
+  const wh = life.rulesVersion===3?0:life.countryData?.wh || 0;
   if (!STATE.eduMode && wh > 0.1 && newAge >= 1 && chance(wh * 0.1)) {
     const warEvt = pick([
       LANG === 'en' ? 'Air raid sirens. The family shelters in the basement.' : '空襲警報響起，全家躲進防空洞。',
@@ -1369,7 +1370,7 @@ function generateYearlyEvent(life) {
     events.push({ weight: 10, icon: '🏥', en: 'Had health check', zh: '做了健康檢查' });
   }
   // 加國家特殊事件
-  if (c.wh > 0.5 && simRandom() < c.wh * 0.1) {
+  if (life.rulesVersion!==3 && c.wh > 0.5 && simRandom() < c.wh * 0.1) {
     events.push({ weight: 50, icon: '⚔️', en: 'Affected by local unrest', zh: '受到當地動亂影響' });
   }
   // 抽權重
@@ -3621,7 +3622,7 @@ function wire() {
     const c = STATE.birthCertCountry;
     const prepared = STATE.birthCertLife;
     hideBirthCertModal();
-    if (c) {startLife(c.id, prepared);const born=STATE.life;queueMicrotask(()=>{if(STATE.life!==born||!born||born.died)return;STATE.paused=true;stopTicker();renderLife();saveCurrentLife();window.pendingBirthArrival=born;document.dispatchEvent(new CustomEvent('rebirth:arrived',{detail:{life:born}}));});}
+    if (c) {startLife(c.id, prepared);const born=STATE.life;queueMicrotask(()=>{if(STATE.life!==born||!born||born.died)return;saveCurrentLife();window.pendingBirthArrival=born;document.dispatchEvent(new CustomEvent('rebirth:arrived',{detail:{life:born}}));});}
   });
   // v5.19：出生卡 modal 的取消按鈕
   const birthCertCancel = $('#birthCertCancel');
