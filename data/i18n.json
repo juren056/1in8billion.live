@@ -408,7 +408,8 @@
     "end.pastNote": "最近的 N 段人生，按下「再看一次」就能重新打開死亡紀錄和分享卡。紀錄只會留在這個瀏覽器。",
     "end.viewShelf": "看看我的前世展示架",
     "end.organize": "整理紀錄",
-    "end.deleteAll": "全部刪除"
+    "end.deleteAll": "全部刪除",
+    "finance.placeholder": "選擇如何運用你的積蓄。"
   },
   "zh-Hans": {
     "title": "1in8billion.live",
@@ -819,7 +820,8 @@
     "end.pastNote": "Your most recent N lives. Press replay to reopen the death record and share card. Records stay only in this browser.",
     "end.viewShelf": "View my past life gallery",
     "end.organize": "Manage records",
-    "end.deleteAll": "Delete all"
+    "end.deleteAll": "Delete all",
+    "finance.placeholder": "选择如何使用你的积蓄。"
   },
   "en": {
     "title": "1in8billion.live",
@@ -1230,7 +1232,8 @@
     "end.pastNote": "Your most recent N lives. Press replay to reopen the death record and share card. Records stay only in this browser.",
     "end.viewShelf": "View my past life gallery",
     "end.organize": "Manage records",
-    "end.deleteAll": "Delete all"
+    "end.deleteAll": "Delete all",
+    "finance.placeholder": "Choose how to use your savings."
   },
   "ko": {
     "title": "1in8billion.live",
@@ -1652,7 +1655,8 @@
     "end.pastNote": "Your most recent N lives. Press replay to reopen the death record and share card. Records stay only in this browser.",
     "end.viewShelf": "View my past life gallery",
     "end.organize": "Manage records",
-    "end.deleteAll": "Delete all"
+    "end.deleteAll": "Delete all",
+    "finance.placeholder": "저축을 어떻게 사용할지 선택하세요."
   },
   "ja": {
     "title": "1in8billion.live",
@@ -2074,7 +2078,8 @@
     "end.pastNote": "Your most recent N lives. Press replay to reopen the death record and share card. Records stay only in this browser.",
     "end.viewShelf": "View my past life gallery",
     "end.organize": "Manage records",
-    "end.deleteAll": "Delete all"
+    "end.deleteAll": "Delete all",
+    "finance.placeholder": "貯蓄の使い方を選びましょう。"
   },
   "vi": {
     "title": "1in8billion.live",
@@ -2496,7 +2501,8 @@
     "end.pastNote": "Your most recent N lives. Press replay to reopen the death record and share card. Records stay only in this browser.",
     "end.viewShelf": "View my past life gallery",
     "end.organize": "Manage records",
-    "end.deleteAll": "Delete all"
+    "end.deleteAll": "Delete all",
+    "finance.placeholder": "Chọn cách sử dụng tiền tiết kiệm."
   },
   "fr": {
     "title": "1in8billion.live",
@@ -2918,7 +2924,8 @@
     "end.pastNote": "Your most recent N lives. Press replay to reopen the death record and share card. Records stay only in this browser.",
     "end.viewShelf": "View my past life gallery",
     "end.organize": "Manage records",
-    "end.deleteAll": "Delete all"
+    "end.deleteAll": "Delete all",
+    "finance.placeholder": "Choisissez comment utiliser votre épargne."
   },
   "th": {
     "title": "1in8billion.live",
@@ -3340,7 +3347,8 @@
     "end.pastNote": "Your most recent N lives. Press replay to reopen the death record and share card. Records stay only in this browser.",
     "end.viewShelf": "View my past life gallery",
     "end.organize": "Manage records",
-    "end.deleteAll": "Delete all"
+    "end.deleteAll": "Delete all",
+    "finance.placeholder": "เลือกวิธีใช้เงินออมของคุณ"
   },
   "es": {
     "title": "1in8billion.live",
@@ -3762,6 +3770,7 @@
     "end.pastNote": "Your most recent N lives. Press replay to reopen the death record and share card. Records stay only in this browser.",
     "end.viewShelf": "View my past life gallery",
     "end.organize": "Manage records",
-    "end.deleteAll": "Delete all"
+    "end.deleteAll": "Delete all",
+    "finance.placeholder": "Elige cómo usar tus ahorros."
   }
 }

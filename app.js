@@ -1109,7 +1109,7 @@ function showFinanceModal(forceOpt) {
       </div>
       <p class="fin-info muted">${isEn?'Switching choices pays fees; profits may be taxed. Real estate is separate. Most traders underperform the index.':'點選其他選項，就會賣出後轉過去。賣出時要付手續費，依國家而定，獲利可能還要繳稅。不動產基金和自己的房子是分開的：自己住的房子請在「買自己的房子」中購買，出租用的房子請在「出租用的房子」中購買。多數人賺得比指數少。'}</p>
       <div class="fin-auto">
-        <button id="finAutoBtn" class="${auto === 'active' ? 'active':''}">${isEn?'▶ Auto-execute (yearly)':'▶ 自動進行（每年）'}</button>
+        <button id="finAutoBtn" class="${life.autoInvest ? 'active':''}">${isEn?'▶ Auto-execute (yearly)':'▶ 自動進行（每年）'}</button>
         <p class="muted">${isEn?'Once enabled, when triggered: family gifts, dates, dining, travel, classes, donations happen automatically. Only if savings > 3× the cost.':'開啟後，每到時候就會自動進行。需要花錢的事，只有在存款超過費用的三倍時才會進行。孝親費、約會、外食、旅行、上課和捐款，只有在花完之後還能剩下一般人一年的收入時才會進行；開啟得越多，能存下的錢就越少。'}</p>
       </div>
     `;
@@ -1130,11 +1130,12 @@ function showFinanceModal(forceOpt) {
     $('#finAutoBtn')?.addEventListener('click', () => {
       life.autoInvest = !life.autoInvest;
       $('#finAutoBtn')?.classList.toggle('active', life.autoInvest);
-      toast(isEn ? (life.autoInvest ? 'Auto-invest enabled' : 'Auto-invest disabled') : (life.autoInvest ? '已開啟自動投資' : '已關閉自動投資'));
+      toast((window.translateUI||String)(isEn ? (life.autoInvest ? 'Auto-invest enabled' : 'Auto-invest disabled') : (life.autoInvest ? '已開啟自動投資' : '已關閉自動投資')));
       modal.setAttribute('hidden', '');
       STATE.paused = false;
     });
   }
+  window.translateFinanceUI?.(modal);
   modal.removeAttribute('hidden');
 }
 
@@ -2149,7 +2150,7 @@ function renderSurvivalRate() {
   }
   const pct = Math.round(sr * 100);
   el.textContent = pct + '%';
-  el.style.color = pct >= 95 ? 'var(--good)' : pct >= 80 ? 'var(--gold)' : 'var(--bad)';
+  el.style.color = pct >= 95 ? 'var(--t-positive,var(--good))' : pct >= 80 ? 'var(--t-action,var(--gold))' : 'var(--t-negative,var(--bad))';
 }
 
 /* v5.9 新增：完整國家統計面板（16 個關鍵指標） */
@@ -2163,7 +2164,7 @@ function renderCountryStats() {
   const sex = STATE.life.sex;
   // 16 個統計指標（依國家資料）
   const rows = [
-    [isEn?'Annual births':'每年出生人數', Math.round(c.births || 240000).toLocaleString() + (isEn?' people':'人')],
+    [isEn?'Annual births':'每年出生人數', Math.round(c.births || 240000).toLocaleString() + ' ' + ({'zh-CN':'人','zh-TW':'人',ja:'人',ko:'명',es:'personas','pt-BR':'pessoas',fr:'personnes',de:'Personen'}[document.documentElement.dataset.siteLocale]||'people')],
     ['Model population weight', Number.isFinite(c.pop)?c.pop.toLocaleString(document.documentElement.dataset.siteLocale||LANG)+' · inherited units':'—'],
     [isEn?'Life expectancy F/M':'平均壽命 女/男', ((c.le || 70) + (isEn?'/':'/') + Math.max(0,(c.le||70) - 4)) + (isEn?' yrs':'歲')],
     [isEn?'Under-5 mortality':'5歲以下死亡率', ((c.u5 || 25) / 1000 * 100).toFixed(1) + '%'],
@@ -2174,7 +2175,7 @@ function renderCountryStats() {
     [isEn?'Expected education years':'預期受教育年數', (c.eys || 12).toFixed(1) + (isEn?' yrs':'年')],
     [isEn?'Higher education rate':'高等教育粗在學率', Math.round(c.ter || 30) + '%'],
     [isEn?'Internet usage':'網路使用率', Math.round(c.net || 60) + '%'],
-    [isEn?'Total fertility rate':'總生育率', (c.tfr || 2).toFixed(2) + (isEn?' children':'人')],
+    [isEn?'Total fertility rate':'總生育率', (c.tfr || 2).toFixed(2) + ' ' + ({'zh-CN':'人','zh-TW':'人',ja:'人',ko:'명',es:'hijos','pt-BR':'filhos',fr:'enfants',de:'Kinder'}[document.documentElement.dataset.siteLocale]||'children')],
     [isEn?'Maternal mortality':'孕產婦死亡率（每10萬活產）', Math.round(c.mmr || 50)],
     [isEn?'HIV prevalence 15-49':'HIV 盛行率（15-49歲）', (c.hiv || 1).toFixed(2) + '%'],
     [isEn?'Homicide rate':'兇殺率（每10萬人）', Math.round(c.hom || 5) + (isEn?'/100k':'/10萬')],
@@ -2244,21 +2245,21 @@ function renderSurvivalCurve() {
   wrap.innerHTML = `
     <h4>📉 ${isEn ? 'Survival curve' : '存活曲線'} <span class="muted">${isEn ? '% still alive at each age' : '同年出生的人當中仍存活的比例'}</span></h4>
     <svg viewBox="0 0 ${W} ${H}" class="survival-svg" style="width:100%;height:auto;">
-      <rect x="0" y="0" width="${W}" height="${H}" fill="#faf7f0"/>
+      <rect x="0" y="0" width="${W}" height="${H}" fill="var(--t-paper)"/>
       <line x1="40" y1="${H-30}" x2="${W-10}" y2="${H-30}" stroke="#999" stroke-width="1"/>
       <line x1="40" y1="20" x2="40" y2="${H-30}" stroke="#999" stroke-width="1"/>
-      <text x="${W-12}" y="${H-32}" font-size="9" fill="#666" text-anchor="end">${isEn ? 'Age':'年齡'}</text>
-      <text x="32" y="22" font-size="9" fill="#666" text-anchor="end">100%</text>
-      <text x="32" y="${H-32}" font-size="9" fill="#666" text-anchor="end">0%</text>
-      <text x="42" y="${H-15}" font-size="8" fill="#999">0</text>
-      <text x="${W/2}" y="${H-15}" font-size="8" fill="#999" text-anchor="middle">${Math.round(maxAge/2)}</text>
-      <text x="${W-12}" y="${H-15}" font-size="8" fill="#999" text-anchor="end">${maxAge}</text>
+      <text x="${W-12}" y="${H-32}" font-size="9" fill="var(--t-muted)" text-anchor="end">${isEn ? 'Age':'年齡'}</text>
+      <text x="32" y="22" font-size="9" fill="var(--t-muted)" text-anchor="end">100%</text>
+      <text x="32" y="${H-32}" font-size="9" fill="var(--t-muted)" text-anchor="end">0%</text>
+      <text x="42" y="${H-15}" font-size="8" fill="var(--t-muted)">0</text>
+      <text x="${W/2}" y="${H-15}" font-size="8" fill="var(--t-muted)" text-anchor="middle">${Math.round(maxAge/2)}</text>
+      <text x="${W-12}" y="${H-15}" font-size="8" fill="var(--t-muted)" text-anchor="end">${maxAge}</text>
       <path d="${worldPath}" fill="none" stroke="#999" stroke-width="1.5" stroke-dasharray="4 3"/>
       <path d="${path}" fill="none" stroke="var(--accent)" stroke-width="2"/>
       ${myAge <= maxAge ? `<circle cx="${myPos[0]}" cy="${myPos[1]}" r="5" fill="#ff8800" stroke="white" stroke-width="2"/>` : ''}
-      <circle cx="${avgPoint[0]}" cy="${avgPoint[1]}" r="4" fill="white" stroke="#666" stroke-width="1.5"/>
-      <g font-size="9" fill="#5a4a3a">
-        <rect x="${W-130}" y="6" width="120" height="36" fill="white" stroke="#d8cdb8"/>
+      <circle cx="${avgPoint[0]}" cy="${avgPoint[1]}" r="4" fill="var(--t-paper)" stroke="#666" stroke-width="1.5"/>
+      <g font-size="9" fill="var(--t-ink)">
+        <rect x="${W-130}" y="6" width="120" height="36" fill="var(--t-paper)" stroke="#d8cdb8"/>
         <line x1="${W-122}" y1="16" x2="${W-110}" y2="16" stroke="var(--accent)" stroke-width="2"/>
         <text x="${W-105}" y="19">${c.flag} ${isEn ? c.name_en : c.name_zh}</text>
         <line x1="${W-122}" y1="28" x2="${W-110}" y2="28" stroke="#999" stroke-width="1.5" stroke-dasharray="3 2"/>
@@ -4120,7 +4121,7 @@ init().catch(()=>{const el=document.querySelector('#gameLoadState');if(el){el.te
    contact / PWA install）+ 教學版模式 + 版本歷史
    ===================================================================== */
 
-const APP_VERSION = '1.22.0';
+const APP_VERSION = '1.22.1';
 const APP_BUILD = '2026-10-21';
 
 // 版本歷史（每個版本：v / date / items；每個 item 含 emoji badge + 文字）
@@ -4682,7 +4683,7 @@ function drawPersonNode(svg, p, x, y, w, h, selected) {
   const op = deceased ? 0.6 : 1;
   svgEl('rect', { class: 'node-rect ' + (p.sex === 'M' ? 'node-m' : p.sex === 'F' ? 'node-f' : 'node-u'),
     x: 0, y: 0, width: w, height: h, rx: 8, ry: 8,
-    fill: '#faf7f0', stroke: genderColor, 'stroke-width': selected ? 2.5 : 1.5, 'stroke-dasharray': dash, opacity: op }, g);
+    fill: 'var(--t-paper)' , stroke: genderColor, 'stroke-width': selected ? 2.5 : 1.5, 'stroke-dasharray': dash, opacity: op }, g);
   // 點擊開 detail panel
   g.style.cursor = 'pointer';
   g.addEventListener('click', () => {
@@ -4694,19 +4695,19 @@ function drawPersonNode(svg, p, x, y, w, h, selected) {
   portrait.innerHTML = pixelPortraitSVG(p.countryData, computeAge(p), p.sex).match(/<svg[^>]*>(.*)<\/svg>/)?.[1] || '';
   // name
   const nameY = 22;
-  const nameEl = svgEl('text', { class: 'node-name', x: 70, y: nameY, 'font-size': 14, 'font-weight': 500, fill: '#1a1a1a' }, g);
+  const nameEl = svgEl('text', { class: 'node-name', x: 70, y: nameY, 'font-size': 14, 'font-weight': 500, fill: 'var(--t-ink)'  }, g);
   nameEl.textContent = p.name || '?';
   if (p.nameEn && p.nameEn !== p.name) {
-    const ne = svgEl('text', { class: 'node-en', x: 70, y: nameY + 14, 'font-size': 10, fill: '#7a7a7a' }, g);
+    const ne = svgEl('text', { class: 'node-en', x: 70, y: nameY + 14, 'font-size': 10, fill: 'var(--t-muted)'  }, g);
     ne.textContent = p.nameEn;
   }
   const lifeText = p.birth?.year ? `${CalendarCore.personDate(p.birth)} – ${CalendarCore.personDate(p.death)}` : '';
   if (lifeText) {
-    const lt = svgEl('text', { class: 'node-life', x: 70, y: h - 8, 'font-size': 10, fill: '#7a7a7a' }, g);
+    const lt = svgEl('text', { class: 'node-life', x: 70, y: h - 8, 'font-size': 10, fill: 'var(--t-muted)'  }, g);
     lt.textContent = lifeText;
   }
   if (deceased) {
-    const c = svgEl('text', { x: w - 12, y: 16, 'font-size': 14, fill: '#a04040', 'text-anchor': 'end' }, g);
+    const c = svgEl('text', { x: w - 12, y: 16, 'font-size': 14, fill: 'var(--t-negative)' , 'text-anchor': 'end' }, g);
     c.textContent = '†';
   }
   if (p.note === 'adoptive') {
@@ -4720,7 +4721,7 @@ function drawPersonNode(svg, p, x, y, w, h, selected) {
   if (p.birthOrigin) {
     const ob = svgEl('text', { x: 4, y: 14, 'font-size': 12 }, g);
     ob.textContent = p.birthOrigin.flag + '→';
-    ob.setAttribute('fill', '#a04040');
+    ob.setAttribute('fill', 'var(--t-negative)');
     const c = svgEl('text', { x: 32, y: 14, 'font-size': 12 }, g);
     c.textContent = (p.countryData?.flag || '🏳️');
   }

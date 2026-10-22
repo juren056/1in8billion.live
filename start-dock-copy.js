@@ -11,3 +11,6 @@ const copies={
 };
 export const startDockCopy=lang=>copies[lang]||copies.en;
 export function resumeLabel(copy,country,age){return `${copy[0]} · ${country} · ${age} ${copy[4]}`;}
+
+const dismiss={"en": "Hide quick actions", "zh-CN": "收起快捷操作", "zh-TW": "收起快捷操作", "ja": "クイック操作を隠す", "ko": "빠른 작업 숨기기", "es": "Ocultar acciones rápidas", "pt-BR": "Ocultar ações rápidas", "fr": "Masquer les actions rapides", "de": "Schnellaktionen ausblenden"};
+export const dismissDockLabel=lang=>dismiss[lang]||dismiss.en;

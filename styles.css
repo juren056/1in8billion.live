@@ -1,4 +1,4 @@
-/* === born-somewhere v2 === */
+
 :root {
   --bg: #f4f1eb;
   --bg-2: #f3f9fc;
@@ -63,7 +63,7 @@ input, select, textarea { font: inherit; color: inherit; }
   white-space: nowrap;
 }
 .navbtn:hover { background: var(--bg-3); color: var(--ink); }
-.navbtn.active { background: var(--accent); color: #fff; }
+.navbtn.active { background: var(--accent); color: var(--t-on-action, #fff); }
 .topright { display: flex; gap: 8px; align-items: center; }
 .lang-select {
   background: var(--bg-2);
@@ -79,7 +79,7 @@ input, select, textarea { font: inherit; color: inherit; }
 .view { display: none; }
 .view.active { display: block; }
 
-/* === INTRO === */
+
 .hero { max-width: 920px; }
 .hero-title { font-family: var(--serif); font-weight: 700; line-height: 0.95; margin: 32px 0 20px; }
 .hero-title .kicker { display: block; font-size: 13px; font-family: var(--mono); color: var(--accent); letter-spacing: 0.2em; margin-bottom: 12px; font-weight: 500; }
@@ -115,12 +115,12 @@ input, select, textarea { font: inherit; color: inherit; }
   padding: 16px 56px;
   border-radius: 6px;
   background: var(--accent);
-  color: #fff;
+  color: var(--t-on-action, #fff);
   transition: transform 0.15s, box-shadow 0.15s, background 0.15s;
   box-shadow: 0 6px 20px rgba(140, 29, 60, 0.25);
   font-weight: 500;
 }
-.cta-btn:hover { transform: translateY(-1px); background: #6d1530; }
+.cta-btn:hover { transform: translateY(-1px); background: var(--accent); filter: brightness(.95); }
 .cta-hint { color: var(--ink-3); font-size: 13px; margin: 0; max-width: 36em; }
 
 .pick-block { background: var(--bg-2); border: 1px solid var(--line); border-radius: 8px; padding: 24px; max-width: 720px; box-shadow: var(--shadow); }
@@ -161,7 +161,7 @@ input, select, textarea { font: inherit; color: inherit; }
 .about h3 { font-family: var(--serif); font-size: 16px; margin: 0 0 8px; font-weight: 600; }
 .about p { color: var(--ink-2); font-size: 14px; line-height: 1.7; margin: 0; }
 
-/* === v5.19：今日主題列 === */
+
 .daily-theme-row {
   display: flex; align-items: baseline; gap: 10px;
   margin: 12px 0 24px;
@@ -178,7 +178,7 @@ input, select, textarea { font: inherit; color: inherit; }
   letter-spacing: 0.04em;
 }
 
-/* === v5.19：即時計數器 === */
+
 .rt-counters {
   margin-top: 32px; padding: 24px;
   background: var(--bg-2);
@@ -211,7 +211,7 @@ input, select, textarea { font: inherit; color: inherit; }
 .rt-l { font-size: 13px; color: var(--ink-2); }
 .rt-note { margin: 16px 0 0; font-size: 12px; }
 
-/* === v5.19：你 vs 隨機 對照表 === */
+
 .cmp-block {
   margin-top: 40px; padding-top: 32px;
   border-top: 1px solid var(--line);
@@ -252,7 +252,7 @@ input, select, textarea { font: inherit; color: inherit; }
 }
 .cmp-block .muted { font-size: 12px; margin-top: 10px; }
 
-/* === v5.19：機率分布表 === */
+
 .prob-block { max-width: 780px; }
 .prob-table {
   width: 100%; border-collapse: collapse;
@@ -288,7 +288,7 @@ input, select, textarea { font: inherit; color: inherit; }
 }
 .prob-block .muted { font-size: 12px; margin-top: 10px; }
 
-/* === v5.19：出生登記卡 modal === */
+
 .bc-modal { z-index: 50; }
 .bc-card {
   max-width: 560px;
@@ -369,12 +369,12 @@ input, select, textarea { font: inherit; color: inherit; }
   flex-wrap: wrap;
 }
 .bc-actions .primary {
-  background: var(--accent); color: #fff;
+  background: var(--accent); color: var(--t-on-action, #fff);
   padding: 12px 24px; border-radius: 6px;
   font-family: var(--serif); font-size: 16px;
   letter-spacing: 0.1em;
 }
-.bc-actions .primary:hover { background: #6d1530; }
+.bc-actions .primary:hover { background: var(--accent); filter: brightness(.95); }
 .bc-actions .ghost { padding: 10px 18px; }
 
 @media (max-width: 600px) {
@@ -387,7 +387,7 @@ input, select, textarea { font: inherit; color: inherit; }
   .prob-pct { font-size: 13px; }
 }
 
-/* === LIFE CERTIFICATE === */
+
 .life-cert {
   background: var(--bg-2);
   border: 1px solid var(--line);
@@ -399,7 +399,7 @@ input, select, textarea { font: inherit; color: inherit; }
 }
 .cert-band {
   background: var(--accent);
-  color: #fff;
+  color: var(--t-on-action, #fff);
   padding: 16px 24px;
   display: flex;
   align-items: center;
@@ -416,7 +416,7 @@ input, select, textarea { font: inherit; color: inherit; }
 .cert-age { font-family: var(--serif); font-size: 56px; font-weight: 700; line-height: 1; }
 .cert-le { font-size: 14px; color: var(--ink-3); }
 .cert-le-val { font-family: var(--mono); font-size: 18px; }
-/* v5.35：增強 progress bar — gradient track + ▲ marker + pct pill + triple labels */
+
 .cert-bar-wrap { margin: 10px auto 18px; max-width: 600px; padding: 0 4px; }
 .cert-bar-track { position: relative; height: 14px; background: linear-gradient(to right, #f5e8d4, #e8d8b8); border: 1px solid var(--line); border-radius: 7px; overflow: visible; box-shadow: inset 0 1px 2px rgba(0,0,0,0.06); }
 .cert-bar-fill { height: 100%; width: 0%; background: linear-gradient(to right, #c97a4a, #086f87, #5b1029); border-radius: 7px; transition: width 0.6s cubic-bezier(.4,0,.2,1); position: relative; box-shadow: 0 0 10px rgba(140,29,60,0.35); }
@@ -446,7 +446,7 @@ input, select, textarea { font: inherit; color: inherit; }
 }
 .speed-btn:hover { background: var(--bg-3); }
 .speed-btn.active { background: var(--ink); color: var(--bg); border-color: var(--ink); }
-.ctl-danger:hover { background: rgba(176, 54, 43, 0.1); color: var(--bad); border-color: var(--bad); }
+.ctl-danger:hover { background: rgba(176, 54, 43, 0.1); color: var(--t-negative,var(--bad)); border-color: var(--t-negative,var(--bad)); }
 .cert-log-wrap { padding: 16px 24px 24px; border-top: 1px solid var(--line); }
 .cert-log-wrap h4 { font-family: var(--serif); font-size: 14px; color: var(--ink-3); margin: 0 0 8px; letter-spacing: 0.05em; }
 .cert-log { max-height: 280px; overflow-y: auto; display: flex; flex-direction: column; gap: 4px; }
@@ -456,9 +456,9 @@ input, select, textarea { font: inherit; color: inherit; }
   font-family: var(--mono);
 }
 .log-row:last-child { border-bottom: 0; }
-.log-row.kind-death { color: var(--bad); font-weight: 500; }
+.log-row.kind-death { color: var(--t-negative,var(--bad)); font-weight: 500; }
 
-/* === END CERTIFICATE === */
+
 .end-cert {
   background: var(--bg-2);
   border: 1px solid var(--line);
@@ -472,23 +472,23 @@ input, select, textarea { font: inherit; color: inherit; }
 #certCanvas { position: absolute; inset: 0; pointer-events: none; }
 .end-cert .cert-band { position: relative; }
 .end-cert .cert-body { padding: 32px; }
-.cert-id { display: grid; grid-template-columns: 1fr; gap: 4px 16px; max-width: 480px; margin: 0 auto; padding: 16px; background: rgba(255,255,255,0.5); border: 1px solid var(--line); border-radius: 6px; }
+.cert-id { display: grid; grid-template-columns: 1fr; gap: 4px 16px; max-width: 480px; margin: 0 auto; padding: 16px; background: var(--t-soft); border: 1px solid var(--line); border-radius: 6px; }
 .id-row { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px dashed var(--line); }
 .id-row:last-child { border-bottom: 0; }
 .id-row span { color: var(--ink-3); font-size: 13px; }
 .id-row b { color: var(--ink); font-weight: 500; font-size: 14px; }
 .cert-actions { display: flex; gap: 8px; padding: 0 32px 24px; flex-wrap: wrap; justify-content: center; }
 .primary {
-  background: var(--accent); color: #fff;
+  background: var(--accent); color: var(--t-on-action, #fff);
   padding: 10px 20px; border-radius: 6px;
   font-size: 14px; font-weight: 500;
   border: 1px solid var(--accent);
   cursor: pointer;
 }
-.primary:hover { background: #6d1530; }
+.primary:hover { background: var(--accent); filter: brightness(.95); }
 .cert-note { font-size: 12px; color: var(--ink-3); line-height: 1.6; padding: 0 32px 24px; max-width: 600px; margin: 0 auto; text-align: left; }
 
-/* === SHELF === */
+
 .shelf-title { font-family: var(--serif); font-size: 32px; font-weight: 600; margin: 0 0 8px; color: var(--accent); }
 .shelf-hint { color: var(--ink-3); font-size: 14px; margin: 0 0 32px; }
 .shelf-grid {
@@ -529,7 +529,7 @@ input, select, textarea { font: inherit; color: inherit; }
 .shelf-name { font-family: var(--serif); font-size: 14px; font-weight: 600; line-height: 1.2; }
 .shelf-meta { font-family: var(--mono); font-size: 11px; opacity: 0.8; }
 
-/* === LAB === */
+
 .lab-title { font-family: var(--serif); font-size: 32px; font-weight: 600; margin: 0 0 8px; color: var(--accent); }
 .lab-sub { color: var(--ink-3); font-size: 14px; margin: 0 0 24px; }
 .lab-controls { background: var(--bg-2); border: 1px solid var(--line); border-radius: 8px; padding: 20px; margin-bottom: 24px; box-shadow: var(--shadow); }
@@ -570,7 +570,7 @@ input, select, textarea { font: inherit; color: inherit; }
 .lab-cause .fi { height: 100%; background: var(--accent); }
 .lab-cause .ct { font-size: 12px; color: var(--ink-3); font-family: var(--mono); min-width: 50px; text-align: right; }
 
-/* === MODAL === */
+
 .modal {
   position: fixed; inset: 0; z-index: 100;
   display: flex; align-items: center; justify-content: center;
@@ -613,9 +613,9 @@ input, select, textarea { font: inherit; color: inherit; }
 }
 .toast[hidden] { display: none; }
 
-::selection { background: var(--accent); color: #fff; }
+::selection { background: var(--accent); color: var(--t-on-action, #fff); }
 
-/* ==== Tree view (族譜) ==== */
+
 .tree-title { margin: 16px 0 4px; font-size: 22px; }
 .tree-hint { color: var(--ink-3); margin: 0 0 14px; font-size: 13px; }
 .tree-controls {
@@ -627,13 +627,13 @@ input, select, textarea { font: inherit; color: inherit; }
   display: flex; flex-direction: column; gap: 4px; font-size: 12px; color: var(--ink-3);
 }
 .tree-controls select {
-  border: 1px solid var(--line); border-radius: 6px; padding: 4px 8px; font-size: 13px; background: white;
+  border: 1px solid var(--line); border-radius: 6px; padding: 4px 8px; font-size: 13px; background: var(--t-paper, #fff);
 }
 .tree-controls .primary, .tree-controls .ghost {
   border-radius: 6px; padding: 6px 12px; font-size: 13px; cursor: pointer;
   border: 1px solid var(--accent, #086f87);
 }
-.tree-controls .primary { background: var(--accent, #086f87); color: white; }
+.tree-controls .primary { background: var(--accent, #086f87); color: var(--t-on-action, #fff); }
 .tree-controls .ghost { background: transparent; color: var(--accent, #086f87); }
 
 .tree-canvas {
@@ -657,7 +657,7 @@ input, select, textarea { font: inherit; color: inherit; }
 
 .tree-about { font-size: 11px; color: var(--ink-3); margin-top: 12px; text-align: center; opacity: 0.7; }
 
-/* Person detail panel (click family member in tree) */
+
 .person-detail {
   margin-top: 12px;
   background: var(--paper);
@@ -695,7 +695,7 @@ input, select, textarea { font: inherit; color: inherit; }
 .pd-cross-row.kind-heavy { color: var(--accent); }
 .pd-cross-row.kind-forecast { color: var(--ink-3); font-style: italic; }
 
-/* Shelf panorama + life modal */
+
 .shelf-panorama {
   background: linear-gradient(135deg, var(--paper), #f5ead0);
   border: 1px solid var(--accent);
@@ -737,23 +737,23 @@ input, select, textarea { font: inherit; color: inherit; }
 .life-tree { background: var(--bg); border-radius: 8px; padding: 10px; overflow-x: auto; }
 .panorama-common { padding: 10px; background: #fef0f0; border: 1px solid #a04040; border-radius: 6px; font-size: 13px; margin-bottom: 12px; }
 
-/* Lab family stats grid */
+
 .fam-stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 10px; margin-top: 8px; }
 .fam-stats-grid .lab-stat { padding: 10px 8px; background: #fbf6ea; }
 
-/* Caste markers in tree */
+
 .caste-marker { font-size: 10px; padding: 1px 6px; border-radius: 4px; display: inline-block; margin-top: 2px; }
 .caste-SC { background: #5C2B2B; color: #fff; }
 .caste-ST { background: #8B4513; color: #fff; }
 .caste-OBC { background: #C97D2A; color: #fff; }
 .caste-GEN { background: #2A6B8C; color: #fff; }
 
-/* Share button */
+
 .tree-share { display: inline-block; margin-left: 8px; }
 .tree-share button { padding: 6px 12px; font-size: 13px; border-radius: 6px; border: 1px solid var(--accent-2); background: var(--accent-2); color: white; cursor: pointer; }
 .tree-share button:hover { opacity: 0.9; }
 
-/* Family summary card in life view */
+
 .cert-family {
   background: linear-gradient(135deg, var(--bg), #f5ead0);
   border: 1px solid var(--accent);
@@ -787,9 +787,9 @@ input, select, textarea { font: inherit; color: inherit; }
   font-size: 11px;
   cursor: pointer;
 }
-.cert-family-go:hover { background: var(--accent); color: white; }
+.cert-family-go:hover { background: var(--accent); color: var(--t-on-action, #fff); }
 
-/* Lab country compare */
+
 .lab-compare { width: 100%; border-collapse: collapse; margin-top: 8px; font-size: 13px; }
 .lab-compare th, .lab-compare td { padding: 6px 10px; border-bottom: 1px solid var(--line); text-align: left; }
 .lab-compare thead th { background: var(--bg); font-weight: 600; }
@@ -797,7 +797,7 @@ input, select, textarea { font: inherit; color: inherit; }
 .lab-compare-causes { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 8px; }
 .lab-compare-causes h4 { margin: 0 0 6px; font-size: 13px; color: var(--accent); }
 
-/* Shelf world map */
+
 .shelf-world {
   grid-column: 1 / -1;
   background: var(--paper);
@@ -820,16 +820,16 @@ input, select, textarea { font: inherit; color: inherit; }
   line-height: 1.4;
 }
 
-/* Tree search input */
+
 .tree-controls input[type="text"] {
   border: 1px solid var(--line); border-radius: 6px;
   padding: 4px 10px; font-size: 13px; min-width: 140px;
-  background: white;
+  background: var(--t-paper, #fff);
 }
 .tree-controls input[type="text"]:focus { outline: none; border-color: var(--accent); }
 #treeSearchHint { font-size: 11px; color: var(--ink-3); margin-left: 4px; }
 
-/* Shortcuts modal */
+
 .shortcuts-card { max-width: 480px; }
 .shortcuts-table { width: 100%; border-collapse: collapse; margin-top: 12px; font-size: 13px; }
 .shortcuts-table th, .shortcuts-table td { padding: 8px 10px; border-bottom: 1px solid var(--line); text-align: left; }
@@ -846,7 +846,7 @@ input, select, textarea { font: inherit; color: inherit; }
   box-shadow: 1px 1px 0 var(--line);
 }
 
-/* Floating ? help button */
+
 .help-fab {
   position: fixed;
   bottom: 20px;
@@ -854,7 +854,7 @@ input, select, textarea { font: inherit; color: inherit; }
   width: 40px; height: 40px;
   border-radius: 50%;
   background: var(--accent);
-  color: white;
+  color: var(--t-on-action, #fff);
   font-size: 18px; font-weight: bold;
   border: none;
   box-shadow: 0 4px 12px rgba(0,0,0,0.25);
@@ -865,7 +865,7 @@ input, select, textarea { font: inherit; color: inherit; }
 .help-fab:hover { transform: scale(1.1); }
 .help-fab:active { transform: scale(0.95); }
 
-/* v5.8 狀態條 + 家庭背景 + 同伴 */
+
 .life-stats {
   background: linear-gradient(135deg, var(--bg), #f5ead0);
   border: 1px solid var(--line);
@@ -935,7 +935,7 @@ input, select, textarea { font: inherit; color: inherit; }
 .lc-name { font-size: 13px; font-weight: 600; margin-top: 4px; }
 .lc-meta { font-size: 11px; color: var(--ink-3); margin-top: 2px; }
 
-/* v5.9 完整國家統計面板 */
+
 .life-country-stats {
   background: var(--paper);
   border: 1px solid var(--line);
@@ -956,7 +956,7 @@ input, select, textarea { font: inherit; color: inherit; }
 .cs-v { color: var(--ink); padding: 5px 8px; text-align: right; font-weight: 600; }
 .cs-source { font-size: 11px; margin-top: 10px; line-height: 1.5; }
 
-/* v5.11 存活曲線 */
+
 .life-survival-curve {
   background: var(--paper);
   border: 1px solid var(--line);
@@ -972,7 +972,7 @@ input, select, textarea { font: inherit; color: inherit; }
 }
 .survival-svg { display: block; margin: 0 auto; }
 
-/* v5.13 焦點 + 財務 modal */
+
 .focus-card { max-width: 480px; }
 .focus-body { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 12px; }
 .focus-btn, .finance-btn {
@@ -998,7 +998,7 @@ input, select, textarea { font: inherit; color: inherit; }
 .fin-neg { color: var(--accent); font-size: 11px; }
 .fin-stat { color: var(--ink-3); font-size: 11px; }
 
-/* v5.14：本年事件 highlight */
+
 .life-this-year {
   background: linear-gradient(135deg, #fff8e1, #ffe0b2);
   border: 1px solid #ffaa00;
@@ -1009,13 +1009,13 @@ input, select, textarea { font: inherit; color: inherit; }
 }
 .life-this-year h4 {
   margin: 0 0 8px;
-  font-size: 13px; color: #8a5a00;
+  font-size: 13px; color: var(--t-muted, #8a5a00);
   text-transform: uppercase; letter-spacing: 0.08em;
 }
 .ty-body { font-size: 14px; }
 .ty-event {
   display: flex; align-items: center; gap: 10px;
-  background: white;
+  background: var(--t-paper, #fff);
   border-radius: 6px;
   padding: 8px 12px;
 }
@@ -1023,7 +1023,7 @@ input, select, textarea { font: inherit; color: inherit; }
 .ty-text { flex: 1; color: var(--ink); font-weight: 500; }
 .ty-age { font-size: 11px; color: var(--ink-3); }
 
-/* v5.15 5 面向終身軌跡 */
+
 .life-trajectory {
   background: var(--paper);
   border: 1px solid var(--line);
@@ -1039,7 +1039,7 @@ input, select, textarea { font: inherit; color: inherit; }
 }
 .trajectory-svg { display: block; margin: 0 auto; }
 
-/* v5.16 手動決策面板 */
+
 .life-manual-decisions {
   background: var(--paper);
   border: 2px dashed var(--accent);
@@ -1058,7 +1058,7 @@ input, select, textarea { font: inherit; color: inherit; }
   display: flex; align-items: center; gap: 6px;
   padding: 8px 14px;
   background: var(--accent);
-  color: white;
+  color: var(--t-on-action, #fff);
   border: none;
   border-radius: 6px;
   cursor: pointer;
@@ -1069,7 +1069,7 @@ input, select, textarea { font: inherit; color: inherit; }
 .md-btn:hover { transform: translateY(-1px); }
 .md-hint { font-size: 12px; color: var(--ink-3); font-style: italic; }
 
-/* v5.18 人生地圖 + 護照 */
+
 .life-map, .life-identity-record {
   background: var(--paper);
   border: 1px solid var(--line);
@@ -1088,15 +1088,15 @@ input, select, textarea { font: inherit; color: inherit; }
   font-family: 'Courier New', monospace;
   font-size: 13px; font-weight: bold;
   letter-spacing: 0.08em;
-  color: #1a1a1a;
-  background: #f3f9fc;
+  color: var(--ink);
+  background: var(--t-soft, #f3f9fc);
   padding: 4px 6px; border-radius: 4px;
   margin: 4px 0;
 }
 .ir-meta { font-size: 12px; color: var(--ink-3); margin-top: 6px; }
 
-/* === v5.19 life-game 強化樣式 === */
-/* 「ℹ️ 狀態說明」按鈕 + 展開面板 */
+
+
 .state-info-btn {
   margin-left: 8px;
   padding: 2px 8px;
@@ -1108,7 +1108,7 @@ input, select, textarea { font: inherit; color: inherit; }
   transition: background 0.15s;
   vertical-align: middle;
 }
-.state-info-btn:hover { background: var(--accent); color: #fff; border-color: var(--accent); }
+.state-info-btn:hover { background: var(--accent); color: var(--t-on-action, #fff); border-color: var(--accent); }
 .state-info-panel {
   margin: 8px 0 12px;
   padding: 10px 12px;
@@ -1122,7 +1122,7 @@ input, select, textarea { font: inherit; color: inherit; }
 .state-info-panel .si-k { flex: 0 0 80px; color: var(--accent); font-weight: 600; }
 .state-info-panel .si-v { flex: 1; color: var(--ink-2); }
 
-/* 「如果你現在出生」vs 隨機國家 */
+
 .life-actual-vs-random {
   background: var(--paper);
   border: 1px solid var(--line);
@@ -1140,12 +1140,12 @@ input, select, textarea { font: inherit; color: inherit; }
 .ar-table th, .ar-table td { padding: 6px 8px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
 .ar-table th { color: var(--ink-2); font-weight: 600; background: var(--bg); }
 .ar-table th.ar-you { color: var(--accent); }
-.ar-table th.ar-rand { color: var(--gold); }
+.ar-table th.ar-rand { color: var(--t-action,var(--gold)); }
 .ar-table .ar-k { color: var(--ink-3); white-space: nowrap; }
 .ar-table .ar-v { text-align: right; font-weight: 600; font-variant-numeric: tabular-nums; }
 .ar-note { font-size: 11px; margin-top: 8px; color: var(--ink-3); }
 
-/* 同伴新增的家庭背景 */
+
 .lc-cell .lc-bg {
   margin-top: 6px;
   padding-top: 6px;
@@ -1155,15 +1155,15 @@ input, select, textarea { font: inherit; color: inherit; }
 .lc-bg-row { display: flex; justify-content: space-between; padding: 2px 0; }
 .lc-bg-k { color: var(--ink-3); }
 .lc-bg-v { color: var(--ink-2); text-align: right; }
-.lc-bg-v.lc-q { color: var(--gold); font-weight: 600; }
+.lc-bg-v.lc-q { color: var(--t-action, var(--gold)); font-weight: 600; }
 
-/* 「⚡ 快速決定」+ 「♪ 音樂」按鈕變體 */
+
 .md-btn-auto { background: var(--good) !important; }
 .md-btn-auto:hover { background: #1f6c43 !important; }
 .md-btn-music { background: var(--gold) !important; }
 .md-btn-music:hover { background: #7a551a !important; }
 
-/* 重點選項 tooltip（focus modal） */
+
 .focus-btn {
   flex-direction: column;
   align-items: flex-start;
@@ -1174,7 +1174,7 @@ input, select, textarea { font: inherit; color: inherit; }
 .focus-btn .fb-label { font-weight: 600; font-size: 13px; }
 .focus-btn .fb-tip { font-size: 10px; color: var(--ink-3); font-weight: normal; }
 
-/* 「快速決定」財務按鈕 */
+
 .fc-auto-row { margin-top: 8px; text-align: center; }
 .fc-auto-btn {
   padding: 6px 12px;
@@ -1187,7 +1187,7 @@ input, select, textarea { font: inherit; color: inherit; }
   transition: transform 0.15s;
 }
 .fc-auto-btn:hover { transform: translateY(-1px); }
-.fin-auto {
+span.fin-auto {
   display: inline-block;
   margin-left: 6px;
   padding: 1px 5px;
@@ -1197,7 +1197,7 @@ input, select, textarea { font: inherit; color: inherit; }
   border-radius: 3px;
 }
 
-/* ==== v5.19: Footer + utility buttons ==== */
+
 .app-footer {
   border-top: 1px solid var(--line);
   background: var(--bg-2);
@@ -1239,7 +1239,7 @@ input, select, textarea { font: inherit; color: inherit; }
   .footer-ver { margin-left: 0; flex-basis: 100%; text-align: center; }
 }
 
-/* ==== v5.19: Educational mode badge ==== */
+
 .kit {
   position: absolute; top: 14px; left: 14px;
   background: #fff8d8; color: #7a5a00;
@@ -1265,7 +1265,7 @@ input, select, textarea { font: inherit; color: inherit; }
 }
 .edu-badge[hidden] { display: none; }
 
-/* ==== v5.19: Feedback modal ==== */
+
 .feedback-textarea {
   width: 100%;
   min-height: 120px;
@@ -1280,9 +1280,9 @@ input, select, textarea { font: inherit; color: inherit; }
 }
 .feedback-textarea:focus { border-color: var(--accent); }
 .feedback-meta { display: flex; justify-content: space-between; font-size: 11px; color: var(--ink-3); margin-top: 4px; }
-.feedback-meta .over { color: var(--bad); font-weight: 600; }
+.feedback-meta .over { color: var(--t-negative,var(--bad)); font-weight: 600; }
 
-/* ==== v5.19: Changelog modal ==== */
+
 .changelog-list { max-height: 60vh; overflow-y: auto; padding-right: 4px; }
 .changelog-entry {
   padding: 10px 0;
@@ -1317,7 +1317,7 @@ input, select, textarea { font: inherit; color: inherit; }
 .cl-badge.edu { background: #fff8d8; color: #7a5a00; }
 .cl-badge.style { background: #efe4d3; color: #9C7020; }
 
-/* ==== v5.19: Privacy / Terms / Contact / Install content ==== */
+
 .legal-body p { font-size: 14px; line-height: 1.65; margin: 10px 0; color: var(--ink-2); }
 .legal-body ul { padding-left: 20px; font-size: 13px; line-height: 1.65; }
 .legal-body li { margin: 4px 0; color: var(--ink-2); }
@@ -1333,7 +1333,7 @@ input, select, textarea { font: inherit; color: inherit; }
 }
 .install-card .install-emoji { font-size: 32px; }
 .install-card .install-cta {
-  background: var(--accent); color: white;
+  background: var(--accent); color: var(--t-on-action, #fff);
   border: none; padding: 8px 16px; border-radius: 6px;
   font-family: inherit; font-size: 13px; cursor: pointer;
 }
@@ -1341,10 +1341,10 @@ input, select, textarea { font: inherit; color: inherit; }
 .install-card .install-cta[disabled] { background: var(--bg-3); color: var(--ink-3); cursor: default; }
 .install-hint { font-size: 11px; color: var(--ink-3); margin-top: 6px; }
 
-/* ==== v5.19: Install hint pulse on help-fab when PWA install available ==== */
+
 .help-fab.install-ready { animation: kitPulse 1.6s ease-in-out infinite; }
 
-/* ==== v5.20: Memorial Wall (追思館) ==== */
+
 .memorial-wall {
   grid-column: 1 / -1;
   background: linear-gradient(180deg, #1a1a2e 0%, #0f0f1e 100%);
@@ -1515,7 +1515,7 @@ input, select, textarea { font: inherit; color: inherit; }
   font-family: var(--mono);
 }
 
-/* ==== v5.20: Shared Lives Feed ==== */
+
 .shared-feed {
   grid-column: 1 / -1;
   margin-top: 18px;
@@ -1642,7 +1642,7 @@ input, select, textarea { font: inherit; color: inherit; }
   font-family: inherit;
 }
 
-/* ==== v5.20: Active players map (intro) ==== */
+
 .players-map-block {
   background: var(--paper);
   border: 1px solid var(--line);
@@ -1677,7 +1677,7 @@ input, select, textarea { font: inherit; color: inherit; }
   padding: 40px 20px;
 }
 
-/* ==== v5.20: Death cause analysis (life + end views) ==== */
+
 .life-cause-this-year {
   margin-top: 14px;
   background: var(--paper);
@@ -1801,22 +1801,22 @@ input, select, textarea { font: inherit; color: inherit; }
   }
 }
 
-/* v5.20 財務管理 modal */
-.fin-intro { font-size: 12px; margin-bottom: 12px; }
+
+.fin-intro { font-size: 14px; margin-bottom: 12px; }
 .fin-actions { display: flex; flex-direction: column; gap: 8px; margin: 8px 0; }
 .fin-cost {
   display: grid;
   grid-template-columns: 1fr auto;
   gap: 4px 12px;
   padding: 10px;
-  background: #fff8e1;
+  background: var(--t-soft, #fff8e1);
   border: 1px solid #ffaa00;
   border-radius: 6px;
   font-size: 13px;
 }
 .fin-cost strong { grid-column: 1; }
-.fin-cost .fin-effect { grid-column: 1; font-size: 11px; color: #8a5a00; }
-.fin-cost .fin-price { grid-column: 2; grid-row: 1 / 3; font-weight: 700; color: #086f87; align-self: center; }
+.fin-cost .fin-effect { grid-column: 1; font-size: 11px; color: var(--t-muted, #8a5a00); }
+.fin-cost .fin-price { grid-column: 2; grid-row: 1 / 3; font-weight: 700; color: var(--t-action, #086f87); align-self: center; }
 .fin-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -1837,16 +1837,16 @@ input, select, textarea { font: inherit; color: inherit; }
   transition: all 0.15s;
 }
 .fin-opt:hover { background: var(--bg); border-color: var(--accent); }
-.fin-opt.active { background: #fff8e1; border-color: #ffaa00; border-width: 2px; }
+.fin-opt.active { background: var(--t-soft, #fff8e1); border-color: #ffaa00; border-width: 2px; }
 .fin-icon { grid-row: 1 / 3; font-size: 18px; align-self: center; }
 .fin-name { font-weight: 600; color: var(--ink); }
-.fin-desc { grid-column: 2; font-size: 10px; color: var(--ink-3); }
-.fin-info { font-size: 11px; line-height: 1.5; margin-top: 10px; padding: 8px; background: #f5f5f5; border-radius: 6px; }
-.fin-auto { margin-top: 12px; padding-top: 12px; border-top: 1px dashed var(--line); }
-.fin-auto button { background: var(--accent); color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 13px; }
-.fin-auto button.active { background: #0F6E68; }
+.fin-desc { grid-column: 2; font-size: 13px; color: var(--ink-3); }
+.fin-info { font-size: 14px; line-height: 1.5; margin-top: 10px; padding: 8px; background: var(--t-soft, #f5f5f5); color: var(--t-ink, #1a1a1a); border-radius: 6px; }
+div.fin-auto { margin-top: 12px; padding-top: 12px; border-top: 1px dashed var(--line); }
+.fin-auto button { background: var(--accent); color: var(--t-on-action, #fff); border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 13px; }
+.fin-auto button.active { background: #0F6E68; color:#fff; }
 
-/* v5.22 主題切換 + 貨幣切換 */
+
 .life-meta-controls {
   display: flex; gap: 8px; margin: 10px 0;
   justify-content: flex-end;
@@ -1863,7 +1863,7 @@ input, select, textarea { font: inherit; color: inherit; }
 }
 .meta-btn:hover { background: var(--bg); border-color: var(--accent); }
 
-/* 主題：dark */
+
 body.theme-dark { background: #1a1a1a; color: #e5e5e5; }
 body.theme-dark .paper, body.theme-dark .meta-btn, body.theme-dark .life-stats, body.theme-dark .life-country-stats,
 body.theme-dark .life-family-detail, body.theme-dark .life-this-year, body.theme-dark .life-survival-curve, body.theme-dark .life-trajectory, body.theme-dark .life-identity-record, body.theme-dark .life-manual-decisions {
@@ -1876,7 +1876,7 @@ body.theme-dark #focusBody .focus-btn, body.theme-dark #financeBody .finance-btn
 }
 body.theme-dark .cs-k { color: #999; }
 
-/* 主題：sepia */
+
 body.theme-sepia { background: #f4ecd8; color: #5b4636; }
 body.theme-sepia .paper, body.theme-sepia .meta-btn, body.theme-sepia .life-stats, body.theme-sepia .life-country-stats,
 body.theme-sepia .life-family-detail, body.theme-sepia .life-this-year, body.theme-sepia .life-survival-curve, body.theme-sepia .life-trajectory, body.theme-sepia .life-identity-record, body.theme-sepia .life-manual-decisions {
@@ -1884,7 +1884,7 @@ body.theme-sepia .life-family-detail, body.theme-sepia .life-this-year, body.the
 }
 body.theme-sepia .muted { color: #8b7355; }
 
-/* v5.23 整理紀錄 + 值得記住的時刻 */
+
 .shelf-manage { padding: 10px; }
 .shelf-manage button { margin: 4px; }
 .manage-list { display: flex; flex-direction: column; gap: 6px; max-height: 50vh; overflow-y: auto; }
@@ -1899,7 +1899,7 @@ body.theme-sepia .muted { color: #8b7355; }
 .ql-row { display: flex; gap: 10px; padding: 4px 8px; background: var(--bg); border-radius: 4px; }
 .ql-age { font-weight: 600; color: var(--accent); min-width: 50px; }
 
-/* v5.24 最後的時刻 + 提供意見 */
+
 .end-last-moments { margin-top: 16px; padding: 12px 16px; background: var(--bg); border-radius: 8px; text-align: left; }
 .end-last-moments h4 { margin: 0 0 8px; font-size: 13px; color: var(--accent); }
 .elm-row { display: flex; gap: 10px; padding: 4px 0; font-size: 13px; }
@@ -1907,7 +1907,7 @@ body.theme-sepia .muted { color: #8b7355; }
 .elm-icon { min-width: 24px; }
 .elm-text { color: var(--ink-2); }
 
-/* v5.25 花錢 modal */
+
 .spend-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 12px; }
 .spend-btn {
   display: flex; flex-direction: column; gap: 4px;
@@ -1918,10 +1918,10 @@ body.theme-sepia .muted { color: #8b7355; }
 }
 .spend-btn:hover { background: var(--bg); border-color: var(--accent); transform: translateY(-1px); }
 .spend-btn small { font-size: 11px; color: var(--ink-3); }
-/* v5.26 兄弟姊妹列 */
+
 .fd-sib { padding-top: 10px; margin-top: 8px; border-top: 1px dashed var(--line); font-size: 13px; color: var(--ink-2); }
 
-/* v5.27 人生紀錄 feed（時間序列） */
+
 .life-events-feed { background: var(--paper); border: 1px solid var(--line); border-radius: 10px; padding: 12px 16px; margin: 12px 0; text-align: left; }
 .life-events-feed h4 { margin: 0 0 10px; font-size: 13px; color: var(--accent); text-transform: uppercase; letter-spacing: 0.08em; }
 .lef-row { display: flex; gap: 10px; padding: 5px 8px; border-bottom: 1px solid var(--line); font-size: 13px; align-items: flex-start; }
@@ -1934,11 +1934,11 @@ body.theme-sepia .muted { color: #8b7355; }
 .lef-row.kind-birth { background: rgba(15,110,104,0.05); }
 .lef-row.kind-focus { background: rgba(168,85,247,0.05); }
 
-/* v5.28 國家 link */
+
 .lef-country-link { color: var(--accent); text-decoration: none; border-bottom: 1px dashed var(--accent); }
 .lef-country-link:hover { color: var(--accent-2, #0F6E68); border-bottom-style: solid; }
 
-/* v5.29 場景 + feed header + 星 */
+
 .life-scene { background: var(--paper); border: 1px solid var(--line); border-radius: 10px; padding: 10px 14px; margin: 12px 0; text-align: left; }
 .life-scene h4 { margin: 0 0 4px; font-size: 13px; color: var(--accent); }
 .life-scene p { margin: 0; font-size: 13px; }
@@ -1951,7 +1951,7 @@ body.theme-sepia .muted { color: #8b7355; }
 .lef-row.kind-birth, .lef-row.kind-finance, .lef-row.kind-death, .lef-row.kind-focus { background: rgba(0,0,0,0.02); }
 .lef-row:last-child { border-bottom: none; }
 
-/* v5.31 前世紀錄面板 */
+
 .end-past-records { background: var(--bg); border: 1px solid var(--line); border-radius: 8px; padding: 12px 16px; margin: 12px 0; text-align: left; }
 .end-past-records h4 { margin: 0 0 8px; font-size: 14px; color: var(--accent); }
 .end-past-note { font-size: 12px; margin: 0 0 10px; }
@@ -1964,4 +1964,8 @@ body.theme-sepia .muted { color: #8b7355; }
 .pr-actions button { font-size: 11px; padding: 3px 8px; }
 .end-past-actions { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 10px; }
 .end-past-actions button { font-size: 12px; padding: 5px 10px; }
-.end-past-actions .danger { color: #a04040; border-color: #a04040; }
+.end-past-actions .danger { color: var(--t-negative); border-color: var(--t-negative); }
+
+.md-btn-auto,.md-btn-music{color:#fff}.md-btn-music{background:#80551c!important}
+
+#financeBody{display:block}@media(max-width:600px){.fin-grid{grid-template-columns:1fr}}

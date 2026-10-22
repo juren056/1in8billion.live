@@ -20,10 +20,9 @@
 
 [data-design-system] table.ar-table th{color:var(--t-ink)}
 
-.start-dock[data-has-progress=true]{width:max-content;max-width:calc(100% - 24px);gap:10px;padding:10px}
-.start-dock[data-has-progress=true]>button{min-height:48px;font-size:15px;line-height:1.35;white-space:normal;max-width:30rem}
-.start-dock[data-has-progress=true]>.dock-rebirth{background:var(--t-soft);color:var(--t-ink);border:1px solid var(--t-line)}
-.start-dock [hidden]{display:none}
-@media(max-width:600px){.start-dock[data-has-progress=true]{width:calc(100% - 24px)}.start-dock[data-has-progress=true]>button:first-of-type{flex:1.4;min-width:0}.start-dock[data-has-progress=true]>.dock-rebirth{flex:1;min-width:0;padding:10px}}
-
 @media(max-width:600px){[data-design-system] .table-scroll table[data-columns="2"]{min-width:0;table-layout:fixed}[data-design-system] table[data-columns="2"] :is(th,td):first-child{width:60%}[data-design-system] table[data-columns="2"] td[data-numeric]{white-space:normal}}
+
+[data-design-system] table.cs-table{table-layout:fixed;width:100%}
+[data-design-system] table.cs-table .cs-k{width:52%;color:var(--t-muted)}
+[data-design-system] table.cs-table .cs-v{width:48%;text-align:right;white-space:normal;overflow-wrap:anywhere}
+@media(max-width:600px){[data-design-system] .table-scroll table.cs-table{min-width:0}[data-design-system] table.cs-table :is(th,td):first-child{width:52%}[data-design-system] table.cs-table td{padding:12px 10px}}
