@@ -1,6 +1,7 @@
 import {clarityTag,clarityPrivacy} from './clarity.mjs';
 import {applyPageSeo,sitemapXml} from './seo-pages.mjs';
 import {release} from '../release-info.mjs';
+import {buildGrowthExperience} from './build-growth-experience.mjs';
 import {buildExpansion} from './build-expansion.mjs';
 import {buildPremium} from './build-premium.mjs';
 import {buildRetention} from './build-retention.mjs';
@@ -17,9 +18,9 @@ const siteConfig=JSON.parse(fs.readFileSync('site.config.json','utf8')),clarity=
 fs.rmSync(out,{recursive:true,force:true});
 fs.mkdirSync(out,{recursive:true});
 const write=(p,s)=>{const dest=path.join(out,p);fs.mkdirSync(path.dirname(dest),{recursive:true});fs.writeFileSync(dest,s);};
-for(const file of ['theme-copy.js','modern-life-art.js','game-workspace-copy.js','arrival-copy.js','calendar-core.js','calendar-copy.js','calendar-ui.js','task-navigation.js','play-clarity.js','playback.js','playback-copy.js','playback.css','retention-bootstrap.js','retention.js','retention-copy.js','retention-core.js','life-scene.js','life-audio.js','life-keepsake.js','life-return.js','retention.css','ux-flow.js','ux-copy.js','app.js','replay-core.js','p1-game.js','replay-entry.js','compare.js','comparison-state-copy.js','comparison-core.js','performance.js','experience.js','storage.js','site-nav.js','content.css','experience.css','gedcom.js','styles.css','launch.css','sw.js','manifest.json','LICENSE'])fs.copyFileSync(file,path.join(out,file));
+for(const file of ['growth-copy.js','growth-experience.js','theme-copy.js','modern-life-art.js','game-workspace-copy.js','arrival-copy.js','calendar-core.js','calendar-copy.js','calendar-ui.js','task-navigation.js','play-clarity.js','playback.js','playback-copy.js','playback.css','retention-bootstrap.js','retention.js','retention-copy.js','retention-core.js','life-scene.js','life-audio.js','life-keepsake.js','life-return.js','retention.css','ux-flow.js','ux-copy.js','app.js','replay-core.js','p1-game.js','replay-entry.js','compare.js','comparison-state-copy.js','comparison-core.js','performance.js','experience.js','storage.js','site-nav.js','content.css','experience.css','gedcom.js','styles.css','launch.css','sw.js','manifest.json','LICENSE'])fs.copyFileSync(file,path.join(out,file));
 for(const dir of ['data','public-assets','vendor'])fs.cpSync(dir,path.join(out,dir),{recursive:true});
-fs.writeFileSync(out+'/app.js',fs.readFileSync('app.js','utf8').replace(/^\s*\/\/[^\r\n]*$/gm,'').replace(/^[ \t]+/gm,''));
+fs.writeFileSync(out+'/app.js',fs.readFileSync('app.js','utf8').replace(/^\s*\/\/[^\r\n]*$/gm,'').replace(/^[ \t]*\/\*[\s\S]*?\*\//gm,'').replace(/^[ \t]+/gm,''));
 for(const css of ['styles.css','launch.css','content.css','experience.css'])fs.writeFileSync(out+'/'+css,fs.readFileSync(css,'utf8').replace(/\/\*[\s\S]*?\*\//g,'').split(/\r?\n/).map(line=>line.trim()).filter(Boolean).join('\n'));
 const countries=JSON.parse(fs.readFileSync('data/countries.json')),dict=JSON.parse(fs.readFileSync('data/i18n.json'));
 prepareData(countries,dict,write);
@@ -51,6 +52,7 @@ buildPremium({write,head,links,footerFor,routes,langs,esc});
 buildExpansion({routes});
 await import('./build-keepsake-studio.mjs').then(m=>m.buildKeepsakeStudio());
 await import('./build-calendar.mjs').then(m=>m.buildCalendar(routes));
+buildGrowthExperience(routes);
 applyPageSeo(routes);
 if(siteConfig.clarityProjectId)clarityPrivacy(routes);
 write('404.html',`<!doctype html><html lang="en"><head><title>Page not found</title><meta name="robots" content="noindex"><link rel="stylesheet" href="/launch.css"></head><body><main class="article"><h1>Page not found</h1><a href="/">Return to the simulator</a></main></body></html>`);

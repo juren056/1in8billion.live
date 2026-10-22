@@ -16,7 +16,7 @@ export function installTaskUI(){
  const seenEvents=new WeakSet();let eventInView=false;
  const markEvent=()=>{const life=STATE.life;if(eventInView&&!document.hidden&&life?.latestEvent?.age>0&&!seenEvents.has(life)){seenEvents.add(life);window.Retention.event('first_event_visible');}};
  new IntersectionObserver(entries=>{eventInView=entries[0].isIntersecting;markEvent();},{threshold:.5}).observe($('#lifeThisYear'));
- const guide=document.createElement('p');guide.id='playbackGuide';guide.className='task-guide';guide.textContent=c.guide;$('#playbackIdentity').after(guide);
+ const guide=$('#playbackGuide')||document.createElement('p');guide.id='playbackGuide';guide.className='task-guide';guide.textContent=c.guide;$('#playbackIdentity').after(guide);
  const optional=document.createElement('p');optional.id='optionalChoiceHelp';optional.className='task-help';optional.textContent=c.optional;$('#lifeManualDecisions').append(optional);
  const note=document.createElement('p');note.className='population-unit-note';note.textContent=c.populationNote;
  const stats=$('#lifeCountryStats');stats.after(note);

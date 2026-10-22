@@ -1,4 +1,5 @@
 import {calculateComparison} from './comparison-core.js';
+import {currentGrowthCopy} from './growth-copy.js';
 const select=document.querySelector('#oddsCountry'),mode=document.querySelector('#oddsMode');
 if(select&&mode){
  const status=document.querySelector('#oddsResult'),play=document.querySelector('#oddsPlay'),search=document.querySelector('#oddsSearch');
@@ -11,7 +12,9 @@ if(select&&mode){
   const update=()=>{const r=calculateComparison(data,select.value,select.value,mode.value);status.textContent=`${select.selectedOptions[0].textContent}: ${r.a.share.toFixed(4)}% · 1 / ${Math.round(r.total/r.a.weight).toLocaleString()} · ${labels.denominator}: ${r.total.toLocaleString()}`;play.href=labels.home+'?country='+select.value;play.textContent=labels.playIn+' '+select.selectedOptions[0].textContent;document.querySelectorAll('[data-odds-country]').forEach(row=>{const c=data.find(c=>c.id===row.dataset.oddsCountry);const weight=mode.value==='population'?c.pop:c.births;row.querySelector('[data-share]').textContent=(100*weight/r.total).toFixed(4)+'%';row.querySelector('[data-one]').textContent=Math.round(r.total/weight).toLocaleString();});};
   const remember=()=>{history.replaceState(null,'',location.pathname+'?country='+select.value+'&mode='+mode.value+location.hash);document.dispatchEvent(new Event('site:task-change'));};
   select.addEventListener('change',()=>{update();remember();window.siteEvent?.('odds_used',{action:'country',mode:mode.value})});mode.addEventListener('change',()=>{update();remember();window.siteEvent?.('odds_used',{action:'mode',mode:mode.value})});
-  search.addEventListener('input',()=>{const q=search.value.trim().toLocaleLowerCase();let n=0;for(const option of select.options){option.hidden=!option.textContent.toLocaleLowerCase().includes(q);if(!option.hidden)n++;}const first=[...select.options].find(x=>!x.hidden);if(first){select.value=first.value;update();remember();}document.querySelector('#oddsEmpty').hidden=n>0;});
+  const clear=document.querySelector('#oddsClear'),empty=document.querySelector('#oddsEmpty');empty.textContent=currentGrowthCopy().searchEmpty;
+  const filter=()=>{const q=search.value.trim().toLocaleLowerCase();for(const option of select.options)option.hidden=!option.textContent.toLocaleLowerCase().includes(q);const matches=[...select.options].filter(x=>!x.hidden);for(const row of document.querySelectorAll('[data-odds-country]'))row.hidden=!matches.some(option=>option.value===row.dataset.oddsCountry);const found=matches.length>0;select.disabled=!found;status.hidden=!found;play.hidden=!found;empty.hidden=found;clear.hidden=!q;if(found){if(!matches.some(option=>option.value===select.value))select.value=matches[0].value;update();remember();}};
+  search.addEventListener('input',filter);clear.onclick=()=>{search.value='';filter();search.focus();};
   update();
  }).catch(()=>{document.querySelector('#oddsError').hidden=false;});
 }

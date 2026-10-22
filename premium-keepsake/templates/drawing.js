@@ -15,11 +15,12 @@ export function tools(context,width,height,data,assets){
  const title=(top,{left=margin,width=w-margin*2,color='#102d45',font='display',size=wide?72:104,nameOnly=false}={})=>{const bottom=text(nameOnly?data.name:data.headline,left,top,{size,width,color,font,weight:600,lines:2,min:wide?24:34});return nameOnly?bottom:text(data.name,left,bottom+(wide?10:20),{size:wide?28:44,width,color,weight:600,lines:wide?1:2,min:20});};
  const facts=(top,{left=margin,width=w-margin*2,color='#102d45',size=wide?22:30}={})=>text(data.summaryLine,left,top,{size,width,color,lines:2});
  const picks=data.featuredMilestones.length<=3?data.featuredMilestones:[data.featuredMilestones[0],data.featuredMilestones[Math.floor(data.featuredMilestones.length/2)],data.featuredMilestones.at(-1)];
- const moments=(top,{left=margin,width=w-margin*2,color='#102d45',accent=p.accent,bottom=h-180,columns=false}={})=>{
+ const moments=(top,{left=margin,width=w-margin*2,color='#102d45',accent=p.accent,bottom=h-180,columns=false,all=false}={})=>{
+  const shown=all?data.featuredMilestones:picks;
   bottom=Math.min(bottom,h-(data.note?(wide?225:350):(wide?110:155)));
-  const gap=columns?28:20,cellWidth=columns?(width-gap*(picks.length-1))/Math.max(1,picks.length):width;
-  const available=bottom-top,cellHeight=columns?available:available/Math.max(1,picks.length);
-  for(const [i,event]of picks.entries()){
+  const gap=columns?28:20,cellWidth=columns?(width-gap*(shown.length-1))/Math.max(1,shown.length):width;
+  const available=bottom-top,cellHeight=columns?available:available/Math.max(1,shown.length);
+  for(const [i,event]of shown.entries()){
    const px=columns?left+i*(cellWidth+gap):left,py=columns?top:top+i*cellHeight;
    rule(px,py,cellWidth,accent);text(`${data.copy.age} ${event.age}${event.month?' · '+event.month:''}`,px,py+12,{size:wide?18:24,width:cellWidth,color:accent,lines:1});
    const room=Math.max(20,cellHeight-(wide?42:56)),size=Math.min(wide?24:small?30:36,room/1.22);

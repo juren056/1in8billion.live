@@ -1,6 +1,9 @@
 import {uxCopy} from './ux-copy.js';
-export function installUX(bridge){
- const {lang,event}=bridge,s=uxCopy[lang]||uxCopy.en,keys=['study','work','family','health','play','rest'];
+export async function installUX(bridge){
+ await window.localeReady;const lang=document.documentElement.dataset.siteLocale||bridge.lang,{event}=bridge,{translateObject}=await import('./locale-runtime.js'),s=uxCopy[lang]||translateObject(uxCopy.en),keys=['study','work','family','health','play','rest'];
+ // These modal nodes are owned by this UI layer, not the engine's static dictionary.
+ for(const id of ['focusModal','financeModal','spendModal'])document.querySelectorAll('#'+id+' [data-t]').forEach(el=>el.removeAttribute('data-t'));
+ for(const id of ['focusModal','financeModal','spendModal','pauseModal'])document.getElementById(id).setAttribute('data-no-translate','true');
  const chineseFocus=['努力讀書','職場發展','陪伴家人','養生保健','玩耍探索','退休生活'],chineseFinance=['學生貸款升學','直接工作','學手藝','積極儲蓄','環遊世界','開始投資','買房','生孩子','衝刺事業','為退休儲蓄','及時行樂','慈善捐贈'];
  const oldStory=window.localizeStory;window.localizeStory=text=>{let out=oldStory(text);if(['ja','ko'].includes(lang)){for(const [i,k]of chineseFinance.entries())out=out.replaceAll(k,s.finance[i]);const map={'努力讀書':s.focus[0],'自我進修':s.focus[0],'職場發展':s.focus[1],'幫忙家裡':s.focus[2],'建立家庭':s.focus[2],'陪伴家人':s.focus[2],'保持活力':s.focus[3],'健康管理':s.focus[3],'養生保健':s.focus[3],'玩耍探索':s.focus[4],'退休生活':s.focus[5],'這一年焦點：':s.focusQuestion('')+' ','重心：':s.focusQuestion('')+' ','理財：':s.spendTitle+' '};for(const [from,to]of Object.entries(map))out=out.replaceAll(from,to);}return out;};
  const focusEffects={study:[[2,3]],work:[[4,2000]],family:[[3,4],[1,3]],health:[[0,4]],play:[[1,3]],rest:[[1,3]]};

@@ -959,7 +959,7 @@ function dieNow(forcedCause) {
   STATE.life.log.push({ age: STATE.life.age, kind: 'death', icon: '🕯️', text: t('log.died_of', cause) });
   savePastLife(STATE.life);
   saveCurrentLife();
-  launchEvent('life_completed');
+  launchEvent('life_completed',{action:forcedCause==='自行結束'?'ended_by_player':'natural'});
   stopTicker();
   STATE.view = 'end';
   renderAll();
@@ -1518,7 +1518,7 @@ function renderView(v) {
 
 // ==== 渲染 ====
 function renderAll() {
-  document.documentElement.lang = LANG;
+  document.documentElement.lang = document.documentElement.dataset.siteLocale || LANG;
   // Static SEO title is preserved.
   // 通用翻譯
   $$('[data-t]').forEach(el => { el.textContent = t(el.dataset.t); });
@@ -1784,9 +1784,9 @@ function renderThisYear() {
   if (!STATE.life) return;
   const wrap = $('#lifeThisYearBody');
   if (!wrap) return;
-  const evt = STATE.life.latestEvent;
+  const evt = window.GrowthNarrative?.(STATE.life) || STATE.life.latestEvent;
   const isEn = LANG === 'en';
-  if (!evt) { wrap.innerHTML = `<span class="muted">${t('life.noMajorEvent')}</span>`; return; }
+  if (!evt) { wrap.innerHTML = `<span class="muted">${escapeHtml(window.GrowthCopy?.quiet || t('life.noMajorEvent'))}</span>`; return; }
   wrap.innerHTML = `
     <div class="ty-event">
       <span class="ty-icon">${evt.icon}</span>
@@ -3691,9 +3691,10 @@ function wire() {
   });
   // 死亡
   const dieBtn = $('#btnDieNow');
-  if (dieBtn) dieBtn.addEventListener('click', () => { if (STATE.life && !STATE.life.died) dieNow('自行結束'); });
+  if (dieBtn) dieBtn.addEventListener('click', () => { if (STATE.life && !STATE.life.died && confirm(window.GrowthCopy?.endConfirm || 'End this fictional life now? This cannot be undone.')) dieNow('自行結束'); });
   const rebirthBtn = $('#btnRebirth');
   if (rebirthBtn) rebirthBtn.addEventListener('click', () => {
+    if (STATE.life && !STATE.life.died && !confirm(window.GrowthCopy?.restartConfirm || 'Leave this life and start another?')) return;
     const c = chooseCountry(STATE.birthMode);
     if (c) {
       stopTicker();
@@ -4116,7 +4117,7 @@ init().catch(()=>{const el=document.querySelector('#gameLoadState');if(el){el.te
    contact / PWA install）+ 教學版模式 + 版本歷史
    ===================================================================== */
 
-const APP_VERSION = '1.17.3';
+const APP_VERSION = '1.18.0';
 const APP_BUILD = '2026-10-21';
 
 // 版本歷史（每個版本：v / date / items；每個 item 含 emoji badge + 文字）

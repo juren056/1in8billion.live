@@ -19,6 +19,7 @@ import {comparisonStateCopy} from './comparison-state-copy.js';
  let current;
  const t=x=>window.translateUI?.(x)||x;
  function update(){
+  document.querySelector('#compareStatus').textContent='';
   const A=data.find(c=>c.id===a.value),B=data.find(c=>c.id===b.value);if(!A||!B)return;
   current=calculateComparison(data,A.id,B.id,mode.value);
   const population=mode.value==='population',weight=c=>population?c.pop:c.births,share=c=>current[c.id===A.id?'a':'b'].share;

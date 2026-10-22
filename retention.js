@@ -4,7 +4,7 @@ import {sceneMarkup,paintScene,drawPortrait,ageStage,sceneKind} from './life-sce
 export async function installRetention(){
  const lang=document.documentElement.dataset.gameLang==='zh-Hant'?'zh-TW':document.documentElement.dataset.gameLang,s=retentionCopy[lang]||retentionCopy.en;
  const config=await fetch('/data/retention-config.json').then(r=>r.json());
- const event=(name,extra={})=>window.siteEvent?.(name,{language:lang,run_type:window.activeRunType||'new',...extra});
+ const visibleLives=new WeakSet();const event=(name,extra={})=>{if(name==='first_event_visible'){if(!STATE.life||visibleLives.has(STATE.life))return;visibleLives.add(STATE.life);}return window.siteEvent?.(name,{language:lang,run_type:window.activeRunType||'new',...extra});};
  let audio=null,audioPromise=null,audioStarted=false,sceneKey='',lifeCanvas=null;
  const sound=document.createElement('details');sound.className='life-sound';sound.innerHTML=`<summary>${s.music}</summary><div class="sound-panel"><button id="musicPlay" type="button">${s.play}</button><label><input id="musicMute" type="checkbox"> ${s.mute}</label><label>${s.volume}<input id="musicVolume" type="range" min="0" max="1" step="0.01" value="0.22"></label><label><input id="musicEffects" type="checkbox"> ${s.sound}</label><p>${s.audioNote}</p><p id="musicStatus" role="status"></p></div>`;document.querySelector('.topbar').append(sound);
  const updateAudio=error=>{document.querySelector('#musicPlay').textContent=audio?.playing?s.pause:s.play;document.querySelector('#musicPlay').setAttribute('aria-pressed',String(!!audio?.playing));document.querySelector('#musicStatus').textContent=error?s.audioError:'';};
@@ -40,6 +40,7 @@ export async function installRetention(){
  if(config.stage>=3)await (await import('./life-return.js')).installReturn(bridge);
  await (await import('./ux-flow.js')).installUX(bridge);
  await (await import('./playback.js')).installPlayback(bridge);
+ await (await import('./growth-experience.js')).installGrowth(bridge);
  await (await import('./premium-keepsake/entry.js')).installPremium(bridge);
  return bridge;
 }

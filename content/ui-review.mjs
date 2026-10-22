@@ -1,4 +1,5 @@
 import {reviewSeoCopy} from './seo-reviewed-copy.mjs';
+import {growthCopy} from '../growth-copy.js';
 // Presentation-only corrections. Never apply these to stored events, seeds or engine text.
 const keys=['tree.title','tree.hint','tree.root','tree.mode','tree.ancestor','tree.descendant','tree.both','tree.depth','tree.g2','tree.g3','tree.g4','tree.g5','tree.empty','tree.loading','tree.refresh','io.export','io.import','io.imported','io.exported','tree.spouse','tree.spouseLink','tree.noteAdoptive','tree.noteFoster','lab.familyStats','lab.famOrphan','lab.famTwoParents','lab.famFull','lab.famAdopted','lab.famAdoptedHint','lab.famAvgSib','lab.famAvgSibHint','lab.famAvgGP','lab.famAvgGPHint','lab.famFostered','lab.famFosteredHint','tree.caste.SC','tree.caste.ST','tree.caste.OBC','tree.caste.GEN','tree.casteMarker','tree.caste','tree.migration','life.familyHead','life.familyHint','life.familyGo','lab.countryB','tree.search','tree.searchPh','end.pastRecords','end.pastNote'];
 const rows={
@@ -19,6 +20,8 @@ export const reviewedUi=Object.fromEntries(Object.entries(rows).map(([lang,value
 }));
 export function reviewDictionary(dict,lang){
  const target=reviewedUi[lang];if(!target)return dict;
+ const c=growthCopy[lang];Object.assign(dict,{'Back to the game':c.back,'Back to life':c.back,'Manage Records':c.manage,'Manage records':c.manage,'Show or delete each past life.':c.manageHelp,'End now':c.end,'Restart':c.restart,'Latest turning point':c.latest,'Covered total':lang==='zh-CN'?'覆盖总权重':dict['Covered total']||'Covered total'});
+ if(lang==='zh-CN')Object.assign(dict,{'生活方式':'生活方式','旅行':'旅行','捐款':'捐款','Save':'储蓄','Travel':'旅行','Lifestyle':'生活方式','Donate':'捐款','Family gifts':'聚餐与送礼','Appearance':'外观','Siblings: __V0__ ppl':'兄弟姐妹：__V0__人','__V0__ years old':'__V0__岁','Born __V0__':'出生 · __V0__','Born in __V0__':'出生于__V0__','Male':'男性','Female':'女性','Non-religious':'无宗教信仰','Lower-middle':'中等偏下','Upper-middle':'中等偏上','Death cause analysis':'模型死因分析','Causes at age __V0__':'__V0__岁模型死因','__V0__% share':'占比__V0__%','A first ending':'首次完成人生','Three birthplaces — Not reached yet':'探索三个出生地 · 尚未达成','Five completed lives — Not reached yet':'完成五段人生 · 尚未达成','Lived in __V0__ countries':'已体验__V0__个出生地','View my past life gallery':'查看本机人生','Download certificate PNG':'下载人生证书PNG','Delete all':'删除全部记录','Life deleted':'已删除该人生','Show':'查看','Focus: __V0__':'年度重点：__V0__','Study':'学习','Help family':'家庭时间','Play & explore':'玩耍与探索','Work':'工作','Rest':'休息'});
  // EN and traditional Chinese are both source surfaces for the locale enhancer.
  for(const key of Object.keys(reviewedUi.en)){dict[reviewedUi.en[key]]=target[key];dict[reviewedUi['zh-TW'][key]]=target[key];}
  for(const key of ['io.imported','io.exported'])dict[reviewedUi.en[key].replace('{}','__V0__')]=target[key].replace('{}','__V0__');
