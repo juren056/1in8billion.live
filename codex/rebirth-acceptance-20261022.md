@@ -1,4 +1,4 @@
-# Rebirth experience · three-batch acceptance · 2026-10-22 · v1.20.0
+# Rebirth experience · three-batch acceptance · 2026-10-22 · v1.20.1
 
 User approved the three-batch plan: homepage birth distribution, 48 original scenes plus 24 character age assets and 12 complete cases per language, then a more meaningful rebirth reveal with sound/skip/cancel, first-arrival guidance and keepsake continuity. Automatic Git deployment remains authorized after acceptance.
 
@@ -38,3 +38,7 @@ Evidence: tests/rebirth-experience-browser.cjs; tests/rebirth-keepsake-browser.c
 - All synthetic browser telemetry blocked. No real purchase was submitted. Stripe server code, credentials, source demographic data and model rules were not changed.
 
 Prior production rollback: Git 7d27bf09e9b2b17b400a68e20b604c72448f490a, Worker 43145f2a-14f3-4918-a0db-90379b7bbf6a, deployment 32862ec7-6ab7-4253-94bf-f425c97acee2. Preserve D1 and payment Secrets during rollback. Deployment receipt is recorded separately after the single Git release.
+
+## Final legacy-export correction · v1.20.1
+
+After the initial v1.20.0 release passed the main production UI and all 72 byte checks, an additional legacy-poster probe exposed a pre-existing asynchronous canvas ordering defect: 1,512,080 pixels of a 4,320,000-pixel export still contained the loading background. Cached decoded images now paint synchronously after readiness; exporters reject missing art rather than accepting a placeholder. Legacy poster/PDF reconstruction also carries the snapshot presentation IDs. A dedicated regression renders all three legacy poster variants, verifies the absence of the loading color and the same recorded portrait identity, and saves the actual PNGs. The patch does not alter the model, birth weights, country distribution, page layout or payment server. Final production receipt records v1.20.1 separately.
