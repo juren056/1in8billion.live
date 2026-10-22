@@ -16,7 +16,7 @@
   "vars": {
     "PUBLIC_ORIGIN": "https://1in8billion.live",
     "KEEPSAKE_PREVIEW_ENABLED": "true",
-    "STRIPE_PRICE_ID": "price_1USwKVLYvwXgXyhf16vQk4uH"
+    "KEEPSAKE_CHECKOUT_ENABLED": "true"
   },
   "keep_vars": true,
   "d1_databases": [

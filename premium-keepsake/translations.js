@@ -18,3 +18,6 @@ for(const[lang,c]of Object.entries(studioCopy)){copy[lang].paidBody=c.premiumDet
 for(const[lang,c]of Object.entries(copy)){c.status=paymentCopy(lang).notice;c.faq[0][1]=paymentCopy(lang).notice+' '+paymentCopy(lang).own;}
 
 for(const[lang,c]of Object.entries(copy)){const policy=commerceCopy(lang);c.steps=[policy.steps];c.recovery=policy.storage;c.refund=policy.sales;}
+
+const purchaseTitles={en:"Life Keepsake Pack", "zh-CN":"人生纪念包","zh-TW":"人生紀念包",ja:"人生記念パック",ko:"인생 기념품",es:"Recuerdo de tu vida","pt-BR":"Lembranças da sua vida",fr:"Souvenirs de votre vie",de:"Lebensandenken"};
+for(const[lang,c]of Object.entries(copy)){const p=paymentCopy(lang);c.title=purchaseTitles[lang];c.price="US$2.99";c.limits=p.notice;c.paidBody=p.notice;}

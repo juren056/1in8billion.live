@@ -52,7 +52,7 @@ test('built Simplified Chinese task pages have reviewed operational meanings and
  assert.match(compare,/<h1[^>]*>[^<]*人生起点条件<\/h1>/);
  assert.match(compare,/<th[^>]*>对比指标<\/th>/);
  const product=visible(fs.readFileSync('dist/zh-cn/keepsake/index.html','utf8'));
- assert(product.includes('仅 Stripe 测试模式，不会真实扣款'));
+ assert(product.includes('US$2.99 单次购买一段已完成人生'));assert(!product.includes('正式销售尚未开放'));
  assert(product.includes('样例不能购买'));
 });
 
