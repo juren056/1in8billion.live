@@ -1,0 +1,29 @@
+/* Shared table surfaces: every layer follows the selected appearance. */
+[data-design-system] table{background:var(--t-paper);color:var(--t-ink);font-variant-numeric:tabular-nums;font-size:14px;line-height:1.6}
+[data-design-system] table caption{background:var(--t-soft);color:var(--t-ink);text-align:left;padding:14px 16px}
+[data-design-system] table :is(th,td){color:var(--t-ink);border-color:var(--t-line);padding:13px 16px;vertical-align:top;overflow-wrap:anywhere}
+[data-design-system] table thead th{background:var(--t-soft);color:var(--t-ink);font-weight:700;text-align:left}
+[data-design-system] table tbody tr{background:var(--t-paper)}
+[data-design-system] table tbody tr:nth-child(even){background:color-mix(in srgb,var(--t-soft) 48%,var(--t-paper))}
+[data-design-system] table tbody th{background:inherit;color:var(--t-ink);text-align:left}
+[data-design-system] table tbody tr:is(:hover,:focus-within){background:var(--t-soft)}
+[data-design-system] table td{text-align:left}
+[data-design-system] table td[data-numeric], [data-design-system] table .ar-v{text-align:right;white-space:nowrap}
+[data-design-system] table :is(.muted,small,.cmp-sub){color:var(--t-muted)}
+[data-design-system] table a{color:var(--t-action);text-underline-offset:3px}
+[data-design-system] .table-scroll{background:var(--t-paper);color:var(--t-ink);border:1px solid var(--t-line);border-radius:12px;max-width:100%;overflow-x:auto;overscroll-behavior-inline:contain;scrollbar-color:var(--t-line) var(--t-paper)}
+[data-design-system] .table-scroll:focus-visible{outline:3px solid var(--t-focus);outline-offset:3px}
+.table-scroll-hint{font-size:13px;line-height:1.5;color:var(--t-muted);margin:8px 0}
+.table-scroll-hint[hidden]{display:none}
+.table-comparison{display:block;font-size:12px;font-weight:500;color:var(--t-muted);margin-top:4px}
+@media(max-width:600px){[data-design-system] table :is(th,td){padding:12px;font-size:14px}[data-design-system] .table-scroll table{min-width:480px}}
+
+[data-design-system] table.ar-table th{color:var(--t-ink)}
+
+.start-dock[data-has-progress=true]{width:max-content;max-width:calc(100% - 24px);gap:10px;padding:10px}
+.start-dock[data-has-progress=true]>button{min-height:48px;font-size:15px;line-height:1.35;white-space:normal;max-width:30rem}
+.start-dock[data-has-progress=true]>.dock-rebirth{background:var(--t-soft);color:var(--t-ink);border:1px solid var(--t-line)}
+.start-dock [hidden]{display:none}
+@media(max-width:600px){.start-dock[data-has-progress=true]{width:calc(100% - 24px)}.start-dock[data-has-progress=true]>button:first-of-type{flex:1.4;min-width:0}.start-dock[data-has-progress=true]>.dock-rebirth{flex:1;min-width:0;padding:10px}}
+
+@media(max-width:600px){[data-design-system] .table-scroll table[data-columns="2"]{min-width:0;table-layout:fixed}[data-design-system] table[data-columns="2"] :is(th,td):first-child{width:60%}[data-design-system] table[data-columns="2"] td[data-numeric]{white-space:normal}}

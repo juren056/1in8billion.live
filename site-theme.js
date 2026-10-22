@@ -13,3 +13,5 @@ update(root.dataset.appearance||'blue');
 if($('#startDock'))import('./home-start-dock.js').then(m=>m.installStartDock(c));
 
 if($('#view-life,.keepsake-studio'))import($('#view-life')?'./theme-home.js':'./theme-studio.js');
+
+import('./table-system.js');

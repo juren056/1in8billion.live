@@ -1,5 +1,6 @@
-import{rebirthCopy}from'./rebirth-copy.js';import{sceneAsset,sceneThumb,recordedScenes}from'./rebirth-art.js';import{drawPortrait}from'./life-scene.js';
+import{rebirthCopy}from'./rebirth-copy.js';import{sceneAsset,sceneThumb,recordedScenes,newVisualIdentity}from'./rebirth-art.js';import{drawPortrait}from'./life-scene.js';
 export function installRebirthReveal(bridge){
+ const create=window.newLife;window.newLife=function(...args){const life=create(...args);if(life)life.visual=newVisualIdentity(life);return life;};
  const modal=document.querySelector('#birthCertModal'),body=document.querySelector('#birthCertBody'),confirm=document.querySelector('#birthCertConfirm'),reroll=document.querySelector('#birthCertReroll'),original=window.showBirthCertModal;
  let revision=0,dispose=()=>{},draws=0;
  const lang=()=>document.documentElement.dataset.siteLocale||document.documentElement.lang;

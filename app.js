@@ -1481,6 +1481,7 @@ function savePastLife(life) {
     const rec = {
       ts: Date.now(),
       country: life.country,
+      sex: life.sex,...(life.visual?{visual:life.visual}:{}),
       name: life.name.full || life.name.full_en || '',
       ...(life.calendarMonth?{calendarMonth:life.calendarMonth,endMonth:CalendarCore.at(life,life.deathAge??life.age)}:{}),
       age: life.deathAge || life.age,
@@ -4117,7 +4118,7 @@ init().catch(()=>{const el=document.querySelector('#gameLoadState');if(el){el.te
    contact / PWA install）+ 教學版模式 + 版本歷史
    ===================================================================== */
 
-const APP_VERSION = '1.20.1';
+const APP_VERSION = '1.21.0';
 const APP_BUILD = '2026-10-21';
 
 // 版本歷史（每個版本：v / date / items；每個 item 含 emoji badge + 文字）
@@ -4951,11 +4952,7 @@ function setupLaunch(){
  const s=window.SurfaceCopy;
  const primary=document.querySelector('#btnStart');primary.removeAttribute('data-t');primary.textContent=s.start;primary.disabled=false;
  const quick=document.createElement('button');quick.id='quickPlay';quick.hidden=true;quick.onclick=()=>{document.querySelector('#lifeDuration').value='quick';startLifeWithCert();};document.querySelector('.cta-row').append(quick);
- const resume=document.createElement('button');resume.id='resumeLife';resume.className='cta-btn';resume.textContent=s.resume;
- try{const saved=JSON.parse(localStorage.getItem(STORAGE_KEY+':current')||'null');if(saved?.version===1&&saved.life&&!saved.life.died&&countryById(saved.life.country)){
- resume.onclick=()=>{stopTicker();STATE.life=saved.life;STATE.life.countryData=countryById(saved.life.country);STATE.era=saved.era;STATE.birthMode=saved.birthMode;STATE.pendingDecision=null;STATE.paused=false;STATE.autoDecide=false;STATE.thoughtsEnabled=true;setView('life');window.Playback?.restore(saved.playback);startTicker();launchEvent('life_resumed');};
- document.querySelector('.cta-row').prepend(resume);primary.className='text-button';const savedNote=document.createElement('p');savedNote.className='resume-note';savedNote.textContent=s.resumeNote+' · '+localize(countryById(saved.life.country)).name+' · '+s.sampleAge+' '+saved.life.age;document.querySelector('.cta-row').before(savedNote);
- }}catch{window.playbackRestoreFailure=true;}
+ window.launchLifeReady=import('/launch-life.js').then(m=>m.installLaunch());
  window.addEventListener('pagehide',saveCurrentLife);
  document.querySelector('#countrySelect').setAttribute('aria-label',s.name);
  document.querySelector('#customizeLife').onclick=()=>{const settings=document.querySelector('#lifeSettings');settings.open=true;settings.scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'start'});document.querySelector('#countrySelect').focus({preventScroll:true});};

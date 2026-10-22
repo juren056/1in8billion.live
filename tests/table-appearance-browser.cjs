@@ -1,0 +1,24 @@
+const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright'),fs=require('node:fs'),assert=require('node:assert/strict');
+const base=process.env.TABLE_BASE||'http://127.0.0.1:4186',out='audit/table-resume-identity-20261022';fs.mkdirSync(out,{recursive:true});
+function routes(dir='dist'){return fs.readdirSync(dir,{withFileTypes:true}).flatMap(e=>e.isDirectory()?routes(dir+'/'+e.name):e.name==='index.html'&&fs.readFileSync(dir+'/'+e.name,'utf8').includes('<table')?['/'+dir.slice(5)+'/']:[]);}
+async function inspect(page){return page.evaluate(()=>{
+ const rgb=s=>{const c=(s.match(/[\d.]+/g)||[]).map(Number);if(s.startsWith('color(srgb'))for(let i=0;i<3;i++)c[i]*=255;return c;},luminance=c=>c.slice(0,3).map(v=>{v/=255;return v<=.04045?v/12.92:((v+.055)/1.055)**2.4;}).reduce((n,v,i)=>n+v*[.2126,.7152,.0722][i],0);
+ function background(el){let result=[255,255,255],layers=[];for(let e=el;e;e=e.parentElement)layers.unshift(rgb(getComputedStyle(e).backgroundColor));for(const c of layers){const a=c[3]??1;result=result.map((v,i)=>c[i]*a+v*(1-a));}return result;}
+ const failures=[];let checked=0;for(const cell of document.querySelectorAll('table th,table td')){
+ if(!cell.getClientRects().length)continue;const walker=document.createTreeWalker(cell,NodeFilter.SHOW_TEXT);let node;
+ while(node=walker.nextNode()){if(!node.textContent.trim()||!node.parentElement.getClientRects().length)continue;const el=node.parentElement,style=getComputedStyle(el);if(style.visibility==='hidden')continue;const fg=rgb(style.color),bg=background(el),a=luminance(fg),b=luminance(bg),ratio=(Math.max(a,b)+.05)/(Math.min(a,b)+.05);checked++;if(ratio<4.49)failures.push({text:node.textContent.trim().slice(0,75),ratio:Number(ratio.toFixed(2)),color:style.color,bg});}}
+ return{checked,failures,overflow:document.documentElement.scrollWidth>innerWidth+1,tables:document.querySelectorAll('table').length};
+});}
+(async()=>{const browser=await chromium.launch({channel:'chrome'}),context=await browser.newContext({serviceWorkers:'block'}),results=[];await context.route(/google-analytics|googletagmanager|clarity\.ms/,r=>r.fulfill({status:204,body:''}));const page=await context.newPage();try{
+ for(const route of(process.env.TABLE_DYNAMIC_ONLY?[]:routes())){await page.goto(base+route);await page.waitForFunction(()=>[...document.querySelectorAll('table')].every(t=>t.parentElement.classList.contains('table-scroll')));for(const width of [1440,390]){await page.setViewportSize({width,height:900});for(const theme of ['blue','journal','editorial','night']){await page.evaluate(t=>document.documentElement.dataset.appearance=t,theme);const row={route,width,theme,...await inspect(page)};results.push(row);if(row.failures.length||row.overflow)console.log('FAIL',JSON.stringify({...row,failures:row.failures.slice(0,3)}));}}}
+ await page.goto(base+'/zh-cn/');await page.waitForFunction(()=>document.documentElement.dataset.birthRevealReady==='true');await page.locator('#btnStart').click();await page.waitForFunction(()=>!document.querySelector('.rebirth-stage'));await page.locator('#birthCertConfirm').click();await page.waitForFunction(()=>STATE.view==='life');
+ await page.evaluate(()=>{STATE.life.trajectory=[0,5,10,15,20].map(age=>({age,health:100-age,knowledge:50,relationship:60,income:0}));renderLife();});
+ for(const phase of ['life','end','lab','shortcuts']){
+ if(phase==='end')await page.evaluate(()=>{STATE.life.age=75;STATE.life.deathAge=75;STATE.life.died=true;STATE.life.cause='Natural causes';STATE.life.log.push({age:75,text:'End',kind:'death'});setView('end');});
+ if(phase==='lab')await page.evaluate(()=>{setView('lab');displayLabResultsCompare(runLab('JPN','now','random',100),runLab('IND','now','random',100));});
+ if(phase==='shortcuts')await page.evaluate(()=>showShortcutsModal());
+ await page.evaluate(()=>document.querySelectorAll('.view.active details').forEach(e=>e.open=true));await page.waitForTimeout(200);
+ for(const width of [1440,390]){await page.setViewportSize({width,height:900});for(const theme of ['blue','journal','editorial','night']){await page.evaluate(t=>document.documentElement.dataset.appearance=t,theme);await page.waitForTimeout(80);const row={route:'dynamic-'+phase,width,theme,...await inspect(page)};results.push(row);if(row.failures.length||row.overflow)console.log('FAIL',JSON.stringify({...row,failures:row.failures.slice(0,3)}));if(theme==='night'&&width===390)await page.locator('table:visible').first().locator('..').screenshot({path:out+'/table-'+phase+'-night-390.png'});}}
+ }
+ fs.writeFileSync(out+(process.env.TABLE_DYNAMIC_ONLY?'/tables-dynamic.json':'/tables.json'),JSON.stringify({results},null,2));assert(results.every(r=>!r.failures.length&&!r.overflow));assert(results.every(r=>r.checked>0));console.log('PASS',results.length,'table page/theme/viewport checks');
+}finally{await browser.close();}})().catch(e=>{console.error(e);process.exitCode=1;});
