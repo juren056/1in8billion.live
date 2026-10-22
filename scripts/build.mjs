@@ -78,3 +78,5 @@ for(const prefix of ['','zh-cn/','zh-tw/','ja/','ko/','es/','pt-br/','fr/','de/'
 
 const galleryHint={en:'12 complete fictional lives · Browse the gallery',ja:'12の完了した架空の人生・横にスクロールして見る',ko:'완료된 가상 삶 12개 · 옆으로 넘겨 보세요','zh-TW':'12 段完整虛構人生 · 手機可左右滑動瀏覽','zh-CN':'12 段完整虚构人生 · 手机可左右滑动浏览',es:'12 vidas ficticias completas · Desliza para explorar','pt-BR':'12 vidas fictícias completas · Deslize para explorar',fr:'12 vies fictives complètes · Faites défiler la galerie',de:'12 vollständige fiktive Leben · Galerie durchblättern'};
 for(const route of routes){const file='dist'+route+'index.html';let h=fs.readFileSync(file,'utf8');if(!h.includes('id="view-intro"'))continue;const lang=h.match(/<html lang="([^"]+)"/)[1];h=h.replace('<div class="sample-grid"',`<p class="sample-gallery-hint">${galleryHint[lang]||galleryHint.en}</p><div class="sample-grid"`);fs.writeFileSync(file,h);}
+
+await import('./build-story.mjs');

@@ -1,0 +1,850 @@
+{
+  "schema": "keepsake-one-life-v1",
+  "model": "inherited-v1",
+  "rules": "replay-v2",
+  "lang": "en",
+  "country": "JPN",
+  "countryName": "Japan",
+  "name": "이영아",
+  "birthYear": 2026,
+  "birthMonth": "2026-10",
+  "endMonth": "2124-10",
+  "age": 98,
+  "endYear": 2124,
+  "cause": "Cardiovascular disease",
+  "completed": true,
+  "events": [
+    {
+      "age": 0,
+      "month": "2026-10",
+      "text": "Was born.",
+      "kind": "birth",
+      "category": "family"
+    },
+    {
+      "age": 2,
+      "month": "2028-10",
+      "text": "Air raid sirens. The family shelters in the basement.",
+      "kind": "event",
+      "category": "event"
+    },
+    {
+      "age": 4,
+      "month": "2030-10",
+      "text": "Air raid sirens. The family shelters in the basement.",
+      "kind": "event",
+      "category": "event"
+    },
+    {
+      "age": 5,
+      "month": "2031-10",
+      "text": "Caught a cold",
+      "kind": "milestone",
+      "category": "event"
+    },
+    {
+      "age": 6,
+      "month": "2032-10",
+      "text": "Started primary school",
+      "kind": "milestone",
+      "category": "education"
+    },
+    {
+      "age": 6,
+      "month": "2032-10",
+      "text": "Fighting blocks the roads. School closes for a week.",
+      "kind": "event",
+      "category": "event"
+    },
+    {
+      "age": 7,
+      "month": "2033-10",
+      "text": "Fighting blocks the roads. School closes for a week.",
+      "kind": "event",
+      "category": "event"
+    },
+    {
+      "age": 8,
+      "month": "2034-10",
+      "text": "The neighborhood is evacuated; supplies run short.",
+      "kind": "event",
+      "category": "event"
+    },
+    {
+      "age": 9,
+      "month": "2035-10",
+      "text": "Fighting blocks the roads. School closes for a week.",
+      "kind": "event",
+      "category": "event"
+    },
+    {
+      "age": 10,
+      "month": "2036-10",
+      "text": "Your father is conscripted. Months of silence.",
+      "kind": "event",
+      "category": "event"
+    },
+    {
+      "age": 11,
+      "month": "2037-10",
+      "text": "Air raid sirens. The family shelters in the basement.",
+      "kind": "event",
+      "category": "event"
+    },
+    {
+      "age": 12,
+      "month": "2038-10",
+      "text": "Started middle school",
+      "kind": "milestone",
+      "category": "education"
+    },
+    {
+      "age": 12,
+      "month": "2038-10",
+      "text": "A neighbor dies in the fighting. You witness the scene.",
+      "kind": "event",
+      "category": "event"
+    },
+    {
+      "age": 13,
+      "month": "2039-10",
+      "text": "The neighborhood is evacuated; supplies run short.",
+      "kind": "event",
+      "category": "event"
+    },
+    {
+      "age": 14,
+      "month": "2040-10",
+      "text": "Affected by local unrest",
+      "kind": "milestone",
+      "category": "event"
+    },
+    {
+      "age": 15,
+      "month": "2041-10",
+      "text": "A neighbor dies in the fighting. You witness the scene.",
+      "kind": "event",
+      "category": "event"
+    },
+    {
+      "age": 16,
+      "month": "2042-10",
+      "text": "A neighbor dies in the fighting. You witness the scene.",
+      "kind": "event",
+      "category": "event"
+    },
+    {
+      "age": 17,
+      "month": "2043-10",
+      "text": "A neighbor dies in the fighting. You witness the scene.",
+      "kind": "event",
+      "category": "event"
+    },
+    {
+      "age": 18,
+      "month": "2044-10",
+      "text": "Air raid sirens. The family shelters in the basement.",
+      "kind": "event",
+      "category": "event"
+    },
+    {
+      "age": 19,
+      "month": "2045-10",
+      "text": "Graduated",
+      "kind": "milestone",
+      "category": "education"
+    },
+    {
+      "age": 20,
+      "month": "2046-10",
+      "text": "Ran a marathon",
+      "kind": "milestone",
+      "category": "event"
+    },
+    {
+      "age": 21,
+      "month": "2047-10",
+      "text": "Air raid sirens. The family shelters in the basement.",
+      "kind": "event",
+      "category": "event"
+    },
+    {
+      "age": 22,
+      "month": "2048-10",
+      "text": "Graduated",
+      "kind": "milestone",
+      "category": "education"
+    },
+    {
+      "age": 23,
+      "month": "2049-10",
+      "text": "Your father is conscripted. Months of silence.",
+      "kind": "event",
+      "category": "event"
+    },
+    {
+      "age": 24,
+      "month": "2050-10",
+      "text": "Your father is conscripted. Months of silence.",
+      "kind": "event",
+      "category": "event"
+    },
+    {
+      "age": 25,
+      "month": "2051-10",
+      "text": "The neighborhood is evacuated; supplies run short.",
+      "kind": "event",
+      "category": "event"
+    },
+    {
+      "age": 26,
+      "month": "2052-10",
+      "text": "Graduated",
+      "kind": "milestone",
+      "category": "education"
+    },
+    {
+      "age": 27,
+      "month": "2053-10",
+      "text": "The neighborhood is evacuated; supplies run short.",
+      "kind": "event",
+      "category": "event"
+    },
+    {
+      "age": 28,
+      "month": "2054-10",
+      "text": "Fighting blocks the roads. School closes for a week.",
+      "kind": "event",
+      "category": "event"
+    },
+    {
+      "age": 29,
+      "month": "2055-10",
+      "text": "Affected by local unrest",
+      "kind": "milestone",
+      "category": "event"
+    },
+    {
+      "age": 30,
+      "month": "2056-10",
+      "text": "Fighting blocks the roads. School closes for a week.",
+      "kind": "event",
+      "category": "event"
+    },
+    {
+      "age": 31,
+      "month": "2057-10",
+      "text": "Bought a car",
+      "kind": "milestone",
+      "category": "event"
+    },
+    {
+      "age": 32,
+      "month": "2058-10",
+      "text": "Your father is conscripted. Months of silence.",
+      "kind": "event",
+      "category": "event"
+    },
+    {
+      "age": 33,
+      "month": "2059-10",
+      "text": "Got divorced",
+      "kind": "milestone",
+      "category": "event"
+    },
+    {
+      "age": 34,
+      "month": "2060-10",
+      "text": "Had a child",
+      "kind": "milestone",
+      "category": "family"
+    },
+    {
+      "age": 35,
+      "month": "2061-10",
+      "text": "Fighting blocks the roads. School closes for a week.",
+      "kind": "event",
+      "category": "event"
+    },
+    {
+      "age": 36,
+      "month": "2062-10",
+      "text": "Air raid sirens. The family shelters in the basement.",
+      "kind": "event",
+      "category": "event"
+    },
+    {
+      "age": 37,
+      "month": "2063-10",
+      "text": "Your father is conscripted. Months of silence.",
+      "kind": "event",
+      "category": "event"
+    },
+    {
+      "age": 38,
+      "month": "2064-10",
+      "text": "Fighting blocks the roads. School closes for a week.",
+      "kind": "event",
+      "category": "event"
+    },
+    {
+      "age": 39,
+      "month": "2065-10",
+      "text": "A neighbor dies in the fighting. You witness the scene.",
+      "kind": "event",
+      "category": "event"
+    },
+    {
+      "age": 40,
+      "month": "2066-10",
+      "text": "Air raid sirens. The family shelters in the basement.",
+      "kind": "event",
+      "category": "event"
+    },
+    {
+      "age": 41,
+      "month": "2067-10",
+      "text": "Your father is conscripted. Months of silence.",
+      "kind": "event",
+      "category": "event"
+    },
+    {
+      "age": 42,
+      "month": "2068-10",
+      "text": "Air raid sirens. The family shelters in the basement.",
+      "kind": "event",
+      "category": "event"
+    },
+    {
+      "age": 43,
+      "month": "2069-10",
+      "text": "A neighbor dies in the fighting. You witness the scene.",
+      "kind": "event",
+      "category": "event"
+    },
+    {
+      "age": 44,
+      "month": "2070-10",
+      "text": "Got married",
+      "kind": "milestone",
+      "category": "family"
+    },
+    {
+      "age": 45,
+      "month": "2071-10",
+      "text": "Had a child",
+      "kind": "milestone",
+      "category": "family"
+    },
+    {
+      "age": 46,
+      "month": "2072-10",
+      "text": "Diagnosed with diabetes",
+      "kind": "event",
+      "category": "event"
+    },
+    {
+      "age": 47,
+      "month": "2073-10",
+      "text": "Got married",
+      "kind": "milestone",
+      "category": "family"
+    },
+    {
+      "age": 48,
+      "month": "2074-10",
+      "text": "Got married",
+      "kind": "milestone",
+      "category": "family"
+    },
+    {
+      "age": 49,
+      "month": "2075-10",
+      "text": "Fighting blocks the roads. School closes for a week.",
+      "kind": "event",
+      "category": "event"
+    },
+    {
+      "age": 50,
+      "month": "2076-10",
+      "text": "Took vacation",
+      "kind": "milestone",
+      "category": "event"
+    },
+    {
+      "age": 51,
+      "month": "2077-10",
+      "text": "The neighborhood is evacuated; supplies run short.",
+      "kind": "event",
+      "category": "event"
+    },
+    {
+      "age": 52,
+      "month": "2078-10",
+      "text": "A neighbor dies in the fighting. You witness the scene.",
+      "kind": "event",
+      "category": "event"
+    },
+    {
+      "age": 53,
+      "month": "2079-10",
+      "text": "Your father is conscripted. Months of silence.",
+      "kind": "event",
+      "category": "event"
+    },
+    {
+      "age": 54,
+      "month": "2080-10",
+      "text": "Air raid sirens. The family shelters in the basement.",
+      "kind": "event",
+      "category": "event"
+    },
+    {
+      "age": 55,
+      "month": "2081-10",
+      "text": "Went back to school",
+      "kind": "milestone",
+      "category": "education"
+    },
+    {
+      "age": 56,
+      "month": "2082-10",
+      "text": "Affected by local unrest",
+      "kind": "milestone",
+      "category": "event"
+    },
+    {
+      "age": 57,
+      "month": "2083-10",
+      "text": "Air raid sirens. The family shelters in the basement.",
+      "kind": "event",
+      "category": "event"
+    },
+    {
+      "age": 58,
+      "month": "2084-10",
+      "text": "Child graduated",
+      "kind": "milestone",
+      "category": "event"
+    },
+    {
+      "age": 59,
+      "month": "2085-10",
+      "text": "Your father is conscripted. Months of silence.",
+      "kind": "event",
+      "category": "event"
+    },
+    {
+      "age": 60,
+      "month": "2086-10",
+      "text": "Health checkup",
+      "kind": "milestone",
+      "category": "event"
+    },
+    {
+      "age": 61,
+      "month": "2087-10",
+      "text": "Affected by local unrest",
+      "kind": "milestone",
+      "category": "event"
+    },
+    {
+      "age": 62,
+      "month": "2088-10",
+      "text": "Fighting blocks the roads. School closes for a week.",
+      "kind": "event",
+      "category": "event"
+    },
+    {
+      "age": 63,
+      "month": "2089-10",
+      "text": "A neighbor dies in the fighting. You witness the scene.",
+      "kind": "event",
+      "category": "event"
+    },
+    {
+      "age": 64,
+      "month": "2090-10",
+      "text": "Fighting blocks the roads. School closes for a week.",
+      "kind": "event",
+      "category": "event"
+    },
+    {
+      "age": 65,
+      "month": "2091-10",
+      "text": "The neighborhood is evacuated; supplies run short.",
+      "kind": "event",
+      "category": "event"
+    },
+    {
+      "age": 66,
+      "month": "2092-10",
+      "text": "Had health check",
+      "kind": "milestone",
+      "category": "event"
+    },
+    {
+      "age": 67,
+      "month": "2093-10",
+      "text": "Saw grandchild grow",
+      "kind": "milestone",
+      "category": "event"
+    },
+    {
+      "age": 68,
+      "month": "2094-10",
+      "text": "Affected by local unrest",
+      "kind": "milestone",
+      "category": "event"
+    },
+    {
+      "age": 69,
+      "month": "2095-10",
+      "text": "Grandchildren visit",
+      "kind": "milestone",
+      "category": "event"
+    },
+    {
+      "age": 70,
+      "month": "2096-10",
+      "text": "A neighbor dies in the fighting. You witness the scene.",
+      "kind": "event",
+      "category": "event"
+    },
+    {
+      "age": 71,
+      "month": "2097-10",
+      "text": "Your father is conscripted. Months of silence.",
+      "kind": "event",
+      "category": "event"
+    },
+    {
+      "age": 72,
+      "month": "2098-10",
+      "text": "A neighbor dies in the fighting. You witness the scene.",
+      "kind": "event",
+      "category": "event"
+    },
+    {
+      "age": 73,
+      "month": "2099-10",
+      "text": "Your father is conscripted. Months of silence.",
+      "kind": "event",
+      "category": "event"
+    },
+    {
+      "age": 74,
+      "month": "2100-10",
+      "text": "A neighbor dies in the fighting. You witness the scene.",
+      "kind": "event",
+      "category": "event"
+    },
+    {
+      "age": 75,
+      "month": "2101-10",
+      "text": "Affected by local unrest",
+      "kind": "milestone",
+      "category": "event"
+    },
+    {
+      "age": 76,
+      "month": "2102-10",
+      "text": "Fighting blocks the roads. School closes for a week.",
+      "kind": "event",
+      "category": "event"
+    },
+    {
+      "age": 77,
+      "month": "2103-10",
+      "text": "Walked in the park",
+      "kind": "milestone",
+      "category": "event"
+    },
+    {
+      "age": 78,
+      "month": "2104-10",
+      "text": "Fighting blocks the roads. School closes for a week.",
+      "kind": "event",
+      "category": "event"
+    },
+    {
+      "age": 79,
+      "month": "2105-10",
+      "text": "A neighbor dies in the fighting. You witness the scene.",
+      "kind": "event",
+      "category": "event"
+    },
+    {
+      "age": 80,
+      "month": "2106-10",
+      "text": "Your father is conscripted. Months of silence.",
+      "kind": "event",
+      "category": "event"
+    },
+    {
+      "age": 81,
+      "month": "2107-10",
+      "text": "Air raid sirens. The family shelters in the basement.",
+      "kind": "event",
+      "category": "event"
+    },
+    {
+      "age": 82,
+      "month": "2108-10",
+      "text": "Fighting blocks the roads. School closes for a week.",
+      "kind": "event",
+      "category": "event"
+    },
+    {
+      "age": 83,
+      "month": "2109-10",
+      "text": "Affected by local unrest",
+      "kind": "milestone",
+      "category": "event"
+    },
+    {
+      "age": 84,
+      "month": "2110-10",
+      "text": "The neighborhood is evacuated; supplies run short.",
+      "kind": "event",
+      "category": "event"
+    },
+    {
+      "age": 85,
+      "month": "2111-10",
+      "text": "Read a great book",
+      "kind": "milestone",
+      "category": "event"
+    },
+    {
+      "age": 86,
+      "month": "2112-10",
+      "text": "Affected by local unrest",
+      "kind": "milestone",
+      "category": "event"
+    },
+    {
+      "age": 87,
+      "month": "2113-10",
+      "text": "Had health check",
+      "kind": "milestone",
+      "category": "event"
+    },
+    {
+      "age": 88,
+      "month": "2114-10",
+      "text": "The neighborhood is evacuated; supplies run short.",
+      "kind": "event",
+      "category": "event"
+    },
+    {
+      "age": 89,
+      "month": "2115-10",
+      "text": "Walked in the park",
+      "kind": "milestone",
+      "category": "event"
+    },
+    {
+      "age": 90,
+      "month": "2116-10",
+      "text": "The neighborhood is evacuated; supplies run short.",
+      "kind": "event",
+      "category": "event"
+    },
+    {
+      "age": 91,
+      "month": "2117-10",
+      "text": "Air raid sirens. The family shelters in the basement.",
+      "kind": "event",
+      "category": "event"
+    },
+    {
+      "age": 92,
+      "month": "2118-10",
+      "text": "Air raid sirens. The family shelters in the basement.",
+      "kind": "event",
+      "category": "event"
+    },
+    {
+      "age": 93,
+      "month": "2119-10",
+      "text": "Walked in the park",
+      "kind": "milestone",
+      "category": "event"
+    },
+    {
+      "age": 94,
+      "month": "2120-10",
+      "text": "Affected by local unrest",
+      "kind": "milestone",
+      "category": "event"
+    },
+    {
+      "age": 95,
+      "month": "2121-10",
+      "text": "Read a great book",
+      "kind": "milestone",
+      "category": "event"
+    },
+    {
+      "age": 96,
+      "month": "2122-10",
+      "text": "A neighbor dies in the fighting. You witness the scene.",
+      "kind": "event",
+      "category": "event"
+    },
+    {
+      "age": 97,
+      "month": "2123-10",
+      "text": "A neighbor dies in the fighting. You witness the scene.",
+      "kind": "event",
+      "category": "event"
+    },
+    {
+      "age": 98,
+      "month": "2124-10",
+      "text": "Died of Cardiovascular disease",
+      "kind": "death",
+      "category": "event"
+    }
+  ],
+  "trajectory": [
+    {
+      "age": 5,
+      "health": 100,
+      "knowledge": 50,
+      "relationship": 60,
+      "income": 0
+    },
+    {
+      "age": 10,
+      "health": 100,
+      "knowledge": 50,
+      "relationship": 60,
+      "income": 0
+    },
+    {
+      "age": 15,
+      "health": 100,
+      "knowledge": 50,
+      "relationship": 60,
+      "income": 0
+    },
+    {
+      "age": 20,
+      "health": 100,
+      "knowledge": 50,
+      "relationship": 60,
+      "income": 0
+    },
+    {
+      "age": 25,
+      "health": 100,
+      "knowledge": 50,
+      "relationship": 60,
+      "income": 0
+    },
+    {
+      "age": 30,
+      "health": 100,
+      "knowledge": 50,
+      "relationship": 60,
+      "income": 0
+    },
+    {
+      "age": 35,
+      "health": 100,
+      "knowledge": 50,
+      "relationship": 60,
+      "income": 0
+    },
+    {
+      "age": 40,
+      "health": 100,
+      "knowledge": 50,
+      "relationship": 60,
+      "income": 0
+    },
+    {
+      "age": 45,
+      "health": 100,
+      "knowledge": 50,
+      "relationship": 60,
+      "income": 0
+    },
+    {
+      "age": 50,
+      "health": 100,
+      "knowledge": 50,
+      "relationship": 60,
+      "income": 0
+    },
+    {
+      "age": 55,
+      "health": 100,
+      "knowledge": 50,
+      "relationship": 60,
+      "income": 0
+    },
+    {
+      "age": 60,
+      "health": 100,
+      "knowledge": 50,
+      "relationship": 60,
+      "income": 0
+    },
+    {
+      "age": 65,
+      "health": 98.50000000000001,
+      "knowledge": 50,
+      "relationship": 60,
+      "income": 0
+    },
+    {
+      "age": 70,
+      "health": 97.00000000000003,
+      "knowledge": 50,
+      "relationship": 60,
+      "income": 0
+    },
+    {
+      "age": 75,
+      "health": 95.50000000000004,
+      "knowledge": 50,
+      "relationship": 60,
+      "income": 0
+    },
+    {
+      "age": 80,
+      "health": 94.00000000000006,
+      "knowledge": 50,
+      "relationship": 60,
+      "income": 0
+    },
+    {
+      "age": 85,
+      "health": 92.50000000000007,
+      "knowledge": 50,
+      "relationship": 60,
+      "income": 0
+    },
+    {
+      "age": 90,
+      "health": 91.00000000000009,
+      "knowledge": 50,
+      "relationship": 60,
+      "income": 0
+    },
+    {
+      "age": 95,
+      "health": 89.5000000000001,
+      "knowledge": 50,
+      "relationship": 60,
+      "income": 0
+    }
+  ],
+  "visual": {
+    "environment": "oldtown",
+    "person": "sora"
+  }
+}

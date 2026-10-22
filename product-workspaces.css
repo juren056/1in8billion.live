@@ -205,3 +205,176 @@ html[data-design-system] .life-secondary :is(h4,.cs-source,.muted){color:var(--t
 .daily-invitation{background:var(--t-paper,#fff);color:var(--t-ink,#112b48)}
 
 [data-design-system] #dailyLife{background:var(--t-page);color:var(--t-ink)}
+
+/* Memorial tools load with the game workspace, outside the initial homepage. */
+
+
+
+.memorial-wall {
+  grid-column: 1 / -1;
+  background: linear-gradient(180deg, #1a1a2e 0%, #0f0f1e 100%);
+  color: #e8e0d0;
+  border-radius: 12px;
+  padding: 24px;
+  margin-top: 18px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+  position: relative;
+  overflow: hidden;
+}
+.memorial-wall::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: radial-gradient(circle at 50% 0%, rgba(255, 200, 100, 0.06), transparent 60%);
+  pointer-events: none;
+}
+.memorial-title {
+  font-family: var(--serif);
+  font-size: 26px;
+  font-weight: 600;
+  color: #f4e6c8;
+  margin: 0 0 4px;
+  letter-spacing: 0.04em;
+}
+.memorial-subtitle {
+  color: #9c9480;
+  font-size: 13px;
+  margin: 0 0 18px;
+}
+.memorial-empty {
+  color: #9c9480;
+  font-style: italic;
+  text-align: center;
+  padding: 20px 0;
+}
+.memorial-nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+.memorial-prev, .memorial-next {
+  background: rgba(255, 255, 255, 0.08);
+  color: #e8e0d0;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  padding: 6px 14px;
+  border-radius: 6px;
+  font-size: 13px;
+  cursor: pointer;
+  font-family: inherit;
+}
+.memorial-prev:hover, .memorial-next:hover {
+  background: rgba(255, 255, 255, 0.14);
+}
+.memorial-counter {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: #9c9480;
+  min-width: 60px;
+  text-align: center;
+}
+.memorial-card {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  padding: 24px;
+  margin-bottom: 18px;
+  position: relative;
+}
+.memorial-card-content {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: center;
+  text-align: center;
+}
+.memorial-flag {
+  font-size: 36px;
+  margin-bottom: 6px;
+}
+.memorial-name {
+  font-family: var(--serif);
+  font-size: 28px;
+  color: #f4e6c8;
+  font-weight: 600;
+}
+.memorial-years {
+  font-family: var(--mono);
+  font-size: 13px;
+  color: #c8b890;
+}
+.memorial-country {
+  font-size: 13px;
+  color: #9c9480;
+}
+.memorial-summary {
+  margin-top: 10px;
+  font-style: italic;
+  font-family: var(--serif);
+  font-size: 15px;
+  color: #e8e0d0;
+  max-width: 480px;
+  line-height: 1.6;
+  border-left: 2px solid rgba(196, 161, 90, 0.4);
+  padding-left: 12px;
+  text-align: left;
+}
+.memorial-candle-display {
+  position: absolute;
+  top: 12px;
+  right: 16px;
+  font-size: 28px;
+  display: flex;
+  align-items: flex-end;
+  filter: drop-shadow(0 0 8px rgba(255, 180, 60, 0.5));
+}
+.memorial-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+  margin-bottom: 10px;
+}
+.memorial-candle, .memorial-heart, .memorial-visit, .memorial-random {
+  background: rgba(255, 255, 255, 0.08);
+  color: #e8e0d0;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  padding: 8px 14px;
+  border-radius: 6px;
+  font-size: 13px;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.2s;
+}
+.memorial-candle:hover, .memorial-heart:hover, .memorial-visit:hover, .memorial-random:hover {
+  background: rgba(196, 161, 90, 0.18);
+  border-color: rgba(196, 161, 90, 0.4);
+}
+.memorial-candle:active {
+  transform: scale(0.97);
+  background: rgba(255, 180, 60, 0.25);
+}
+.memorial-heart:active {
+  transform: scale(0.97);
+  background: rgba(220, 100, 130, 0.25);
+}
+.memorial-counters {
+  text-align: center;
+  font-size: 12px;
+  color: #9c9480;
+  display: flex;
+  justify-content: center;
+  gap: 18px;
+}
+.memorial-counters span {
+  font-family: var(--mono);
+}
+
+@media (max-width: 600px) {
+  .memorial-actions {
+    flex-direction: column;
+  }
+  .memorial-actions button {
+    width: 100%;
+  }}

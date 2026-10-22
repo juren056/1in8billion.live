@@ -7,7 +7,7 @@ export function buildCalendar(routes){
  const samples=JSON.parse(fs.readFileSync('content/life-samples.json','utf8'));
  for(const route of routes){const file='dist'+route+'index.html';let html=fs.readFileSync(file,'utf8');const lang=html.match(/<html lang="([^"]+)"/)?.[1]||'en',c=CalendarCopy[lang]||CalendarCopy.en;
   // Existing sample outcomes keep their recorded month, never today's date.
-  html=html.replace(/#run=v1\.([a-z0-9]+)\.([A-Z]{3})\.now\.(en|ja|ko|zh-Hant)\.0/g,(token,seed,country,internal)=>{const s=samples.find(s=>s.seed===seed&&s.country===country&&s.lang===(internal==='zh-Hant'?'zh-TW':internal));return s?.calendarMonth?`#run=v2.${seed}.${country}.now.${internal}.0.${s.calendarMonth.replace('-','')}`:token;});
+  html=html.replace(/#run=v1\.([a-z0-9]+)\.([A-Z]{3})\.now\.(en|ja|ko|zh-Hant)\.0/g,(token,seed,country,internal)=>{const s=samples.find(s=>s.seed===seed&&s.country===country&&s.lang===(internal==='zh-Hant'?'zh-TW':internal));return s?.calendarMonth?`#run=v${s.rulesVersion===3?3:2}.${seed}.${country}.now.${internal}.0.${s.calendarMonth.replace('-','')}`:token;});
   const editorial=seoLocales[lang],helpPath='/'+editorial.prefix+'how-it-works/';
   const detailed=route===helpPath||route==='/'+editorial.prefix+'guides/quick-play/';
   const section='<span id="birth-calendar" hidden></span>';

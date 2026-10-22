@@ -1,0 +1,340 @@
+{
+  "reviewed": "2026-10-23",
+  "mortality": {
+    "legacyRevision": "e00c962",
+    "sourceFingerprint": "8df45d86bc0492438578a23b592d2f717cc4226ad452f88e0b249509c5f908d7",
+    "boundaryCases": 38184,
+    "changed": false
+  },
+  "fields": {
+    "wh": {
+      "meaning": "unverified inherited field",
+      "newRuleUse": "never a conflict probability",
+      "sourceUnits": "unverified"
+    },
+    "war": {
+      "meaning": "inherited model coefficient",
+      "newRuleUse": "existing family and cause weighting only; no new real-world probability mapping",
+      "sourceUnits": "unverified"
+    },
+    "ls": {
+      "meaning": "absent in all 172 source records",
+      "newRuleUse": "show missing value, never invent 5.5 or substitute wh"
+    },
+    "ter": {
+      "meaning": "inherited tertiary enrollment input",
+      "newRuleUse": "no new individual probability mapping"
+    },
+    "ppp": {
+      "meaning": "inherited GDP per capita PPP input",
+      "newRuleUse": "not invented as personal salary"
+    }
+  },
+  "observationYears": "Unverified; review date is not a statistical observation year.",
+  "observedFields": {
+    "id": {
+      "missing": 0,
+      "nulls": 0,
+      "types": [
+        "string"
+      ]
+    },
+    "flag": {
+      "missing": 0,
+      "nulls": 0,
+      "types": [
+        "string"
+      ]
+    },
+    "name_zh": {
+      "missing": 0,
+      "nulls": 0,
+      "types": [
+        "string"
+      ]
+    },
+    "name_en": {
+      "missing": 0,
+      "nulls": 0,
+      "types": [
+        "string"
+      ]
+    },
+    "name_ko": {
+      "missing": 0,
+      "nulls": 0,
+      "types": [
+        "string"
+      ]
+    },
+    "region": {
+      "missing": 0,
+      "nulls": 0,
+      "types": [
+        "string"
+      ]
+    },
+    "region_zh": {
+      "missing": 0,
+      "nulls": 0,
+      "types": [
+        "string"
+      ]
+    },
+    "region_en": {
+      "missing": 0,
+      "nulls": 0,
+      "types": [
+        "string"
+      ]
+    },
+    "pop": {
+      "missing": 0,
+      "nulls": 0,
+      "types": [
+        "number"
+      ],
+      "minimum": 524,
+      "maximum": 1438070
+    },
+    "births": {
+      "missing": 0,
+      "nulls": 0,
+      "types": [
+        "number"
+      ],
+      "minimum": 4213,
+      "maximum": 23219488
+    },
+    "le": {
+      "missing": 0,
+      "nulls": 0,
+      "types": [
+        "number"
+      ],
+      "minimum": 54.5,
+      "maximum": 85.5
+    },
+    "gap": {
+      "missing": 0,
+      "nulls": 0,
+      "types": [
+        "number"
+      ],
+      "minimum": 1.3,
+      "maximum": 10.5
+    },
+    "u5": {
+      "missing": 0,
+      "nulls": 0,
+      "types": [
+        "number"
+      ],
+      "minimum": 1.8,
+      "maximum": 116.8
+    },
+    "im": {
+      "missing": 0,
+      "nulls": 0,
+      "types": [
+        "number"
+      ],
+      "minimum": 1.3,
+      "maximum": 71.9
+    },
+    "ppp": {
+      "missing": 0,
+      "nulls": 0,
+      "types": [
+        "number"
+      ],
+      "minimum": 900,
+      "maximum": 130297
+    },
+    "gi": {
+      "missing": 0,
+      "nulls": 0,
+      "types": [
+        "number"
+      ],
+      "minimum": 0.24,
+      "maximum": 0.59
+    },
+    "tfr": {
+      "missing": 0,
+      "nulls": 0,
+      "types": [
+        "number"
+      ],
+      "minimum": 0.66,
+      "maximum": 6.13
+    },
+    "mmr": {
+      "missing": 0,
+      "nulls": 0,
+      "types": [
+        "number"
+      ],
+      "minimum": 1,
+      "maximum": 1223
+    },
+    "urb": {
+      "missing": 0,
+      "nulls": 0,
+      "types": [
+        "number"
+      ],
+      "minimum": 15,
+      "maximum": 100
+    },
+    "agr": {
+      "missing": 0,
+      "nulls": 0,
+      "types": [
+        "number"
+      ],
+      "minimum": 0,
+      "maximum": 86
+    },
+    "hiv": {
+      "missing": 0,
+      "nulls": 0,
+      "types": [
+        "number"
+      ],
+      "minimum": 0,
+      "maximum": 26.1
+    },
+    "hom": {
+      "missing": 0,
+      "nulls": 0,
+      "types": [
+        "number"
+      ],
+      "minimum": 0.1,
+      "maximum": 51.9
+    },
+    "road": {
+      "missing": 0,
+      "nulls": 0,
+      "types": [
+        "number"
+      ],
+      "minimum": 1.4,
+      "maximum": 64.6
+    },
+    "mal": {
+      "missing": 0,
+      "nulls": 0,
+      "types": [
+        "number"
+      ],
+      "minimum": 0,
+      "maximum": 1.5
+    },
+    "net": {
+      "missing": 0,
+      "nulls": 0,
+      "types": [
+        "number"
+      ],
+      "minimum": 0,
+      "maximum": 100
+    },
+    "ter": {
+      "missing": 0,
+      "nulls": 0,
+      "types": [
+        "number"
+      ],
+      "minimum": 3,
+      "maximum": 100
+    },
+    "eys": {
+      "missing": 0,
+      "nulls": 0,
+      "types": [
+        "number"
+      ],
+      "minimum": 5.6,
+      "maximum": 20.8
+    },
+    "sm": {
+      "missing": 0,
+      "nulls": 0,
+      "types": [
+        "number"
+      ],
+      "minimum": 7,
+      "maximum": 72
+    },
+    "sf": {
+      "missing": 0,
+      "nulls": 0,
+      "types": [
+        "number"
+      ],
+      "minimum": 0,
+      "maximum": 39
+    },
+    "oop": {
+      "missing": 0,
+      "nulls": 0,
+      "types": [
+        "number"
+      ],
+      "minimum": 4,
+      "maximum": 79
+    },
+    "cm": {
+      "missing": 0,
+      "nulls": 0,
+      "types": [
+        "number"
+      ],
+      "minimum": 0.5,
+      "maximum": 76
+    },
+    "wh": {
+      "missing": 0,
+      "nulls": 16,
+      "types": [
+        "number",
+        "null"
+      ],
+      "minimum": 1.72,
+      "maximum": 7.74
+    },
+    "cs": {
+      "missing": 0,
+      "nulls": 130,
+      "types": [
+        "null",
+        "object"
+      ]
+    },
+    "war": {
+      "missing": 0,
+      "nulls": 0,
+      "types": [
+        "number"
+      ],
+      "minimum": 0,
+      "maximum": 3
+    },
+    "rel": {
+      "missing": 0,
+      "nulls": 0,
+      "types": [
+        "string"
+      ]
+    },
+    "lang": {
+      "missing": 0,
+      "nulls": 0,
+      "types": [
+        "string"
+      ]
+    }
+  }
+}

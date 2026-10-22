@@ -1,0 +1,31 @@
+{
+  "asset": "public-assets/story/moments-atlas-v1.webp",
+  "sha256": "0fa0eb13be1de91bdf5830152a02940f4f78de9addc66b36c45438beaf75377d",
+  "source": "Original AI-generated fictional illustration, created for this project with image_gen, 2026-10-22",
+  "layout": {
+    "columns": 4,
+    "rows": 4,
+    "width": 1536,
+    "height": 1024
+  },
+  "panels": [
+    "toys",
+    "books",
+    "tea and chairs",
+    "family meal",
+    "work desk",
+    "kitchen",
+    "garden path",
+    "letters and photographs",
+    "school bags",
+    "train and suitcase",
+    "repair workshop",
+    "balcony",
+    "rainy window",
+    "flowers and books",
+    "graduation cap",
+    "savings jar"
+  ],
+  "facts": "No real people, places, demographic observations, text or competitor assets. Scene illustrations do not assert personal events.",
+  "conversion": "PNG to WebP format conversion only, quality 88."
+}

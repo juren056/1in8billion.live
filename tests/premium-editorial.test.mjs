@@ -5,7 +5,7 @@ import {buildDocument} from '../premium-keepsake/build-document.js';
 import {eventGroups,distinctMilestones,groupEntry} from '../premium-keepsake/editorial.js';
 import {copy} from '../premium-keepsake/translations.js';
 
-const sample=JSON.parse(fs.readFileSync('content/premium-samples.json')).find(s=>s.lang==='en'&&s.country==='JPN');
+const sample=JSON.parse(fs.readFileSync('tests/fixtures/premium-repeated-v2.json'));
 test('keepsake overview distinguishes repeated templates while retaining every original dated event',()=>{
  const before=JSON.stringify(sample),doc=buildDocument(sample);
  const groups=eventGroups(sample.events),repeated=groups.filter(g=>g.event.kind==='event'&&g.records.length>1);

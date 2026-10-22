@@ -428,6 +428,7 @@ function randomName(country, sex) {
     const first = pick(FIRST_NAMES_INDIA[sex] || FIRST_NAMES_INDIA.M);
     return { last, first, full: first + ' ' + last, full_en: first + ' ' + last, caste };
   }
+  if(country.id==='JPN'&&(window.newBirthRulesVersion===3||(!window.newBirthRulesVersion&&STATE.life?.rulesVersion===3)))return window.StoryEngine.japaneseName(sex,pick);
   if (country.id === 'JPN' || country.id === 'KOR') {
     const last = sex === 'F' ? (chance(0.3) ? '김' : '이') : (chance(0.3) ? '박' : '최');
     const first = sex === 'F' ? '영' + pick(['희','은','아','수']) : '준' + pick(['호','혁','영','수']);
@@ -707,25 +708,25 @@ function generateFamily(countryCode, selfSex, fc, calendar = STATE.life?{year:ST
 // ==== 事件 ====
 function milestoneEvents(life, newAge) {
   const events = [];
-  if (newAge === 6) events.push({ age: 6, kind: 'milestone', icon: '🎒', text: t('event.school.start') });
-  if (newAge === 12) events.push({ age: 12, kind: 'milestone', icon: '📚', text: t('event.school.middle') });
+  if (newAge === 6) events.push({...(life.rulesVersion===3?{eventId:'core.event.school.start',category:'study',scene:'school',interaction:'explore',effectsRecorded:false}:{}), age: 6, kind: 'milestone', icon: '🎒', text: t('event.school.start') });
+  if (newAge === 12) events.push({...(life.rulesVersion===3?{eventId:'core.event.school.middle',category:'study',scene:'school',interaction:'explore',effectsRecorded:false}:{}), age: 12, kind: 'milestone', icon: '📚', text: t('event.school.middle') });
   if (newAge === 15) {
     if (life.stats.education < 2 && chance(0.4)) {
       life.stats.education = 1;
-      events.push({ age: 15, kind: 'milestone', icon: '📖', text: t('event.education.low') });
+      events.push({...(life.rulesVersion===3?{eventId:'core.event.education.low',category:'study',scene:'school',interaction:'explore',effectsRecorded:false}:{}), age: 15, kind: 'milestone', icon: '📖', text: t('event.education.low') });
     }
   }
   if (newAge === 18) {
     if (life.stats.education === 4 || (life.stats.education === 3 && chance(0.5))) {
-      events.push({ age: 18, kind: 'milestone', icon: '🎓', text: t('event.school.graduate') });
+      events.push({...(life.rulesVersion===3?{eventId:'core.event.school.graduate',category:'study',scene:'school',interaction:'explore',effectsRecorded:false}:{}), age: 18, kind: 'milestone', icon: '🎓', text: t('event.school.graduate') });
     } else if (life.stats.education >= 2) {
-      events.push({ age: 18, kind: 'milestone', icon: '🔨', text: t('event.work.start') });
+      events.push({...(life.rulesVersion===3?{eventId:'core.event.work.start',category:'work',scene:'work',interaction:'explore',effectsRecorded:false}:{}), age: 18, kind: 'milestone', icon: '🔨', text: t('event.work.start') });
     }
   }
-  if (newAge === 22 && life.stats.education === 4 && chance(0.5)) {
+  if (newAge===22&&(life.stats.education===4||life.rulesVersion===3&&life.plannedStudy)&&chance(0.5)) {
     life.stats.education = 4;
     life.stats.employment = 'university';
-    events.push({ age: 22, kind: 'milestone', icon: '🎓', text: t('event.education.university') });
+    events.push({...(life.rulesVersion===3?{eventId:'core.event.education.university',category:'study',scene:'school',interaction:'explore',effectsRecorded:false}:{}), age: 22, kind: 'milestone', icon: '🎓', text: t('event.education.university') });
   }
   if (newAge >= 25 && newAge <= 35 && !life.stats.married && chance(0.15) && (life.stats.employment === 'university' || life.stats.employment === 'employed')) {
     life.stats.married = true;
@@ -740,10 +741,10 @@ function milestoneEvents(life, newAge) {
         country: life.country,
         countryData: life.countryData,
         marriageAge: newAge,
-        birth: { year: (life.year + life.yearOffset - life.age) - (newAge - Math.floor(simRandom()*5)),...(life.calendarMonth?{month:Number(life.calendarMonth.slice(5))}:{}) }
+        birth: { year: (life.rulesVersion===3?life.year+newAge:life.year+life.yearOffset-life.age) - (newAge - Math.floor(simRandom()*5)),...(life.calendarMonth?{month:Number(life.calendarMonth.slice(5))}:{}) }
       };
     }
-    events.push({ age: newAge, kind: 'milestone', icon: '💍', text: t('event.marriage', partnerName.full || partnerName.full_en || '') });
+    events.push({...(life.rulesVersion===3?{eventId:'core.event.marriage',category:'family',scene:'home',interaction:'people',effectsRecorded:false}:{}), age: newAge, kind: 'milestone', icon: '💍', text: t('event.marriage', partnerName.full || partnerName.full_en || '') });
   }
   if (life.stats.married && life.stats.kids.length < 3 && newAge >= 25 && newAge <= 45 && chance(0.12)) {
     const sex = simRandom() < 0.5 ? 'M' : 'F';
@@ -761,30 +762,30 @@ function milestoneEvents(life, newAge) {
         death: chance((life.countryData.im || 5) / 1000 * 0.3) ? { year: childBirth.year + Math.floor(simRandom() * 5),...(life.calendarMonth?{month:childBirth.month}:{}) } : null
       };
       life.family.kids.push(childNode);
-      if (childNode.death && !STATE.eduMode) events.push({ age: newAge, kind: 'heavy', icon: '🕯️', text: LANG === 'en' ? `${childNode.name} died as an infant.` : `${childNode.name} 在嬰幼兒時期夭折了。` });
+      if (childNode.death && !STATE.eduMode && (life.rulesVersion!==3||childNode.death.year<=childBirth.year)) events.push({ age: newAge, kind: 'heavy', icon: '🕯️', text: LANG === 'en' ? `${childNode.name} died as an infant.` : `${childNode.name} 在嬰幼兒時期夭折了。` });
     }
-    events.push({ age: newAge, kind: 'milestone', icon: '👶', text: t('event.baby', life.stats.kids.length) });
+    events.push({...(life.rulesVersion===3?{eventId:'core.event.baby',category:'family',scene:'home',interaction:'people',effectsRecorded:false}:{}), age: newAge, kind: 'milestone', icon: '👶', text: t('event.baby', life.stats.kids.length) });
   }
   if (newAge === 60 && life.stats.employment !== 'none') {
     life.stats.employment = 'retired';
-    events.push({ age: 60, kind: 'milestone', icon: '🏖️', text: t('event.retirement') });
+    events.push({...(life.rulesVersion===3?{eventId:'core.event.retirement',category:'work',scene:'work',interaction:'explore',effectsRecorded:false}:{}), age: 60, kind: 'milestone', icon: '🏖️', text: t('event.retirement') });
   }
   // 偶發事件（教學版過濾掉疾病）
   if (!STATE.eduMode && newAge >= 18 && newAge <= 65 && chance(0.04)) {
     const cond = pick(['cancer', 'heart', 'stroke', 'diabetes']);
-    life.conditions[cond === 'cancer' ? 'cancer' : cond === 'heart' ? 'heart' : cond === 'stroke' ? 'heart' : 'diabetes'] = true;
-    events.push({ age: newAge, kind: 'illness', icon: '💊', text: t('event.illness.' + cond) });
+    const key=cond==='stroke'?'heart':cond;if(life.rulesVersion!==3||!life.conditions[key]){life.conditions[key]=true;
+    events.push({...(life.rulesVersion===3?{eventId:'core.event.illness',category:'wellbeing',scene:'quiet',interaction:'explore',effectsRecorded:false}:{}), age: newAge, kind: 'illness', icon: '💊', text: t('event.illness.' + cond) });}
   }
   if (newAge >= 12 && newAge <= 25 && chance(0.02)) {
-    events.push({ age: newAge, kind: 'social', icon: '🎓', text: t('event.event.school.exam') });
+    events.push({...(life.rulesVersion===3?{eventId:'core.event.event.school.exam',category:'study',scene:'school',interaction:'explore',effectsRecorded:false}:{}), age: newAge, kind: 'social', icon: '🎓', text: t('event.event.school.exam') });
   }
   // 印度種姓相關
   if (life.country === 'IND' && life.name.caste === 'SC' && newAge >= 8 && newAge <= 16 && chance(0.08)) {
-    events.push({ age: newAge, kind: 'social', icon: '⚠️', text: t('event.caste.disc') });
+    events.push({...(life.rulesVersion===3?{eventId:'core.event.caste.disc',category:'home',scene:'outside',interaction:'explore',effectsRecorded:false}:{}), age: newAge, kind: 'social', icon: '⚠️', text: t('event.caste.disc') });
   }
   // 紐澳原住民加成
   if ((life.country === 'NZL' || life.country === 'AUS') && newAge === 18 && chance(0.5)) {
-    events.push({ age: newAge, kind: 'social', icon: '🌿', text: LANG === 'en' ? 'You identify as indigenous; get education & health support.' : '你被認定為原住民後裔，獲得教育補助與健康資源。' });
+    events.push({...(life.rulesVersion===3?{eventId:'core.indigenous.support',category:'home',scene:'outside',interaction:'explore',effectsRecorded:false}:{}), age: newAge, kind: 'social', icon: '🌿', text: LANG === 'en' ? 'You identify as indigenous; get education & health support.' : '你被認定為原住民後裔，獲得教育補助與健康資源。' });
   }
   // 戰爭/衝突（教學版過濾掉）
   // Unknown conflict-field units are quarantined in new rules; legacy playback stays exact.
@@ -804,7 +805,7 @@ function milestoneEvents(life, newAge) {
     if (chance(0.04)) {
       life.fc = { in: 1, system: 'state', type: 'foster' };
       life.family = generateFamily(life.country, life.sex, { type: 'foster' });
-      events.push({ age: 0, kind: 'heavy', icon: '🏠', text: LANG === 'en' ? 'You enter foster care due to family circumstances.' : '出生後因家庭變故，被送進寄養系統，由寄養父母撫養。' });
+      events.push({...(life.rulesVersion===3?{eventId:'core.family.foster',category:'family',scene:'home',interaction:'people',effectsRecorded:false}:{}), age: 0, kind: 'heavy', icon: '🏠', text: LANG === 'en' ? 'You enter foster care due to family circumstances.' : '出生後因家庭變故，被送進寄養系統，由寄養父母撫養。' });
     }
   }
   // 國際收養（韓/中/越/柬/泰/印）
@@ -820,12 +821,12 @@ function milestoneEvents(life, newAge) {
     life.country = newCountry;
     life.countryData = newCountryData;
     life.birthOrigin = { country: oldCountry, flag: oldFlag };  // 記錄出生國家
-    events.push({ age: 0, kind: 'social', icon: '🌍', text: LANG === 'en' ? `You are adopted by a foreign family (${oldFlag} → ${newFlag}) and grow up in another country.` : `你被一對外國夫婦收養 ${oldFlag} → ${newFlag}，離開出生地到另一個國家長大。` });
+    events.push({...(life.rulesVersion===3?{eventId:'core.family.adopt',category:'family',scene:'home',interaction:'people',effectsRecorded:false}:{}), age: 0, kind: 'social', icon: '🌍', text: LANG === 'en' ? `You are adopted by a foreign family (${oldFlag} → ${newFlag}) and grow up in another country.` : `你被一對外國夫婦收養 ${oldFlag} → ${newFlag}，離開出生地到另一個國家長大。` });
     // 遷徙動畫 toast
     setTimeout(() => toast(`${oldFlag} → ${newFlag}  ${LANG==='en'?'Migration':'遷徙'}`), 200);
   }
   if (life.country === 'IND' && life.name.caste === 'SC' && newAge >= 18 && chance(0.05)) {
-    events.push({ age: newAge, kind: 'social', icon: '📋', text: t('event.caste.form') });
+    events.push({...(life.rulesVersion===3?{eventId:'core.event.caste.form',category:'home',scene:'outside',interaction:'explore',effectsRecorded:false}:{}), age: newAge, kind: 'social', icon: '📋', text: t('event.caste.form') });
   }
   // 5/15/30/50/70 暫停問題
   if ([5, 15, 30, 50, 70].includes(newAge) && !life.quotes[newAge]) {
@@ -838,14 +839,15 @@ function milestoneEvents(life, newAge) {
     life.financeAgeAvailable = newAge;
   }
   // v5.14：每年保底事件（其他里程碑未觸發時）
-  if (events.length === 0 && newAge >= 4) {
+  if (events.length === 0 && newAge >= (life.rulesVersion===3?1:4)) {
     const evt = generateYearlyEvent(life);
     if (evt) {
       const text = (LANG === 'en' ? evt.en : evt.zh);
-      events.push({ age: newAge, kind: 'milestone', icon: evt.icon, text });
+      events.push({...(life.rulesVersion===3?{eventId:evt.eventId,category:evt.category,scene:evt.scene,interaction:evt.interaction,actorId:evt.actorId,effects:{},effectsRecorded:true}:{}),age:newAge,kind:'milestone',icon:evt.icon,text});
       life.latestEvent = { age: newAge, icon: evt.icon, text };
     }
   }
+  if(life.rulesVersion===3)events.sort((a,b)=>Number(a.kind==='heavy'&&a.icon==='🕯️')-Number(b.kind==='heavy'&&b.icon==='🕯️'));
   return events;
 }
 
@@ -1039,7 +1041,7 @@ function showFocusChoice() {
   if (body) body.innerHTML = focusOpts.map(o => `<button class="focus-btn" data-focus="${o.id}" title="${(tooltips[o.id] || '').replace(/"/g,'&quot;')}"><span class="fb-icon">${o.icon}</span><span class="fb-label">${isEn ? o.en : o.zh}</span><span class="fb-tip">${tooltips[o.id] || ''}</span></button>`).join('');
   body.querySelectorAll('.focus-btn').forEach(btn => {
     btn.addEventListener('click', () => {
-      const focus = btn.dataset.focus;
+      const focus=btn.dataset.focus;if(STATE.life.rulesVersion===3){if(STATE.life.focusDecisions?.some(d=>d.age===age))return;(STATE.life.focusDecisions||=[]).push({age,id:focus});}
       STATE.life.focus = focus;
       const opt = focusOpts.find(o=>o.id===focus);
       STATE.life.log.push({ age, kind:'focus', icon: opt?.icon || '·', text: `${isEn?'Focus':'重心'}：${opt?(isEn?opt.en:opt.zh):focus}` });
@@ -1255,7 +1257,7 @@ function showSpendModal() {
   if (!modal) return;
   modal.removeAttribute('hidden');
   modal.querySelectorAll('.spend-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
+    btn.onclick=() => {
       const act = btn.dataset.act;
       const s = STATE.life.stats;
       const cost = Math.max(50, Math.round((s.netAssets || 1000) * 0.03));
@@ -1275,7 +1277,7 @@ function showSpendModal() {
       toast(LANG === 'en' ? `Spent ${cost}` : `支出 ${cost}`);
       modal.setAttribute('hidden', '');
       STATE.paused = false;
-    });
+    };
   });
 }
 
@@ -1305,6 +1307,7 @@ function savePauseQuote() {
 
 /* v5.14：每年自動生成事件 — 依年齡/國家/焦點產生有意義的隨機事件 */
 function generateYearlyEvent(life) {
+  if(life.rulesVersion===3&&window.StoryEngine)return window.StoryEngine.year(life);
   const age = life.age;
   const c = life.countryData;
   const sex = life.sex;
@@ -1383,24 +1386,6 @@ function generateYearlyEvent(life) {
   return events[0];
 }
 
-/* v5.14：套用事件到狀態條（重要事件才有效果） */
-function applyEventEffects(event, isYearLike) {
-  if (!STATE.life || !STATE.life.stats) return;
-  const s = STATE.life.stats;
-  const txt = (event.text || '').toLowerCase();
-  if (txt.includes('戀愛') || txt.includes('結婚') || txt.includes('度假') || txt.includes('旅遊')) {
-    s.happiness = Math.min(100, s.happiness + 3);
-    s.social = Math.min(100, s.social + 2);
-  } else if (txt.includes('升職') || txt.includes('畢業')) {
-    s.knowledge = Math.min(100, s.knowledge + 3);
-    s.netAssets += 1500;
-  } else if (txt.includes('生病') || txt.includes('受傷') || txt.includes('動亂') || txt.includes('離婚')) {
-    s.health = Math.max(0, s.health - 5);
-    s.happiness = Math.max(0, s.happiness - 3);
-  } else if (txt.includes('孩子') || txt.includes('孫')) {
-    s.happiness = Math.min(100, s.happiness + 5);
-  }
-}
 
 function logLife(text) {
   const el = $('#lifeLog');
@@ -1723,7 +1708,7 @@ function renderLife() {
   if (STATE.life.stats.married && STATE.life.stats.partner) {
     const p = STATE.life.stats.partner;
     const pName = p.name?.full || p.name?.full_en || '';
-    const pAge = p.age || ((STATE.life.year + STATE.life.yearOffset) - (p.birth?.year || 0));
+    const pAge = STATE.life.rulesVersion===3&&STATE.life.family?.partner?.birth?STATE.life.year+STATE.life.age-STATE.life.family.partner.birth.year:p.age || ((STATE.life.year + STATE.life.yearOffset) - (p.birth?.year || 0));
     $('#lifePartner').textContent = `${pName}（${pAge} ${LANG==='en'?'yo':'歲'}）`;
   } else {
     $('#lifePartner').textContent = t('partner.no');
@@ -2184,7 +2169,7 @@ function renderCountryStats() {
     [isEn?'Tobacco use M/F':'菸草使用 男/女', (Math.round(c.sm * 0.8)) + '% / ' + (Math.round(c.sm * 0.1)) + '%'],
     [isEn?'Out-of-pocket health':'醫療費用自付比例', Math.round(c.oop || 30) + '%'],
     [isEn?'Child marriage (F)':'18歲前結婚（女性）', Math.round(c.cm || 20) + '%'],
-    [isEn?'Life satisfaction (0-10)':'生活滿意度（0-10）', (c.ls || 5.5).toFixed(2)]
+    [isEn?'Life satisfaction (0-10)':'生活滿意度（0-10）', (STATE.life.rulesVersion===3&&!Number.isFinite(c.ls)?'—':(c.ls||5.5).toFixed(2))]
   ];
   wrap.innerHTML = `
     <h4>🌍 ${c.flag} ${isEn ? c.name_en : c.name_zh} <span class="muted">(${isEn?'20 key stats':'20 個關鍵統計'})</span></h4>
@@ -4096,6 +4081,7 @@ function buildFamilyAround(selfP, parsed) {
 
 async function init() {
   await loadData();
+  await import('/story-engine.js').then(m=>m.prepareStoryEngine(document.documentElement.dataset.siteLocale||document.documentElement.lang));
   document.documentElement.lang = LANG;
   const savedTheme = localStorage.getItem('born-somewhere-v2:theme') || 'theme-light';
   setTheme(savedTheme);  // v5.22：套用保存的主題
@@ -4122,8 +4108,8 @@ init().catch(()=>{const el=document.querySelector('#gameLoadState');if(el){el.te
    contact / PWA install）+ 教學版模式 + 版本歷史
    ===================================================================== */
 
-const APP_VERSION = '1.22.1';
-const APP_BUILD = '2026-10-21';
+const APP_VERSION = '1.23.0';
+const APP_BUILD = '2026-10-23';
 
 // 版本歷史（每個版本：v / date / items；每個 item 含 emoji badge + 文字）
 // 為節省空間與維護成本，所有語言文字都用 i18n key；徽章 emoji 是視覺標記。

@@ -1,0 +1,38 @@
+{
+  "date": "2026-10-23",
+  "targetVersion": "1.23.0",
+  "automatedTests": 100,
+  "publicSeoPages": 226,
+  "countries": 172,
+  "browserStates": 1080,
+  "locales": 9,
+  "themes": 4,
+  "widths": [
+    320,
+    390,
+    720,
+    768,
+    1024,
+    1440
+  ],
+  "browserErrors": 0,
+  "exactReplayProofs": {
+    "v1": 12,
+    "v2": 48,
+    "v3": 48
+  },
+  "proofFingerprint": "3cb96a16a866be527a4795699a84a5911d31c4a6d0ca6ef509df35d483f0cb80",
+  "modelRuns": 12172,
+  "modelYears": 932088,
+  "shortCooldownRepeats": 0,
+  "mortalityBoundaryCases": 38184,
+  "newNarratives": 160,
+  "newDecisions": 12,
+  "coreEventTypes": 16,
+  "adapterFamilies": 6,
+  "uncoveredDefinitions": 0,
+  "edgeChecks": 7,
+  "runtimeChecks": 7,
+  "crossLocaleStateAndExport": true,
+  "productionStatus": "Await Git deployment and separate production receipt; no charge authorized"
+}
