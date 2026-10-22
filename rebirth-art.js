@@ -14,7 +14,7 @@ export function environmentFor(life={}){if(environments.includes(life.visual?.en
  else if(['JPN','KOR','USA','GBR','FRA','ESP','PRT','ITA','AUS','NZL','CHL','TWN','GRC','TUR'].includes(id))pool=['coast','urban','oldtown','lake'];
  return pool[artHash(id+nameOf(life))%pool.length];
 }
-export function personFor(life={}){if(identities.includes(life.visual?.person))return life.visual.person;const pool=life.sex==='F'?legacyIdentities.slice(0,3):legacyIdentities.slice(3);return pool[artHash(nameOf(life)+String(life.country))%pool.length];}
+export function personFor(life={}){if(identities.includes(life.visual?.person))return life.visual.person;if(life.visual?.version===2)return newVisualIdentity(life).person;const pool=life.sex==='F'?legacyIdentities.slice(0,3):legacyIdentities.slice(3);return pool[artHash(nameOf(life)+String(life.country))%pool.length];}
 export const visualAge=age=>age<2?'baby':age<18?'young':age<60?'adult':'elder';
 export const sceneAsset=(life,kind='home')=>'/public-assets/rebirth/scenes/'+environmentFor(life)+'-'+(chapters.includes(kind)?kind:'home')+'.webp';
 export const sceneThumb=(life,kind='home')=>sceneAsset(life,kind).replace('/scenes/','/thumbs/');

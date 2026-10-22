@@ -882,6 +882,7 @@ function startLife(countryCode, preparedLife) {
   stopTicker();
   STATE.life = preparedLife || newLife(countryCode);
   if (!STATE.life) return;
+  STATE.life.visual ||= {version:2};window.recordLifeVisual?.(STATE.life);
   launchEvent('life_started',{play_mode:document.querySelector('#lifeDuration').value==='quick'?'quick':'manual'});
   STATE.life.log.push({ age: 0, kind: 'birth', icon: '👶', text: t('event.birth', '') });
   logLife(t('log.born_in', localize(STATE.life.countryData,LANG).name, ''));
@@ -1675,6 +1676,7 @@ function showBirthCertModal(c) {
   // 先建立一個臨時的 life 物件（不啟動 ticker、不切換視圖）
   const life = newLife(c.id);
   if (!life) return;
+  life.visual ||= {version:2};window.recordLifeVisual?.(life);
   launchEvent('birth_generated');
   STATE.birthCertCountry = c;
   STATE.birthCertLife = life;
@@ -4118,7 +4120,7 @@ init().catch(()=>{const el=document.querySelector('#gameLoadState');if(el){el.te
    contact / PWA install）+ 教學版模式 + 版本歷史
    ===================================================================== */
 
-const APP_VERSION = '1.21.0';
+const APP_VERSION = '1.21.1';
 const APP_BUILD = '2026-10-21';
 
 // 版本歷史（每個版本：v / date / items；每個 item 含 emoji badge + 文字）

@@ -1,4 +1,4 @@
-# Tables, continuation and character identity — v1.21.0
+# Tables, continuation and character identity — v1.21.1
 
 Requested scope: execute the three approved batches in order. Preserve simulation rules, country data, calendar rules, nine languages, four appearances, existing saves, expanded reading sections, analytics and payment configuration.
 
@@ -10,6 +10,8 @@ Requested scope: execute the three approved batches in order. Preserve simulatio
 
 ## Corrections found during acceptance
 
+- Production latency exposed a late-loading reveal dependency in character assignment. The core birth/start UI now marks new lives before optional modules run; the registered presentation selector records the identity immediately when available, with first-draw completion as fallback. Legacy saves remain unmarked and retain original behavior. Delayed-module coverage was added.
+
 - Completed-life restoration initially called playback rendering for unbuilt live-game controls. Playback now skips that work outside the live view for a completed life. The continuation suite records page errors and fails on any error.
 - A generated sheet's figure spacing did not exactly follow quarter boundaries. The importer finds transparent gaps and checks full figure bounds; it never replaces the six legacy identities. All final sprites were decoded and reviewed.
 - Running several image-heavy browsers together produced resource/screenshot failures. Relevant suites were rerun serially; those resource failures are not counted as passes.
@@ -18,14 +20,15 @@ Requested scope: execute the three approved batches in order. Preserve simulatio
 
 Evidence folder: `audit/table-resume-identity-20261022/` (local QA files, intentionally not published as site content).
 
-- `verify-final.log`: complete build, 172-country data invariants, 226-page SEO/sitemap checks, critical asset budgets and 84 passing Node tests.
+- `verify-patch-final.log`: complete build, 172-country data invariants, 226-page SEO/sitemap checks, critical asset budgets and 85 passing Node tests.
 - `tables-final.log`, `tables.json`: 976 passing combinations across all 118 static table pages and four dynamic table states, four themes, desktop/mobile; computed text/background contrast at least 4.5:1 and no document overflow.
 - `dock-errors-final.log`, `dock.json`: 22 continuation scenarios, nine languages, four themes, save cancellation, completed/invalid/legacy/pending-decision states, no page errors.
-- `characters.log`, `characters.json`: 12 country journeys, 48 age portraits, visual persistence through reload and history, no page errors.
+- `deferred-character.log`, `deferred-character.json`: birth before the reveal module loads still records the same country-appropriate identity.
+- `characters-patch-final.log`, `characters.json`: 12 country journeys, 48 age portraits, visual persistence through reload and history, no page errors.
 - `rebirth-final.log`, `rebirth/browser.json`: nine locales, four-theme mobile/desktop flows, reduced motion, failed-image recovery and all 160 image decodes.
 - `playback-final.log`: reading pause, five-second pace, decision waiting, full state equality for fast-forward, restoration and four original languages.
 - `keepsake.log`: 18 real style/ratio previews, actual PNG and PDF files under mocked payment entitlement, refund lock. No real financial transaction.
-- `legacy.log`: all three original poster exports retain the recorded character and contain no loading placeholder.
+- `legacy-patch-final.log`: all three original poster exports retain the recorded character and contain no loading placeholder.
 - `art-check.json`: 160 production asset decodes; all 24 legacy person assets match their Git originals byte-for-byte.
 
 Generated assets: `public-assets/rebirth/people/{identity}-{baby|young|adult|elder}.webp`. Inventory: `public-assets/rebirth/manifest.json`. Importer: `scripts/import-character-sheets.py`.
