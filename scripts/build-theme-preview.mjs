@@ -34,7 +34,8 @@ export function buildThemePreview(routes,{preview=false}={}){
  // Move the real country selector and action before scripts initialize; there is still one of each.
  h=h.replace(/<select id="countrySelect"[^>]*><\/select>/,'').replace(/<button id="btnStartSelected"[^>]*>[\s\S]*?<\/button>/,'').replace(/<h3 data-t="intro.pick">[^<]*<\/h3>/,'');
  h=h.replace('<p class="play-policy">',`<div class="theme-start"><label for="countrySelect">${c[5]}</label><div><select id="countrySelect" class="country-pick" aria-label="${c[5]}"></select><button id="btnStartSelected" type="button">${c[6]} <span aria-hidden="true">→</span></button></div></div><p class="play-policy">`);
- let index=0;const art=['blue','night','india'];h=h.replace(/<article class="sample-life">/g,()=>`<article class="sample-life"><img class="sample-landscape" src="/public-assets/themes/${art[index++]||'blue'}-mobile.webp" alt="${c[15]}" width="640" height="360" loading="lazy">`);
+ // Sample cards already carry their own record-derived scene artwork.
+
  const showcase=`<section class="theme-keepsake"><div><h2>${c[8]}</h2><p>${c[9]}</p><a class="primary-link" href="${base}keepsake/">${c[10]} <span aria-hidden="true">→</span></a></div><div class="theme-specimens">${['cinematic-poster','journal-scrapbook','minimal-data'].map(id=>`<img src="/public-assets/keepsake/thumbnails/${id}.png" width="270" height="480" alt="${id}" loading="lazy">`).join('')}</div></section>`;
  h=h.replace(/(<section class="compare-prompt">[\s\S]*?<\/section>)/,'$1'+showcase);
  const explore=`<section class="theme-explore"><h2>${c[5]}</h2><div>${[['JPN','blue'],['USA','night'],['IND','india'],['CHN','china'],['CAN','canada'],['FRA','editorial']].map(([id,art])=>`<a href="${base}?country=${id}"><img src="/public-assets/themes/${art}-mobile.webp" alt="${c[15]}" width="384" height="216" loading="lazy"><span>${esc(displayCountry(id,lang,id))} <span aria-hidden="true">→</span></span></a>`).join('')}</div></section>`;

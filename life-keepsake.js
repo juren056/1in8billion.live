@@ -8,7 +8,7 @@ export function trajectoryMarkup(life,s){
  return `<p>${s.sampleNote}</p><svg class="keepsake-chart" viewBox="0 0 640 215" role="img" aria-label="${esc(s.samples)}"><path d="M45 30V175H610" fill="none" stroke="#a7bdc6"/><text x="5" y="44">100</text><text x="20" y="178">0</text><text x="45" y="202">0</text><text x="570" y="202">${s.age} ${max}</text>${paths}</svg><ul class="chart-legend">${fields.map((_,i)=>`<li><i style="background:${colors[i]}"></i>${s.axes[i]}</li>`).join('')}</ul><p class="muted">${s.assetsNote}</p><details><summary>${s.samples}</summary><div class="table-scroll"><table><thead><tr><th>${s.age}</th>${s.axes.map(a=>`<th>${a}</th>`).join('')}</tr></thead><tbody>${points.map(p=>`<tr><th>${p.age}</th>${fields.map(k=>`<td>${p[k]===null?'—':Math.round(p[k])}</td>`).join('')}</tr>`).join('')}</tbody></table></div></details>`;
 }
 export async function downloadKeepsake(life,s,country,event){
- await (await import('./modern-life-art.js')).readyModernArt();
+ await (await import('./modern-life-art.js')).readyModernArt(life);
  const canvas=document.createElement('canvas');canvas.width=1200;canvas.height=1420;const ctx=canvas.getContext('2d');if(!ctx)throw Error('Canvas unavailable');
  ctx.fillStyle='#f4efe3';ctx.fillRect(0,0,1200,1420);ctx.fillStyle='#061b32';ctx.fillRect(0,0,1200,110);ctx.fillStyle='#fff';ctx.font='600 32px Segoe UI,sans-serif';ctx.fillText('1in8billion.live',64,70);ctx.fillStyle='#163b50';ctx.font='600 42px Georgia,serif';
  const name=life.name?.full||life.name?.full_en||life.name||s.unknown;ctx.fillText(String(name).slice(0,40),64,182,1070);ctx.font='24px Segoe UI,sans-serif';ctx.fillText(`${country} · ${CalendarCore.range(life)} · ${s.age} ${life.age}`,64,230,1070);

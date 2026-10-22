@@ -3,7 +3,7 @@ import {lifeMemories,sampledTrajectory,dailyLife,replayUrl} from '../retention-c
 import {ageStage,sceneKind} from '../life-scene.js';
 import {retentionCopy} from '../retention-copy.js';
 test('presentation stages and memories never invent unrecorded life milestones',()=>{
- assert.deepEqual([0,5,12,18,60].map(ageStage),[0,1,2,3,4]);assert.equal(sceneKind({age:6,stats:{}}),'school');assert.equal(sceneKind({age:26,stats:{employment:'employed'}}),'work');assert.equal(sceneKind({age:2,died:true}),'memory');
+ assert.deepEqual([0,5,12,18,60].map(ageStage),[0,1,2,3,4]);assert.equal(sceneKind({age:6,stats:{}}),'outside');assert.equal(sceneKind({age:6,stats:{},log:[{age:6,text:'Started school'}]}),'school');assert.equal(sceneKind({age:26,stats:{employment:'employed'}}),'work');assert.equal(sceneKind({age:2,died:true}),'memory');
  const life={age:2,log:[{kind:'birth',icon:'👶',age:0}]};const copy=JSON.stringify(life);assert.deepEqual(lifeMemories(life).map(x=>x.key),['birth']);assert.equal(JSON.stringify(life),copy);
  const adult={log:[{age:6,kind:'milestone',icon:'🎒',text:'School'},{age:18,kind:'milestone',icon:'🔨',text:'Work'},{age:25,kind:'milestone',icon:'💍',text:'Married'}]};assert.deepEqual(lifeMemories(adult).map(x=>x.key),['birth','work','partner']);assert(lifeMemories(adult).every(x=>x.index<0||adult.log[x.index].text===x.text));
 });

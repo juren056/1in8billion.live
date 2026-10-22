@@ -1,3 +1,4 @@
+import {distributionMarkup} from './build-distribution.mjs';
 import {commerceCopy} from '../premium-keepsake/commerce-copy.js';
 import {paymentCopy} from '../premium-keepsake/payment-copy.js';
 import {arrivalCopy} from '../arrival-copy.js';
@@ -18,7 +19,7 @@ export function seoPresentation(html,route,lang,coverage){
   const labels=arrivalCopy[lang]||arrivalCopy.en;
   const clock=`<section class="world-clock"><dl>${labels.map((label,i)=>`<div><dt>${label}</dt><dd id="arrival${['Births','Seconds','Countries'][i]}">${i===2?coverage:0}</dd></div>`).join('')}</dl></section>`;
   // Insert after the hero, immediately before the controls section that follows it.
-  html=html.replace(/<details\b[^>]*id="lifeSettings"/,match=>clock+match);
+  html=html.replace(/<details\b[^>]*id="lifeSettings"/,match=>distributionMarkup(lang,clock)+match);
  }
  const heading=text(html.match(/<h1\b[^>]*>([\s\S]*?)<\/h1>/)?.[1]||'');
  const crumbs=html.match(/<p class="breadcrumbs">([\s\S]*?)<\/p>/)?.[1];

@@ -2,7 +2,7 @@ import {paintModernScene,paintModernActor,paintModernPortrait} from './modern-li
 // Original pixel scene artwork. Display only: no engine random calls or mutations.
 export function ageStage(age){return age<5?0:age<12?1:age<18?2:age<60?3:4;}
 const hash=value=>[...String(value)].reduce((h,c)=>(Math.imul(h,31)+c.charCodeAt(0))>>>0,7);
-export function sceneKind(life){if(life?.died)return 'memory';const age=life?.age||0;if(age<5)return 'home';if(age<18)return 'school';if(age>=60)return 'quiet';return life?.stats?.employment==='employed'?'work':'outside';}
+export function sceneKind(life){if(life?.died)return 'memory';const age=life?.age||0;if(age<5)return 'home';if(age<18){const studied=(Number(life.stats?.education)||0)>0||(life.log||life.events||[]).some(e=>/school|上学|上學|学校|學校|입학|학교|入学|入學/i.test(e.text||''));return studied?'school':'outside';}if(age>=60)return 'quiet';return life?.stats?.employment==='employed'?'work':'outside';}
 function person(ctx,life,x,y,scale=2,blink=false){
  const h=hash(life?.name?.full||life?.name||life?.country||'sample'),stage=ageStage(life?.age||0),skins=['#ecc5a0','#c5916d','#8f6045','#6b4536'],skin=skins[h%4],shirt=['#187a8a','#465e91','#947344','#5b7971'][h%4],hair=stage===4?'#c3b8aa':'#40302d';
  const r=(a,b,w,z,c)=>{ctx.fillStyle=c;ctx.fillRect(x+a*scale,y+b*scale,w*scale,z*scale);};

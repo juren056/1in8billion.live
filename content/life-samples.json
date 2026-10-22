@@ -298,5 +298,853 @@
     ],
     "outcomeDigest": "cf30c3ae37310944c9b14a2db70296db8cbbb1eb8598a871d966a0e69fed8bf0",
     "logEntries": 83
+  },
+  {
+    "lang": "en",
+    "country": "CHN",
+    "seed": "journeychn",
+    "calendarMonth": "2026-10",
+    "name": "何麗雲",
+    "age": 85,
+    "died": true,
+    "moments": [
+      {
+        "age": 5,
+        "text": "Affected by local unrest"
+      },
+      {
+        "age": 30,
+        "text": "Had a child"
+      },
+      {
+        "age": 83,
+        "text": "Saw grandchild grow"
+      }
+    ],
+    "outcomeDigest": "346cb6fb6392f2fbcebd904974abd4dc9dc62817e7772342332e9ba595f3387d",
+    "logEntries": 87
+  },
+  {
+    "lang": "en",
+    "country": "GBR",
+    "seed": "journeygbr",
+    "calendarMonth": "2026-10",
+    "name": "Scott Aaron",
+    "age": 56,
+    "died": true,
+    "moments": [
+      {
+        "age": 6,
+        "text": "Started primary school"
+      },
+      {
+        "age": 23,
+        "text": "Fell in love"
+      },
+      {
+        "age": 54,
+        "text": "Lost a loved one"
+      }
+    ],
+    "outcomeDigest": "52b02222dd14d2ec51a0af88926dd293ac7c622485ff84390bd85935def4d572",
+    "logEntries": 60
+  },
+  {
+    "lang": "en",
+    "country": "FRA",
+    "seed": "journeyfra",
+    "calendarMonth": "2026-10",
+    "name": "Bailey Willow",
+    "age": 93,
+    "died": true,
+    "moments": [
+      {
+        "age": 4,
+        "text": "Learned to walk"
+      },
+      {
+        "age": 40,
+        "text": "Bought a car"
+      },
+      {
+        "age": 79,
+        "text": "Grandchildren visit"
+      }
+    ],
+    "outcomeDigest": "7dc51122d743bdbecf1c3d7d4ff19eb507c6d12bbc84ee9b17c13cfe6954c729",
+    "logEntries": 98
+  },
+  {
+    "lang": "en",
+    "country": "CAN",
+    "seed": "journeycan",
+    "calendarMonth": "2026-10",
+    "name": "Reed Lan",
+    "age": 86,
+    "died": true,
+    "moments": [
+      {
+        "age": 5,
+        "text": "Discovered a favorite book"
+      },
+      {
+        "age": 34,
+        "text": "Affected by local unrest"
+      },
+      {
+        "age": 84,
+        "text": "Affected by local unrest"
+      }
+    ],
+    "outcomeDigest": "5f4a652a01c98feb77bcf55ebd06a0882360daafd570fd373b1cb9fed76c216a",
+    "logEntries": 88
+  },
+  {
+    "lang": "en",
+    "country": "AUS",
+    "seed": "journeyaus",
+    "calendarMonth": "2026-10",
+    "name": "Walker Hao",
+    "age": 61,
+    "died": true,
+    "moments": [
+      {
+        "age": 4,
+        "text": "Affected by local unrest"
+      },
+      {
+        "age": 30,
+        "text": "Got big promotion"
+      },
+      {
+        "age": 59,
+        "text": "Affected by local unrest"
+      }
+    ],
+    "outcomeDigest": "d1f0b6faf1d3b519718635f42fe0d409eee8aba585688b5c3796ad3b091884ec",
+    "logEntries": 64
+  },
+  {
+    "lang": "en",
+    "country": "KOR",
+    "seed": "journeykor",
+    "calendarMonth": "2026-10",
+    "name": "이영수",
+    "age": 94,
+    "died": true,
+    "moments": [
+      {
+        "age": 4,
+        "text": "Learned to walk"
+      },
+      {
+        "age": 46,
+        "text": "Bought a home"
+      },
+      {
+        "age": 86,
+        "text": "Affected by local unrest"
+      }
+    ],
+    "outcomeDigest": "9e3e0ee45834746f22a345081946e5232e2ec6c5e63d5df716b62450545fade2",
+    "logEntries": 95
+  },
+  {
+    "lang": "en",
+    "country": "NGA",
+    "seed": "journeynga",
+    "calendarMonth": "2026-10",
+    "name": "Castillo Hazel",
+    "age": 2,
+    "died": true,
+    "moments": [],
+    "outcomeDigest": "c9df34a9b8b99220b76c0923b6d53203862735071d341ffba948a4dd4b5e6946",
+    "logEntries": 3
+  },
+  {
+    "lang": "en",
+    "country": "BRA",
+    "seed": "journeybra",
+    "calendarMonth": "2026-10",
+    "name": "Alvarez Nevaeh",
+    "age": 49,
+    "died": true,
+    "moments": [
+      {
+        "age": 6,
+        "text": "Started primary school"
+      },
+      {
+        "age": 25,
+        "text": "Graduated"
+      },
+      {
+        "age": 42,
+        "text": "Affected by local unrest"
+      }
+    ],
+    "outcomeDigest": "04d021034fca3d081f419d385abf29390ec6c8e4b2e838a652be6180741bad4b",
+    "logEntries": 50
+  },
+  {
+    "lang": "en",
+    "country": "CHE",
+    "seed": "journeyche",
+    "calendarMonth": "2026-10",
+    "name": "Peterson Tyler",
+    "age": 88,
+    "died": true,
+    "moments": [
+      {
+        "age": 6,
+        "text": "Started primary school"
+      },
+      {
+        "age": 41,
+        "text": "Affected by local unrest"
+      },
+      {
+        "age": 86,
+        "text": "Walked in the park"
+      }
+    ],
+    "outcomeDigest": "f7b50acceb3144084945b87f807c1c0b3b5cac939fd94db4ef329b63fc5a1246",
+    "logEntries": 93
+  },
+  {
+    "lang": "ja",
+    "country": "CHN",
+    "seed": "journeychn",
+    "calendarMonth": "2026-10",
+    "name": "何麗雲",
+    "age": 85,
+    "died": true,
+    "moments": [
+      {
+        "age": 5,
+        "text": "受到當地動亂影響"
+      },
+      {
+        "age": 30,
+        "text": "有了孩子"
+      },
+      {
+        "age": 83,
+        "text": "看孫子女長大"
+      }
+    ],
+    "outcomeDigest": "7d388bcb4d47d783943df80d92cba595d9be45394695be906025fdcb1d00326f",
+    "logEntries": 87
+  },
+  {
+    "lang": "ja",
+    "country": "GBR",
+    "seed": "journeygbr",
+    "calendarMonth": "2026-10",
+    "name": "Scott Aaron",
+    "age": 56,
+    "died": true,
+    "moments": [
+      {
+        "age": 6,
+        "text": "小学校入学"
+      },
+      {
+        "age": 23,
+        "text": "戀愛了"
+      },
+      {
+        "age": 54,
+        "text": "失去摯愛"
+      }
+    ],
+    "outcomeDigest": "f7dd026222713fb15dad4c326f8f4b38c3fb3901b9c65ba251a82f71dcbd3064",
+    "logEntries": 60
+  },
+  {
+    "lang": "ja",
+    "country": "FRA",
+    "seed": "journeyfra",
+    "calendarMonth": "2026-10",
+    "name": "Bailey Willow",
+    "age": 93,
+    "died": true,
+    "moments": [
+      {
+        "age": 4,
+        "text": "學會走路"
+      },
+      {
+        "age": 40,
+        "text": "買了車"
+      },
+      {
+        "age": 79,
+        "text": "孫子女來訪"
+      }
+    ],
+    "outcomeDigest": "09d631a5068b80c415a8435938c0f45c544379b53d2af07e34c97fa742417a46",
+    "logEntries": 98
+  },
+  {
+    "lang": "ja",
+    "country": "CAN",
+    "seed": "journeycan",
+    "calendarMonth": "2026-10",
+    "name": "Reed Lan",
+    "age": 86,
+    "died": true,
+    "moments": [
+      {
+        "age": 5,
+        "text": "發現一本喜歡的書"
+      },
+      {
+        "age": 34,
+        "text": "受到當地動亂影響"
+      },
+      {
+        "age": 84,
+        "text": "受到當地動亂影響"
+      }
+    ],
+    "outcomeDigest": "4c277d2602c598a9f9e86d02b554e483db4b67c6c56c496d7433525c8007dec7",
+    "logEntries": 88
+  },
+  {
+    "lang": "ja",
+    "country": "AUS",
+    "seed": "journeyaus",
+    "calendarMonth": "2026-10",
+    "name": "Walker Hao",
+    "age": 61,
+    "died": true,
+    "moments": [
+      {
+        "age": 4,
+        "text": "受到當地動亂影響"
+      },
+      {
+        "age": 30,
+        "text": "大幅晉升"
+      },
+      {
+        "age": 59,
+        "text": "受到當地動亂影響"
+      }
+    ],
+    "outcomeDigest": "d2ad3f821a83f25b89c2bb0cf61b766c93de63231ee8645b77ce3c8651bf13c5",
+    "logEntries": 64
+  },
+  {
+    "lang": "ja",
+    "country": "KOR",
+    "seed": "journeykor",
+    "calendarMonth": "2026-10",
+    "name": "이영수",
+    "age": 94,
+    "died": true,
+    "moments": [
+      {
+        "age": 4,
+        "text": "學會走路"
+      },
+      {
+        "age": 46,
+        "text": "買了房子"
+      },
+      {
+        "age": 86,
+        "text": "受到當地動亂影響"
+      }
+    ],
+    "outcomeDigest": "36642dae04cca80aa916860879b48a699edd67001f9eacb738f8a2643f3cbbc1",
+    "logEntries": 95
+  },
+  {
+    "lang": "ja",
+    "country": "NGA",
+    "seed": "journeynga",
+    "calendarMonth": "2026-10",
+    "name": "Castillo Hazel",
+    "age": 2,
+    "died": true,
+    "moments": [],
+    "outcomeDigest": "53b638cf7b8b680631c1d177f7cdc2df66b5403f09a782e9baf95f7250f8de2a",
+    "logEntries": 3
+  },
+  {
+    "lang": "ja",
+    "country": "BRA",
+    "seed": "journeybra",
+    "calendarMonth": "2026-10",
+    "name": "Alvarez Nevaeh",
+    "age": 49,
+    "died": true,
+    "moments": [
+      {
+        "age": 6,
+        "text": "小学校入学"
+      },
+      {
+        "age": 25,
+        "text": "畢業了"
+      },
+      {
+        "age": 42,
+        "text": "受到當地動亂影響"
+      }
+    ],
+    "outcomeDigest": "1d6d6178b74089872c5e86bf43583f46c32850cbf2c87d4fb1a0af3dfa637327",
+    "logEntries": 50
+  },
+  {
+    "lang": "ja",
+    "country": "CHE",
+    "seed": "journeyche",
+    "calendarMonth": "2026-10",
+    "name": "Peterson Tyler",
+    "age": 88,
+    "died": true,
+    "moments": [
+      {
+        "age": 6,
+        "text": "小学校入学"
+      },
+      {
+        "age": 41,
+        "text": "受到當地動亂影響"
+      },
+      {
+        "age": 86,
+        "text": "公園散步"
+      }
+    ],
+    "outcomeDigest": "9f740d4ec3dba60ecfb895e27e4729431e731c5da97ff69fb7e969a4ce82cdb2",
+    "logEntries": 93
+  },
+  {
+    "lang": "ko",
+    "country": "CHN",
+    "seed": "journeychn",
+    "calendarMonth": "2026-10",
+    "name": "何麗雲",
+    "age": 85,
+    "died": true,
+    "moments": [
+      {
+        "age": 5,
+        "text": "受到當地動亂影響"
+      },
+      {
+        "age": 30,
+        "text": "有了孩子"
+      },
+      {
+        "age": 83,
+        "text": "看孫子女長大"
+      }
+    ],
+    "outcomeDigest": "f012d722711a3192e30317dbeb015965380c9b921663db068f5786f57fd5cfd0",
+    "logEntries": 87
+  },
+  {
+    "lang": "ko",
+    "country": "GBR",
+    "seed": "journeygbr",
+    "calendarMonth": "2026-10",
+    "name": "Scott Aaron",
+    "age": 56,
+    "died": true,
+    "moments": [
+      {
+        "age": 6,
+        "text": "초등학교 입학"
+      },
+      {
+        "age": 23,
+        "text": "戀愛了"
+      },
+      {
+        "age": 54,
+        "text": "失去摯愛"
+      }
+    ],
+    "outcomeDigest": "f927822b0c40c9b1bd57bfaf9984bd167eac4de48493c661801cfdb4b3330306",
+    "logEntries": 60
+  },
+  {
+    "lang": "ko",
+    "country": "FRA",
+    "seed": "journeyfra",
+    "calendarMonth": "2026-10",
+    "name": "Bailey Willow",
+    "age": 93,
+    "died": true,
+    "moments": [
+      {
+        "age": 4,
+        "text": "學會走路"
+      },
+      {
+        "age": 40,
+        "text": "買了車"
+      },
+      {
+        "age": 79,
+        "text": "孫子女來訪"
+      }
+    ],
+    "outcomeDigest": "c1a50edfd912cb6db0ee3c15e2cafd5d085243e5ee0891769eb4da8ebdc069ed",
+    "logEntries": 98
+  },
+  {
+    "lang": "ko",
+    "country": "CAN",
+    "seed": "journeycan",
+    "calendarMonth": "2026-10",
+    "name": "Reed Lan",
+    "age": 86,
+    "died": true,
+    "moments": [
+      {
+        "age": 5,
+        "text": "發現一本喜歡的書"
+      },
+      {
+        "age": 34,
+        "text": "受到當地動亂影響"
+      },
+      {
+        "age": 84,
+        "text": "受到當地動亂影響"
+      }
+    ],
+    "outcomeDigest": "11a881a0b58ac105ad7be43b37ef1d3f8401e64927536d655cedf3e386d78e70",
+    "logEntries": 88
+  },
+  {
+    "lang": "ko",
+    "country": "AUS",
+    "seed": "journeyaus",
+    "calendarMonth": "2026-10",
+    "name": "Walker Hao",
+    "age": 61,
+    "died": true,
+    "moments": [
+      {
+        "age": 4,
+        "text": "受到當地動亂影響"
+      },
+      {
+        "age": 30,
+        "text": "大幅晉升"
+      },
+      {
+        "age": 59,
+        "text": "受到當地動亂影響"
+      }
+    ],
+    "outcomeDigest": "5c9b3c01428e16b35cd1b6e4cc0e8b37a331b0d2211e369f3cda7b452c851582",
+    "logEntries": 64
+  },
+  {
+    "lang": "ko",
+    "country": "KOR",
+    "seed": "journeykor",
+    "calendarMonth": "2026-10",
+    "name": "이영수",
+    "age": 94,
+    "died": true,
+    "moments": [
+      {
+        "age": 4,
+        "text": "學會走路"
+      },
+      {
+        "age": 46,
+        "text": "買了房子"
+      },
+      {
+        "age": 86,
+        "text": "受到當地動亂影響"
+      }
+    ],
+    "outcomeDigest": "1fdfc979dffa573d2d08e924a442879f126eee72035a5c2f8e8e2a7adb5a51c7",
+    "logEntries": 95
+  },
+  {
+    "lang": "ko",
+    "country": "NGA",
+    "seed": "journeynga",
+    "calendarMonth": "2026-10",
+    "name": "Castillo Hazel",
+    "age": 2,
+    "died": true,
+    "moments": [],
+    "outcomeDigest": "92cbf1151f7fee036a67e6af386d4ef5e1414408c4059ca44fb3463e912477dd",
+    "logEntries": 3
+  },
+  {
+    "lang": "ko",
+    "country": "BRA",
+    "seed": "journeybra",
+    "calendarMonth": "2026-10",
+    "name": "Alvarez Nevaeh",
+    "age": 49,
+    "died": true,
+    "moments": [
+      {
+        "age": 6,
+        "text": "초등학교 입학"
+      },
+      {
+        "age": 25,
+        "text": "畢業了"
+      },
+      {
+        "age": 42,
+        "text": "受到當地動亂影響"
+      }
+    ],
+    "outcomeDigest": "e3087b7fbf3036bbce3c534ca8d5aced74b6620ca8aa4fa730740affe9fc2173",
+    "logEntries": 50
+  },
+  {
+    "lang": "ko",
+    "country": "CHE",
+    "seed": "journeyche",
+    "calendarMonth": "2026-10",
+    "name": "Peterson Tyler",
+    "age": 88,
+    "died": true,
+    "moments": [
+      {
+        "age": 6,
+        "text": "초등학교 입학"
+      },
+      {
+        "age": 41,
+        "text": "受到當地動亂影響"
+      },
+      {
+        "age": 86,
+        "text": "公園散步"
+      }
+    ],
+    "outcomeDigest": "6428a709b045f6229226f4aab03095c5bd13577a04cf1da0d47757d7e0ed159a",
+    "logEntries": 93
+  },
+  {
+    "lang": "zh-TW",
+    "country": "CHN",
+    "seed": "journeychn",
+    "calendarMonth": "2026-10",
+    "name": "何麗雲",
+    "age": 85,
+    "died": true,
+    "moments": [
+      {
+        "age": 5,
+        "text": "受到當地動亂影響"
+      },
+      {
+        "age": 30,
+        "text": "有了孩子"
+      },
+      {
+        "age": 83,
+        "text": "看孫子女長大"
+      }
+    ],
+    "outcomeDigest": "8ae12efcfa3c676a73ac76ab2d18a94ae4032131183861d703a50d0ea575e062",
+    "logEntries": 87
+  },
+  {
+    "lang": "zh-TW",
+    "country": "GBR",
+    "seed": "journeygbr",
+    "calendarMonth": "2026-10",
+    "name": "Scott Aaron",
+    "age": 56,
+    "died": true,
+    "moments": [
+      {
+        "age": 6,
+        "text": "開始上學"
+      },
+      {
+        "age": 23,
+        "text": "戀愛了"
+      },
+      {
+        "age": 54,
+        "text": "失去摯愛"
+      }
+    ],
+    "outcomeDigest": "5b849f80da171b867a39ddd3facf4f2c19b6e63c19d9aab642c5dbce5c032c24",
+    "logEntries": 60
+  },
+  {
+    "lang": "zh-TW",
+    "country": "FRA",
+    "seed": "journeyfra",
+    "calendarMonth": "2026-10",
+    "name": "Bailey Willow",
+    "age": 93,
+    "died": true,
+    "moments": [
+      {
+        "age": 4,
+        "text": "學會走路"
+      },
+      {
+        "age": 40,
+        "text": "買了車"
+      },
+      {
+        "age": 79,
+        "text": "孫子女來訪"
+      }
+    ],
+    "outcomeDigest": "5d16cd6f320e4b8fbe2d404974d4d203b3058f019867357037d877e2021155f1",
+    "logEntries": 98
+  },
+  {
+    "lang": "zh-TW",
+    "country": "CAN",
+    "seed": "journeycan",
+    "calendarMonth": "2026-10",
+    "name": "Reed Lan",
+    "age": 86,
+    "died": true,
+    "moments": [
+      {
+        "age": 5,
+        "text": "發現一本喜歡的書"
+      },
+      {
+        "age": 34,
+        "text": "受到當地動亂影響"
+      },
+      {
+        "age": 84,
+        "text": "受到當地動亂影響"
+      }
+    ],
+    "outcomeDigest": "f12fb3d44c62e83560cb236b7b70e805446260023c9db4e7a1e94a7a1fae154f",
+    "logEntries": 88
+  },
+  {
+    "lang": "zh-TW",
+    "country": "AUS",
+    "seed": "journeyaus",
+    "calendarMonth": "2026-10",
+    "name": "Walker Hao",
+    "age": 61,
+    "died": true,
+    "moments": [
+      {
+        "age": 4,
+        "text": "受到當地動亂影響"
+      },
+      {
+        "age": 30,
+        "text": "大幅晉升"
+      },
+      {
+        "age": 59,
+        "text": "受到當地動亂影響"
+      }
+    ],
+    "outcomeDigest": "bcc73945f72e233b231920752730bdb09a504ab83ac9848d3c440a7b3caad48d",
+    "logEntries": 64
+  },
+  {
+    "lang": "zh-TW",
+    "country": "KOR",
+    "seed": "journeykor",
+    "calendarMonth": "2026-10",
+    "name": "이영수",
+    "age": 94,
+    "died": true,
+    "moments": [
+      {
+        "age": 4,
+        "text": "學會走路"
+      },
+      {
+        "age": 46,
+        "text": "買了房子"
+      },
+      {
+        "age": 86,
+        "text": "受到當地動亂影響"
+      }
+    ],
+    "outcomeDigest": "e950ab89134b802d35dcab862125720265ffa39edeb86c5a703d7a642f069516",
+    "logEntries": 95
+  },
+  {
+    "lang": "zh-TW",
+    "country": "NGA",
+    "seed": "journeynga",
+    "calendarMonth": "2026-10",
+    "name": "Castillo Hazel",
+    "age": 2,
+    "died": true,
+    "moments": [],
+    "outcomeDigest": "a24571209f29295e3424d5edf9c9765c790419582244135caa20af76c7141f49",
+    "logEntries": 3
+  },
+  {
+    "lang": "zh-TW",
+    "country": "BRA",
+    "seed": "journeybra",
+    "calendarMonth": "2026-10",
+    "name": "Alvarez Nevaeh",
+    "age": 49,
+    "died": true,
+    "moments": [
+      {
+        "age": 6,
+        "text": "開始上學"
+      },
+      {
+        "age": 25,
+        "text": "畢業了"
+      },
+      {
+        "age": 42,
+        "text": "受到當地動亂影響"
+      }
+    ],
+    "outcomeDigest": "897d5bdc2d9009f0182c0f6eee34274dea4b2c6a5b1caab3fc46dca85b2c685d",
+    "logEntries": 50
+  },
+  {
+    "lang": "zh-TW",
+    "country": "CHE",
+    "seed": "journeyche",
+    "calendarMonth": "2026-10",
+    "name": "Peterson Tyler",
+    "age": 88,
+    "died": true,
+    "moments": [
+      {
+        "age": 6,
+        "text": "開始上學"
+      },
+      {
+        "age": 41,
+        "text": "受到當地動亂影響"
+      },
+      {
+        "age": 86,
+        "text": "公園散步"
+      }
+    ],
+    "outcomeDigest": "d907f1bdbf64b81c934aa8fcf34db48c4266ffe26057fe896b9bac01d85361e9",
+    "logEntries": 93
   }
 ]
