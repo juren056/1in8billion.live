@@ -8,7 +8,7 @@
 [data-design-system] table tbody th{background:inherit;color:var(--t-ink);text-align:left}
 [data-design-system] table tbody tr:is(:hover,:focus-within){background:var(--t-soft)}
 [data-design-system] table td{text-align:left}
-[data-design-system] table td[data-numeric], [data-design-system] table .ar-v{text-align:right;white-space:nowrap}
+[data-design-system] table [data-numeric], [data-design-system] table .ar-v{text-align:right;white-space:nowrap}
 [data-design-system] table :is(.muted,small,.cmp-sub){color:var(--t-muted)}
 [data-design-system] table a{color:var(--t-action);text-underline-offset:3px}
 [data-design-system] .table-scroll{background:var(--t-paper);color:var(--t-ink);border:1px solid var(--t-line);border-radius:12px;max-width:100%;overflow-x:auto;overscroll-behavior-inline:contain;scrollbar-color:var(--t-line) var(--t-paper)}
@@ -26,3 +26,5 @@
 [data-design-system] table.cs-table .cs-k{width:52%;color:var(--t-muted)}
 [data-design-system] table.cs-table .cs-v{width:48%;text-align:right;white-space:normal;overflow-wrap:anywhere}
 @media(max-width:600px){[data-design-system] .table-scroll table.cs-table{min-width:0}[data-design-system] table.cs-table :is(th,td):first-child{width:52%}[data-design-system] table.cs-table td{padding:12px 10px}}
+
+[data-design-system] table thead th[data-numeric]{text-align:right;white-space:normal}

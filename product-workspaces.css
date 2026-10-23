@@ -378,3 +378,8 @@ html[data-design-system] .life-secondary :is(h4,.cs-source,.muted){color:var(--t
   .memorial-actions button {
     width: 100%;
   }}
+/* Template names must remain readable in every locale and narrow control column. */
+[data-design-system] button.template-choice{white-space:normal;overflow-wrap:anywhere;hyphens:auto}
+[data-design-system] button.template-choice>:not(img){min-width:0;max-width:100%}
+@media(max-width:1000px){[data-design-system] .template-strip{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:400px){[data-design-system] .template-strip,[data-design-system] .studio-controls .template-strip{grid-template-columns:repeat(2,minmax(0,1fr))}}

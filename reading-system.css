@@ -15,3 +15,5 @@ html[data-appearance=journal] .page-intro{border-bottom-style:dashed}html[data-a
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
 
 .page-intro h1{overflow-wrap:anywhere;hyphens:auto}
+
+.reading-page :is(h1,h2,h3){overflow-wrap:anywhere;hyphens:auto}

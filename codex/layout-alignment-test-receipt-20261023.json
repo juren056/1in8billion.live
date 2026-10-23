@@ -1,0 +1,26 @@
+{
+  "version": "1.23.2",
+  "automatedTests": 102,
+  "publicPages": 226,
+  "themes": 4,
+  "widths": [
+    320,
+    390,
+    768,
+    1024,
+    1440
+  ],
+  "publicStates": 4520,
+  "dynamicStates": 80,
+  "totalStates": 4600,
+  "alignmentErrors": 0,
+  "overflowErrors": 0,
+  "clippedControls": 0,
+  "browserErrors": 0,
+  "budgets": {
+    "/": 458912,
+    "/compare/": 113706,
+    "/guides/quick-play/": 21377
+  },
+  "note": "Isolated Chrome viewport tests, not a physical-device or complete manual accessibility certification."
+}
