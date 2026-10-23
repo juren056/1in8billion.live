@@ -1681,7 +1681,9 @@ function hideBirthCertModal() {
 }
 
 /* v5.19：點「出 生」按鈕 — 隨機抽國家、顯示出生卡、確認後才開始 */
-function startLifeWithCert() {
+function prepareBirthUI(){return import('./birth-entry.js').then(m=>m.prepareBirth()).catch(()=>{toast(SurfaceCopy.error,5000);return false;});}
+async function startLifeWithCert() {
+  if(!await prepareBirthUI())return;
   const c = chooseCountry(STATE.birthMode);
   if (!c) return;
   // 顯示出生卡 modal，等使用者按「開始人生」才正式 startLife
@@ -3591,14 +3593,15 @@ function wire() {
   }));
   // 開始按鈕（v5.19：先顯示出生登記卡 modal，等使用者確認才 startLife）
   const start = $('#btnStart');
-  if (start) start.addEventListener('click', () => {
+  if (start) start.addEventListener('click', async () => {
     const linked=new URLSearchParams(location.search).get('country');
     const selected=linked&&countryById(STATE.selectedCountry);
-    if(selected)showBirthCertModal(selected);else startLifeWithCert();
+    if(selected){if(await prepareBirthUI())showBirthCertModal(selected);}else startLifeWithCert();
   });
   // 選特定國家開始（v5.19：同樣先顯示出生卡）
   const startSelected = $('#btnStartSelected');
-  if (startSelected) startSelected.addEventListener('click', () => {
+  if (startSelected) startSelected.addEventListener('click', async () => {
+    if(!await prepareBirthUI())return;
     const c = countryById(STATE.selectedCountry);
     if (c) showBirthCertModal(c);
   });
@@ -3617,7 +3620,8 @@ function wire() {
   });
   // v5.19：出生卡 modal 的「換一個國家」
   const birthCertReroll = $('#birthCertReroll');
-  if (birthCertReroll) birthCertReroll.addEventListener('click', () => {
+  if (birthCertReroll) birthCertReroll.addEventListener('click', async () => {
+    if(!await prepareBirthUI())return;
     const c = chooseCountry(STATE.birthMode);
     if (c) showBirthCertModal(c);
   });
@@ -4109,7 +4113,7 @@ init().catch(()=>{const el=document.querySelector('#gameLoadState');if(el){el.te
    contact / PWA install）+ 教學版模式 + 版本歷史
    ===================================================================== */
 
-const APP_VERSION = '1.27.1';
+const APP_VERSION = '1.28.0';
 const APP_BUILD = '2026-10-23';
 
 // 版本歷史（每個版本：v / date / items；每個 item 含 emoji badge + 文字）
