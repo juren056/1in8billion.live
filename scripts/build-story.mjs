@@ -13,3 +13,5 @@ fs.copyFileSync('content/story/config.json','dist/story-config.json');
 await import('./build-story-v4.mjs');
 
 await import('./build-story-v5.mjs');
+
+await import('./build-story-v6.mjs');

@@ -1,4 +1,4 @@
-function usesStoryRules(life){return [3,4,5].includes(life?.rulesVersion);}
+function usesStoryRules(life){return [3,4,5,6].includes(life?.rulesVersion);}
 /* born-somewhere v2
    人生模擬遊戲：選一個出生地（172 國虛構模擬），從 0 歲活到當地平均壽命。
    參考原作 1in8b.life 的生命表、死因分布、決策點等核心機制。
@@ -429,7 +429,7 @@ function randomName(country, sex) {
     const first = pick(FIRST_NAMES_INDIA[sex] || FIRST_NAMES_INDIA.M);
     return { last, first, full: first + ' ' + last, full_en: first + ' ' + last, caste };
   }
-  if(country.id==='JPN'&&([3,4,5].includes(window.newBirthRulesVersion)||(!window.newBirthRulesVersion&&usesStoryRules(STATE.life))))return window.StoryEngine.japaneseName(sex,pick);
+  if(country.id==='JPN'&&([3,4,5,6].includes(window.newBirthRulesVersion)||(!window.newBirthRulesVersion&&usesStoryRules(STATE.life))))return window.StoryEngine.japaneseName(sex,pick);
   if (country.id === 'JPN' || country.id === 'KOR') {
     const last = sex === 'F' ? (chance(0.3) ? '김' : '이') : (chance(0.3) ? '박' : '최');
     const first = sex === 'F' ? '영' + pick(['희','은','아','수']) : '준' + pick(['호','혁','영','수']);
@@ -4109,7 +4109,7 @@ init().catch(()=>{const el=document.querySelector('#gameLoadState');if(el){el.te
    contact / PWA install）+ 教學版模式 + 版本歷史
    ===================================================================== */
 
-const APP_VERSION = '1.25.0';
+const APP_VERSION = '1.26.0';
 const APP_BUILD = '2026-10-23';
 
 // 版本歷史（每個版本：v / date / items；每個 item 含 emoji badge + 文字）
