@@ -1,4 +1,4 @@
-# Life workbench UI · v1.27.0
+# Life workbench UI · v1.27.1
 
 Implements the approved operating-layout, story-action and choice-card refinement across clear blue, travel journal, editorial and cinema themes.
 
@@ -22,3 +22,5 @@ Desktop all four themes were switched in the actual browser. Mobile 390×844 che
 Local evidence: audit/workbench-ui/mobile-checks.json, night-desktop.png, night-moment-mobile.png. These are synthetic QA records, not customer testimonials. Temporary viewport override was reset.
 
 Baseline/rollback: f1de8a4dfa51e108158aa6696a8a4b94ed2bf281. Git deployment and exact production release checks follow the local acceptance.
+
+Final refinement includes styled actions inside individual memory dialogs. The latest 120-test verification passed again. Measured mobile action contrast: journal 9.46, editorial 12.44, blue 11.92, night 11.06. Music playback was started under mute, its pressed Pause state verified, and then stopped. No real payment was submitted.
