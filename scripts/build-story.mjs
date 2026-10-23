@@ -9,3 +9,5 @@ const core=[...new Set([...fs.readFileSync('app.js','utf8').matchAll(/eventId:'(
 fs.writeFileSync('dist/story-coverage.json',JSON.stringify({version:3,total:catalog.length,decisions:decisions.length,core,adapters:['birth','death','focus','finance','family','legacy-unknown'],interactions:['moment','people','explore','letter','choice'],events:metadata,locales:9,art:{atlas:'/public-assets/story/moments-atlas-v1.webp',cells:16,scenes:48},legacyAdapter:true},null,2));
 
 fs.copyFileSync('content/story/config.json','dist/story-config.json');
+
+await import('./build-story-v4.mjs');

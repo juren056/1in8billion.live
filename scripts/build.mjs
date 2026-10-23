@@ -69,7 +69,7 @@ write('analytics-config.js',`window.SITE_RELEASE=${JSON.stringify(release.versio
 fs.copyFileSync('public-assets/favicon.ico',out+'/favicon.ico');
 write('routes.json',JSON.stringify(routes));console.log('Built '+routes.length+' indexable pages');
 
-for(const file of ['site-nav.js','performance.js','analytics-config.js','compare.js'])fs.writeFileSync(out+'/'+file,fs.readFileSync(out+'/'+file,'utf8').replace(/^\s*\/\/[^\r\n]*$/gm,''));
+for(const file of ['app.js','site-nav.js','performance.js','analytics-config.js','compare.js'])fs.writeFileSync(out+'/'+file,fs.readFileSync(out+'/'+file,'utf8').replace(/^\s*\/\/[^\r\n]*$/gm,''));
 fs.writeFileSync(out+'/compare.js',fs.readFileSync(out+'/compare.js','utf8').split(/\r?\n/).map(line=>line.trim()).join(''));
 await import('./release.mjs');
 await import('./build-theme-preview.mjs').then(m=>m.buildThemePreview(routes,{preview:process.env.THEME_PREVIEW==='1'}));

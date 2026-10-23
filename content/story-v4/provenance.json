@@ -1,0 +1,7 @@
+{
+  "rulesVersion": 4,
+  "authored": "2026-10-23",
+  "copy": {"sourceLanguages": ["en", "zh-CN"], "otherLanguages": "Cached machine translations of project-authored fictional copy, with placeholder validation; not player data. Not a claim of professional human review in seven languages."},
+  "art": {"atlas": "/public-assets/story/moments-atlas-v1.webp", "cells": 16, "mapping": "Each daily situation and chain names a scene cell. The existing 48 environments and age-aware character sprites remain available for exploration.", "newImagesGeneratedInThisRelease": 0},
+  "model": {"mortality": "Existing source fingerprint and 38184 input checks remain unchanged.", "randomness": "Story and contact selection use independent stable hashes or scoped seeds. Reading, bookmarking and opening cards do not consume simulation random values.", "compatibility": "Version 1, 2 and 3 stories keep their original engine and localization packs. Existing purchased snapshots are never rewritten."}
+}

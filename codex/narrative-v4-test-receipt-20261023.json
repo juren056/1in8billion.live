@@ -1,0 +1,111 @@
+{
+  "date": "2026-10-23",
+  "targetVersion": "1.24.0",
+  "status": "local_acceptance_passed_production_pending",
+  "automatedTests": 110,
+  "countries": 172,
+  "publicSeoPages": 226,
+  "assetBudget": {
+    "home": 459229,
+    "homeLimit": 459232,
+    "compare": 113706,
+    "guide": 21377
+  },
+  "browser": {
+    "states": 1080,
+    "themes": 4,
+    "locales": 9,
+    "widths": [
+      320,
+      390,
+      720,
+      768,
+      1024,
+      1440
+    ],
+    "errors": [],
+    "failures": 0
+  },
+  "model": {
+    "runs": 12172,
+    "years": 932088,
+    "errors": 0,
+    "cooldownRepeats": 0
+  },
+  "legacyFullReplayDigests": {
+    "v1": 12,
+    "v2": 48,
+    "v3": 48
+  },
+  "v4FullReplays": 24,
+  "branchesUnitTested": 36,
+  "export": {
+    "templates": 6,
+    "ratios": 3,
+    "previews": 18,
+    "paperChecks": [
+      {
+        "paper": "A4",
+        "pages": 24,
+        "minimumBodyY": 177.0,
+        "rendered": [
+          3,
+          8,
+          14
+        ]
+      },
+      {
+        "paper": "Letter",
+        "pages": 24,
+        "minimumBodyY": 177.0,
+        "rendered": [
+          3,
+          8,
+          14
+        ]
+      }
+    ],
+    "exampleChapters": 12,
+    "exampleChapterPages": 6
+  },
+  "edgeChecks": [
+    "real birth confirmation advances without an extra start",
+    "card keyboard input cannot activate navigation behind the dialog",
+    "native dialog retains keyboard focus",
+    "pending choices survive refresh and resume exactly once",
+    "optional focus shows actual results and cannot award twice in one year",
+    "reopening the spending modal never stacks duplicate purchase listeners",
+    "image failure preserves choices and retries the same asset",
+    "copy failure fails visibly with a working reload entry"
+  ],
+  "localization": {
+    "sameStats": true,
+    "sameChoice": true,
+    "displayAndSnapshotUseCurrentLocale": true,
+    "endArchiveCards": true,
+    "localArchiveCards": true,
+    "errors": []
+  },
+  "touch": {
+    "touchEmulated": true,
+    "width": 390,
+    "theme": "night",
+    "dismissAndRestore": true,
+    "oneChoice": true,
+    "oneYearStep": true,
+    "overflow": false
+  },
+  "billing": {
+    "productionCheckoutPending": true,
+    "paymentSubmitted": false
+  },
+  "art": {
+    "newGeneratedImages": 0,
+    "reusedAtlasCells": 16,
+    "existingEnvironments": 48
+  },
+  "observationPending": [
+    "GSC actual indexing",
+    "real conversion changes"
+  ]
+}

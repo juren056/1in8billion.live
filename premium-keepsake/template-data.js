@@ -10,6 +10,7 @@ export function assembleTemplateData(snapshot,customization={}){
  const milestones=unique.filter(e=>e.kind==='milestone');let selected=milestones;
  if(milestones.length>5){selected=['education','work','family'].map(category=>milestones.find(e=>e.category===category)).filter(Boolean);const rest=milestones.filter(e=>!selected.includes(e)).sort((a,b)=>b.text.length-a.text.length||a.sourceIndex-b.sourceIndex);selected=[...selected,...rest.slice(0,5-selected.length)];}
  if(selected.length<3){const rest=unique.filter(e=>!selected.includes(e)).sort((a,b)=>b.text.length-a.text.length||a.sourceIndex-b.sourceIndex);selected=[...selected,...rest.slice(0,3-selected.length)];}
+ if(snapshot.rules==='replay-v4'){const choices=unique.filter(e=>e.chapterPart==='choice');if(choices.length){const picks=choices.length<=3?choices:[choices[0],choices[Math.floor(choices.length/2)],choices.at(-1)];selected=picks.flatMap(choice=>[choice,...unique.filter(e=>e.chapter===choice.chapter&&e.chapterPart==='follow')]);}}
  const featuredMilestones=selected.sort((a,b)=>a.sourceIndex-b.sourceIndex);
  const country=typeof snapshot.country==='string'?snapshot.country:'',display=displayCountry(country,lang,typeof snapshot.countryName==='string'?snapshot.countryName:''),countryName=typeof display==='string'&&display.trim()?display:c.fallback,name=safe(snapshot.name,180)||c.fallback;
  const latest=[...(snapshot.trajectory||[])].sort((a,b)=>b.age-a.age)[0];
