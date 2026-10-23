@@ -1,0 +1,10 @@
+const{chromium}=require(process.env.PLAYWRIGHT_MODULE||'C:/Users/lenovo/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/playwright'),fs=require('node:fs'),assert=require('node:assert/strict'),{createHash}=require('node:crypto');
+(async()=>{await require('./story-test-server.cjs')();const b=await chromium.launch({channel:'chrome'}),cases=[],errors=[];try{for(const country of['CHN','IND','JPN','USA','BRA','NGA','ETH','IDN','DEU','AUS','CAN','FRA']){
+ let expected;for(const prefix of['','zh-cn/']){const c=await b.newContext({serviceWorkers:'block',reducedMotion:'reduce'}),p=await c.newPage();await c.route(/google-analytics|googletagmanager|clarity\.ms/,r=>r.fulfill({status:204,body:''}));p.on('pageerror',e=>errors.push(e.message));try{
+  await p.goto('http://127.0.0.1:4186/'+prefix+'#run=v5.storyproof.'+country+'.now.en.0.202610');await p.waitForFunction(()=>document.documentElement.dataset.storyExperience==='ready');await p.locator('#startReplay').click();
+  const out=await p.evaluate(perturb=>{stopTicker();for(let n=0;n<180&&!STATE.life.died;n++){if(perturb&&n%13===0){renderLife();storyEventText(STATE.life.log.at(-1),STATE.life);}STATE.paused=false;tick();}if(!STATE.life.died)throw Error('unfinished v5');const l=STATE.life;return{url:ReplayCore.encode(l.replayV1),proof:{name:l.name,age:l.age,deathAge:l.deathAge,cause:l.cause,stats:l.stats,log:l.log,narrative:l.narrative,history:l.storyHistory}};},!!prefix);
+  assert(out.url.startsWith('#run=v5.'));const digest=createHash('sha256').update(JSON.stringify(out.proof)).digest('hex');if(!prefix)expected=digest;else assert.equal(digest,expected,country+' current display language or reading changed the simulation');
+  cases.push({country,prefix,digest,age:out.proof.age});
+ }finally{await c.close();}}console.log('V5_PROOF',country);}
+ assert.deepEqual(errors,[]);fs.writeFileSync('audit/story-v5/replay-v5.json',JSON.stringify({cases,errors},null,2));console.log('PASS 12 countries, 24 complete v5 replays; display language and read-only rendering preserve facts');
+ }finally{await b.close();}})().catch(e=>{console.error(e);process.exitCode=1});

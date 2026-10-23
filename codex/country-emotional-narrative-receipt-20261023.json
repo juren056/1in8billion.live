@@ -1,0 +1,141 @@
+{
+  "version": "1.25.0",
+  "checked": "2026-10-23",
+  "revision": "7c638e65cbbb7e621b6473fbc455b003d180588d",
+  "releaseStatus": "local-tests-passed-deployment-pending",
+  "baseline": "7c638e65cbbb7e621b6473fbc455b003d180588d",
+  "content": {
+    "rules": 5,
+    "countries": [
+      "CHN",
+      "JPN",
+      "IND",
+      "USA",
+      "BRA",
+      "NGA"
+    ],
+    "sharedDaily": 160,
+    "localDaily": 60,
+    "sharedChains": 12,
+    "localAdaptations": 18,
+    "deepPrototypes": 3,
+    "locales": 9,
+    "keysPerLocale": 760,
+    "followYears": [
+      2,
+      5
+    ],
+    "limits": "Other 166 countries use the shared fallback; local adaptations share prototype branch semantics."
+  },
+  "tests": {
+    "unitTests": 115,
+    "mortalityInputs": 38184,
+    "legacyFullReplays": [
+      {
+        "version": 1,
+        "count": 12
+      },
+      {
+        "version": 2,
+        "count": 48
+      },
+      {
+        "version": 3,
+        "count": 48
+      },
+      {
+        "version": 4,
+        "count": 24
+      }
+    ],
+    "newFullReplays": 24,
+    "actualSimulations": {
+      "runs": 12172,
+      "countries": 172,
+      "years": 932088,
+      "errors": 0,
+      "cooldownViolations": 0
+    },
+    "uiStates": 1080,
+    "localLongCardStates": 432,
+    "uiErrors": 0,
+    "interactionChecks": [
+      "actual prelude, defer, refresh, one settlement, branch-specific followup",
+      "natural completed life preserves actual choices and later outcomes in keepsake"
+    ],
+    "edgeChecks": [
+      "real birth confirmation advances without an extra start",
+      "card keyboard input cannot activate navigation behind the dialog",
+      "native dialog retains keyboard focus",
+      "pending choices survive refresh and resume exactly once",
+      "optional focus shows actual results and cannot award twice in one year",
+      "reopening the spending modal never stacks duplicate purchase listeners",
+      "image failure preserves choices and retries the same asset",
+      "copy failure fails visibly with a working reload entry"
+    ],
+    "touch": {
+      "touchEmulated": true,
+      "width": 390,
+      "theme": "night",
+      "dismissAndRestore": true,
+      "oneChoice": true,
+      "oneYearStep": true,
+      "overflow": false
+    },
+    "localization": {
+      "sameStats": true,
+      "sameChoice": true,
+      "displayAndSnapshotUseCurrentLocale": true,
+      "endArchiveCards": true,
+      "localArchiveCards": true,
+      "errors": []
+    },
+    "pdf": [
+      {
+        "paper": "A4",
+        "pages": 27,
+        "minimumBodyY": 177,
+        "rendered": [
+          3,
+          8,
+          14
+        ]
+      },
+      {
+        "paper": "Letter",
+        "pages": 27,
+        "minimumBodyY": 177,
+        "rendered": [
+          3,
+          8,
+          14
+        ]
+      }
+    ],
+    "cardPreviews": 18,
+    "assetBudget": [
+      {
+        "route": "/",
+        "decodedBytes": 459194
+      },
+      {
+        "route": "/compare/",
+        "decodedBytes": 113706
+      },
+      {
+        "route": "/guides/quick-play/",
+        "decodedBytes": 21377
+      }
+    ],
+    "indexablePages": 226
+  },
+  "payments": {
+    "mode": "live",
+    "amount": 299,
+    "currency": "USD",
+    "livePaymentSubmitted": false,
+    "paidWebhookSettlementClaimed": false,
+    "configurationChanged": false
+  },
+  "deployment": null
+}

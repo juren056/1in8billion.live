@@ -13,7 +13,7 @@ test('old-rule yearly unrest remains reproducible for existing playback',()=>{
 });
 test('only fresh births receive new rules; explicit old seeds retain legacy rules',()=>{
  const wrapper=p1.slice(p1.indexOf('newLife=function(country)'),p1.indexOf('const p1OriginalTick'));
- for(const incoming of [null,'oldseed']){const ctx={window:{},p1PendingSeed:incoming,p1Incoming:null,p1PendingCalendar:undefined,CalendarCore:{},p1Scope:(_,fn)=>fn(),p1OriginalNewLife:()=>({calendarMonth:'2026-10'}),STATE:{era:'now',eduMode:false},LANG:'en',crypto:{getRandomValues:xs=>{xs[0]=123;return xs;}}};vm.createContext(ctx);vm.runInContext(wrapper,ctx);assert.equal(ctx.newLife('CHN').rulesVersion,incoming?2:3);}
+ for(const incoming of [null,'oldseed']){const ctx={window:{},p1PendingSeed:incoming,p1Incoming:null,p1PendingCalendar:undefined,CalendarCore:{},p1Scope:(_,fn)=>fn(),p1OriginalNewLife:()=>({calendarMonth:'2026-10'}),STATE:{era:'now',eduMode:false},LANG:'en',crypto:{getRandomValues:xs=>{xs[0]=123;return xs;}}};vm.createContext(ctx);vm.runInContext(app.split("\n")[0]+"\n"+wrapper,ctx);assert.equal(ctx.newLife('CHN').rulesVersion,incoming?2:3);}
 });
 test('birth confirmation starts the clock rather than imposing another reading pause',()=>{
  const handler=app.slice(app.indexOf('const birthCertConfirm ='),app.indexOf('const birthCertCancel ='));assert(!handler.includes('STATE.paused=true'));assert(!handler.includes('stopTicker()'));

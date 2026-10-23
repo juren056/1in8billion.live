@@ -11,3 +11,5 @@ fs.writeFileSync('dist/story-coverage.json',JSON.stringify({version:3,total:cata
 fs.copyFileSync('content/story/config.json','dist/story-config.json');
 
 await import('./build-story-v4.mjs');
+
+await import('./build-story-v5.mjs');

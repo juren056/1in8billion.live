@@ -1,0 +1,13 @@
+{
+ "version":5,"reviewed":"2026-10-23","type":"original-fiction-with-sourced-background",
+ "scope":"Six initial country adaptations of three deep story prototypes; ten original everyday situations per country; shared fallback for all other countries.",
+ "limits":"Institutions establish possible settings, not access guarantees, uniform national culture, household language, government endorsement or future policy. No statistics copied from older sources. Dialogue, characters, motives and outcomes are original fiction. Country adaptations share prototype branch outcomes; they are not 18 independent cultural ethnographies. Native editorial review remains desirable before expanding.",
+ "sources":[
+  {"country":"CHN","url":"https://mct.gov.cn/whzx/bnsj/ggwhs/202104/t20210401_923473.html","supports":"Public cultural centers, reading spaces and participatory arts as possible settings."},
+  {"country":"JPN","url":"https://www.mext.go.jp/component/a_menu/education/detail/__icsFiles/afieldfile/2010/06/01/1285289_1.pdf","supports":"Kominkan social and community education. Historical booklet used for institutional meaning only."},
+  {"country":"IND","url":"https://dsel.education.gov.in/sites/default/files/update/Reading%20Revised%20Promotion%20guidelines%20%2820-01-2020%29_0.pdf","supports":"School readers clubs and reading activities; a home language is not inferred from country."},
+  {"country":"USA","url":"https://library.loudoun.gov/makerspace","supports":"Public library creative learning as one possible setting, without assigning this county to a player."},
+  {"country":"BRA","url":"https://www.gov.br/culturaviva/pt-br/acesso-a-informacao/perguntas-frequentes-2/1/","supports":"Community cultural groups; not all are permanent buildings."},
+  {"country":"NGA","url":"https://nln.gov.ng/statebranches.php","supports":"Library reading promotion as a possible setting; no national access or annual availability claim."}
+ ]
+}

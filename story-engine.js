@@ -25,14 +25,14 @@ export function createStoryEngine({catalog,decisions,dictionary,supportsRulesVer
 export function installStoryRuntime(engine){
  if(window.storyRulesReady)return;window.storyRulesReady=true;let context=null;
  const die=window.dieNow;window.dieNow=function(...args){const life=STATE.life;if(life?.rulesVersion===3&&context){life.died=true;engine.afterYear(life,context.age,context.before);life.died=false;}return die(...args);};
- const tick=window.tick;window.tick=function(...args){const life=STATE.life;if(!life||![3,4].includes(life.rulesVersion))return tick(...args);if(life.storyPending)return;const age=life.age,before=engine.values(life.stats);context={age,before};let out;try{out=tick(...args);}finally{context=null;}if(life!==STATE.life||life.age===age||life.died)return out;engine.afterYear(life,age,before);if(life.storyPending){if(STATE.autoDecide)engine.resolve(life,engine.pending(life).defaultIndex,{automatic:true});else{STATE.paused=true;window.stopTicker?.();}}window.renderLife?.();window.saveCurrentLife?.();if(life.storyPending&&!window.storyPresentationReady){let note=document.getElementById('storyRuntimeFallback');if(!note){note=document.createElement('section');note.id='storyRuntimeFallback';const label=document.createElement('p'),retry=document.createElement('button');label.textContent=engine.text('ui.pending');retry.textContent=window.SurfaceCopy?.reload||'Reload';retry.onclick=()=>location.reload();note.append(label,retry);document.querySelector('#view-life')?.prepend(note);}}return out;};
+ const tick=window.tick;window.tick=function(...args){const life=STATE.life;if(!life||![3,4,5].includes(life.rulesVersion))return tick(...args);if(life.storyPending)return;const age=life.age,before=engine.values(life.stats);context={age,before};let out;try{out=tick(...args);}finally{context=null;}if(life!==STATE.life||life.age===age||life.died)return out;engine.afterYear(life,age,before);if(life.storyPending){if(STATE.autoDecide)engine.resolve(life,engine.pending(life).defaultIndex,{automatic:true});else{STATE.paused=true;window.stopTicker?.();}}window.renderLife?.();window.saveCurrentLife?.();if(life.storyPending&&!window.storyPresentationReady){let note=document.getElementById('storyRuntimeFallback');if(!note){note=document.createElement('section');note.id='storyRuntimeFallback';const label=document.createElement('p'),retry=document.createElement('button');label.textContent=engine.text('ui.pending');retry.textContent=window.SurfaceCopy?.reload||'Reload';retry.onclick=()=>location.reload();note.append(label,retry);document.querySelector('#view-life')?.prepend(note);}}return out;};
 }
 export async function prepareStoryEngine(lang){
  const{catalog,decisions}=await import('./story-data.js');
  lang=['en','zh-CN','zh-TW','ja','ko','es','pt-BR','fr','de'].includes(lang)?lang:'en';
  const[r,c]=await Promise.all([fetch('/story-locales/'+lang+'.json'),fetch('/story-config.json')]);
  if(!r.ok||!c.ok)throw Error('story_copy_unavailable');const config=await c.json();
- if(![2,3,4].includes(config.newRules)||typeof config.workspace!=='boolean')throw Error('story_config_invalid');
+ if(![2,3,4,5].includes(config.newRules)||typeof config.workspace!=='boolean')throw Error('story_config_invalid');
  const dictionary=await r.json(),legacy=createStoryEngine({catalog,decisions,dictionary});
  let engine=legacy;
  // Load the new rules as a separate pack; never mutate legacy copy or seeds.
@@ -41,6 +41,12 @@ export async function prepareStoryEngine(lang){
   if(!response.ok)throw Error('story_v4_copy_unavailable');
   const modern=m.createNarrativeEngine({base:createStoryEngine({catalog,decisions:[],dictionary:data.canonical,supportsRulesVersion:4}),catalog:data.catalog,chains:data.chains,dictionary:await response.json(),canonical:data.canonical,hash:storyHash,livingPeople,nameFactory:(life,role)=>p1Scope((life.replayV1?.seed||life.regNumber)+':narrative-person:'+role,()=>{const sex=storyHash((life.replayV1?.seed||life.regNumber)+role)%2?'F':'M';return{name:randomName(life.countryData,sex),sex};})});
   engine=m.versionedEngine(legacy,modern,()=>typeof STATE!=='undefined'?STATE.life:null,config);
+ }
+ {
+  const[m,data,response]=await Promise.all([import('./story-v5-engine.js'),import('./story-v5-data.js'),fetch('/story-v5-locales/'+lang+'.json')]);
+  if(!response.ok)throw Error('story_v5_copy_unavailable');
+  const modern=m.createNarrativeEngine({base:createStoryEngine({catalog,decisions:[],dictionary:data.canonical,supportsRulesVersion:5}),catalog:data.catalog,chains:data.chains,dictionary:await response.json(),canonical:data.canonical,hash:storyHash,livingPeople,nameFactory:(life,role)=>p1Scope((life.replayV1?.seed||life.regNumber)+':narrative-person:'+role,()=>{const sex=storyHash((life.replayV1?.seed||life.regNumber)+role)%2?'F':'M';return{name:randomName(life.countryData,sex),sex};})});
+  engine=m.versionedEngine(engine,modern,()=>typeof STATE!=='undefined'?STATE.life:null,config);
  }
  engine.config=config;window.StoryEngine=engine;installStoryRuntime(engine);return engine;
 }
