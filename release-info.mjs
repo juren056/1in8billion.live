@@ -1,2 +1,2 @@
 // Review dates describe actual work, never the observation year of model inputs.
-export const release=Object.freeze({version:'1.26.0',calendarReviewed:'2026-10-23',guideCapture:{version:'1.17.0',date:'2026-10-22'}});
+export const release=Object.freeze({version:'1.27.0',calendarReviewed:'2026-10-23',guideCapture:{version:'1.17.0',date:'2026-10-22'}});
