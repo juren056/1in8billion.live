@@ -1,7 +1,7 @@
 import{assembleTemplateData}from'./template-data.js';
 import{copy}from'./translations.js';import{validSnapshot}from'./schema.js';
 import{eventGroups,groupEntry}from'./editorial.js';
-export function wrapWords(value,fits){const out=[];for(const paragraph of String(value).split('\n')){let line='';for(const{segment}of new Intl.Segmenter(undefined,{granularity:'word'}).segment(paragraph)){if(fits(line+segment)){line+=segment;continue;}if(line.trim()){out.push(line.trimEnd());line='';}if(fits(segment.trimStart())){line=segment.trimStart();continue;}for(const ch of segment.trimStart()){if(!fits(line+ch)&&line){out.push(line);line='';}line+=ch;}}out.push(line.trimEnd());}return out;}
+export function wrapWords(value,fits){const out=[];for(const paragraph of String(value).replace(/\u200B/g,'').split('\n')){let line='';for(const{segment}of new Intl.Segmenter(undefined,{granularity:'word'}).segment(paragraph)){if(fits(line+segment)){line+=segment;continue;}if(line.trim()){out.push(line.trimEnd());line='';}if(fits(segment.trimStart())){line=segment.trimStart();continue;}for(const ch of segment.trimStart()){if(!fits(line+ch)&&line){out.push(line);line='';}line+=ch;}}out.push(line.trimEnd());}return out;}
 // Full-width CJK glyphs occupy more space than Latin characters. This estimate
 // deliberately reserves more room than the PDF's measured line wrapping needs.
 export function lines(value,width=52){return wrapWords(value,line=>[...line].reduce((n,ch)=>n+(/[\p{Script=Han}\p{Script=Hiragana}\p{Script=Katakana}\p{Script=Hangul}\uFF01-\uFF60]/u.test(ch)?2:1),0)<=width);}

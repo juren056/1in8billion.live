@@ -1,3 +1,4 @@
+import{createTestCheckout}from'./payment-client.js';
 import{paymentCopy}from'./payment-copy.js';import{conversionCopy}from'./conversion-copy.js';
 export function installTestPurchase({getLocal,getDesign,isBusy,onPendingChange=()=>{}}){
  const lang=document.documentElement.lang,words=conversionCopy(lang);let c=paymentCopy(lang);
@@ -9,7 +10,7 @@ export function installTestPurchase({getLocal,getDesign,isBusy,onPendingChange=(
  const health=()=>fetch('/api/keepsake/health',{cache:'no-store',signal:AbortSignal.timeout(10000)}).then(r=>r.ok?r.json():{}).then(r=>{available=r.checkout===true&&typeof r.testOnly==='boolean';testMode=r.testOnly!==false;c=paymentCopy(lang,testMode?'test':'live');price.textContent=testMode?c.notice:'US$2.99 · '+words.once;buy.textContent=c.buy;orders.textContent=c.orders;refresh();}).catch(()=>{available=false;refresh();});
  buy.onclick=async()=>{
   if(pending||isBusy()||!getLocal())return;const localId=getLocal().id,design={...getDesign()};pending=true;failed=false;onPendingChange();refresh();state.textContent=words.connecting;event(testMode?'test_click':'live_click');
-  try{await health();if(!available)throw Object.assign(Error('checkout_closed'),{checkoutStage:'checkout'});const{createTestCheckout}=await import('./payment-client.js'),order=await createTestCheckout(localId,design,stage=>{state.textContent=stage==='files'?words.preparing:words.connecting;});
+  try{if(!available)throw Object.assign(Error('checkout_closed'),{checkoutStage:'checkout'});const order=await createTestCheckout(localId,design,stage=>{state.textContent=words.connecting;});
    event(order.testMode?'test_session_created':'live_session_created');
    if(order.checkoutUrl){const url=new URL(order.checkoutUrl);if(url.origin!=='https://checkout.stripe.com'||order.testMode!==testMode)throw Object.assign(Error('wrong_payment_mode'),{checkoutStage:'checkout'});location.assign(url.href);}else location.assign('/keepsake/success/');
   }catch(error){failed=true;const stage=['files','storage','browser','checkout'].includes(error.checkoutStage)?error.checkoutStage:'checkout';lastError=words[stage==='files'?'fileError':stage==='storage'?'storageError':stage==='browser'?'browserError':'checkoutError'];state.textContent=lastError;event((testMode?'test_':'live_')+stage+'_error');}
