@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import fs from "node:fs";
-import { countryPhotography, lifePhotography } from "../content/home-photography.mjs";
+import { countryPhotography, lifePhotography, sampleCountryPhotography } from "../content/home-photography.mjs";
 
 const root = new URL("../", import.meta.url);
 const read = (path) => fs.readFileSync(new URL(path, root), "utf8");
@@ -10,7 +10,8 @@ const homePrefixes = ["", "zh-cn/", "zh-tw/", "ja/", "ko/", "es/", "pt-br/", "fr
 test("homepage photography is real-source, local and complete", () => {
   assert.equal(Object.keys(countryPhotography).length, 12);
   assert.equal(lifePhotography.length, 6);
-  const records = [...Object.values(countryPhotography), ...lifePhotography];
+  assert.equal(Object.keys(sampleCountryPhotography).length, 6);
+  const records = [...Object.values(countryPhotography), ...Object.values(sampleCountryPhotography), ...lifePhotography];
   for (const photo of records) {
     assert.match(photo.source, /^https:\/\/www\.pexels\.com\/photo\//);
     assert(photo.photographer);
@@ -18,6 +19,13 @@ test("homepage photography is real-source, local and complete", () => {
     const bytes = fs.readFileSync(path);
     assert(bytes.length > 70_000, `${photo.file} is unexpectedly small`);
     assert.equal(bytes.subarray(4, 8).toString("ascii"), "ftyp", `${photo.file} is not AVIF/ISO media`);
+  }
+});
+
+test("countries repeated on the homepage use a different real photograph in each section", () => {
+  for (const [country, samplePhoto] of Object.entries(sampleCountryPhotography)) {
+    assert.notEqual(samplePhoto.file, countryPhotography[country].file, country);
+    assert.notEqual(samplePhoto.source, countryPhotography[country].source, country);
   }
 });
 
@@ -43,5 +51,6 @@ test("carousel is accessible, motion-aware and photography is publicly credited"
   assert(chinese.includes('aria-roledescription="carousel"'));
   const sources = read("dist/sources/index.html");
   assert(sources.includes('id="photography"'));
-  assert.equal((sources.match(/pexels\.com\/photo\//g) || []).length, 18);
+  const creditedPhotoCount = Object.keys(countryPhotography).length + Object.keys(sampleCountryPhotography).length + lifePhotography.length;
+  assert.equal((sources.match(/pexels\.com\/photo\//g) || []).length, creditedPhotoCount);
 });

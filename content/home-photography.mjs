@@ -13,6 +13,15 @@ export const countryPhotography = Object.freeze({
   CHE: { file: "switzerland-parliament.avif", place: "Federal Palace, Bern", photographer: "Christian Wasserfallen", source: "https://www.pexels.com/photo/historic-swiss-parliament-building-in-bern-33849506/" },
 });
 
+export const sampleCountryPhotography = Object.freeze({
+  JPN: { file: "sample-japan-osaka-castle.avif", place: "Osaka Castle, Osaka", photographer: "Satoshi Hirayama", source: "https://www.pexels.com/photo/osaka-castle-4058521/" },
+  USA: { file: "sample-usa-statue-liberty.avif", place: "Statue of Liberty, New York City", photographer: "Mark Direen", source: "https://www.pexels.com/photo/iconic-statue-of-liberty-view-in-new-york-city-35990789/" },
+  IND: { file: "sample-india-india-gate.avif", place: "India Gate, New Delhi", photographer: "Manish Sharma", source: "https://www.pexels.com/photo/majestic-view-of-india-gate-in-delhi-india-30032907/" },
+  CHN: { file: "sample-china-great-wall.avif", place: "Great Wall of China", photographer: "Jan Židlický", source: "https://www.pexels.com/photo/great-wall-in-china-3233096/" },
+  CAN: { file: "sample-canada-cn-tower.avif", place: "CN Tower, Toronto", photographer: "Josh Kobayashi", source: "https://www.pexels.com/photo/the-cn-tower-in-downtown-toronto-5726605/" },
+  FRA: { file: "sample-france-arc-triomphe.avif", place: "Arc de Triomphe, Paris", photographer: "ClickerHappy", source: "https://www.pexels.com/photo/arc-de-triomphe-paris-630769/" },
+});
+
 export const lifePhotography = Object.freeze([
   { id: "childhood", file: "life-childhood.avif", photographer: "RDNE Stock project", source: "https://www.pexels.com/photo/a-boy-and-girl-playing-on-the-park-8083338/" },
   { id: "learning", file: "life-learning.avif", photographer: "Ludovic Delot", source: "https://www.pexels.com/photo/a-student-sitting-in-a-library-and-with-a-laptop-and-studying-16420237/" },
@@ -37,6 +46,8 @@ const carouselCopy = {
 
 const esc = (value) => String(value).replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll('"', "&quot;");
 export const countryPhotoPath = (id) => `/public-assets/photography/${countryPhotography[id]?.file || countryPhotography.JPN.file}`;
+export const sampleCountryPhoto = (id) => sampleCountryPhotography[id] || countryPhotography[id] || countryPhotography.JPN;
+export const sampleCountryPhotoPath = (id) => `/public-assets/photography/${sampleCountryPhoto(id).file}`;
 
 export function lifePhotoFigure(lang = "en", base = "/") {
   const words = carouselCopy[lang] || carouselCopy.en;
@@ -50,6 +61,6 @@ export function lifePhotoFigure(lang = "en", base = "/") {
 }
 
 export function photoCreditsSection() {
-  const rows = [...Object.values(countryPhotography), ...lifePhotography].map((photo) => `<li><a href="${photo.source}" rel="external">${esc(photo.place || photo.id)}</a> — ${esc(photo.photographer)}</li>`).join("");
+  const rows = [...Object.values(countryPhotography), ...Object.values(sampleCountryPhotography), ...lifePhotography].map((photo) => `<li><a href="${photo.source}" rel="external">${esc(photo.place || photo.id)}</a> — ${esc(photo.photographer)}</li>`).join("");
   return `<section id="photography"><h2>Homepage photography</h2><p>These homepage images are real photographs sourced from Pexels and stored locally for reliable delivery. They are illustrative and do not depict players or simulated characters. Use follows the <a href="https://www.pexels.com/license/" rel="external">Pexels License</a>.</p><ul>${rows}</ul></section>`;
 }

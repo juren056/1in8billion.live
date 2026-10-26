@@ -16,6 +16,12 @@ All files in this folder are locally served real photographs sourced from Pexels
 | `nigeria-abuja.avif` | Abuja National Mosque, Nigeria | Abdullahi Santuraki | [Pexels](https://www.pexels.com/photo/aerial-view-of-abuja-with-national-mosque-31187374/) |
 | `brazil-christ-redeemer.avif` | Christ the Redeemer, Brazil | K | [Pexels](https://www.pexels.com/photo/jesus-christ-statue-in-rio-de-janeiro-brazil-11815583/) |
 | `switzerland-parliament.avif` | Federal Palace, Switzerland | Christian Wasserfallen | [Pexels](https://www.pexels.com/photo/historic-swiss-parliament-building-in-bern-33849506/) |
+| `sample-japan-osaka-castle.avif` | Osaka Castle, Japan | Satoshi Hirayama | [Pexels](https://www.pexels.com/photo/osaka-castle-4058521/) |
+| `sample-usa-statue-liberty.avif` | Statue of Liberty, United States | Mark Direen | [Pexels](https://www.pexels.com/photo/iconic-statue-of-liberty-view-in-new-york-city-35990789/) |
+| `sample-india-india-gate.avif` | India Gate, India | Manish Sharma | [Pexels](https://www.pexels.com/photo/majestic-view-of-india-gate-in-delhi-india-30032907/) |
+| `sample-china-great-wall.avif` | Great Wall of China | Jan Židlický | [Pexels](https://www.pexels.com/photo/great-wall-in-china-3233096/) |
+| `sample-canada-cn-tower.avif` | CN Tower, Canada | Josh Kobayashi | [Pexels](https://www.pexels.com/photo/the-cn-tower-in-downtown-toronto-5726605/) |
+| `sample-france-arc-triomphe.avif` | Arc de Triomphe, France | ClickerHappy | [Pexels](https://www.pexels.com/photo/arc-de-triomphe-paris-630769/) |
 | `life-childhood.avif` | Childhood | RDNE Stock project | [Pexels](https://www.pexels.com/photo/a-boy-and-girl-playing-on-the-park-8083338/) |
 | `life-learning.avif` | Learning | Ludovic Delot | [Pexels](https://www.pexels.com/photo/a-student-sitting-in-a-library-and-with-a-laptop-and-studying-16420237/) |
 | `life-work.avif` | Work | Ivan S | [Pexels](https://www.pexels.com/photo/colleagues-working-on-a-project-together-5428766/) |
