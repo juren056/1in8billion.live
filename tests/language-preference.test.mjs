@@ -38,3 +38,15 @@ test("language recommendation treats only the active game view as in progress", 
   assert.match(source, /#view-life\.active,#view-end\.active/);
   assert.doesNotMatch(source, /#view-life:not\(\[hidden\]\)/);
 });
+
+test("language recommendation is a responsive bottom-right notice", () => {
+  const css = readFileSync("language-preference.css", "utf8");
+  const source = readFileSync("language-preference.js", "utf8");
+  assert.match(css, /\.language-suggestion\{position:fixed;right:/);
+  assert.match(css, /bottom:max\(/);
+  assert.match(css, /width:min\(400px,calc\(100vw - 40px\)\)/);
+  assert.match(css, /prefers-reduced-motion:no-preference/);
+  assert.match(source, /language-suggestion-actions/);
+  assert.match(source, /<svg viewBox="0 0 24 24"/);
+  assert.doesNotMatch(source, /🌐/);
+});

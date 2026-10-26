@@ -93,7 +93,7 @@ export function installLanguagePreference() {
   bar.className = "language-suggestion";
   bar.dataset.languageSuggestion = target;
   bar.setAttribute("aria-label", c[0]);
-  bar.innerHTML = `<span aria-hidden="true">🌐</span><p>${c[0]}</p><a href="${link.getAttribute("href")}">${c[1]}</a><button type="button">${c[2]}</button>`;
+  bar.innerHTML = `<span class="language-suggestion-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"></circle><path d="M3 12h18M12 3c2.2 2.4 3.4 5.4 3.4 9s-1.2 6.6-3.4 9c-2.2-2.4-3.4-5.4-3.4-9S9.8 5.4 12 3Z"></path></svg></span><p>${c[0]}</p><div class="language-suggestion-actions"><a href="${link.getAttribute("href")}">${c[1]}</a><button type="button">${c[2]}</button></div>`;
   bar.querySelector("a").addEventListener("click", () => {
     remember("accepted:" + target);
     record("accept", target);
