@@ -8,6 +8,7 @@ import { release } from "../release-info.mjs";
 import { toolCopy } from "../tool-workspace-copy.js";
 import { migrateReadingPages } from "./build-reading-system.mjs";
 import { displayCountry } from "../country-labels.js";
+import { countryPhotoPath, countryPhotography, lifePhotoFigure, photoCreditsSection } from "../content/home-photography.mjs";
 const esc = (s) =>
   String(s)
     .replaceAll("&", "&amp;")
@@ -35,6 +36,7 @@ export function buildThemePreview(routes, { preview = false } = {}) {
     "site-theme.js",
     "home-start-dock.js",
     "home-start-dock.css",
+    "home-photography.js",
     "theme-menu.js",
     "theme-system.css",
   ])
@@ -65,6 +67,8 @@ export function buildThemePreview(routes, { preview = false } = {}) {
       c = themeCopy[lang] || themeCopy.en,
       base = "/" + (locales[lang]?.[0] || ""),
       home = h.includes('id="view-intro"');
+    if (home && h.includes('class="life-photo-figure"'))
+      h = h.replace(/<figure class="life-photo-figure">[\s\S]*?<\/figure>/, lifePhotoFigure(lang, base));
     if (h.includes('id="compareRetry"')) {
       const labels = comparisonStateCopy[lang] || comparisonStateCopy.en;
       h = h
@@ -219,16 +223,16 @@ export function buildThemePreview(routes, { preview = false } = {}) {
         "$1" + showcase,
       );
       const explore = `<section class="theme-explore"><h2>${c[5]}</h2><div>${[
-        ["JPN", "blue"],
-        ["USA", "night"],
-        ["IND", "india"],
-        ["CHN", "china"],
-        ["CAN", "canada"],
-        ["FRA", "editorial"],
+        "JPN",
+        "USA",
+        "IND",
+        "CHN",
+        "CAN",
+        "FRA",
       ]
         .map(
-          ([id, art]) =>
-            `<a href="${base}?country=${id}"><img src="/public-assets/themes/${art}-mobile.webp" alt="${c[15]}" width="384" height="216" loading="lazy"><span>${esc(displayCountry(id, lang, id))} <span aria-hidden="true">→</span></span></a>`,
+          (id) =>
+            `<a href="${base}?country=${id}"><img src="${countryPhotoPath(id)}" alt="${esc(displayCountry(id, lang, id))} · ${esc(countryPhotography[id].place)}" width="1260" height="750" loading="lazy"><span>${esc(displayCountry(id, lang, id))} <span aria-hidden="true">→</span></span></a>`,
         )
         .join("")}</div></section>`;
       h = h.replace(showcase, showcase + explore);
@@ -292,6 +296,12 @@ export function buildThemePreview(routes, { preview = false } = {}) {
     });
   }
   migrateReadingPages(routes);
+  const sourceFile = "dist/sources/index.html";
+  if (fs.existsSync(sourceFile)) {
+    let source = fs.readFileSync(sourceFile, "utf8");
+    if (!source.includes('id="photography"')) source = source.replace("</main>", photoCreditsSection() + "</main>");
+    fs.writeFileSync(sourceFile, source);
+  }
   fs.mkdirSync("audit/theme-batch-c", { recursive: true });
   fs.writeFileSync(
     "audit/theme-batch-c/route-coverage.json",
