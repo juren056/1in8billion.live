@@ -1,82 +1,517 @@
-import {clarityTag,clarityPrivacy} from './clarity.mjs';
-import {applyPageSeo,sitemapXml} from './seo-pages.mjs';
-import {release} from '../release-info.mjs';
-import {buildGrowthExperience} from './build-growth-experience.mjs';
-import {buildExpansion} from './build-expansion.mjs';
-import {buildPremium} from './build-premium.mjs';
-import {buildRetention} from './build-retention.mjs';
-import {buildGrowth} from './build-growth.mjs';
-import {buildProvenance} from './build-provenance.mjs';
-import {prepareData,navigation,footerFor,homeExperience,enhanceOutput,copy,countryName} from './build-experience.mjs';
-import {buildGuides} from './build-guides.mjs';
-import {buildP1} from './build-p1.mjs';
-import fs from 'node:fs';
-import path from 'node:path';
-if(process.env.THEME_PREVIEW==='1'&&(process.env.CI||process.env.CF_PAGES||process.env.CLOUDFLARE_ACCOUNT_ID))throw Error('Batch A themes are local-only until the full redesign release is accepted');
-const out='dist',origin='https://1in8billion.live';
-const siteConfig=JSON.parse(fs.readFileSync('site.config.json','utf8')),clarity=clarityTag(siteConfig.clarityProjectId);
-fs.rmSync(out,{recursive:true,force:true});
-fs.mkdirSync(out,{recursive:true});
-const write=(p,s)=>{const dest=path.join(out,p);fs.mkdirSync(path.dirname(dest),{recursive:true});fs.writeFileSync(dest,s);};
-for(const file of ['yandex_5a1d54042883dd6c.html','character-library.js','rebirth-reveal.css','rebirth-reveal.js','rebirth-art.js','rebirth-copy.js','birth-distribution-core.js','birth-distribution.js','rebirth.css','growth-copy.js','growth-experience.js','theme-copy.js','modern-life-art.js','game-workspace-copy.js','arrival-copy.js','calendar-core.js','calendar-copy.js','calendar-ui.js','task-navigation.js','play-clarity.js','playback.js','playback-copy.js','playback.css','retention-bootstrap.js','retention.js','retention-copy.js','retention-core.js','life-scene.js','life-audio.js','life-keepsake.js','life-return.js','retention.css','ux-flow.js','ux-copy.js','app.js','replay-core.js','p1-game.js','replay-entry.js','compare.js','comparison-state-copy.js','comparison-core.js','performance.js','experience.js','storage.js','site-nav.js','content.css','experience.css','gedcom.js','styles.css','launch.css','sw.js','manifest.json','LICENSE'])fs.copyFileSync(file,path.join(out,file));
-for(const dir of ['data','public-assets','vendor'])fs.cpSync(dir,path.join(out,dir),{recursive:true});
-fs.writeFileSync(out+'/app.js',fs.readFileSync('app.js','utf8').replace(/^\s*\/\/[^\r\n]*$/gm,'').replace(/^[ \t]*\/\*[\s\S]*?\*\//gm,'').replace(/^[ \t]+/gm,''));
-for(const css of ['styles.css','launch.css','content.css','experience.css'])fs.writeFileSync(out+'/'+css,fs.readFileSync(css,'utf8').replace(/\/\*[\s\S]*?\*\//g,'').split(/\r?\n/).map(line=>line.trim()).filter(Boolean).join('\n').replace(/}\n/g,'}'));
-const countries=JSON.parse(fs.readFileSync('data/countries.json')),dict=JSON.parse(fs.readFileSync('data/i18n.json'));
-prepareData(countries,dict,write);
-const total=countries.reduce((s,c)=>s+c.births,0),pop=countries.reduce((s,c)=>s+c.pop,0);
-const langs={en:{prefix:'',internal:'en',title:'Birth Lottery Simulator – Live Another Life Free',nav:['Play','How it works','Birth odds','Countries'],intro:'Draw a birthplace. Explore the choices that shape a fictional life.',method:'The country draw uses annual birth weights in the bundled game dataset. Population mode instead uses population weights. Neither mode predicts your real life.',steps:['Draw a country or choose one yourself.','Confirm the birth card and start at age zero.','Pause, change speed, choose an action or enable automatic decisions.','At the end, download your life card or share the website.'],note:'Game dataset: inherited estimates; individual observation years are unverified. These are model weights, not an official current world probability.',formula:'Country annual birth weight ÷ sum of covered annual birth weights. Population and birth weights have different denominators.',country:'Country',odds:'Model birth share',faq:['Is it free?','Yes. No account or payment is needed.','Is this a forecast?','No. The characters and events are fictional; national averages cannot predict an individual life.','Where is progress saved?','In this browser on this device. Clearing site storage removes it.'],warning:'Fictional simulation with themes of illness, death and inequality. Educational mode: add ?edu=1.'},ja:{prefix:'ja/',internal:'ja',title:'出生ガチャ・人生シミュレーター｜無料で別の人生を体験',nav:['遊ぶ','遊び方','出生確率','国一覧'],intro:'生まれる国を抽選し、選択が変える架空の人生を体験。',method:'出生モードではゲーム内データの年間出生数を重みに使います。人口モードでは人口を使います。個人の未来を予測するものではありません。',steps:['国を抽選するか、自分で選びます。','出生カードを確認し、0歳から始めます。','一時停止・倍速・手動選択・自動選択を使えます。','人生の最後に画像を保存し、サイトを共有できます。'],note:'継承した推定ゲームデータです。各数値の観測年は未確認で、現在の世界の公式確率ではありません。',formula:'国の年間出生数の重み ÷ 対象国すべての年間出生数の重みの合計。人口の割合とは異なります。',country:'国',odds:'モデルの出生割合',faq:['無料ですか？','登録や支払いなしで遊べます。','未来の予測ですか？','いいえ。登場人物や出来事は架空です。平均値は個人の運命を決めません。','進行状況はどこに保存されますか？','この端末のブラウザ内です。サイトデータを消すと失われます。'],warning:'病気、死、格差を扱う架空のシミュレーションです。教育モード：?edu=1'},ko:{prefix:'ko/',internal:'ko',title:'출생 복권 · 인생 시뮬레이터 | 무료로 다른 삶 체험',nav:['플레이','플레이 방법','출생 확률','국가 목록'],intro:'태어날 나라를 뽑고 선택에 따라 달라지는 가상의 삶을 경험하세요.',method:'출생 모드는 게임 데이터의 연간 출생 수를 가중치로 사용합니다. 인구 모드는 인구 수를 사용합니다. 개인의 미래를 예측하지 않습니다.',steps:['나라를 무작위로 뽑거나 직접 선택하세요.','출생 카드를 확인하고 0세부터 시작하세요.','일시 정지, 배속, 수동 선택, 자동 선택을 이용하세요.','마지막에 이미지로 저장하거나 사이트를 공유하세요.'],note:'기존 프로젝트에서 이어받은 추정 게임 데이터입니다. 개별 관측 연도는 확인되지 않았으며 현재 세계의 공식 확률이 아닙니다.',formula:'국가의 연간 출생 가중치 ÷ 전체 대상 국가의 연간 출생 가중치 합계. 인구 비율과는 다릅니다.',country:'국가',odds:'모델 출생 비중',faq:['무료인가요?','가입이나 결제 없이 플레이할 수 있습니다.','미래를 예측하나요?','아니요. 인물과 사건은 허구이며 평균값으로 개인의 삶을 예측할 수 없습니다.','진행 상황은 어디에 저장되나요?','이 기기의 브라우저에 저장됩니다. 사이트 데이터를 지우면 사라집니다.'],warning:'질병, 죽음, 불평등을 다루는 가상의 시뮬레이션입니다. 교육 모드: ?edu=1'},'zh-TW':{prefix:'zh-tw/',internal:'zh-Hant',title:'出生機率與人生模擬器｜免費體驗另一種人生',nav:['遊玩','玩法說明','出生機率','國家列表'],intro:'抽一個出生國家，探索選擇如何改變虛構人生。',method:'出生模式依遊戲資料中的年度出生人數加權；人口模式依人口加權。兩者分母不同，都不能預測個人真實命運。',steps:['隨機抽國家，或自行選擇出生地。','確認出生卡，從零歲開始。','可暫停、加速、手動選擇或開啟自動抉擇。','結局可下載圖片，或分享本站連結。'],note:'沿用的遊戲估算資料，個別數值觀測年份尚未核實。這是模型權重，不是目前全球官方機率。',formula:'某國年度出生權重 ÷ 所有涵蓋國家的年度出生權重總和。這不是人口佔比。',country:'國家',odds:'模型出生佔比',faq:['免費嗎？','免費、免註冊，不需要付款。','能預測未來嗎？','不能。角色與事件均為虛構，國家平均數無法預測個人一生。','進度存在哪裡？','此裝置的瀏覽器內；清除網站資料會刪除存檔。'],warning:'內容涉及疾病、死亡與不平等，屬虛構模擬。教學模式：?edu=1'}};
-const routes=[],groups=['','how-it-works/','birth-odds/','countries/'];
-const esc=s=>String(s).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('"','&quot;');
-const links=l=>navigation(l,Object.keys(langs).find(k=>langs[k]===l));
-const footer='<footer><a href="/about/">About</a> · <a href="/sources/">Sources</a> · <a href="/privacy/">Privacy</a> · <a href="/terms/">Terms</a> · <a href="/contact/">Contact</a> · <a href="https://www.indiedb.com/games/free-birth-lottery-simulator-live-a-life-from-birth-to-death" target="_blank" rel="noopener">1 in 8 Billion on IndieDB</a><p>Independent project. Not affiliated with 1in8b.life. <a href="/LICENSE">MIT license</a></p></footer>';
-function head(title,desc,url,lang,group){return `<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>${esc(title)} | 1in8billion.live</title><meta name="description" content="${esc(desc)}"><link rel="canonical" href="${origin}${url}">${group!==undefined?Object.entries(langs).map(([k,v])=>`<link rel="alternate" hreflang="${k}" href="${origin}/${v.prefix}${group}">`).join('')+`<link rel="alternate" hreflang="x-default" href="${origin}/${group}">`:''}<link rel="icon" href="/public-assets/icon-96.png" type="image/png" sizes="96x96"><link rel="apple-touch-icon" sizes="180x180" href="/public-assets/apple-touch-icon.png"><link rel="manifest" href="/manifest.json"><meta name="theme-color" content="#061b32"><meta property="og:title" content="${esc(title)}"><meta property="og:description" content="${esc(desc)}"><meta property="og:url" content="${origin}${url}"><meta property="og:type" content="website"><meta property="og:image" content="${origin}/public-assets/og.png"><meta name="twitter:card" content="summary_large_image"><link rel="stylesheet" href="/styles.css"><link rel="stylesheet" href="/launch.css"><link rel="stylesheet" href="/content.css"><link rel="stylesheet" href="/experience.css"><script src="/ui-copy/${lang}.js"></script><script src="/site-nav.js" defer></script><script src="/performance.js" defer></script>${process.env.GSC_VERIFICATION?`<meta name="google-site-verification" content="${esc(process.env.GSC_VERIFICATION)}">`:''}<script src="/analytics-config.js" defer></script>${clarity}`;}
-const table=l=>`<p>${l.note}</p><div class="table-scroll"><table><caption>${l.nav[2]} · ${countries.length}</caption><thead><tr><th>${l.country}</th><th>${l.odds}</th><th>1 / N</th></tr></thead><tbody>${[...countries].sort((a,b)=>b.births-a.births).map(c=>`<tr><td>${esc(countryName(c,Object.keys(langs).find(k=>langs[k]===l)))}</td><td>${(100*c.births/total).toFixed(4)}%</td><td>${Math.round(total/c.births)}</td></tr>`).join('')}</tbody></table></div>`;
-for(const [lang,l] of Object.entries(langs))for(const group of groups){const url='/'+l.prefix+group;routes.push(url);let title=l.nav[groups.indexOf(group)],body='';
-if(group===''){let h=fs.readFileSync('index.html','utf8');h=h.replace(/<head>[\s\S]*?<\/head>/,`<head>${head(l.title,l.intro,url,lang,group)}<script type="application/ld+json">${JSON.stringify({'@context':'https://schema.org','@type':'WebApplication',name:'1in8billion.live',url:origin+url,applicationCategory:'GameApplication',operatingSystem:'Web browser',offers:{'@type':'Offer',price:'0',priceCurrency:'USD'}})}</script></head>`).replace('<html lang="zh-Hant">',`<html lang="${lang}" data-game-lang="${l.internal}">`);const d=dict[l.internal];h=h.replace(/(<[\w]+[^>]*data-t="([^"]+)"[^>]*>)([^<]*)(<\/[^>]+>)/g,(all,start,key,txt,end)=>d[key]?start+esc(d[key])+end:all);h=h.replace(/(<span data-t-html="intro.title">)[\s\S]*?<\/span>\s*<span id="eduBadge"/,`$1${d['intro.title']}</span><span id="eduBadge"`).replace(/(<p class="hero-sub"[^>]*>)[\s\S]*?<\/p>/,`$1${d['intro.sub']}</p>`);h=h.replace('<main class="main">',links(l)+'<main class="main">').replace('</main>',`<section class="seo-content"><h2>${l.nav[1]}</h2><p>${l.warning}</p><p>${l.method}</p><ol>${l.steps.map(s=>`<li>${s}</li>`).join('')}</ol><h2>FAQ</h2>${l.faq.map((s,i)=>i%2===0?`<h3>${s}</h3>`:`<p>${s}</p>`).join('')}<a href="/${l.prefix}birth-odds/">${l.nav[2]}</a></section></main>`).replace('</body>',footer+'</body>');h=homeExperience(h,{lang,l,countries,esc}).replace(footer,footerFor(lang));write(l.prefix+'index.html',h);continue;}
-if(group==='how-it-works/')body=`<p>${l.intro}</p><ol>${l.steps.map(s=>`<li>${s}</li>`).join('')}</ol><h2>${l.nav[2]}</h2><p>${l.method}</p><p>${l.formula}</p><p>${l.note}</p><p>${l.warning}</p><p><a href="/sources/">Sources (English)</a></p>`;
-if(group==='birth-odds/')body=`<p>${l.formula}</p><label>${l.country} <select id="oddsCountry">${countries.map(c=>`<option value="${c.id}">${esc(countryName(c,lang))}</option>`).join('')}</select></label><output id="oddsResult" aria-live="polite"></output><script src="/odds.js" defer></script>${table(l)}`;
-if(group==='countries/')body=`<p>${l.method}</p><p>${l.note}</p><label>${l.country} <input id="countrySearch" type="search"></label><div class="country-grid">${countries.map(c=>`<a class="country-entry" href="/${l.prefix}?country=${c.id}">${esc(countryName(c,Object.keys(langs).find(k=>langs[k]===l)))}</a>`).join('')}</div><p id="searchEmpty" hidden>—</p><script src="/odds.js" defer></script>`;
-write(l.prefix+group+'index.html',`<!doctype html><html lang="${lang}"><head>${head(title,l.intro,url,lang,group)}</head><body><header class="topbar"><a class="brand" href="/${l.prefix}">1in8billion.live</a></header>${links(l)}<main class="article"><h1>${title}</h1>${body}</main>${footer}</body></html>`);
+import { clarityTag, clarityPrivacy } from "./clarity.mjs";
+import { applyPageSeo, sitemapXml } from "./seo-pages.mjs";
+import { release } from "../release-info.mjs";
+import { buildGrowthExperience } from "./build-growth-experience.mjs";
+import { buildExpansion } from "./build-expansion.mjs";
+import { buildPremium } from "./build-premium.mjs";
+import { buildRetention } from "./build-retention.mjs";
+import { buildGrowth } from "./build-growth.mjs";
+import { buildProvenance } from "./build-provenance.mjs";
+import {
+  prepareData,
+  navigation,
+  footerFor,
+  homeExperience,
+  enhanceOutput,
+  copy,
+  countryName,
+} from "./build-experience.mjs";
+import { buildGuides } from "./build-guides.mjs";
+import { buildP1 } from "./build-p1.mjs";
+import fs from "node:fs";
+import path from "node:path";
+if (
+  process.env.THEME_PREVIEW === "1" &&
+  (process.env.CI || process.env.CF_PAGES || process.env.CLOUDFLARE_ACCOUNT_ID)
+)
+  throw Error(
+    "Batch A themes are local-only until the full redesign release is accepted",
+  );
+const out = "dist",
+  origin = "https://1in8billion.live";
+const siteConfig = JSON.parse(fs.readFileSync("site.config.json", "utf8")),
+  clarity = clarityTag(siteConfig.clarityProjectId);
+fs.rmSync(out, { recursive: true, force: true });
+fs.mkdirSync(out, { recursive: true });
+const write = (p, s) => {
+  const dest = path.join(out, p);
+  fs.mkdirSync(path.dirname(dest), { recursive: true });
+  fs.writeFileSync(dest, s);
+};
+for (const file of [
+  "yandex_5a1d54042883dd6c.html",
+  "language-preference.js",
+  "language-preference-core.js",
+  "language-preference.css",
+  "character-library.js",
+  "rebirth-reveal.css",
+  "rebirth-reveal.js",
+  "rebirth-art.js",
+  "rebirth-copy.js",
+  "birth-distribution-core.js",
+  "birth-distribution.js",
+  "rebirth.css",
+  "growth-copy.js",
+  "growth-experience.js",
+  "theme-copy.js",
+  "modern-life-art.js",
+  "game-workspace-copy.js",
+  "arrival-copy.js",
+  "calendar-core.js",
+  "calendar-copy.js",
+  "calendar-ui.js",
+  "task-navigation.js",
+  "play-clarity.js",
+  "playback.js",
+  "playback-copy.js",
+  "playback.css",
+  "retention-bootstrap.js",
+  "retention.js",
+  "retention-copy.js",
+  "retention-core.js",
+  "life-scene.js",
+  "life-audio.js",
+  "life-keepsake.js",
+  "life-return.js",
+  "retention.css",
+  "ux-flow.js",
+  "ux-copy.js",
+  "app.js",
+  "replay-core.js",
+  "p1-game.js",
+  "replay-entry.js",
+  "compare.js",
+  "comparison-state-copy.js",
+  "comparison-core.js",
+  "performance.js",
+  "experience.js",
+  "storage.js",
+  "site-nav.js",
+  "content.css",
+  "experience.css",
+  "gedcom.js",
+  "styles.css",
+  "launch.css",
+  "sw.js",
+  "manifest.json",
+  "LICENSE",
+])
+  fs.copyFileSync(file, path.join(out, file));
+for (const dir of ["data", "public-assets", "vendor"])
+  fs.cpSync(dir, path.join(out, dir), { recursive: true });
+fs.writeFileSync(
+  out + "/app.js",
+  fs
+    .readFileSync("app.js", "utf8")
+    .replace(/^\s*\/\/[^\r\n]*$/gm, "")
+    .replace(/^[ \t]*\/\*[\s\S]*?\*\//gm, "")
+    .replace(/^[ \t]+/gm, ""),
+);
+for (const css of ["styles.css", "launch.css", "content.css", "experience.css"])
+  fs.writeFileSync(
+    out + "/" + css,
+    fs
+      .readFileSync(css, "utf8")
+      .replace(/\/\*[\s\S]*?\*\//g, "")
+      .split(/\r?\n/)
+      .map((line) => line.trim())
+      .filter(Boolean)
+      .join("\n")
+      .replace(/}\n/g, "}"),
+  );
+const countries = JSON.parse(fs.readFileSync("data/countries.json")),
+  dict = JSON.parse(fs.readFileSync("data/i18n.json"));
+prepareData(countries, dict, write);
+const total = countries.reduce((s, c) => s + c.births, 0),
+  pop = countries.reduce((s, c) => s + c.pop, 0);
+const langs = {
+  en: {
+    prefix: "",
+    internal: "en",
+    title: "Birth Lottery Simulator – Live Another Life Free",
+    nav: ["Play", "How it works", "Birth odds", "Countries"],
+    intro:
+      "Draw a birthplace. Explore the choices that shape a fictional life.",
+    method:
+      "The country draw uses annual birth weights in the bundled game dataset. Population mode instead uses population weights. Neither mode predicts your real life.",
+    steps: [
+      "Draw a country or choose one yourself.",
+      "Confirm the birth card and start at age zero.",
+      "Pause, change speed, choose an action or enable automatic decisions.",
+      "At the end, download your life card or share the website.",
+    ],
+    note: "Game dataset: inherited estimates; individual observation years are unverified. These are model weights, not an official current world probability.",
+    formula:
+      "Country annual birth weight ÷ sum of covered annual birth weights. Population and birth weights have different denominators.",
+    country: "Country",
+    odds: "Model birth share",
+    faq: [
+      "Is it free?",
+      "Yes. No account or payment is needed.",
+      "Is this a forecast?",
+      "No. The characters and events are fictional; national averages cannot predict an individual life.",
+      "Where is progress saved?",
+      "In this browser on this device. Clearing site storage removes it.",
+    ],
+    warning:
+      "Fictional simulation with themes of illness, death and inequality. Educational mode: add ?edu=1.",
+  },
+  ja: {
+    prefix: "ja/",
+    internal: "ja",
+    title: "出生ガチャ・人生シミュレーター｜無料で別の人生を体験",
+    nav: ["遊ぶ", "遊び方", "出生確率", "国一覧"],
+    intro: "生まれる国を抽選し、選択が変える架空の人生を体験。",
+    method:
+      "出生モードではゲーム内データの年間出生数を重みに使います。人口モードでは人口を使います。個人の未来を予測するものではありません。",
+    steps: [
+      "国を抽選するか、自分で選びます。",
+      "出生カードを確認し、0歳から始めます。",
+      "一時停止・倍速・手動選択・自動選択を使えます。",
+      "人生の最後に画像を保存し、サイトを共有できます。",
+    ],
+    note: "継承した推定ゲームデータです。各数値の観測年は未確認で、現在の世界の公式確率ではありません。",
+    formula:
+      "国の年間出生数の重み ÷ 対象国すべての年間出生数の重みの合計。人口の割合とは異なります。",
+    country: "国",
+    odds: "モデルの出生割合",
+    faq: [
+      "無料ですか？",
+      "登録や支払いなしで遊べます。",
+      "未来の予測ですか？",
+      "いいえ。登場人物や出来事は架空です。平均値は個人の運命を決めません。",
+      "進行状況はどこに保存されますか？",
+      "この端末のブラウザ内です。サイトデータを消すと失われます。",
+    ],
+    warning:
+      "病気、死、格差を扱う架空のシミュレーションです。教育モード：?edu=1",
+  },
+  ko: {
+    prefix: "ko/",
+    internal: "ko",
+    title: "출생 복권 · 인생 시뮬레이터 | 무료로 다른 삶 체험",
+    nav: ["플레이", "플레이 방법", "출생 확률", "국가 목록"],
+    intro: "태어날 나라를 뽑고 선택에 따라 달라지는 가상의 삶을 경험하세요.",
+    method:
+      "출생 모드는 게임 데이터의 연간 출생 수를 가중치로 사용합니다. 인구 모드는 인구 수를 사용합니다. 개인의 미래를 예측하지 않습니다.",
+    steps: [
+      "나라를 무작위로 뽑거나 직접 선택하세요.",
+      "출생 카드를 확인하고 0세부터 시작하세요.",
+      "일시 정지, 배속, 수동 선택, 자동 선택을 이용하세요.",
+      "마지막에 이미지로 저장하거나 사이트를 공유하세요.",
+    ],
+    note: "기존 프로젝트에서 이어받은 추정 게임 데이터입니다. 개별 관측 연도는 확인되지 않았으며 현재 세계의 공식 확률이 아닙니다.",
+    formula:
+      "국가의 연간 출생 가중치 ÷ 전체 대상 국가의 연간 출생 가중치 합계. 인구 비율과는 다릅니다.",
+    country: "국가",
+    odds: "모델 출생 비중",
+    faq: [
+      "무료인가요?",
+      "가입이나 결제 없이 플레이할 수 있습니다.",
+      "미래를 예측하나요?",
+      "아니요. 인물과 사건은 허구이며 평균값으로 개인의 삶을 예측할 수 없습니다.",
+      "진행 상황은 어디에 저장되나요?",
+      "이 기기의 브라우저에 저장됩니다. 사이트 데이터를 지우면 사라집니다.",
+    ],
+    warning:
+      "질병, 죽음, 불평등을 다루는 가상의 시뮬레이션입니다. 교육 모드: ?edu=1",
+  },
+  "zh-TW": {
+    prefix: "zh-tw/",
+    internal: "zh-Hant",
+    title: "出生機率與人生模擬器｜免費體驗另一種人生",
+    nav: ["遊玩", "玩法說明", "出生機率", "國家列表"],
+    intro: "抽一個出生國家，探索選擇如何改變虛構人生。",
+    method:
+      "出生模式依遊戲資料中的年度出生人數加權；人口模式依人口加權。兩者分母不同，都不能預測個人真實命運。",
+    steps: [
+      "隨機抽國家，或自行選擇出生地。",
+      "確認出生卡，從零歲開始。",
+      "可暫停、加速、手動選擇或開啟自動抉擇。",
+      "結局可下載圖片，或分享本站連結。",
+    ],
+    note: "沿用的遊戲估算資料，個別數值觀測年份尚未核實。這是模型權重，不是目前全球官方機率。",
+    formula:
+      "某國年度出生權重 ÷ 所有涵蓋國家的年度出生權重總和。這不是人口佔比。",
+    country: "國家",
+    odds: "模型出生佔比",
+    faq: [
+      "免費嗎？",
+      "免費、免註冊，不需要付款。",
+      "能預測未來嗎？",
+      "不能。角色與事件均為虛構，國家平均數無法預測個人一生。",
+      "進度存在哪裡？",
+      "此裝置的瀏覽器內；清除網站資料會刪除存檔。",
+    ],
+    warning: "內容涉及疾病、死亡與不平等，屬虛構模擬。教學模式：?edu=1",
+  },
+};
+const routes = [],
+  groups = ["", "how-it-works/", "birth-odds/", "countries/"];
+const esc = (s) =>
+  String(s)
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll('"', "&quot;");
+const links = (l) =>
+  navigation(
+    l,
+    Object.keys(langs).find((k) => langs[k] === l),
+  );
+const footer =
+  '<footer><a href="/about/">About</a> · <a href="/sources/">Sources</a> · <a href="/privacy/">Privacy</a> · <a href="/terms/">Terms</a> · <a href="/contact/">Contact</a> · <a href="https://www.indiedb.com/games/free-birth-lottery-simulator-live-a-life-from-birth-to-death" target="_blank" rel="noopener">1 in 8 Billion on IndieDB</a><p>Independent project. Not affiliated with 1in8b.life. <a href="/LICENSE">MIT license</a></p></footer>';
+function head(title, desc, url, lang, group) {
+  return `<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>${esc(title)} | 1in8billion.live</title><meta name="description" content="${esc(desc)}"><link rel="canonical" href="${origin}${url}">${
+    group !== undefined
+      ? Object.entries(langs)
+          .map(
+            ([k, v]) =>
+              `<link rel="alternate" hreflang="${k}" href="${origin}/${v.prefix}${group}">`,
+          )
+          .join("") +
+        `<link rel="alternate" hreflang="x-default" href="${origin}/${group}">`
+      : ""
+  }<link rel="icon" href="/public-assets/icon-96.png" type="image/png" sizes="96x96"><link rel="apple-touch-icon" sizes="180x180" href="/public-assets/apple-touch-icon.png"><link rel="manifest" href="/manifest.json"><meta name="theme-color" content="#061b32"><meta property="og:title" content="${esc(title)}"><meta property="og:description" content="${esc(desc)}"><meta property="og:url" content="${origin}${url}"><meta property="og:type" content="website"><meta property="og:image" content="${origin}/public-assets/og.png"><meta name="twitter:card" content="summary_large_image"><link rel="stylesheet" href="/styles.css"><link rel="stylesheet" href="/launch.css"><link rel="stylesheet" href="/content.css"><link rel="stylesheet" href="/experience.css"><script src="/ui-copy/${lang}.js"></script><script src="/site-nav.js" defer></script><script src="/performance.js" defer></script>${process.env.GSC_VERIFICATION ? `<meta name="google-site-verification" content="${esc(process.env.GSC_VERIFICATION)}">` : ""}<script src="/analytics-config.js" defer></script>${clarity}`;
 }
-const source=`<p>The game dataset contains ${countries.length} countries and territories. It was inherited from the MIT licensed born-somewhere repository. Per-record statistical years and primary-source provenance were not supplied; we do not present these weights as verified current statistics.</p><p>Birth mode divides each annual birth weight by the sum across covered countries (${total.toLocaleString('en-US')}). Population mode separately divides each population weight by the covered total (${pop.toLocaleString('en-US')} dataset units, apparently thousands). Coverage and rounding affect both results.</p><p>Life expectancy, education and income fields are inherited estimates. Events, careers, relationships and mortality are simplified fictional game mechanisms, not validated forecasts or medical advice. Missing values must not be interpreted as zero.</p><p>Primary resources for future calibration: <a href="https://population.un.org/wpp/">UN World Population Prospects</a>, <a href="https://data.worldbank.org/indicator/SP.DYN.CBRT.IN">World Bank crude birth rate</a>, <a href="https://data.worldbank.org/indicator/SP.DYN.LE00.IN">World Bank life expectancy</a>. Linking these resources does not mean the bundled data has been checked against them.</p><p>Reviewed 20 October 2026. Country pages describe inherited game-model shares only. Statistical years remain unverified; these profiles do not certify current national observations.</p>`;
-const pages={about:['About this independent life simulator','<p>1in8billion.live is a free browser game about the influence of a birthplace and choices. It is an independent project, not affiliated with 1in8b.life. Characters are fictional. No registration or payment is required.</p><p>The game engine is adapted from rollroyces/born-somewhere under MIT. Original license notices remain available. Our launch adds a separate identity, localized static guides and transparent dataset limitations.</p>'],sources:['Sources and model limitations',source],privacy:['Privacy and local storage','<p>Progress, preferences and past fictional lives are stored in your browser using localStorage. They are not synchronized between devices. Clearing site data deletes them. Do not enter personal details into fictional records or imported family trees.</p><p>Cloudflare hosts the site and processes network request information. Sharing uses your device share sheet or copies the website URL. Replay links contain a rules version, seed, country, era, language and education setting. They do not include names, private notes or saved family records. Downloaded cards stay on your device unless you choose to share them.</p><p>Google Analytics loads automatically when you visit this site. It uses analytics cookies to measure page views and game actions. We do not send names, story text or family records as analytics parameters. Google signals are disabled. You can manage cookies and tracking through your browser settings. There are no online accounts. Optional Stripe test checkout does not create a real charge.</p>'],terms:['Terms of use','<p>This is a fictional game, with themes of illness, mortality and inequality. National averages do not define a person. Educational mode is available with ?edu=1. This is not a prediction, medical advice or a demographic research tool.</p><p>Code adapted from born-somewhere retains its MIT license. That license does not grant rights to third-party trademarks, unrelated artwork or other websites. Do not submit personal or sensitive information. See Sources for data limitations.</p>'],contact:['Contact and feedback','<p>Report a reproducible problem or suggest an improvement through <a href="https://github.com/juren056/1in8billion.live/issues">the project GitHub Issues page</a>. Do not post personal information. No support email is currently published.</p>']};
-for(const [slug,[title,body]] of Object.entries(pages)){routes.push('/'+slug+'/');write(slug+'/index.html',`<!doctype html><html lang="en"><head>${head(title,title,'/'+slug+'/','en')}</head><body>${links(langs.en)}<main class="article"><h1>${title}</h1>${body}</main>${footer}</body></html>`);}
-buildP1({write,head,links,footer,routes,countries,langs,esc});
-buildGuides({write,head,links,footerFor,routes,langs,esc});
-buildGrowth({write,head,links,footerFor,routes,countries,langs,esc});
-buildRetention({write,langs});
-enhanceOutput({routes,write,countries});
-buildProvenance({write,countries});
-buildPremium({write,head,links,footerFor,routes,langs,esc});
-buildExpansion({routes});
-await import('./build-keepsake-studio.mjs').then(m=>m.buildKeepsakeStudio());
-await import('./build-calendar.mjs').then(m=>m.buildCalendar(routes));
+const table = (l) =>
+  `<p>${l.note}</p><div class="table-scroll"><table><caption>${l.nav[2]} · ${countries.length}</caption><thead><tr><th>${l.country}</th><th>${l.odds}</th><th>1 / N</th></tr></thead><tbody>${[
+    ...countries,
+  ]
+    .sort((a, b) => b.births - a.births)
+    .map(
+      (c) =>
+        `<tr><td>${esc(
+          countryName(
+            c,
+            Object.keys(langs).find((k) => langs[k] === l),
+          ),
+        )}</td><td>${((100 * c.births) / total).toFixed(4)}%</td><td>${Math.round(total / c.births)}</td></tr>`,
+    )
+    .join("")}</tbody></table></div>`;
+for (const [lang, l] of Object.entries(langs))
+  for (const group of groups) {
+    const url = "/" + l.prefix + group;
+    routes.push(url);
+    let title = l.nav[groups.indexOf(group)],
+      body = "";
+    if (group === "") {
+      let h = fs.readFileSync("index.html", "utf8");
+      h = h
+        .replace(
+          /<head>[\s\S]*?<\/head>/,
+          `<head>${head(l.title, l.intro, url, lang, group)}<script type="application/ld+json">${JSON.stringify({ "@context": "https://schema.org", "@type": "WebApplication", name: "1in8billion.live", url: origin + url, applicationCategory: "GameApplication", operatingSystem: "Web browser", offers: { "@type": "Offer", price: "0", priceCurrency: "USD" } })}</script></head>`,
+        )
+        .replace(
+          '<html lang="zh-Hant">',
+          `<html lang="${lang}" data-game-lang="${l.internal}">`,
+        );
+      const d = dict[l.internal];
+      h = h.replace(
+        /(<[\w]+[^>]*data-t="([^"]+)"[^>]*>)([^<]*)(<\/[^>]+>)/g,
+        (all, start, key, txt, end) =>
+          d[key] ? start + esc(d[key]) + end : all,
+      );
+      h = h
+        .replace(
+          /(<span data-t-html="intro.title">)[\s\S]*?<\/span>\s*<span id="eduBadge"/,
+          `$1${d["intro.title"]}</span><span id="eduBadge"`,
+        )
+        .replace(
+          /(<p class="hero-sub"[^>]*>)[\s\S]*?<\/p>/,
+          `$1${d["intro.sub"]}</p>`,
+        );
+      h = h
+        .replace('<main class="main">', links(l) + '<main class="main">')
+        .replace(
+          "</main>",
+          `<section class="seo-content"><h2>${l.nav[1]}</h2><p>${l.warning}</p><p>${l.method}</p><ol>${l.steps.map((s) => `<li>${s}</li>`).join("")}</ol><h2>FAQ</h2>${l.faq.map((s, i) => (i % 2 === 0 ? `<h3>${s}</h3>` : `<p>${s}</p>`)).join("")}<a href="/${l.prefix}birth-odds/">${l.nav[2]}</a></section></main>`,
+        )
+        .replace("</body>", footer + "</body>");
+      h = homeExperience(h, { lang, l, countries, esc }).replace(
+        footer,
+        footerFor(lang),
+      );
+      write(l.prefix + "index.html", h);
+      continue;
+    }
+    if (group === "how-it-works/")
+      body = `<p>${l.intro}</p><ol>${l.steps.map((s) => `<li>${s}</li>`).join("")}</ol><h2>${l.nav[2]}</h2><p>${l.method}</p><p>${l.formula}</p><p>${l.note}</p><p>${l.warning}</p><p><a href="/sources/">Sources (English)</a></p>`;
+    if (group === "birth-odds/")
+      body = `<p>${l.formula}</p><label>${l.country} <select id="oddsCountry">${countries.map((c) => `<option value="${c.id}">${esc(countryName(c, lang))}</option>`).join("")}</select></label><output id="oddsResult" aria-live="polite"></output><script src="/odds.js" defer></script>${table(l)}`;
+    if (group === "countries/")
+      body = `<p>${l.method}</p><p>${l.note}</p><label>${l.country} <input id="countrySearch" type="search"></label><div class="country-grid">${countries
+        .map(
+          (c) =>
+            `<a class="country-entry" href="/${l.prefix}?country=${c.id}">${esc(
+              countryName(
+                c,
+                Object.keys(langs).find((k) => langs[k] === l),
+              ),
+            )}</a>`,
+        )
+        .join(
+          "",
+        )}</div><p id="searchEmpty" hidden>—</p><script src="/odds.js" defer></script>`;
+    write(
+      l.prefix + group + "index.html",
+      `<!doctype html><html lang="${lang}"><head>${head(title, l.intro, url, lang, group)}</head><body><header class="topbar"><a class="brand" href="/${l.prefix}">1in8billion.live</a></header>${links(l)}<main class="article"><h1>${title}</h1>${body}</main>${footer}</body></html>`,
+    );
+  }
+const source = `<p>The game dataset contains ${countries.length} countries and territories. It was inherited from the MIT licensed born-somewhere repository. Per-record statistical years and primary-source provenance were not supplied; we do not present these weights as verified current statistics.</p><p>Birth mode divides each annual birth weight by the sum across covered countries (${total.toLocaleString("en-US")}). Population mode separately divides each population weight by the covered total (${pop.toLocaleString("en-US")} dataset units, apparently thousands). Coverage and rounding affect both results.</p><p>Life expectancy, education and income fields are inherited estimates. Events, careers, relationships and mortality are simplified fictional game mechanisms, not validated forecasts or medical advice. Missing values must not be interpreted as zero.</p><p>Primary resources for future calibration: <a href="https://population.un.org/wpp/">UN World Population Prospects</a>, <a href="https://data.worldbank.org/indicator/SP.DYN.CBRT.IN">World Bank crude birth rate</a>, <a href="https://data.worldbank.org/indicator/SP.DYN.LE00.IN">World Bank life expectancy</a>. Linking these resources does not mean the bundled data has been checked against them.</p><p>Reviewed 20 October 2026. Country pages describe inherited game-model shares only. Statistical years remain unverified; these profiles do not certify current national observations.</p>`;
+const pages = {
+  about: [
+    "About this independent life simulator",
+    "<p>1in8billion.live is a free browser game about the influence of a birthplace and choices. It is an independent project, not affiliated with 1in8b.life. Characters are fictional. No registration or payment is required.</p><p>The game engine is adapted from rollroyces/born-somewhere under MIT. Original license notices remain available. Our launch adds a separate identity, localized static guides and transparent dataset limitations.</p>",
+  ],
+  sources: ["Sources and model limitations", source],
+  privacy: [
+    "Privacy and local storage",
+    "<p>Progress, preferences and past fictional lives are stored in your browser using localStorage. They are not synchronized between devices. Clearing site data deletes them. Do not enter personal details into fictional records or imported family trees.</p><p>Cloudflare hosts the site and processes network request information. Sharing uses your device share sheet or copies the website URL. Replay links contain a rules version, seed, country, era, language and education setting. They do not include names, private notes or saved family records. Downloaded cards stay on your device unless you choose to share them.</p><p>Google Analytics loads automatically when you visit this site. It uses analytics cookies to measure page views and game actions. We do not send names, story text or family records as analytics parameters. Google signals are disabled. You can manage cookies and tracking through your browser settings. There are no online accounts. Optional Stripe test checkout does not create a real charge.</p>",
+  ],
+  terms: [
+    "Terms of use",
+    "<p>This is a fictional game, with themes of illness, mortality and inequality. National averages do not define a person. Educational mode is available with ?edu=1. This is not a prediction, medical advice or a demographic research tool.</p><p>Code adapted from born-somewhere retains its MIT license. That license does not grant rights to third-party trademarks, unrelated artwork or other websites. Do not submit personal or sensitive information. See Sources for data limitations.</p>",
+  ],
+  contact: [
+    "Contact and feedback",
+    '<p>Report a reproducible problem or suggest an improvement through <a href="https://github.com/juren056/1in8billion.live/issues">the project GitHub Issues page</a>. Do not post personal information. No support email is currently published.</p>',
+  ],
+};
+for (const [slug, [title, body]] of Object.entries(pages)) {
+  routes.push("/" + slug + "/");
+  write(
+    slug + "/index.html",
+    `<!doctype html><html lang="en"><head>${head(title, title, "/" + slug + "/", "en")}</head><body>${links(langs.en)}<main class="article"><h1>${title}</h1>${body}</main>${footer}</body></html>`,
+  );
+}
+buildP1({ write, head, links, footer, routes, countries, langs, esc });
+buildGuides({ write, head, links, footerFor, routes, langs, esc });
+buildGrowth({ write, head, links, footerFor, routes, countries, langs, esc });
+buildRetention({ write, langs });
+enhanceOutput({ routes, write, countries });
+buildProvenance({ write, countries });
+buildPremium({ write, head, links, footerFor, routes, langs, esc });
+buildExpansion({ routes });
+await import("./build-keepsake-studio.mjs").then((m) =>
+  m.buildKeepsakeStudio(),
+);
+await import("./build-calendar.mjs").then((m) => m.buildCalendar(routes));
 buildGrowthExperience(routes);
 applyPageSeo(routes);
-if(siteConfig.clarityProjectId)clarityPrivacy(routes);
-write('404.html',`<!doctype html><html lang="en"><head><title>Page not found</title><meta name="robots" content="noindex"><link rel="stylesheet" href="/launch.css"></head><body><main class="article"><h1>Page not found</h1><a href="/">Return to the simulator</a></main></body></html>`);
-write('robots.txt',`User-agent: *\nAllow: /\nSitemap: ${origin}/sitemap.xml\n`);
-write('sitemap.xml',sitemapXml(routes,origin));
-const legacyRedirects=JSON.parse(fs.readFileSync('content/legacy-redirects.json','utf8'));
-for(const target of Object.values(legacyRedirects))if(!routes.includes(target))throw Error('Redirect target missing '+target);
-write('_redirects',Object.entries(legacyRedirects).map(([from,to])=>`${from} ${to} 301`).join('\n')+'\n');
-write('_headers','/*\n  X-Content-Type-Options: nosniff\n  Referrer-Policy: strict-origin-when-cross-origin\n  Permissions-Policy: camera=(), microphone=(), geolocation=()\n/sw.js\n  Cache-Control: no-cache\n/favicon.ico\n  Cache-Control: no-cache\n/public-assets/icon-*.png\n  Cache-Control: no-cache\n/public-assets/brand.svg\n  Cache-Control: no-cache\n/public-assets/apple-touch-icon.png\n  Cache-Control: no-cache\n/manifest.json\n  Cache-Control: no-cache\n');
-write('llms.txt',`# 1in8billion.live\nIndependent fictional life simulator.\n- [Sources](${origin}/sources/)\n- [How it works](${origin}/how-it-works/)\n- [Birth odds](${origin}/birth-odds/)\n`);
-write('odds.js',`fetch('/data/countries.json').then(r=>r.json()).then(data=>{const select=document.querySelector('#oddsCountry'),output=document.querySelector('#oddsResult');const total=data.reduce((s,c)=>s+c.births,0);if(select){const requested=new URLSearchParams(location.search).get('country');if(data.some(c=>c.id===requested))select.value=requested;const update=()=>{const c=data.find(c=>c.id===select.value);output.textContent=' '+(100*c.births/total).toFixed(4)+'% · 1 / '+Math.round(total/c.births);};select.addEventListener('change',update);update();}});document.querySelector('#countrySearch')?.addEventListener('input',e=>{let n=0;document.querySelectorAll('.country-entry').forEach(a=>{a.hidden=!a.textContent.toLowerCase().includes(e.target.value.toLowerCase());if(!a.hidden)n++;});document.querySelector('#searchEmpty').hidden=n>0;});`);
-const ga=process.env.GA4_MEASUREMENT_ID||siteConfig.ga4MeasurementId||'';if(ga&&!/^G-[A-Z0-9]+$/.test(ga))throw Error('Invalid GA4 measurement ID');
-write('analytics-config.js',`window.SITE_RELEASE=${JSON.stringify(release.version)};window.GA4_ID=${JSON.stringify(ga)};\n`+fs.readFileSync('analytics-url.js','utf8')+'\n'+fs.readFileSync('scripts/analytics.js','utf8'));
-fs.copyFileSync('public-assets/favicon.ico',out+'/favicon.ico');
-write('routes.json',JSON.stringify(routes));console.log('Built '+routes.length+' indexable pages');
+if (siteConfig.clarityProjectId) clarityPrivacy(routes);
+write(
+  "404.html",
+  `<!doctype html><html lang="en"><head><title>Page not found</title><meta name="robots" content="noindex"><link rel="stylesheet" href="/launch.css"></head><body><main class="article"><h1>Page not found</h1><a href="/">Return to the simulator</a></main></body></html>`,
+);
+write(
+  "robots.txt",
+  `User-agent: *\nAllow: /\nSitemap: ${origin}/sitemap.xml\n`,
+);
+write("sitemap.xml", sitemapXml(routes, origin));
+const legacyRedirects = JSON.parse(
+  fs.readFileSync("content/legacy-redirects.json", "utf8"),
+);
+for (const target of Object.values(legacyRedirects))
+  if (!routes.includes(target))
+    throw Error("Redirect target missing " + target);
+write(
+  "_redirects",
+  Object.entries(legacyRedirects)
+    .map(([from, to]) => `${from} ${to} 301`)
+    .join("\n") + "\n",
+);
+write(
+  "_headers",
+  "/*\n  X-Content-Type-Options: nosniff\n  Referrer-Policy: strict-origin-when-cross-origin\n  Permissions-Policy: camera=(), microphone=(), geolocation=()\n/sw.js\n  Cache-Control: no-cache\n/favicon.ico\n  Cache-Control: no-cache\n/public-assets/icon-*.png\n  Cache-Control: no-cache\n/public-assets/brand.svg\n  Cache-Control: no-cache\n/public-assets/apple-touch-icon.png\n  Cache-Control: no-cache\n/manifest.json\n  Cache-Control: no-cache\n",
+);
+write(
+  "llms.txt",
+  `# 1in8billion.live\nIndependent fictional life simulator.\n- [Sources](${origin}/sources/)\n- [How it works](${origin}/how-it-works/)\n- [Birth odds](${origin}/birth-odds/)\n`,
+);
+write(
+  "odds.js",
+  `fetch('/data/countries.json').then(r=>r.json()).then(data=>{const select=document.querySelector('#oddsCountry'),output=document.querySelector('#oddsResult');const total=data.reduce((s,c)=>s+c.births,0);if(select){const requested=new URLSearchParams(location.search).get('country');if(data.some(c=>c.id===requested))select.value=requested;const update=()=>{const c=data.find(c=>c.id===select.value);output.textContent=' '+(100*c.births/total).toFixed(4)+'% · 1 / '+Math.round(total/c.births);};select.addEventListener('change',update);update();}});document.querySelector('#countrySearch')?.addEventListener('input',e=>{let n=0;document.querySelectorAll('.country-entry').forEach(a=>{a.hidden=!a.textContent.toLowerCase().includes(e.target.value.toLowerCase());if(!a.hidden)n++;});document.querySelector('#searchEmpty').hidden=n>0;});`,
+);
+const ga = process.env.GA4_MEASUREMENT_ID || siteConfig.ga4MeasurementId || "";
+if (ga && !/^G-[A-Z0-9]+$/.test(ga)) throw Error("Invalid GA4 measurement ID");
+write(
+  "analytics-config.js",
+  `window.SITE_RELEASE=${JSON.stringify(release.version)};window.GA4_ID=${JSON.stringify(ga)};\n` +
+    fs.readFileSync("analytics-url.js", "utf8") +
+    "\n" +
+    fs.readFileSync("scripts/analytics.js", "utf8"),
+);
+fs.copyFileSync("public-assets/favicon.ico", out + "/favicon.ico");
+write("routes.json", JSON.stringify(routes));
+console.log("Built " + routes.length + " indexable pages");
 
-for(const file of ['app.js','site-nav.js','performance.js','analytics-config.js','compare.js'])fs.writeFileSync(out+'/'+file,fs.readFileSync(out+'/'+file,'utf8').replace(/^\s*\/\/[^\r\n]*$/gm,''));
-fs.writeFileSync(out+'/compare.js',fs.readFileSync(out+'/compare.js','utf8').split(/\r?\n/).map(line=>line.trim()).join(''));
-await import('./release.mjs');
-await import('./build-theme-preview.mjs').then(m=>m.buildThemePreview(routes,{preview:process.env.THEME_PREVIEW==='1'}));
+for (const file of [
+  "app.js",
+  "site-nav.js",
+  "performance.js",
+  "analytics-config.js",
+  "compare.js",
+])
+  fs.writeFileSync(
+    out + "/" + file,
+    fs
+      .readFileSync(out + "/" + file, "utf8")
+      .replace(/^\s*\/\/[^\r\n]*$/gm, ""),
+  );
+fs.writeFileSync(
+  out + "/compare.js",
+  fs
+    .readFileSync(out + "/compare.js", "utf8")
+    .split(/\r?\n/)
+    .map((line) => line.trim())
+    .join(""),
+);
+await import("./release.mjs");
+await import("./build-theme-preview.mjs").then((m) =>
+  m.buildThemePreview(routes, { preview: process.env.THEME_PREVIEW === "1" }),
+);
 
-for(const prefix of ['','zh-cn/','zh-tw/','ja/','ko/','es/','pt-br/','fr/','de/']){const file='dist/'+prefix+'index.html';let html=fs.readFileSync(file,'utf8');html=html.replace('</head>','<link rel="stylesheet" href="/rebirth.css"><link rel="stylesheet" href="/rebirth-reveal.css" media="print" onload="this.media=\'all\'"><noscript><link rel="stylesheet" href="/rebirth-reveal.css"></noscript></head>');fs.writeFileSync(file,html);}
+for (const prefix of [
+  "",
+  "zh-cn/",
+  "zh-tw/",
+  "ja/",
+  "ko/",
+  "es/",
+  "pt-br/",
+  "fr/",
+  "de/",
+]) {
+  const file = "dist/" + prefix + "index.html";
+  let html = fs.readFileSync(file, "utf8");
+  html = html.replace(
+    "</head>",
+    '<link rel="stylesheet" href="/rebirth.css"><link rel="stylesheet" href="/rebirth-reveal.css" media="print" onload="this.media=\'all\'"><noscript><link rel="stylesheet" href="/rebirth-reveal.css"></noscript></head>',
+  );
+  fs.writeFileSync(file, html);
+}
 
-const galleryHint={en:'12 complete fictional lives · Browse the gallery',ja:'12の完了した架空の人生・横にスクロールして見る',ko:'완료된 가상 삶 12개 · 옆으로 넘겨 보세요','zh-TW':'12 段完整虛構人生 · 手機可左右滑動瀏覽','zh-CN':'12 段完整虚构人生 · 手机可左右滑动浏览',es:'12 vidas ficticias completas · Desliza para explorar','pt-BR':'12 vidas fictícias completas · Deslize para explorar',fr:'12 vies fictives complètes · Faites défiler la galerie',de:'12 vollständige fiktive Leben · Galerie durchblättern'};
-for(const route of routes){const file='dist'+route+'index.html';let h=fs.readFileSync(file,'utf8');if(!h.includes('id="view-intro"'))continue;const lang=h.match(/<html lang="([^"]+)"/)[1];h=h.replace('<div class="sample-grid"',`<p class="sample-gallery-hint">${galleryHint[lang]||galleryHint.en}</p><div class="sample-grid"`);fs.writeFileSync(file,h);}
+const galleryHint = {
+  en: "12 complete fictional lives · Browse the gallery",
+  ja: "12の完了した架空の人生・横にスクロールして見る",
+  ko: "완료된 가상 삶 12개 · 옆으로 넘겨 보세요",
+  "zh-TW": "12 段完整虛構人生 · 手機可左右滑動瀏覽",
+  "zh-CN": "12 段完整虚构人生 · 手机可左右滑动浏览",
+  es: "12 vidas ficticias completas · Desliza para explorar",
+  "pt-BR": "12 vidas fictícias completas · Deslize para explorar",
+  fr: "12 vies fictives complètes · Faites défiler la galerie",
+  de: "12 vollständige fiktive Leben · Galerie durchblättern",
+};
+for (const route of routes) {
+  const file = "dist" + route + "index.html";
+  let h = fs.readFileSync(file, "utf8");
+  if (!h.includes('id="view-intro"')) continue;
+  const lang = h.match(/<html lang="([^"]+)"/)[1];
+  h = h.replace(
+    '<div class="sample-grid"',
+    `<p class="sample-gallery-hint">${galleryHint[lang] || galleryHint.en}</p><div class="sample-grid"`,
+  );
+  fs.writeFileSync(file, h);
+}
 
-await import('./build-story.mjs');
+await import("./build-story.mjs");

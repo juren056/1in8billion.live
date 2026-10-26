@@ -7,5 +7,6 @@
   "/es/": "Un lugar de nacimiento. Una vida completamente nueva.<span id=\"eduBadge\" class=\"edu-badge\" hidden data-t=\"edu.badge\"></span>",
   "/pt-br/": "Um local de nascimento. Uma vida totalmente nova.<span id=\"eduBadge\" class=\"edu-badge\" hidden data-t=\"edu.badge\"></span>",
   "/fr/": "Un lieu de naissance. Une toute nouvelle vie.<span id=\"eduBadge\" class=\"edu-badge\" hidden data-t=\"edu.badge\"></span>",
-  "/de/": "Ein Geburtsort. Ein ganz neues Leben.<span id=\"eduBadge\" class=\"edu-badge\" hidden data-t=\"edu.badge\"></span>"
+  "/de/": "Ein Geburtsort. Ein ganz neues Leben.<span id=\"eduBadge\" class=\"edu-badge\" hidden data-t=\"edu.badge\"></span>",
+  "/ru/": "Одно место рождения. Совершенно новая жизнь.<span id=\"eduBadge\" class=\"edu-badge\" hidden data-t=\"edu.badge\"></span>"
 }

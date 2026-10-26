@@ -1,2 +1,1 @@
-import('/experience-upgrade.js');
-import('/task-navigation.js').then(({preserveTaskLinks})=>{preserveTaskLinks();document.addEventListener('site:task-change',()=>preserveTaskLinks());});
+import('/experience-upgrade.js');import('/task-navigation.js').then(({preserveTaskLinks})=>{preserveTaskLinks();document.addEventListener('site:task-change',preserveTaskLinks);return import('/language-preference.js')}).then(({installLanguagePreference})=>installLanguagePreference()).catch(()=>{});
