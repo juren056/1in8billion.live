@@ -60,7 +60,10 @@ test("every localized homepage uses real-photo hero, memory, reflection and life
     assert.equal((html.match(/class="sample-scene" src="\/public-assets\/photography\//g) || []).length, 12, prefix || "en");
     assert.equal((html.match(/class="theme-explore"[\s\S]*?<\/section>/)?.[0].match(/\/public-assets\/photography\//g) || []).length, 6, prefix || "en");
     assert.equal((html.match(/data-reflection-slide/g) || []).length, 8, prefix || "en");
+    const reflection = html.match(/<figure class="reflection-carousel"[\s\S]*?<\/figure>/)?.[0] || "";
+    assert(!reflection.includes("<figcaption>"));
     assert.equal((html.match(/data-theme-memory-card/g) || []).length, 3, prefix || "en");
+    assert(!html.includes('class="theme-memory-disclosure"'));
     assert(html.includes("data-theme-scenery"));
     assert(html.includes("window.HomePhotoManifest"));
     assert(!html.includes("/public-assets/keepsake/thumbnails/"));
