@@ -1,3 +1,5 @@
+import { allHomeExperiencePhotography } from "./home-reflection-photography.mjs";
+
 export const countryPhotography = Object.freeze({
   JPN: { file: "japan-kiyomizu.avif", place: "Kiyomizu-dera, Kyoto", photographer: "Nursel Kaya", source: "https://www.pexels.com/photo/kiyomizu-dera-temple-in-kyoto-japan-28166557/" },
   USA: { file: "usa-capitol.avif", place: "United States Capitol, Washington, D.C.", photographer: "Trev W. Adams", source: "https://www.pexels.com/photo/the-united-states-capitol-in-washington-dc-12504958/" },
@@ -61,6 +63,6 @@ export function lifePhotoFigure(lang = "en", base = "/") {
 }
 
 export function photoCreditsSection() {
-  const rows = [...Object.values(countryPhotography), ...Object.values(sampleCountryPhotography), ...lifePhotography].map((photo) => `<li><a href="${photo.source}" rel="external">${esc(photo.place || photo.id)}</a> — ${esc(photo.photographer)}</li>`).join("");
+  const rows = [...Object.values(countryPhotography), ...Object.values(sampleCountryPhotography), ...lifePhotography, ...allHomeExperiencePhotography].map((photo) => `<li><a href="${photo.source}" rel="external">${esc(photo.place || photo.id)}</a> — ${esc(photo.photographer)}</li>`).join("");
   return `<section id="photography"><h2>Homepage photography</h2><p>These homepage images are real photographs sourced from Pexels and stored locally for reliable delivery. They are illustrative and do not depict players or simulated characters. Use follows the <a href="https://www.pexels.com/license/" rel="external">Pexels License</a>.</p><ul>${rows}</ul></section>`;
 }

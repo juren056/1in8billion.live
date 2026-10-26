@@ -9,6 +9,7 @@ import { toolCopy } from "../tool-workspace-copy.js";
 import { migrateReadingPages } from "./build-reading-system.mjs";
 import { displayCountry } from "../country-labels.js";
 import { countryPhotoPath, countryPhotography, lifePhotoFigure, photoCreditsSection } from "../content/home-photography.mjs";
+import { appearancePhotoPath, heroSceneMarkup, homePhotographyManifest, reflectionCarousel, themeMemoryStack } from "../content/home-reflection-photography.mjs";
 const esc = (s) =>
   String(s)
     .replaceAll("&", "&amp;")
@@ -39,8 +40,15 @@ export function buildThemePreview(routes, { preview = false } = {}) {
     "home-photography.js",
     "theme-menu.js",
     "theme-system.css",
-  ])
-    fs.copyFileSync(file, "dist/" + file);
+  ]) {
+    if (file === "theme-system.css") {
+      const source = fs.readFileSync(file, "utf8");
+      const marker = "/* Real-photography home experience */";
+      const split = source.indexOf(marker);
+      fs.writeFileSync("dist/theme-system.css", split < 0 ? source : source.slice(0, split));
+      if (split >= 0) fs.writeFileSync("dist/home-photography.css", source.slice(split));
+    } else fs.copyFileSync(file, "dist/" + file);
+  }
   const init = fs.readFileSync("theme-init.js", "utf8");
   const themeCss = fs.readFileSync("theme-system.css", "utf8");
   fs.writeFileSync(
@@ -81,7 +89,7 @@ export function buildThemePreview(routes, { preview = false } = {}) {
           (_, start, end) => start + esc(labels[2]) + end,
         );
     }
-    const menu = `<details id="appearanceMenu" class="appearance-menu" data-initially-open="true"><summary>${icon}<span>${c[0]}</span></summary><div class="appearance-options">${themeIds.map((id, i) => `<button type="button" data-appearance-choice="${id}" aria-pressed="${id === "night"}"><img src="/public-assets/themes/${id}-thumb.webp" alt="" width="160" height="90" loading="lazy"><span>${c[i + 1]}</span></button>`).join("")}</div></details><span id="appearanceStatus" class="theme-sr" role="status"></span>`;
+    const menu = `<details id="appearanceMenu" class="appearance-menu" data-initially-open="true"><summary>${icon}<span>${c[0]}</span></summary><div class="appearance-options">${themeIds.map((id, i) => `<button type="button" data-appearance-choice="${id}" aria-pressed="${id === "night"}"><img src="${appearancePhotoPath(id)}" alt="" width="160" height="90" loading="lazy"><span>${c[i + 1]}</span></button>`).join("")}</div></details><span id="appearanceStatus" class="theme-sr" role="status"></span>`;
     h = h
       .replace(/(<html[^>]*)(>)/, '$1 data-design-system="1"$2')
       .replace(
@@ -200,7 +208,7 @@ export function buildThemePreview(routes, { preview = false } = {}) {
       h = h.replace(
         start,
         (_, left) =>
-          `<div class="theme-hero"><div class="theme-scenery"><div></div><script>{const image=new Image();image.width=1536;image.height=1024;image.alt=${JSON.stringify(c[15])};image.fetchPriority="high";image.dataset.themeArt="";image.src='/public-assets/themes/'+document.documentElement.dataset.appearance+(matchMedia('(max-width:760px)').matches?'-mobile':'')+'.webp';document.currentScript.previousElementSibling.append(image);}</script><noscript><img src="/public-assets/themes/night-mobile.webp" alt="${c[15]}" width="768" height="512"></noscript><button class="art-retry" hidden>${c[16]}</button></div>${left}<div class="theme-book" aria-hidden="true"><img src="/public-assets/keepsake/thumbnails/journal-scrapbook.png" width="270" height="480" alt=""><img src="/public-assets/keepsake/thumbnails/clean-modern.png" width="270" height="480" alt=""><img src="/public-assets/keepsake/thumbnails/editorial-magazine.png" width="270" height="480" alt=""></div></div>`,
+          `<div class="theme-hero">${heroSceneMarkup(lang)}${left}${themeMemoryStack(lang)}</div>`,
       );
       h = h.replace(
         '<p class="play-policy">',
@@ -217,9 +225,9 @@ export function buildThemePreview(routes, { preview = false } = {}) {
       );
       // Sample cards already carry their own record-derived scene artwork.
 
-      const showcase = `<section class="theme-keepsake"><div><h2>${c[8]}</h2><p>${v.premiumDetail}</p><p>US$2.99 · ${v.once}</p><a class="primary-link" href="${base}keepsake/">${c[10]} <span aria-hidden="true">→</span></a></div><div class="theme-specimens">${["cinematic-poster", "journal-scrapbook", "minimal-data"].map((id) => `<img src="/public-assets/keepsake/thumbnails/${id}.png" width="270" height="480" alt="${id}" loading="lazy">`).join("")}</div></section>`;
+      const showcase = `<section class="theme-keepsake"><div class="theme-keepsake-copy"><h2>${c[8]}</h2><p>${v.premiumDetail}</p><p>US$2.99 · ${v.once}</p><a class="primary-link" href="${base}keepsake/">${c[10]} <span aria-hidden="true">→</span></a></div>${reflectionCarousel(lang)}</section>`;
       h = h.replace(
-        /(<div class="theme-hero">[\s\S]*?<div class="theme-book"[\s\S]*?<\/div><\/div>)/,
+        /(<div class="theme-hero">[\s\S]*?<div class="theme-book(?: [^"]*)?"[\s\S]*?<\/div><\/div>)/,
         "$1" + showcase,
       );
       const explore = `<section class="theme-explore"><h2>${c[5]}</h2><div>${[
@@ -240,11 +248,15 @@ export function buildThemePreview(routes, { preview = false } = {}) {
         "</body>",
         `<div id="startDock" class="start-dock" hidden><a href="#view-intro">1in8billion.live</a><button type="button">${c[11]}</button></div></body>`,
       );
+      h = h.replace(
+        "</body>",
+        `<script>window.HomePhotoManifest=${JSON.stringify(homePhotographyManifest)};</script></body>`,
+      );
     }
     if (home || route.includes("/keepsake/"))
       h = h.replace(
         "</head>",
-        `<link rel="stylesheet" href="/premium-keepsake/conversion.css"${home ? ' media="print" onload="this.media=\'all\'"' : ""}></head>`,
+        `${home ? '<link rel="stylesheet" href="/home-photography.css" media="print" onload="this.media=\'all\'"><noscript><link rel="stylesheet" href="/home-photography.css"></noscript>' : ""}<link rel="stylesheet" href="/premium-keepsake/conversion.css"${home ? ' media="print" onload="this.media=\'all\'"' : ""}></head>`,
       );
     fs.writeFileSync(path, h);
     const group = home

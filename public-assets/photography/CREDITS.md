@@ -28,3 +28,37 @@ All files in this folder are locally served real photographs sourced from Pexels
 | `life-travel.avif` | Travel | Defrino Maasy | [Pexels](https://www.pexels.com/photo/traveler-with-luggage-at-train-station-platform-28823803/) |
 | `life-family.avif` | Family | Gustavo Fring | [Pexels](https://www.pexels.com/photo/grandparents-preparing-food-together-with-their-grandchild-8769738/) |
 | `life-later-years.avif` | Later years | Filipe Silva da Rosa | [Pexels](https://www.pexels.com/photo/elderly-couple-strolling-in-park-during-spring-30144254/) |
+| `reflection-child-bike.avif` | Childhood dream | Pexels LATAM | [Pexels](https://www.pexels.com/photo/boy-riding-bicycle-on-dirt-road-17979332/) |
+| `reflection-departure-station.avif` | Departure | Dario Rawert | [Pexels](https://www.pexels.com/photo/back-view-of-woman-standing-on-railway-station-with-suitcase-at-sunset-26443229/) |
+| `reflection-crossroads.avif` | Crossroads | Alvaro Camacho | [Pexels](https://www.pexels.com/photo/people-near-crosswalk-in-street-18051283/) |
+| `reflection-window-silhouette.avif` | Window reflection | Mr. krvsn | [Pexels](https://www.pexels.com/photo/silhouette-of-a-person-beside-a-window-15509019/) |
+| `reflection-unspoken.avif` | An unspoken moment | RDNE Stock project | [Pexels](https://www.pexels.com/photo/bench-nature-man-couple-6669851/) |
+| `reflection-family-shore.avif` | Family at the shore | MATEO BASTIDAS | [Pexels](https://www.pexels.com/photo/back-view-shot-of-a-family-holding-each-others-hand-while-walking-on-the-sandy-shore-11889769/) |
+| `reflection-self-mirror.avif` | Self reflection | Gantas Vaičiulėnas | [Pexels](https://www.pexels.com/photo/woman-looking-at-reflection-in-mirror-4042109/) |
+| `reflection-memory-photos.avif` | Looking through memories | SHVETS production | [Pexels](https://www.pexels.com/photo/an-elderly-couple-looking-at-photographs-together-7545249/) |
+| `memory-blue-bike.avif` | Learning to ride | Yan Krukau | [Pexels](https://www.pexels.com/photo/a-father-pushing-his-child-riding-a-bike-5792903/) |
+| `memory-blue-boardwalk.avif` | Family walk | PNW Production | [Pexels](https://www.pexels.com/photo/a-family-walking-together-on-a-boardwalk-8575916/) |
+| `memory-blue-beach.avif` | Father and children | David Brown | [Pexels](https://www.pexels.com/photo/back-view-of-father-and-children-walking-on-the-beach-15162143/) |
+| `memory-journal-train.avif` | Train journey | Genine Alyssa Pedreno-Andrada | [Pexels](https://www.pexels.com/photo/unrecognizable-woman-riding-train-and-looking-out-window-6466385/) |
+| `memory-journal-cafe.avif` | Friends at a cafe | Ketut Subiyanto | [Pexels](https://www.pexels.com/photo/photo-of-happy-women-at-the-cafe-5047032/) |
+| `memory-journal-photo.avif` | Remembering a loved one | RDNE Stock project | [Pexels](https://www.pexels.com/photo/lonely-elderly-woman-looking-at-beloved-s-photo-8865413/) |
+| `memory-editorial-work.avif` | Working life | Usman AbdulrasheedGambo | [Pexels](https://www.pexels.com/photo/focused-young-man-working-on-computer-in-office-33393704/) |
+| `memory-editorial-window.avif` | Apartment window | Hakeem James Hausley | [Pexels](https://www.pexels.com/photo/person-in-simple-apartment-building-window-3340299/) |
+| `memory-editorial-building.avif` | City dwelling | Serinus | [Pexels](https://www.pexels.com/photo/person-on-a-window-of-an-apartment-building-4010286/) |
+| `memory-night-station.avif` | Railway station at night | Bayram Yalçın | [Pexels](https://www.pexels.com/photo/railway-station-at-night-15978265/) |
+| `memory-night-room.avif` | Quiet room at night | Shivansh Sharma | [Pexels](https://www.pexels.com/photo/a-man-sitting-in-a-room-with-a-window-28113351/) |
+| `memory-night-umbrella.avif` | Rainy night street | Jonathan Borba | [Pexels](https://www.pexels.com/photo/person-with-umbrella-on-rainy-night-street-35539030/) |
+| `hero-blue-lake.avif` | Mountain lake dawn | Anton Atanasov | [Pexels](https://www.pexels.com/photo/dawn-at-lake-in-mountain-landscape-6805484/) |
+| `hero-blue-coast.avif` | Coastal path | Ahmad Shakir Shamsulbadri | [Pexels](https://www.pexels.com/photo/coastal-landscape-with-ocean-waves-and-beachfront-path-30642919/) |
+| `hero-blue-morning.avif` | Morning bedroom | Stefan de Vries | [Pexels](https://www.pexels.com/photo/bed-at-morning-15871634/) |
+| `hero-journal-alley.avif` | Old town alley | Arlind D | [Pexels](https://www.pexels.com/photo/charming-old-town-alleyway-at-golden-hour-39771209/) |
+| `hero-journal-road.avif` | Road at sunset | Ceren Büşra SEVTEKİN | [Pexels](https://www.pexels.com/photo/scenic-road-trip-at-sunset-through-car-windshield-37832996/) |
+| `hero-journal-train.avif` | View from a train | Jose Ángel Ruiz Olivares | [Pexels](https://www.pexels.com/photo/window-in-train-16919849/) |
+| `hero-editorial-architecture.avif` | White and blue architecture | Jan van der Wolf | [Pexels](https://www.pexels.com/photo/a-white-and-blue-structure-under-blue-sky-14440898/) |
+| `hero-editorial-gallery.avif` | Modern gallery interior | Sherif Emad | [Pexels](https://www.pexels.com/photo/modern-interior-with-geometric-windows-and-artwork-29095460/) |
+| `hero-editorial-apartment.avif` | Minimal apartment | Max Vakhtbovych | [Pexels](https://www.pexels.com/photo/empty-minimalist-apartment-7587375/) |
+| `hero-night-rain.avif` | Rainy city lights | Korie Jenkins | [Pexels](https://www.pexels.com/photo/blurry-city-lights-behind-a-rainy-window-at-night-9501140/) |
+| `hero-night-skyline.avif` | Night skyline | Olga Lioncat | [Pexels](https://www.pexels.com/photo/through-window-of-night-city-7245349/) |
+| `hero-night-windows.avif` | Lit windows at night | Elina Volkova | [Pexels](https://www.pexels.com/photo/a-building-with-windows-lit-up-at-night-17726304/) |
+
+The 12 `hero-*-mobile.avif` files are alternate crops of the corresponding hero photograph above, not separate sources.
