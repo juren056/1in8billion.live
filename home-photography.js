@@ -35,7 +35,7 @@
     const start = () => {
       stop();
       if (!visible || paused || reduceMotion.matches || document.hidden || entries().length < 2) return;
-      timer = setInterval(() => show(index + 1), 13000);
+      timer = setInterval(() => show(index + 1), 6000);
     };
     const show = (next, immediate = false) => {
       const photos = entries();
@@ -73,7 +73,7 @@
     mobileImage.addEventListener?.("change", reset);
     document.addEventListener("visibilitychange", start);
     reduceMotion.addEventListener?.("change", start);
-    watchVisibility(scenery, (state) => { visible = state; start(); }, .45);
+    watchVisibility(scenery, (state) => { visible = state; start(); }, .15);
     show(0, true);
   });
 
@@ -83,7 +83,7 @@
     const number = carousel.querySelector("[data-reflection-number]");
     const status = carousel.querySelector("[data-reflection-status]");
     const toggle = carousel.querySelector("[data-reflection-toggle]");
-    let index = 0, timer = 0, visible = false, paused = false, interacting = false, pointerStart = null;
+    let index = 0, timer = 0, visible = false, paused = false, pointerStart = null;
     const show = (next, announce = false) => {
       index = (next + slides.length) % slides.length;
       slides.forEach((slide, i) => { const active = i === index; slide.classList.toggle("is-active", active); slide.setAttribute("aria-hidden", String(!active)); });
@@ -96,8 +96,8 @@
     const stop = () => { if (timer) clearInterval(timer); timer = 0; };
     const start = () => {
       stop();
-      if (!visible || paused || interacting || reduceMotion.matches || document.hidden || slides.length < 2) return;
-      timer = setInterval(() => show(index + 1), 9000);
+      if (!visible || paused || reduceMotion.matches || document.hidden || slides.length < 2) return;
+      timer = setInterval(() => show(index + 1), 4500);
     };
     const manual = (next) => { show(next, true); start(); };
     carousel.querySelector("[data-reflection-prev]")?.addEventListener("click", () => manual(index - 1));
@@ -117,13 +117,9 @@
       pointerStart = null;
       if (Math.abs(distance) > 44) manual(index + (distance < 0 ? 1 : -1));
     });
-    carousel.addEventListener("pointerenter", () => { interacting = true; stop(); });
-    carousel.addEventListener("pointerleave", () => { interacting = false; start(); });
-    carousel.addEventListener("focusin", () => { interacting = true; stop(); });
-    carousel.addEventListener("focusout", (event) => { if (!carousel.contains(event.relatedTarget)) { interacting = false; start(); } });
     document.addEventListener("visibilitychange", start);
     reduceMotion.addEventListener?.("change", start);
-    watchVisibility(carousel, (state) => { visible = state; start(); }, .55);
+    watchVisibility(carousel, (state) => { visible = state; start(); }, .15);
     show(0);
   });
 
@@ -131,7 +127,7 @@
     const slides = [...carousel.querySelectorAll("[data-life-slide]")];
     const dots = [...carousel.querySelectorAll("[data-life-dot]")];
     const status = carousel.querySelector(".life-photo-status");
-    let index = 0, timer = 0, visible = false, interacting = false;
+    let index = 0, timer = 0, visible = false;
     const show = (next, announce = false) => {
       index = (next + slides.length) % slides.length;
       slides.forEach((slide, i) => { const active = i === index; slide.classList.toggle("is-active", active); slide.setAttribute("aria-hidden", String(!active)); });
@@ -139,17 +135,13 @@
       if (announce && status) status.textContent = slides[index].querySelector("strong")?.textContent || "";
     };
     const stop = () => { if (timer) clearInterval(timer); timer = 0; };
-    const start = () => { stop(); if (visible && !interacting && !document.hidden && !reduceMotion.matches && slides.length > 1) timer = setInterval(() => show(index + 1), 7200); };
+    const start = () => { stop(); if (visible && !document.hidden && !reduceMotion.matches && slides.length > 1) timer = setInterval(() => show(index + 1), 4500); };
     carousel.querySelector("[data-life-prev]")?.addEventListener("click", () => { show(index - 1, true); start(); });
     carousel.querySelector("[data-life-next]")?.addEventListener("click", () => { show(index + 1, true); start(); });
     dots.forEach((dot, i) => dot.addEventListener("click", () => { show(i, true); start(); }));
-    carousel.addEventListener("pointerenter", () => { interacting = true; stop(); });
-    carousel.addEventListener("pointerleave", () => { interacting = false; start(); });
-    carousel.addEventListener("focusin", () => { interacting = true; stop(); });
-    carousel.addEventListener("focusout", (event) => { if (!carousel.contains(event.relatedTarget)) { interacting = false; start(); } });
     document.addEventListener("visibilitychange", start);
     reduceMotion.addEventListener?.("change", start);
-    watchVisibility(carousel, (state) => { visible = state; start(); }, .55);
+    watchVisibility(carousel, (state) => { visible = state; start(); }, .15);
     show(0);
   });
 })();

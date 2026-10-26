@@ -82,12 +82,6 @@ export function applyPageSeo(routes) {
         "</head>",
         '<script src="/game-load-guard.js" defer></script></head>',
       );
-      const q = c.questions;
-      const faq = `<section class="seo-content" data-product-answers><h2>${escape(q[0])}</h2><p>${escape(q[1])} <a href="/${c.prefix}?country=JPN">${escape(seoLinks[lang][0])}</a></p></section>`;
-      h = h.replace(
-        '<section class="home-life-intro">',
-        faq + '<section class="home-life-intro">',
-      );
       // Initial hidden templates should be readable when extracted; runtime fills actual values.
       h = h.replace(
         /(<[^>]+data-t="[^"]+"[^>]*>)([^<]*\{(?:age|le|n)\}[^<]*)(<\/[^>]+>)/g,

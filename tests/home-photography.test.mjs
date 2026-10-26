@@ -89,3 +89,23 @@ test("carousel is accessible, motion-aware and photography is publicly credited"
   const creditedPhotoCount = Object.keys(countryPhotography).length + Object.keys(sampleCountryPhotography).length + lifePhotography.length + allHomeExperiencePhotography.length;
   assert.equal((sources.match(/pexels\.com\/photo\//g) || []).length, creditedPhotoCount);
 });
+
+test("homepage carousels advance quickly without hover or focus becoming an implicit pause", () => {
+  const script = read("home-photography.js");
+  assert(script.includes("setInterval(() => show(index + 1), 6000)"));
+  assert.equal((script.match(/setInterval\(\(\) => show\(index \+ 1\), 4500\)/g) || []).length, 2);
+  assert(!script.includes('addEventListener("pointerenter"'));
+  assert(!script.includes('addEventListener("focusin"'));
+  assert(read("theme-system.css").includes("transition:transform 4.5s linear"));
+});
+
+test("localized homepages omit the removed SEO answer and local-life collection blocks", () => {
+  for (const prefix of homePrefixes) {
+    const html = read(`dist/${prefix}index.html`);
+    assert(!html.includes("data-product-answers"), prefix || "en");
+    assert(!html.includes('id="localCollection"'), prefix || "en");
+  }
+  const returnScript = read("life-return.js");
+  assert(!returnScript.includes("localCollection"));
+  assert(!returnScript.includes("local-collection"));
+});
