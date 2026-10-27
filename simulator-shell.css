@@ -1,0 +1,124 @@
+/* Story-first simulator. These rules replace the historical panel layout. */
+html[data-simulator-view=life] .game-tools{display:none}
+html[data-simulator-view=life] :is(.premium-related,.education-entry){display:none}
+html[data-simulator-view=life] [data-language-suggestion]{display:none!important}
+html[data-simulator-shell] #view-life{box-sizing:border-box;max-width:1440px;padding:20px 24px 48px;width:100%;min-height:100dvh}
+.simulator-summary{display:flex;align-items:center;gap:14px;min-width:0;margin-bottom:16px;scroll-margin-top:16px}
+.simulator-avatar{width:48px;height:48px;flex:0 0 48px;border-radius:50%;background:var(--t-soft)}
+.simulator-summary .story-live{display:block;position:static;padding:0;margin:0;border:0;min-width:0;background:transparent}
+.simulator-summary .story-live strong{font:650 18px/1.5 var(--sans);overflow-wrap:anywhere}
+.simulator-summary .story-live>div{display:flex;flex-wrap:wrap;gap:6px 18px;font:400 13px/1.6 var(--sans);color:var(--t-muted)}
+.simulator-summary .story-live b{color:var(--t-ink);font-variant-numeric:tabular-nums}
+.simulator-tabs{display:flex;gap:4px;border-bottom:1px solid var(--t-line);margin-bottom:16px;scroll-margin-top:12px}
+.simulator-tabs button{flex:0 1 auto;min-height:44px;padding:10px 20px;background:transparent;color:var(--t-muted);border:0;border-radius:0;font:600 15px/1.5 var(--sans);border-bottom:2px solid transparent}
+.simulator-tabs button[aria-pressed=true]{color:var(--t-ink);border-bottom-color:var(--t-action)}
+.simulator-tabs button:hover{background:var(--t-soft)}
+html[data-simulator-shell] .story-controls.simulator-toolbar{position:sticky;top:0;inset:auto;transform:none;display:flex;align-items:center;gap:12px;padding:10px 0;margin:0 0 24px;background:var(--t-page);border:0;border-bottom:1px solid var(--t-line);border-radius:0;max-height:none;overflow:visible;box-shadow:none;z-index:15}
+html[data-simulator-shell] .simulator-toolbar #lifeCommandBar{flex:1;display:flex;gap:10px;align-items:center;margin:0;padding:0;border:0;background:transparent;min-width:0}
+html[data-simulator-shell] .simulator-toolbar .cert-controls{display:flex;flex-wrap:nowrap;width:auto;gap:8px;flex:1}
+html[data-simulator-shell] .simulator-toolbar :is(#btnPause,#simulatorChoose){width:auto;min-width:112px;background:var(--t-action);color:var(--t-on-action);border-color:var(--t-action);font-weight:650}
+html[data-simulator-shell] .simulator-toolbar [hidden]{display:none!important}
+html[data-simulator-shell] .simulator-toolbar .cert-controls button:not([hidden]){display:block!important}
+html[data-simulator-shell] .simulator-toolbar #playStatus{display:none}
+html[data-simulator-shell] .simulator-toolbar .speed-menu>summary{min-width:56px;text-align:center;white-space:nowrap}
+.simulator-toolbar .speed-options{left:auto;right:0;min-width:200px;grid-template-columns:1fr 1fr;box-sizing:border-box}
+.simulator-toolbar .speed-options button{width:auto;white-space:normal}
+.simulator-more{min-height:44px;padding:10px 16px;border:1px solid var(--t-line);border-radius:10px;background:var(--t-paper);color:var(--t-ink);font:600 15px/1.5 var(--sans)}
+html[data-simulator-shell] .life-play-layout.story-workspace{padding-bottom:0;grid-template-columns:minmax(200px,.8fr) minmax(0,2fr) minmax(200px,.8fr);gap:24px;align-items:start}
+html[data-simulator-shell] .story-workspace :is(.story-identity,.story-rail){position:static;max-height:none;overflow:visible}
+html[data-simulator-shell] #view-life :is(#playbackIdentity,#lifeThisYear,#playbackGuide){display:none}
+html[data-simulator-shell] #playbackNotice:empty{display:none}
+html[data-simulator-shell] .story-workspace .life-events-feed{max-height:none;overflow:visible;margin:0;padding:0;border:0;border-radius:0;background:transparent}
+html[data-simulator-shell] .life-events-feed>h3{position:static;margin:0 0 12px;padding:0;background:transparent;font:600 20px/1.5 var(--sans)}
+html[data-simulator-shell] .story-feed{gap:0}
+html[data-simulator-shell] .story-moment{display:block;padding:18px 0}
+html[data-simulator-shell] .story-moment .story-art{display:none}
+html[data-simulator-shell] .story-moment[data-emphasis=major]{display:grid;grid-template-columns:104px minmax(0,1fr);gap:16px}
+html[data-simulator-shell] .story-moment[data-emphasis=major] .story-art{display:block}
+html[data-simulator-shell] .story-moment p{font:400 17px/1.75 var(--sans);margin:8px 0 12px;max-width:65ch}
+html[data-simulator-shell] .story-moment button{min-height:44px;padding:8px 12px;margin-bottom:0}
+html[data-simulator-shell] .story-moment .story-inline-save{font-weight:400;color:var(--t-muted);border-color:transparent}
+.simulator-scene{margin-top:20px;border-top:1px solid var(--t-line);padding-top:8px}
+.simulator-scene>summary{min-height:44px;align-content:center;cursor:pointer;color:var(--t-muted)}
+.simulator-scene .warm-life-scene{margin:12px 0}
+html[data-simulator-shell] #lifeSecondary{margin:0;padding:0;border:0}
+html[data-simulator-shell] #lifeSecondary>summary{display:none}
+html[data-simulator-shell] #lifeSecondary>:first-child{margin-top:0}
+#view-life[data-panel=people] .life-play-story{display:none}
+html[data-simulator-shell] #view-life[data-panel=people] .story-workspace{grid-template-columns:1fr 1fr}
+.simulator-memories{max-width:760px;margin:auto}
+.simulator-memories h2{font:600 26px/1.4 var(--serif);margin:0 0 20px}
+.simulator-empty{color:var(--t-muted);line-height:1.8;padding-block:24px}
+.simulator-memory{display:grid;gap:8px;text-align:start;width:100%;padding:20px 0;background:transparent;color:var(--t-ink);border:0;border-bottom:1px solid var(--t-line);border-radius:0;line-height:1.7}
+.simulator-memory span{color:var(--t-muted);font-size:13px}
+.simulator-memory strong{font-size:17px;font-weight:500}
+.simulator-latest{position:fixed;bottom:90px;left:50%;transform:translateX(-50%);z-index:20;background:var(--t-action);color:var(--t-on-action);border:0;border-radius:10px;padding:12px 20px;min-height:44px;max-width:calc(100vw - 32px);font:600 14px/1.5 var(--sans)}
+.simulator-settings{width:min(540px,calc(100vw - 32px));max-height:calc(100dvh - 32px);box-sizing:border-box;padding:24px;border:0;border-radius:16px;background:var(--t-paper);color:var(--t-ink);overflow:auto;overscroll-behavior:contain}
+.simulator-settings::backdrop{background:#071522aa}
+body:has(#simulatorSettings[open]){overflow:hidden}
+.simulator-settings-close{display:block;margin-inline-start:auto;min-height:44px;padding:8px 16px;background:var(--t-soft);color:var(--t-ink);border:1px solid var(--t-line);border-radius:10px}
+.simulator-settings h2{font:600 26px/1.4 var(--serif);margin:12px 0 24px}
+.simulator-settings .playback-secondary{display:flex;gap:10px;flex-wrap:wrap;align-items:stretch;overflow:visible}
+.simulator-settings .playback-secondary>button{flex:1 1 140px;width:auto!important;height:auto!important;min-width:0;white-space:normal;position:static}
+.simulator-settings :is(button,summary){min-height:44px;font-family:var(--sans)}
+.simulator-settings .playback-secondary button{padding:10px 16px;background:var(--t-soft);color:var(--t-ink);border:1px solid var(--t-line);border-radius:10px}
+.simulator-settings .life-sound{display:block;position:static;margin:24px 0;width:100%}
+.simulator-settings .life-sound>summary{cursor:pointer;align-content:center}
+.simulator-settings .sound-panel{position:static;max-width:100%;width:auto;box-shadow:none;background:transparent;border:0;padding:16px 0}
+.simulator-settings .sound-panel label{display:flex;gap:12px;align-items:center;min-height:44px;flex-wrap:wrap}
+.simulator-settings .sound-panel button{background:var(--t-soft);color:var(--t-ink);border:1px solid var(--t-line);border-radius:10px;min-height:44px;padding:10px 16px}
+.simulator-settings .sound-panel :is(input,select){max-width:100%;min-width:0}
+.simulator-settings .sound-panel select{width:100%}
+.simulator-settings .life-manual-decisions{margin:20px 0;padding:0;background:transparent;border-radius:0}
+.simulator-tool-links{display:flex;gap:8px;flex-wrap:wrap;padding-top:20px;border-top:1px solid var(--t-line)}
+.simulator-tool-links button{padding:10px 14px;background:var(--t-soft);color:var(--t-ink);border:1px solid var(--t-line);border-radius:10px}
+html[data-simulator-shell] .story-dialog:has(.story-options)>.story-art{height:120px;aspect-ratio:auto;background-size:400% 400%}
+html[data-simulator-shell] .story-dialog-body{padding:24px}
+html[data-simulator-shell] .story-dialog h2{font-size:26px;margin-bottom:16px}
+html[data-simulator-shell] .story-before{padding:0;background:transparent;border-bottom:1px solid var(--t-line);border-radius:0;margin:12px 0}
+html[data-simulator-shell] .story-before summary{min-height:44px;align-content:center;cursor:pointer;font-size:14px;color:var(--t-muted)}
+html[data-simulator-shell] .story-before h3{margin:12px 0;font-size:15px}
+html[data-simulator-shell] .story-prose{font:400 17px/1.7 var(--sans);margin:14px 0}
+html[data-simulator-shell] .story-options{margin:20px 0;gap:10px}
+html[data-simulator-shell] .story-options button{padding:12px 16px;min-height:64px}
+html[data-simulator-shell] .story-options button strong{font-size:16px;font-weight:600}
+html[data-simulator-shell] .story-options span{font-size:12px;margin-top:4px}
+html[data-simulator-shell] .story-dialog .story-date{font-size:13px;margin:0 0 10px;color:var(--t-muted)}
+html[data-simulator-shell] .story-dialog small{font-size:12px;line-height:1.6;margin-top:16px}
+@media(min-width:761px) and (max-width:1099px){
+ html[data-simulator-shell] .life-play-layout.story-workspace{grid-template-columns:220px minmax(0,1fr);gap:20px}
+ html[data-simulator-shell] #view-life[data-panel=story] .story-rail{display:none}
+ html[data-simulator-shell] .story-rail{display:block;grid-column:auto}
+}
+@media(max-width:760px){
+ html[data-simulator-shell] #view-life{padding:12px 0 calc(100px + env(safe-area-inset-bottom));width:100%}
+ html[data-simulator-view=life] .main{padding-inline:16px!important}
+ .simulator-summary{position:sticky;top:0;z-index:12;background:var(--t-page);padding-block:8px;margin-bottom:8px;gap:10px;scroll-margin-top:0}
+ .simulator-avatar{width:38px;height:38px;flex-basis:38px}
+ .simulator-summary .story-live strong{font-size:15px}
+ .simulator-summary .story-live>div{font-size:12px;gap:4px 12px}
+ .simulator-tabs{margin-bottom:12px;scroll-margin-top:90px}
+ .simulator-tabs button{flex:1;padding:10px 4px;font-size:14px}
+ html[data-simulator-shell] .life-play-layout.story-workspace{display:flex;flex-direction:column;gap:16px}
+ html[data-simulator-shell] #view-life[data-panel=story] :is(.story-identity,.story-rail){display:none}
+ html[data-simulator-shell] #view-life[data-panel=people] :is(.story-identity,.story-rail){display:block;width:100%}
+ html[data-simulator-shell] .life-play-story{width:100%}
+ html[data-simulator-shell] .story-moment p{font-size:16px;line-height:1.75}
+ html[data-simulator-shell] .story-moment[data-emphasis=major]{grid-template-columns:76px minmax(0,1fr);gap:12px}
+ html[data-simulator-shell] .story-moment[data-emphasis=major] .story-art{background-size:400% 400%;aspect-ratio:1/1}
+ html[data-simulator-shell] .story-controls.simulator-toolbar{position:fixed;inset:auto 0 0;padding:10px 16px calc(10px + env(safe-area-inset-bottom));margin:0;gap:10px;border-bottom:0;border-top:1px solid var(--t-line);background:var(--t-paper)}
+ html[data-simulator-shell] .simulator-toolbar #lifeCommandBar{background:var(--t-paper);gap:8px}
+ html[data-simulator-shell] .simulator-toolbar :is(#btnPause,#simulatorChoose){min-width:0;flex:1;padding:10px;font-size:14px}
+ html[data-simulator-shell] .simulator-toolbar .speed-menu>summary{padding:10px;min-width:44px}
+ .simulator-more{padding:10px 12px;font-size:14px}
+ .simulator-toolbar .speed-options{bottom:calc(100% + 14px);top:auto}
+ .simulator-settings{margin:auto 0 0;max-height:85dvh;width:100%;max-width:100%;border-radius:16px 16px 0 0;padding:20px 20px calc(20px + env(safe-area-inset-bottom))}
+ html[data-simulator-shell] .story-dialog{max-height:calc(100dvh - 16px);width:calc(100% - 16px);box-sizing:border-box}
+ html[data-simulator-shell] .story-dialog-body{padding:18px}
+ html[data-simulator-shell] .story-dialog:has(.story-options)>.story-art{height:100px}
+ html[data-simulator-shell] .story-dialog h2{font-size:23px;line-height:1.4}
+ html[data-simulator-shell] #lifeSecondary>*{padding-inline:0}
+ .simulator-settings .md-row{flex-wrap:wrap}
+ .simulator-settings .md-row button{max-width:100%;white-space:normal}
+}
+html[data-simulator-shell] :is(.simulator-tabs,.simulator-toolbar,.simulator-settings,.simulator-memories) :focus-visible{outline:3px solid var(--t-action);outline-offset:3px}

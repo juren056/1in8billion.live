@@ -32,6 +32,8 @@ export function buildThemePreview(routes, { preview = false } = {}) {
     "modern-life-art.js",
     "product-workspaces.css",
     "game-workspace.js",
+    "simulator-shell.js",
+    "simulator-shell.css",
     "game-workspace-copy.js",
     "theme-copy.js",
     "site-theme.js",
