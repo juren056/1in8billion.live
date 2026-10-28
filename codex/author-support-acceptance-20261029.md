@@ -20,3 +20,9 @@ Browser acceptance: twelve popup viewport/theme combinations and ten support-pag
 Independent finish review: SHIP at reviewed presentation scope after correcting Chinese support-page heading to phrase-aware lines. Screenshots: audit/author-support-20261029/. Production release and live checkout acceptance recorded after deployment below. No charge has been submitted by the agent.
 
 Primary references: https://docs.stripe.com/api/checkout/sessions/create and https://docs.stripe.com/currencies. Layout inspiration: https://buymeacoffee.com/ and https://ko-fi.com/; no third-party branding, testimonials or supporter counts copied.
+
+## Production acceptance
+
+Production v1.34.0 revision 7045f44 deployed as Cloudflare version b5163c7c-2c04-4af1-a005-e98a46579f91. Deployment verification passed all 145 tests. Locale links were corrected using locale attributes rather than assuming HTML attribute order.
+
+Real Stripe checkout acceptance: USD7.35 produced a live one-time session and displayed the correct amount in 3.09 seconds. Cancellation returned to an unpaid state with no paid claim. No payment information was entered and no charge was submitted. This verifies checkout entry and unpaid return, not live paid settlement. Receipt: audit/author-support-20261029/live-checkout.json. The test harness captures API response before redirect to avoid a browser response-body race.
