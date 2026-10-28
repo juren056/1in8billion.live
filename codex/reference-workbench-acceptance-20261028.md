@@ -21,3 +21,11 @@ Ten-locale phone regression passed, including pending-choice refresh, actual foc
 `npm run verify`: 141 tests pass; 258 SEO routes pass; country validation and critical asset budgets pass. Layout detector: no findings. No Safari, Firefox or physical device test is claimed; browser tests use headless Chromium.
 
 Scripts: audit/verify-reference-workbench.py and audit/verify-simulator-regression.py. Screenshots and receipts: audit/reference-workbench-20261028/. Production deployment/verification recorded after release below.
+
+## Production release
+
+Deployed v1.33.0 from e9d9d6661f5c2edd2602f570e824fa24fe193bd6. Cloudflare version a61e1db1-3f2b-4d93-8190-05a63e516dea. Production release.json matches that revision/version. The deployment's mandatory verify run passed all 141 tests and SEO/data/asset checks. The first deployment attempt failed in local Node heap allocation before upload; a process-scoped 384 MB heap limit allowed the normal build/deployment to complete.
+
+Production workbench acceptance passed all 24 viewport/theme combinations with zero page errors, six rates and 16× restore, settings, thought/choice modals and exit. Exact AdSense verification remains on the Chinese homepage; workbench JavaScript returns 200. Original payments backend unchanged; no payment charge submitted in this task.
+
+Production ten-locale regression also passed at 390px and 1440px: no horizontal overflow, desktop auto/16× controls visible, mobile panels/settings working. Chinese pending-choice refresh, actual study-focus choice, complete life, keepsake offer and ending toolbar removal passed. Page errors: zero. Receipt: audit/reference-workbench-20261028/regression.json.
