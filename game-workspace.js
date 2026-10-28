@@ -3,6 +3,7 @@ import {installToolWorkspace} from './tool-workspace.js';
 import {workspaceCopy} from './game-workspace-copy.js';
 import {installStoryExperience} from './story-experience.js';
 import {installSimulatorShell} from './simulator-shell.js';
+import {installAuthorInvitation} from './author-support.js';
 export function installGameWorkspace(){
  const root=document.documentElement,lang=root.dataset.siteLocale||root.lang,c=workspaceCopy[lang]||workspaceCopy.en;
  const sound=document.querySelector('.life-sound'),story=document.querySelector('.life-play-story');
@@ -15,5 +16,6 @@ export function installGameWorkspace(){
  installToolWorkspace();
  installStoryExperience();
  installSimulatorShell();
+ installAuthorInvitation();
  root.dataset.gameWorkspace='ready';
 }
