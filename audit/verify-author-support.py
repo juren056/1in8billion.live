@@ -46,6 +46,7 @@ with sync_playwright() as p:
    page.set_viewport_size({'width':width,'height':height})
    assert page.evaluate('document.documentElement.scrollWidth<=innerWidth'),locale
   assert page.locator('#supportSubmit').inner_text()
+  assert all(href.endswith('/support/') for href in page.locator('.language-menu a').evaluate_all('els=>els.map(e=>e.getAttribute("href"))')),'Language switching must stay on support page'
   if locale=='zh-cn/':
    for theme in ['blue','journal','editorial','night']:
     page.evaluate('theme=>document.documentElement.dataset.appearance=theme',theme)
