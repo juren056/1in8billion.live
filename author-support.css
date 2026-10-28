@@ -1,6 +1,12 @@
-.author-invitation{padding:40px 0;margin-top:48px;border-top:1px solid var(--t-line);text-align:center;color:var(--t-ink)}
-.author-invitation h2{font:600 26px/1.4 var(--serif);margin:0 0 12px;text-wrap:balance}
-.author-invitation p{color:var(--t-muted);font:400 15px/1.7 var(--sans);margin:0 0 20px}
+.author-invitation{display:flex;align-items:center;gap:24px;padding:24px 32px;margin:0 0 32px;background:var(--t-soft);border-radius:12px;text-align:start;color:var(--t-ink)}
+.author-invitation[hidden]{display:none}
+.author-invitation-message{flex:1;min-width:0}
+.author-invitation-icon{display:flex;flex:0 0 48px;color:var(--t-action)}
+.author-invitation-icon svg{width:48px;height:48px}
+.author-invitation h2{font:600 26px/1.4 var(--serif);margin:0 0 8px;text-wrap:balance}
+.author-invitation p{color:var(--t-muted);font:400 15px/1.7 var(--sans);margin:0}
+.author-invitation>button{flex-shrink:0;max-width:100%;white-space:normal}
+@media(max-width:760px){.author-invitation{flex-wrap:wrap;gap:16px;padding:24px;margin-bottom:24px}.author-invitation-icon{flex-basis:36px}.author-invitation-icon svg{width:36px;height:36px}.author-invitation h2{font-size:22px}.author-invitation>button{width:100%}}
 .author-invitation button,.author-primary{display:inline-flex;justify-content:center;align-items:center;min-height:48px;padding:12px 22px;background:var(--t-action);color:var(--t-on-action);border:0;border-radius:10px;font:600 15px/1.5 var(--sans);text-decoration:none;box-sizing:border-box}
 [data-design-system] a.author-primary{color:var(--t-on-action);text-decoration:none}
 .author-invitation-dialog{--t-paper:#fffaf2;--t-ink:#382c23;--t-muted:#75614f;--t-action:#95502c;--t-on-action:#fffaf2;--t-line:#ddcdb8;--t-soft:#f2e7d6;--sans:'Segoe UI','Microsoft YaHei','Noto Sans',sans-serif;--serif:LifeDisplay,'Microsoft YaHei',Georgia,serif;width:min(500px,calc(100% - 32px));box-sizing:border-box;max-height:calc(100dvh - 32px);overflow:auto;padding:40px;border:0;border-radius:20px;background:var(--t-paper);color:var(--t-ink);text-align:center;box-shadow:0 28px 100px #130d0a66;animation:author-arrive .3s ease-out}

@@ -13,6 +13,7 @@ with sync_playwright() as p:
  page.locator('#btnStartSelected').click();page.wait_for_function("!document.querySelector('#birthCertConfirm').disabled && !document.querySelector('.rebirth-stage')",timeout=20000)
  page.locator('#birthCertConfirm').click();page.evaluate('''() => {stopTicker();STATE.autoDecide=true;for(let n=0;n<160&&!STATE.life.died;n++){STATE.paused=false;tick();}stopTicker();}''')
  assert page.evaluate('STATE.view==="end"&&STATE.life.died')
+ assert page.locator('#view-end > :first-child').get_attribute('id')=='authorSupportInvitation','Support invitation must lead the ending'
  assert not page.locator('#authorInvitation').is_visible(),'Must not interrupt the beginning of the ending'
  page.locator('#authorSupportInvitation').scroll_into_view_if_needed();page.wait_for_selector('#authorInvitation[open]',timeout=9000)
  layouts=[]
@@ -20,12 +21,19 @@ with sync_playwright() as p:
   page.set_viewport_size({'width':width,'height':height})
   for theme in ['blue','journal','editorial','night']:
    page.evaluate('theme=>document.documentElement.dataset.appearance=theme',theme)
+   assert page.locator('#authorSupportInvitation').evaluate('e=>e.scrollWidth<=e.clientWidth+1'),'Top invitation must fit its container'
    box=page.locator('#authorInvitation').bounding_box();assert box['x']>=0 and box['x']+box['width']<=width+1,box
    assert page.locator('#authorInvitation').evaluate('e=>e.scrollWidth<=e.clientWidth+1')
    if width in [390,1440]:page.screenshot(path=str(out/f'invitation-{width}-{theme}.png'))
    layouts.append({'width':width,'theme':theme})
  page.locator('.author-encourage').click();assert page.locator('.author-encourage').is_disabled();assert page.locator('.author-response').inner_text()
  page.keyboard.press('Escape');assert not page.locator('#authorInvitation').is_visible()
+ for width,height in [(390,844),(1440,1000)]:
+  page.set_viewport_size({'width':width,'height':height})
+  for theme in ['blue','journal','editorial','night']:
+   page.evaluate('theme=>document.documentElement.dataset.appearance=theme',theme)
+   page.locator('#authorSupportInvitation').scroll_into_view_if_needed()
+   page.screenshot(path=str(out/f'top-invitation-{width}-{theme}.png'))
  assert page.evaluate("Number(localStorage.getItem('1in8billion:author-invitation:v1'))>0")
  page.locator('#authorSupportInvitation button').click();assert page.locator('#authorInvitation').is_visible()
  page.locator('#authorInvitation a').click();page.wait_for_url('**/zh-cn/support/')
