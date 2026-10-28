@@ -26,3 +26,5 @@ Primary references: https://docs.stripe.com/api/checkout/sessions/create and htt
 Production v1.34.0 revision 7045f44 deployed as Cloudflare version b5163c7c-2c04-4af1-a005-e98a46579f91. Deployment verification passed all 145 tests. Locale links were corrected using locale attributes rather than assuming HTML attribute order.
 
 Real Stripe checkout acceptance: USD7.35 produced a live one-time session and displayed the correct amount in 3.09 seconds. Cancellation returned to an unpaid state with no paid claim. No payment information was entered and no charge was submitted. This verifies checkout entry and unpaid return, not live paid settlement. Receipt: audit/author-support-20261029/live-checkout.json. The test harness captures API response before redirect to avoid a browser response-body race.
+
+Final production browser run passed twelve popup viewport/theme combinations and all ten localized support forms, including support-preserving language navigation, with zero page errors. Receipt: audit/author-support-20261029/verification.json (production URL).
