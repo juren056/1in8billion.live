@@ -3,7 +3,7 @@ import os,json
 from playwright.sync_api import sync_playwright
 
 base=os.environ.get('SIMULATOR_BASE','http://127.0.0.1:4186')
-out=Path('audit/simulator-shell-20261027');out.mkdir(parents=True,exist_ok=True)
+out=Path(os.environ.get('SIMULATOR_AUDIT_OUT','audit/simulator-shell-20261027'));out.mkdir(parents=True,exist_ok=True)
 with sync_playwright() as p:
  b=p.chromium.launch(headless=True)
  checks=[];errors=[]
@@ -23,6 +23,11 @@ with sync_playwright() as p:
   tabs=page.locator('.simulator-tabs button').all_inner_texts()
   assert len(tabs)==4 and all(tabs),tabs
   assert page.evaluate('document.documentElement.scrollWidth<=innerWidth')
+  page.set_viewport_size({'width':1440,'height':1000})
+  assert page.evaluate('document.documentElement.scrollWidth<=innerWidth'),locale+' desktop overflow'
+  assert page.locator('.workbench-masthead #btnAuto').is_visible()
+  assert page.locator('.workbench-masthead [data-workbench-rate="16"]').is_visible()
+  page.set_viewport_size({'width':390,'height':844})
   page.locator('[data-simulator-panel="people"]').click()
   assert page.locator('#lifeCert').is_visible()
   page.locator('[data-simulator-panel="details"]').click()

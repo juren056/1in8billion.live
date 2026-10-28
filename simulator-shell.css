@@ -122,3 +122,163 @@ html[data-simulator-shell] .story-dialog small{font-size:12px;line-height:1.6;ma
  .simulator-settings .md-row button{max-width:100%;white-space:normal}
 }
 html[data-simulator-shell] :is(.simulator-tabs,.simulator-toolbar,.simulator-settings,.simulator-memories) :focus-visible{outline:3px solid var(--t-action);outline-offset:3px}
+
+/* Life workbench: reference proportions, our themes, artwork and real records. */
+html[data-simulator-view=life] .topbar{display:none!important}
+html[data-simulator-view=life] .main{width:100%;max-width:none!important;padding:0!important}
+html[data-simulator-shell] #view-life{max-width:1760px;padding:0 32px 48px;margin-inline:auto}
+.workbench-masthead{display:flex;align-items:center;gap:20px;position:sticky;top:0;z-index:25;min-height:88px;padding:12px 0;margin-bottom:24px;border-bottom:1px solid var(--t-line);background:var(--t-page);box-sizing:border-box}
+.workbench-home{flex:0 0 auto;color:var(--t-ink);font:650 19px/1.3 var(--sans);text-decoration:none;letter-spacing:-.025em}
+.workbench-clock{display:grid;grid-template-columns:auto 1fr;align-items:center;gap:4px 12px;flex:0 1 240px;min-width:156px;font-variant-numeric:tabular-nums}
+.workbench-clock>strong{font:500 30px/1.1 var(--sans);grid-row:span 2;white-space:nowrap;color:var(--t-ink)}
+.workbench-clock>span{font:400 12px/1.5 var(--sans);overflow-wrap:anywhere;color:var(--t-muted)}
+.workbench-time{height:4px;background:var(--t-soft);overflow:hidden}
+.workbench-time i{display:block;height:100%;background:var(--t-action);transition:width .2s ease-out}
+.workbench-masthead .workbench-mobile-summary{display:none}
+.workbench-mobile-summary{display:none}
+html[data-simulator-shell] .workbench-masthead .simulator-toolbar{position:static;flex:1;min-width:0;gap:8px;padding:0;margin:0;border:0;background:transparent;flex-wrap:wrap}
+html[data-simulator-shell] .workbench-masthead .simulator-toolbar #lifeCommandBar{flex:0 0 auto}
+html[data-simulator-shell] .workbench-masthead .simulator-toolbar .cert-controls{flex:0 0 auto}
+html[data-simulator-shell] .workbench-masthead .simulator-toolbar :is(#btnPause,#simulatorChoose){min-width:84px}
+.workbench-actions{display:flex;align-items:center;gap:6px;flex-wrap:wrap;min-width:0;flex:1}
+.workbench-rates{display:flex;gap:4px;align-items:center}
+html[data-simulator-shell] .workbench-actions .playback-secondary{display:flex;flex-direction:row;align-items:center;gap:6px;flex-wrap:nowrap;width:auto;padding:0;border:0}
+html[data-simulator-shell] .workbench-masthead :is(button,.simulator-more,.speed-menu>summary){min-height:44px;height:auto;width:auto;max-width:none;margin:0;padding:9px 12px;border:1px solid var(--t-line);border-radius:5px;background:var(--t-paper);color:var(--t-ink);white-space:nowrap;font:500 13px/1.5 var(--sans);box-sizing:border-box}
+.workbench-actions>button{display:inline-flex;align-items:center;gap:6px}
+.workbench-actions svg{flex-shrink:0}
+html[data-simulator-shell] .workbench-rates button{min-width:36px;padding-inline:7px;font-variant-numeric:tabular-nums}
+html[data-simulator-shell] .workbench-rates button[aria-pressed=true],html[data-simulator-shell] .workbench-actions #btnAuto[aria-pressed=true]{background:var(--t-soft);border-color:var(--t-action);color:var(--t-ink)}
+html[data-simulator-shell] .workbench-actions #btnSkip{max-width:155px;white-space:normal;line-height:1.35}
+html[data-simulator-shell] .workbench-actions #btnAuto{min-width:76px}
+html[data-simulator-shell] .life-play-layout.story-workspace{grid-template-columns:minmax(240px,1fr) minmax(0,1.82fr) minmax(240px,1.06fr);gap:24px}
+html[data-simulator-shell] .story-workspace :is(.story-identity,.story-rail){display:flex;flex-direction:column;gap:20px;min-width:0}
+html[data-simulator-shell] #view-life[data-panel=people] .story-workspace{grid-template-columns:1fr 1fr}
+html[data-simulator-shell] :is(.story-identity #lifeCert,.story-identity #lifeStats,.story-family,.workbench-focus,.workbench-companions,.workbench-map,.story-rail #lifeSurvivalCurve,.simulator-scene,.story-workspace #lifeEventsFeed){border:1px solid var(--t-line);border-radius:6px;background:var(--t-paper);color:var(--t-ink);margin:0;min-width:0;box-shadow:none;box-sizing:border-box}
+html[data-simulator-shell] .story-identity #lifeCert{overflow:hidden}
+.workbench-identity-title{font:600 13px/1.5 var(--sans);flex:1}
+html[data-simulator-shell] #lifeCert .cert-band{padding:12px 16px;min-height:0;gap:10px;background:var(--t-soft);color:var(--t-ink);flex-wrap:wrap}
+html[data-simulator-shell] #lifeCert .cert-band .cert-name{display:none}
+html[data-simulator-shell] #lifeCert .cert-flag{font-size:13px}
+html[data-simulator-shell] #lifeCert .cert-year{font-size:12px;margin-inline-start:auto}
+html[data-simulator-shell] #lifeCert .cert-body{display:grid;grid-template-columns:68px minmax(0,1fr);gap:10px 14px;padding:20px 16px;align-items:start;text-align:start}
+html[data-simulator-shell] #lifeCert #lifePortrait{width:68px;height:82px;grid-column:1;grid-row:1/4;margin:0;border-radius:4px;overflow:hidden;background:var(--t-soft)}
+html[data-simulator-shell] #lifeCert #lifePortrait canvas{width:100%;height:100%;object-fit:cover}
+html[data-simulator-shell] #lifeCert .cert-name-main{grid-column:2;font:600 22px/1.35 var(--serif);margin:0;text-align:start;overflow-wrap:anywhere}
+html[data-simulator-shell] #lifeCert .cert-age-row{grid-column:2;display:flex;flex-wrap:wrap;gap:6px;justify-content:start;margin:0}
+html[data-simulator-shell] #lifeCert #lifeAge{font:600 16px/1.5 var(--sans)}
+html[data-simulator-shell] #lifeCert :is(.cert-le,.cert-le-val,.cert-bar-wrap){display:none}
+html[data-simulator-shell] #lifeCert .cert-meta{grid-column:1/-1;display:flex!important;flex-direction:column;margin:12px 0 0;padding:14px 0 0;border:0;border-top:1px dashed var(--t-line);border-radius:0;background:transparent;gap:9px}
+html[data-simulator-shell] #lifeCert .cert-meta .meta-row{display:grid;grid-template-columns:76px minmax(0,1fr);gap:12px;align-items:baseline;font:400 13px/1.6 var(--sans)}
+html[data-simulator-shell] #lifeCert .meta-row b{text-align:start;font-weight:500}
+html[data-simulator-shell] #lifeCert .reference-note{font:400 11px/1.6 var(--sans);padding:0 16px 14px;margin:0;color:var(--t-muted)}
+html[data-simulator-shell] #lifeCert .reference-details{padding:0 16px 12px;margin:0;color:var(--t-muted);font:400 11px/1.6 var(--sans)}
+html[data-simulator-shell] #lifeCert .reference-details>summary{min-height:32px;padding:6px 0;cursor:pointer;font:400 11px/1.6 var(--sans);color:var(--t-muted)}
+html[data-simulator-shell] #lifeCert .reference-details .reference-note{padding:8px 0}
+html[data-simulator-shell] .story-year-change{margin:0;font-size:11px;line-height:1.6;color:var(--t-muted)}
+html[data-simulator-shell] .story-identity #lifeStats{padding:20px}
+html[data-simulator-shell] #lifeStats h4{margin:0 0 18px;font:600 17px/1.5 var(--sans);color:var(--t-ink)}
+html[data-simulator-shell] #lifeStats .state-row{grid-template-columns:64px minmax(0,1fr) 28px;gap:10px;margin:12px 0;font-size:13px}
+html[data-simulator-shell] .state-row .state-label{min-width:0;white-space:normal}
+html[data-simulator-shell] .state-row .state-bar{height:8px;border-radius:0;background:var(--t-soft)}
+html[data-simulator-shell] #stateHealth{background:#3b8e68}html[data-simulator-shell] #stateHappy{background:#b88b2c}html[data-simulator-shell] #stateKnowledge{background:#328d98}html[data-simulator-shell] #stateSocial{background:#be7464}
+html[data-simulator-shell] #lifeStats .state-assets{padding-top:16px;margin-top:18px;font-size:12px;border-top:1px dashed var(--t-line)}
+html[data-simulator-shell] .simulator-scene{padding:0;overflow:hidden}
+.simulator-scene>summary{display:none}
+html[data-simulator-shell] .simulator-scene #warmLifeScene{margin:0;padding:0;border:0;border-radius:0;background:transparent;box-shadow:none}
+.simulator-scene :is(.scene-caption,#warmLifeScene>p){display:none}
+html[data-simulator-shell] .simulator-scene .pixel-stage{border-radius:0;aspect-ratio:2.7/1;min-height:0;margin:0}
+html[data-simulator-shell] .simulator-scene .pixel-stage canvas{width:100%;height:100%;object-fit:cover}
+.simulator-scene #livingScene{margin:0}
+.workbench-scene-caption{font:400 13px/1.6 var(--sans);margin:0;padding:12px 16px;color:var(--t-muted);border-top:1px solid var(--t-line)}
+.workbench-focus{padding:20px;margin-top:20px!important}
+.workbench-focus h3,.workbench-companions h3,.workbench-map h3,html[data-simulator-shell] .story-family h3{font:600 20px/1.45 var(--serif);margin:0 0 16px;color:var(--t-ink)}
+.workbench-focus>strong{font:500 15px/1.6 var(--sans);color:var(--t-muted)}
+.workbench-focus p{font:400 14px/1.8 var(--sans);margin:10px 0 0;color:var(--t-muted)}
+.workbench-focus button{min-height:44px;padding:8px 14px;font:500 13px/1.5 var(--sans);margin-top:16px;background:var(--t-soft);color:var(--t-ink);border:1px solid var(--t-line);border-radius:5px}
+html[data-simulator-shell] .story-workspace #lifeEventsFeed{padding:20px;margin-top:20px}
+html[data-simulator-shell] .life-events-feed>h3{font:600 20px/1.45 var(--serif);margin-bottom:8px}
+html[data-simulator-shell] .story-moment{padding:16px 0;position:relative}
+html[data-simulator-shell] .story-moment[data-emphasis=major]{grid-template-columns:80px minmax(0,1fr);gap:16px}
+html[data-simulator-shell] .story-moment .story-age{font:400 12px/1.5 var(--sans);color:var(--t-muted)}
+html[data-simulator-shell] .story-moment p{font:400 15px/1.85 var(--sans);margin:6px 0 10px;max-width:70ch}
+html[data-simulator-shell] .story-moment .story-art{border-radius:4px;aspect-ratio:1/1}
+html[data-simulator-shell] .story-moment button{padding:7px 10px;font:500 12px/1.5 var(--sans);min-height:36px;border-radius:5px}
+html[data-simulator-shell] .story-family{position:static;padding:20px}
+html[data-simulator-shell] .story-family-context{display:none}
+html[data-simulator-shell] .story-person{display:flex;flex-wrap:nowrap;align-items:baseline;width:100%;margin:0;gap:10px;padding:12px 0;border-radius:0;background:transparent;color:var(--t-ink);border:0;border-bottom:1px solid var(--t-line);font:500 14px/1.5 var(--sans);text-align:start}
+html[data-simulator-shell] .story-person>strong{min-width:0;display:grid;gap:4px;font-weight:500}
+.story-person>strong>small{font:400 12px/1.5 var(--sans);color:var(--t-muted)}
+html[data-simulator-shell] .story-person>span{flex-shrink:0;font-size:12px}
+html[data-simulator-shell] .story-person:last-child{border-bottom:0}
+.workbench-companions,.workbench-map{padding:20px}
+.workbench-companion{display:grid;gap:4px;padding:12px 0;border-bottom:1px solid var(--t-line);font:400 13px/1.5 var(--sans)}
+.workbench-companion:last-child{border-bottom:0;padding-bottom:0}
+.workbench-companion strong{font-size:14px;font-weight:600;overflow-wrap:anywhere}
+.workbench-companion span{color:var(--t-muted)}
+.workbench-map>div:first-child{display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin-bottom:14px}
+.workbench-map h3{margin:0}.workbench-map small{font:400 11px/1.5 var(--sans);color:var(--t-muted)}
+.workbench-years{display:grid;grid-template-columns:repeat(10,minmax(0,1fr));gap:4px}
+html[data-simulator-shell] .workbench-year{display:block;min-width:0;min-height:24px;aspect-ratio:1;border:1px solid transparent;border-radius:2px;background:var(--t-soft);padding:0;margin:0;width:100%;height:auto}
+html[data-simulator-shell] .workbench-year[data-elapsed=true]{background:var(--t-action);opacity:.65}
+html[data-simulator-shell] .workbench-year[data-current=true]{opacity:1;outline:2px solid var(--t-ink);outline-offset:-2px}
+.workbench-map-caption{font:400 12px/1.6 var(--sans);margin:12px 0 0;color:var(--t-muted)}
+html[data-simulator-shell] #lifeMap{display:none!important}
+.workbench-settings-nav{display:flex;flex-wrap:wrap;gap:8px;margin-top:20px}
+.workbench-actions .appearance-menu{position:relative}
+.workbench-actions .appearance-options{top:calc(100% + 10px);right:0}
+.simulator-settings .appearance-menu{margin-block:16px}
+.simulator-settings .appearance-options{position:relative;inset:auto;width:100%;max-width:100%;box-sizing:border-box;box-shadow:none}
+.simulator-settings>.speed-menu{margin-top:20px;border-top:1px solid var(--t-line);padding-top:12px}
+.simulator-settings>.speed-menu>.speed-options{position:static;width:100%;box-sizing:border-box;box-shadow:none}
+.workbench-settings-nav button,.simulator-settings>#writeMemory,.simulator-settings>button:last-child{min-height:44px;padding:10px 14px;background:var(--t-soft);color:var(--t-ink);border:1px solid var(--t-line);border-radius:6px}
+html[data-simulator-shell] #lifeSecondary[hidden]{display:none}
+html[data-simulator-shell] .story-rail #lifeSurvivalCurve{padding:20px}
+.story-rail #lifeSurvivalCurve:empty{display:none}
+.story-rail #lifeSurvivalCurve svg{width:100%;max-width:100%;height:auto}
+@media(min-width:1200px){
+ .simulator-tabs{display:none}
+ html[data-simulator-shell] .workbench-masthead .speed-menu{display:none}
+ html[data-simulator-shell] .workbench-masthead #btnPause{background:var(--t-action);color:var(--t-on-action)}
+ html[data-simulator-shell] #view-life:not([data-panel=story]) .simulator-tabs{display:flex}
+}
+@media(min-width:761px) and (max-width:1199px){
+ html[data-simulator-shell] #view-life{padding-inline:24px}
+ .workbench-masthead{gap:16px;min-height:80px}
+ .workbench-home{font-size:17px}.workbench-clock{flex:1}.workbench-clock>strong{font-size:26px}
+ .workbench-actions{display:none}
+ html[data-simulator-shell] .life-play-layout.story-workspace{grid-template-columns:240px minmax(0,1fr);gap:20px}
+ html[data-simulator-shell] #view-life[data-panel=story] .story-rail{display:none}
+ html[data-simulator-shell] #view-life[data-panel=people] .story-rail{display:flex}
+ .simulator-tabs{margin-bottom:20px}
+}
+@media(max-width:760px){
+ html[data-simulator-view=life][data-simulator-shell] .main{padding-inline:16px!important}
+ html[data-simulator-shell] #view-life{padding:0 0 calc(100px + env(safe-area-inset-bottom))}
+ .workbench-masthead{position:relative;min-height:0;margin:0;padding:14px 0;justify-content:space-between;gap:12px}
+ .workbench-home{font-size:16px}.workbench-clock{min-width:0;flex:1;max-width:210px;grid-template-columns:auto minmax(0,1fr);gap:4px 8px}
+ .workbench-clock>strong{font-size:22px}.workbench-clock>span{font-size:10px;line-height:1.5}
+ .workbench-time{height:3px}
+ .workbench-mobile-summary{display:flex;position:static;padding:12px 0;margin:0;background:transparent}
+ .workbench-mobile-summary .simulator-avatar{display:none}
+ .workbench-mobile-summary .story-live strong{display:none}
+ .workbench-mobile-summary .story-live>div{font-size:11px;gap:6px 12px;margin:0}
+ .workbench-actions{display:none}
+ html[data-simulator-shell] .workbench-masthead .story-controls.simulator-toolbar{position:fixed;inset:auto 0 0;padding:10px 16px calc(10px + env(safe-area-inset-bottom));margin:0;gap:10px;flex-wrap:nowrap;border-top:1px solid var(--t-line);background:var(--t-paper)}
+ html[data-simulator-shell] .workbench-masthead .simulator-toolbar #lifeCommandBar{flex:1}
+ html[data-simulator-shell] .workbench-masthead .simulator-toolbar .cert-controls{flex:1}
+ html[data-simulator-shell] .workbench-masthead .simulator-toolbar :is(#btnPause,#simulatorChoose){min-width:0;flex:1}
+ .simulator-tabs{margin-bottom:16px;scroll-margin-top:8px}
+ html[data-simulator-shell] .simulator-scene .pixel-stage{aspect-ratio:2/1}
+ .workbench-focus{padding:16px;margin-top:16px!important}
+ .workbench-focus h3{font-size:18px;margin-bottom:10px}
+ .workbench-focus>strong{font-size:13px}
+ html[data-simulator-shell] .story-workspace #lifeEventsFeed{padding:16px;margin-top:16px}
+ html[data-simulator-shell] .story-moment[data-emphasis=major]{grid-template-columns:64px minmax(0,1fr);gap:12px}
+ html[data-simulator-shell] .story-moment p{font-size:15px;line-height:1.8}
+ html[data-simulator-shell] .story-moment button{min-height:44px}
+ html[data-simulator-shell] #view-life[data-panel=people] .story-workspace{display:flex}
+ html[data-simulator-shell] #view-life[data-panel=people] :is(.story-identity,.story-rail){display:flex}
+ .workbench-companions,.workbench-map{padding:16px}
+ .workbench-years{grid-template-columns:repeat(10,minmax(0,1fr))}
+}
+@media(prefers-reduced-motion:reduce){.workbench-time i{transition:none}}

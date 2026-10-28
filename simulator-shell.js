@@ -1,3 +1,4 @@
+import { installLifeWorkbench } from './life-workbench.js';
 // The shell owns placement; existing controllers still own the life and its controls.
 const labels = {
   en:['Story','People','Memories','Details','Settings','Close','Keep a moment from your story to find it here.','Latest story','Life settings','Choose','More','Current scene'],
@@ -76,6 +77,7 @@ export function installSimulatorShell(){
   const latest=document.createElement('button');latest.type='button';latest.className='simulator-latest';latest.textContent=c[7];latest.hidden=true;
   latest.onclick=()=>{selectPanel('story');document.querySelector('#lifeEventsFeed')?.scrollIntoView({block:'start',behavior:'instant'});latest.hidden=true;};
   view.querySelector('.workspace-title')?.remove();view.prepend(summary,tabs,controls);view.append(memories,latest);
+  const workbench=installLifeWorkbench({view,layout,story,left,rail,summary,tabs,controls,settings,secondary,more,speed,c});
   let currentLife=null,memorySignature='';
   function selectPanel(panel,scroll=false){
     view.dataset.panel=panel;
@@ -107,6 +109,7 @@ export function installSimulatorShell(){
     }
     layout.hidden=view.dataset.panel==='memories'||view.dataset.panel==='details';memories.hidden=view.dataset.panel!=='memories';details.hidden=view.dataset.panel!=='details';
     const originalNotice=document.querySelector('#returnPendingChoice');if(originalNotice)originalNotice.hidden=true;
+    workbench.sync(life);
     if(STATE.view!=='life'&&settings.open)settings.close();
   }
   const oldRender=window.renderLife;window.renderLife=function(...args){const result=oldRender(...args);sync();return result;};

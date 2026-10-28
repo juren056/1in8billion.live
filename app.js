@@ -4113,8 +4113,8 @@ init().catch(()=>{const el=document.querySelector('#gameLoadState');if(el){el.te
    contact / PWA install）+ 教學版模式 + 版本歷史
    ===================================================================== */
 
-const APP_VERSION = '1.32.0';
-const APP_BUILD = '2026-10-27';
+const APP_VERSION = '1.33.0';
+const APP_BUILD = '2026-10-28';
 
 // 版本歷史（每個版本：v / date / items；每個 item 含 emoji badge + 文字）
 // 為節省空間與維護成本，所有語言文字都用 i18n key；徽章 emoji 是視覺標記。

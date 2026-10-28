@@ -33,6 +33,7 @@ export function buildThemePreview(routes, { preview = false } = {}) {
     "product-workspaces.css",
     "game-workspace.js",
     "simulator-shell.js",
+    "life-workbench.js",
     "simulator-shell.css",
     "game-workspace-copy.js",
     "theme-copy.js",
