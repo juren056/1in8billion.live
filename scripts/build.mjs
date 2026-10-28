@@ -515,3 +515,6 @@ for (const route of routes) {
 }
 
 await import("./build-story.mjs");
+await import("./build-adsense.mjs").then(({ buildAdSense }) =>
+  buildAdSense({ publisherId: siteConfig.adsensePublisherId }),
+);
