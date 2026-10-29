@@ -8,7 +8,7 @@ test('content advertising excludes games, personal workflows, utility pages and 
   for(const route of [...include,...exclude]){fs.mkdirSync(directory+'/'+route,{recursive:true});fs.writeFileSync(directory+'/'+route+'index.html','<html><head></head><body><main><h1>Content</h1><p>Public article</p></main></body></html>');}
   buildAdSense({directory,publisherId:'ca-pub-2031710024449901',adsEnabled:true,contentSlot:'9459958473'});
   for(const route of include){const html=fs.readFileSync(directory+'/'+route+'index.html','utf8');assert.equal((html.match(/data-content-ad/g)||[]).length,1);assert.match(html,/data-slot="9459958473"/);assert.doesNotMatch(html,/<script[^>]+googlesyndication/);}
-  for(const route of exclude)assert.doesNotMatch(fs.readFileSync(directory+'/'+route+'index.html','utf8'),/data-content-ad|src="\/content-ads.js"/);
+  for(const route of exclude)assert.doesNotMatch(fs.readFileSync(directory+'/'+route+'index.html','utf8'),/data-content-ad|src="\/content-ads/);
   assert.match(fs.readFileSync(directory+'/privacy/index.html','utf8'),/custom opt-in is not a Google-certified CMP/);
  }finally{fs.rmSync(directory,{recursive:true,force:true});}
 });

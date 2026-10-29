@@ -23,6 +23,7 @@ with sync_playwright() as p:
    assert page.evaluate('document.documentElement.scrollWidth<=innerWidth')
    assert page.locator('.ad-permission button').count()==2
    if width in [390,1440]:page.screenshot(path=str(out/f'choice-{width}-{theme}.png'))
+   if width==390 and theme=='night':page.locator('.ad-permission').screenshot(path=str(out/'consent-panel.png'))
  page.locator('.ad-permission-actions button').last.click();assert not google
  page.reload(wait_until='networkidle');assert not google
  page.locator('.ad-controls button').click();page.locator('.ad-permission-actions button').first.click()
