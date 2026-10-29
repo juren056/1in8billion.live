@@ -1,43 +1,35 @@
 import{contentAdsCopy}from'./content-ads-copy.js';
-const slot=document.querySelector('[data-content-ad]');
-if(slot){
- const c=contentAdsCopy(document.documentElement.dataset.siteLocale||document.documentElement.lang),key='1in8billion:advertising-choice:v1';
- let visible=false,policy=null,requested=false,stored=null,ready=false,submitted=false;
- try{stored=JSON.parse(localStorage.getItem(key)||'null');if(!stored||!['allow','deny'].includes(stored.value)||!Number.isFinite(stored.at)||stored.at>Date.now()||Date.now()-stored.at>180*86400000)stored=null;}catch{}
- const controls=document.createElement('div');controls.className='ad-controls';controls.hidden=true;
- const preferences=document.createElement('button');preferences.type='button';preferences.textContent=c.preferences;controls.append(preferences);slot.after(controls);
- const remember=value=>{stored={value,at:Date.now()};try{localStorage.setItem(key,JSON.stringify(stored));}catch{}};
- function disable(){slot.hidden=true;controls.hidden=true;}
- function choice(){
-  if(!policy?.allowed)return;slot.hidden=false;slot.replaceChildren();
-  const panel=document.createElement('div');panel.className='ad-permission';
-  const title=document.createElement('h2');title.textContent=c.title;const text=document.createElement('p');text.textContent=c.body;
-  const actions=document.createElement('div');actions.className='ad-permission-actions';const allow=document.createElement('button'),decline=document.createElement('button');allow.type=decline.type='button';allow.textContent=c.allow;decline.textContent=c.decline;
-  allow.onclick=()=>{remember('allow');render();};decline.onclick=()=>{remember('deny');slot.hidden=true;};
-  const privacy=document.createElement('a');privacy.href='/privacy/#google-advertising';privacy.textContent=c.privacy;actions.append(allow,decline);panel.append(title,text,actions,privacy);slot.append(panel);controls.hidden=false;
- }
- function submit(){if(ready&&!submitted&&visible&&document.visibilityState==='visible'&&stored?.value==='allow'){submitted=true;try{window.adsbygoogle.requestNonPersonalizedAds=1;window.adsbygoogle.push({});}catch{slot.hidden=true;}}}
- function render(){
-  if(!policy?.allowed||!visible||document.visibilityState!=='visible')return;
-  if(requested){submit();return;}
-  if(stored?.value==='deny'){slot.hidden=true;controls.hidden=false;return;}
-  if(stored?.value!=='allow'){choice();return;}
-  requested=true;slot.hidden=false;controls.hidden=false;slot.replaceChildren();
-  const label=document.createElement('p');label.className='content-ad-label';label.textContent=c.label;
-  const ad=document.createElement('ins');ad.className='adsbygoogle';ad.style.display='block';ad.dataset.adClient=slot.dataset.publisher;ad.dataset.adSlot=slot.dataset.slot;ad.dataset.restrictDataProcessing='1';
-  slot.append(label,ad);preferences.textContent=c.withdraw;
-  // Only neutral public articles reach this loader; no game state or targeting fields are read.
+const key='1in8billion:advertising-choice:v1',c=contentAdsCopy(document.documentElement.dataset.siteLocale||document.documentElement.lang);
+let sdk;
+function loadSDK(publisher){
+ if(!sdk)sdk=new Promise((resolve,reject)=>{
   const queue=window.adsbygoogle=window.adsbygoogle||[];queue.requestNonPersonalizedAds=1;
-  const script=document.createElement('script');script.async=true;script.crossOrigin='anonymous';script.dataset.privacyTreatments='disablePersonalization';script.src='https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client='+encodeURIComponent(slot.dataset.publisher);
-  const failed=()=>{slot.hidden=true;controls.hidden=false;};
-  script.onload=()=>{ready=true;submit();};script.onerror=failed;document.head.append(script);
-  new MutationObserver(()=>{if(ad.dataset.adStatus==='unfilled')slot.hidden=true;}).observe(ad,{attributes:true,attributeFilter:['data-ad-status']});
+  const script=document.createElement('script');script.async=true;script.crossOrigin='anonymous';script.dataset.privacyTreatments='disablePersonalization';
+  script.src='https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client='+encodeURIComponent(publisher);script.onload=resolve;script.onerror=reject;document.head.append(script);
+ });
+ return sdk;
+}
+function storedChoice(){try{const value=JSON.parse(localStorage.getItem(key)||'null');return value&&['allow','deny'].includes(value.value)&&Number.isFinite(value.at)&&value.at<=Date.now()&&Date.now()-value.at<180*86400000?value.value:null;}catch{return null;}}
+const remember=value=>{try{localStorage.setItem(key,JSON.stringify({value,at:Date.now()}));}catch{}};
+export function installAdvertising(slot,policy){
+ const zone=slot.closest('[data-ad-view]');let visible=false,loading=false,ready=false,submitted=false,failed=false;
+ const controls=document.createElement('div');controls.className='ad-controls';controls.hidden=true;const preferences=document.createElement('button');preferences.type='button';controls.append(preferences);slot.after(controls);slot.setAttribute('aria-label',c.label);
+ const active=()=>{if(!zone)return true;const view=document.querySelector('#view-'+zone.dataset.adView+'.active');return !zone.hidden&&!!view&&(zone.dataset.adView!=='life'||view.dataset.panel==='story')&&!document.querySelector('dialog[open],.modal:not([hidden])');};
+ const denied=()=>storedChoice()==='deny';
+ preferences.onclick=()=>{remember(denied()?'allow':'deny');location.reload();};
+ function sync(){
+  if(!policy?.allowed||location.search||location.hash||navigator.globalPrivacyControl===true){slot.hidden=true;controls.hidden=true;if(zone){zone.dataset.adUnavailable='true';zone.hidden=true;}return;}
+  preferences.textContent=denied()?c.allow:c.withdraw;controls.hidden=!active();
+  if(denied()||failed){slot.hidden=true;return;}
+  slot.hidden=false;if(!active()||!visible||document.visibilityState!=='visible'||submitted)return;
+  if(!loading){loading=true;loadSDK(slot.dataset.publisher).then(()=>{ready=true;sync();}).catch(()=>{failed=true;slot.hidden=true;});}
+  if(!ready)return;submitted=true;
+  // Create a unit only at submission time; an earlier offscreen unit cannot consume this push.
+  const label=document.createElement('p');label.className='content-ad-label';label.textContent=c.label;
+  const ad=document.createElement('ins');ad.className='adsbygoogle';ad.style.display='block';ad.dataset.adClient=slot.dataset.publisher;ad.dataset.adSlot=slot.dataset.slot;ad.dataset.restrictDataProcessing='1';slot.replaceChildren(label,ad);
+  try{window.adsbygoogle.requestNonPersonalizedAds=1;window.adsbygoogle.push({});}catch{failed=true;slot.hidden=true;}
+  new MutationObserver(()=>{if(ad.dataset.adStatus==='unfilled'){failed=true;slot.hidden=true;}}).observe(ad,{attributes:true,attributeFilter:['data-ad-status']});
  }
- preferences.onclick=()=>{if(requested){remember('deny');location.reload();}else{stored=null;choice();}};
- if(location.search||location.hash||navigator.globalPrivacyControl===true)disable();
- else{
-  const observer=new IntersectionObserver(entries=>{visible=entries.some(e=>e.isIntersecting);if(visible)render();},{threshold:.1});observer.observe(slot);
-  document.addEventListener('visibilitychange',render);
-  fetch('/api/ads/config',{cache:'no-store',signal:AbortSignal.timeout(5000)}).then(r=>r.ok?r.json():null).then(value=>{policy=value;if(!policy?.allowed)disable();else render();}).catch(disable);
- }
+ new IntersectionObserver(entries=>{visible=entries.some(e=>e.isIntersecting);sync();},{threshold:.1}).observe(slot);
+ document.addEventListener('visibilitychange',sync);document.addEventListener('advertising:context',sync);sync();
 }

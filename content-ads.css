@@ -9,6 +9,11 @@
 .ad-permission a{color:var(--t-action);display:inline-block;margin-top:16px;text-underline-offset:4px}
 .ad-controls{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;margin:24px auto;color:var(--t-muted)}
 .content-ad ins{display:block;width:100%;height:250px}
+.play-ad-zone{padding:40px 0;max-width:1200px;margin:0 auto;clear:both}
+.play-ad-zone[data-ad-view="life"]{padding:160px 0}
+.play-ad-zone[hidden]{display:none}
+.play-ad-zone .content-ad{margin:0 auto}
+.play-ad-zone:has([data-content-ad][hidden]){padding-block:16px}
 @media(min-width:800px){.content-ad ins{height:90px}}
 .content-ad :is(button,a):focus-visible,.ad-controls button:focus-visible{outline:3px solid var(--t-action);outline-offset:3px}
 @media(max-width:420px){.ad-permission{padding:20px}.ad-permission-actions button{flex:1 1 100%}}

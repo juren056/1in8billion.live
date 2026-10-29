@@ -18,4 +18,5 @@ export function installGameWorkspace(){
  installSimulatorShell();
  installAuthorInvitation();
  root.dataset.gameWorkspace='ready';
+ setTimeout(()=>import('./content-ads-bootstrap.js').catch(()=>{}));
 }
