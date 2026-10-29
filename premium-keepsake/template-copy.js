@@ -1,3 +1,4 @@
+import{freeCopy}from'./free-copy.js';
 import{paymentCopy}from'./payment-copy.js';
 const keys=['studio','intro','choose','customize','title','note','palette','ratio','paper','print','preview','png','pdf','demo','locked','loading','error','retry','record','illustration','source','values','health','knowledge','relationship','events','years','birth','end','milestones','recommended','recommendEvents','recommendMetrics','recommendFamily','recommendDefault','reset','fallback','own','sample','free','premium','freeDetail','premiumDetail','noteLabel','factNote','switched','renderFailed','downloadReady','printHint'];
 const rows={
@@ -20,3 +21,6 @@ export const styleUses={en:['Everyday sharing','An atmospheric collectible','For
 
 // Runtime purchase controls display the actual payment mode.
 for(const lang of Object.keys(studioCopy))Object.assign(studioCopy[lang],{locked:paymentCopy(lang).notice,premiumDetail:paymentCopy(lang).notice});
+
+studioCopy.ru={...studioCopy.en};
+for(const[lang,c]of Object.entries(studioCopy)){const f=freeCopy(lang);Object.assign(c,{png:f.png,pdf:f.pdf,locked:f.free,premium:f.title,premiumDetail:f.detail,downloadReady:f.free});}

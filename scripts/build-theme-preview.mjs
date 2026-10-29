@@ -231,7 +231,7 @@ export function buildThemePreview(routes, { preview = false } = {}) {
       );
       // Sample cards already carry their own record-derived scene artwork.
 
-      const showcase = `<section class="theme-keepsake"><div class="theme-keepsake-copy"><h2>${c[8]}</h2><p>${v.premiumDetail}</p><p>US$2.99 · ${v.once}</p><a class="primary-link" href="${base}keepsake/">${c[10]} <span aria-hidden="true">→</span></a></div>${reflectionCarousel(lang)}</section>`;
+      const showcase = `<section class="theme-keepsake"><div class="theme-keepsake-copy"><h2>${c[8]}</h2><p>${v.premiumDetail}</p><p>${v.once}</p><a class="primary-link" href="${base}keepsake/">${c[10]} <span aria-hidden="true">→</span></a></div>${reflectionCarousel(lang)}</section>`;
       h = h.replace(
         /(<div class="theme-hero">[\s\S]*?<div class="theme-book(?: [^"]*)?"[\s\S]*?<\/div><\/div>)/,
         "$1" + showcase,

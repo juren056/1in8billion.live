@@ -56,7 +56,7 @@ export function installPremium(bridge) {
       sample = document.createElement("a");
     h.textContent = v.headline;
     p.textContent = v.includes;
-    status.textContent = "US$2.99 · " + v.once;
+    status.textContent = v.once;
     a.type = "button";
     a.textContent = v.buy;
     state.setAttribute("role", "status");
@@ -95,7 +95,7 @@ export function installPremium(bridge) {
         m.renderCard(snapshot(), {
           templateId: "cinematic-poster",
           preview: true,
-          demo: true,
+          demo: false,
         }),
       )
       .then((result) => {

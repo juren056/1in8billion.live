@@ -1,3 +1,4 @@
+import{freeCopy}from'./free-copy.js';
 import{commerceCopy}from'./commerce-copy.js';
 import{paymentCopy}from'./payment-copy.js';
 import{localeCopy}from'./locale-copy.js';
@@ -13,7 +14,7 @@ export const copy={
 
 Object.assign(copy,localeCopy);
 for(const[lang,labels]of Object.entries(editorialCopy))Object.assign(copy[lang],labels);
-for(const[lang,c]of Object.entries(studioCopy)){copy[lang].paidBody=c.premiumDetail;copy[lang].faq[2][1]=c.excludedScope;}
+for(const[lang,c]of Object.entries(studioCopy)){if(!copy[lang])continue;copy[lang].paidBody=c.premiumDetail;copy[lang].faq[2][1]=c.excludedScope;}
 
 for(const[lang,c]of Object.entries(copy)){c.status=paymentCopy(lang).notice;c.faq[0][1]=paymentCopy(lang).notice+' '+paymentCopy(lang).own;}
 
@@ -21,3 +22,6 @@ for(const[lang,c]of Object.entries(copy)){const policy=commerceCopy(lang);c.step
 
 const purchaseTitles={en:"Life Keepsake Pack", "zh-CN":"人生纪念包","zh-TW":"人生紀念包",ja:"人生記念パック",ko:"인생 기념품",es:"Recuerdo de tu vida","pt-BR":"Lembranças da sua vida",fr:"Souvenirs de votre vie",de:"Lebensandenken"};
 for(const[lang,c]of Object.entries(copy)){const p=paymentCopy(lang);c.title=purchaseTitles[lang];c.price="US$2.99";c.limits=p.notice;c.paidBody=p.notice;}
+
+copy.ru={...copy.en,faq:copy.en.faq.map(row=>[...row])};
+for(const[lang,c]of Object.entries(copy)){const f=freeCopy(lang);Object.assign(c,{title:f.title,price:f.free,status:f.detail,scope:f.detail,refund:f.free,limits:f.free,recovery:f.local,precheck:f.local,paidTitle:f.title,paidBody:f.detail,downloadDemo:f.pdf,intent:f.save,steps:[c.free,f.detail,f.local]});c.faq[0]=[f.title,f.detail];c.faq[3]=[c.freeTitle,f.free];}

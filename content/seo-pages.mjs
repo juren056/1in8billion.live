@@ -1,3 +1,4 @@
+import{freeCopy}from'../premium-keepsake/free-copy.js';
 import { commerceCopy } from "../premium-keepsake/commerce-copy.js";
 // Page intent owns metadata. Calendar and presentation enhancements must not overwrite it.
 export const seoLocales = {
@@ -321,3 +322,5 @@ seoLinks.ru = ["Начать жизнь в Японии", "Источники и
 for (const lang of Object.keys(seoLocales))
   if (lang !== "ru")
     seoLocales[lang].descriptions[5] = commerceCopy(lang).description;
+
+for(const[lang,c]of Object.entries(seoLocales)){const f=freeCopy(lang);c.titles[5]=f.title;c.descriptions[5]=f.detail;}

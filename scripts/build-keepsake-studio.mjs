@@ -1,4 +1,5 @@
 import { commerceCopy } from "../premium-keepsake/commerce-copy.js";
+import { freeCopy } from "../premium-keepsake/free-copy.js";
 import fs from "node:fs";
 import { studioMarkup } from "../premium-keepsake/studio-markup.js";
 import { studioCopy } from "../premium-keepsake/template-copy.js";
@@ -19,6 +20,8 @@ export function buildKeepsakeStudio() {
   for (const [lang, prefix] of Object.entries(prefixes)) {
     const file = "dist/" + prefix + "keepsake/index.html";
     let html = fs.readFileSync(file, "utf8");
+    const nativeFree=freeCopy(lang),englishFree=freeCopy('en');
+    for(const key of Object.keys(englishFree))html=html.replaceAll(englishFree[key],nativeFree[key]);
     const title = html.match(/<h1>([\s\S]*?)<\/h1>/)[1];
     let studio = studioMarkup(lang, title);
     if (lang === "ru")

@@ -52,8 +52,8 @@ test('built Simplified Chinese task pages have reviewed operational meanings and
  assert.match(compare,/<h1[^>]*>[^<]*人生起点条件<\/h1>/);
  assert.match(compare,/<th[^>]*>对比指标<\/th>/);
  const product=visible(fs.readFileSync('dist/zh-cn/keepsake/index.html','utf8'));
- assert(product.includes('US$2.99 单次购买一段已完成人生'));assert(!product.includes('正式销售尚未开放'));
- assert(product.includes('样例不能购买'));
+ assert(product.includes('免费 · 无需付款'));assert(!product.includes('正式销售尚未开放'));
+ assert(!product.includes('US$2.99'));
 });
 
 test('Simplified Chinese keepsake copy describes recorded lives, local recovery and the closed preview clearly',()=>{
