@@ -1,7 +1,7 @@
 from pathlib import Path
 from playwright.sync_api import sync_playwright
 import json,os
-base=os.environ.get('SIMULATOR_BASE','http://127.0.0.1:4186');out=Path('audit/game-ads-20261030');out.mkdir(parents=True,exist_ok=True)
+base=os.environ.get('SIMULATOR_BASE','http://127.0.0.1:4186');out=Path('audit/home-ads-expanded-20261030');out.mkdir(parents=True,exist_ok=True)
 with sync_playwright() as p:
  browser=p.chromium.launch(headless=True);page=browser.new_page(viewport={'width':390,'height':844},reduced_motion='reduce')
  errors=[];requests=[]
@@ -15,6 +15,10 @@ with sync_playwright() as p:
  top=page.locator('[data-placement="home-top"]');lower=page.locator('[data-placement="home-lower"]');game=page.locator('[data-placement="simulator"]')
  top.scroll_into_view_if_needed();page.wait_for_selector('[data-placement="home-top"] ins');assert page.locator('.ad-permission').count()==0
  lower.scroll_into_view_if_needed();page.wait_for_selector('[data-placement="home-lower"] ins');assert len(requests)==1
+ for name in ['home-world','home-stories']:
+  extra=page.locator('[data-placement="'+name+'"]');extra.scroll_into_view_if_needed();page.wait_for_selector('[data-placement="'+name+'"] ins');assert len(requests)==1;page.screenshot(path=str(out/f'{name}-390.png'))
+ assert page.locator('[data-ad-view="intro"]').count()==4
+ assert page.evaluate("document.querySelector('[data-placement=home-world]').parentElement.previousElementSibling.matches('.world-clock')&&document.querySelector('[data-placement=home-stories]').parentElement.previousElementSibling.id==='completeExamples'")
  for width,height in [(320,740),(390,844),(1440,1000)]:
   page.set_viewport_size({'width':width,'height':height})
   for theme in ['blue','journal','editorial','night']:
@@ -45,5 +49,5 @@ with sync_playwright() as p:
  page.unroute('**/api/ads/config');page.route('**/api/ads/config',lambda r:r.fulfill(content_type='application/json',body='{"allowed":false}'))
  page.goto(base+'/zh-cn/',wait_until='networkidle');page.locator('[data-placement="home-top"]').scroll_into_view_if_needed();page.wait_for_function("[...document.querySelectorAll('[data-ad-view]')].every(e=>e.hidden)")
  assert not errors,errors
- result={'base':base,'homeSlots':2,'simulatorSlots':1,'simulatorGap':gap,'sharedSdk':True,'noPermissionPrompt':True,'noAutoRefresh':True,'privatePanelsExcluded':True,'priorOptOutHonored':True,'protectedRegionsBlocked':True,'realAdRequests':0,'errors':errors}
+ result={'base':base,'homeSlots':4,'simulatorSlots':1,'simulatorGap':gap,'sharedSdk':True,'noPermissionPrompt':True,'noAutoRefresh':True,'privatePanelsExcluded':True,'priorOptOutHonored':True,'protectedRegionsBlocked':True,'realAdRequests':0,'errors':errors}
  (out/'verification.json').write_text(json.dumps(result,indent=2),encoding='utf8');print(json.dumps(result));browser.close()
