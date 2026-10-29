@@ -517,5 +517,5 @@ for (const route of routes) {
 await import("./build-story.mjs");
 await import("./build-author-support.mjs").then(({ buildAuthorSupport }) => buildAuthorSupport());
 await import("./build-adsense.mjs").then(({ buildAdSense }) =>
-  buildAdSense({ publisherId: siteConfig.adsensePublisherId }),
+  buildAdSense({ publisherId: siteConfig.adsensePublisherId, adsEnabled:siteConfig.adsenseAdsEnabled===true, contentSlot:siteConfig.adsenseContentSlot }),
 );
