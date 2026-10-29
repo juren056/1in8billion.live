@@ -87,3 +87,9 @@ The complete checklist below reuses established source/provenance evidence from 
 | ADS-PRIV-10 | N/A | Personalized ads not enabled. Explicit opt-in and 180-day local choice; withdraw reloads without further ad scripts; GPC disables ads. |
 
 Completeness: 73 unique reference IDs; 73 rows; missing IDs: none.
+
+## Release acceptance
+
+Version 1.36.0, revision 7719948, Cloudflare version 0f8edad2-8069-46e0-b11a-242428f7cbcb. All 149 unit tests and existing SEO/data checks passed. The initial build correctly rejected extra critical assets; advertising UI, translations and CSS now load only after the article-end slot enters the viewport. The guide critical payload is 22,997 bytes versus 22,418 before this release; home and comparison budgets remain unchanged.
+
+Local browser acceptance passed twelve viewport/theme combinations and ten localized pages; tested allow/deny/revisit/withdrawal, protected-region rejection, private-URL exclusion and five excluded workflows. Google requests were intercepted with a mock script: one mocked request and zero real advertising requests/clicks. Production HTTP confirms version, authorized ads.txt, non-personalized/RDP eligibility and GPC rejection. Actual ad fill or earnings are not claimed.
