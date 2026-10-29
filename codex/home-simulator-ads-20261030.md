@@ -89,3 +89,7 @@ The complete checklist reuses the prior account/content evidence for unchanged i
 | ADS-PRIV-10 | N/A | No personalized ads. Existing visitor denials and GPC retained; per-placement advertising disable/re-enable control. Protected CMP regions remain blocked. |
 
 Completeness: 73 reference IDs; 73 rows; missing IDs: none.
+
+Release: v1.37.0, source 12b6221, Cloudflare version 08833e99-22df-478b-b07f-ea720823c0e7. All 150 unit tests passed, with zero failures; data/SEO/asset checks passed. Critical payloads: home 459,755 bytes (unchanged), comparison 114,747 bytes (unchanged), quick-play guide 23,551 bytes (within its existing budget). The game initializes ad layout only after its workspace is ready; heavier ad code/CSS and SDK remain viewport-triggered. Production HTTP confirms visible-direct-v2 and NPA/RDP flags. Ad fill and revenue are not asserted.
+
+Final production browser acceptance passed: home two slots, simulator one, 160px gap, shared SDK, direct loading without the custom prompt, no refresh on view return, private panel/dialog exclusion, previous opt-out preservation and protected-region blocking. No page errors. All advertising requests were mocked; no real impressions or clicks were generated. Receipt: audit/game-ads-20261030/verification.json (production base).
