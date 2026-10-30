@@ -1,0 +1,7 @@
+# Automatic advertising without play-page switches
+
+User reported the remaining enable/disable buttons after requesting automatic advertising. These were the per-placement privacy controls, not a requirement to start ads; placing them beside every ad was misleading for the requested flow. They are now removed from all ordinary pages. Advertising remains direct on eligible visible placements without a prompt or play-page switch.
+
+The privacy choice is available only under the Privacy page's Google advertising section. Existing denials, GPC and regional exclusions remain effective. Privacy-page re-enablement removes the previous denial and restores automatic loading on subsequent page loads. No forced interstitial/popup, refresh loop, game/RNG/save change or extra tracking is introduced. Home retains four slots and simulator one, with the existing 160px gap.
+
+Local browser acceptance passed automatic requests without ad controls/questions, four home slots, one simulator slot, modal/private-view hiding, previous opt-out preservation, privacy-page re-enablement, protected-region rejection and one shared SDK. No page errors; all advertising requests are mocked. Critical asset budgets are unchanged and four targeted advertising tests pass. Receipt: audit/no-ad-switches-20261030/verification.json. The prior complete 73-item advertising assessment remains the policy baseline; this refinement moves the exit control instead of removing privacy choices.

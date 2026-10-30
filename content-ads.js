@@ -10,16 +10,13 @@ function loadSDK(publisher){
  return sdk;
 }
 function storedChoice(){try{const value=JSON.parse(localStorage.getItem(key)||'null');return value&&['allow','deny'].includes(value.value)&&Number.isFinite(value.at)&&value.at<=Date.now()&&Date.now()-value.at<180*86400000?value.value:null;}catch{return null;}}
-const remember=value=>{try{localStorage.setItem(key,JSON.stringify({value,at:Date.now()}));}catch{}};
 export function installAdvertising(slot,policy){
  const zone=slot.closest('[data-ad-view]');let visible=false,loading=false,ready=false,submitted=false,failed=false;
- const controls=document.createElement('div');controls.className='ad-controls';controls.hidden=true;const preferences=document.createElement('button');preferences.type='button';controls.append(preferences);slot.after(controls);slot.setAttribute('aria-label',c.label);
+ slot.setAttribute('aria-label',c.label);
  const active=()=>{if(!zone)return true;const view=document.querySelector('#view-'+zone.dataset.adView+'.active');return !zone.hidden&&!!view&&(zone.dataset.adView!=='life'||view.dataset.panel==='story')&&!document.querySelector('dialog[open],.modal:not([hidden])');};
  const denied=()=>storedChoice()==='deny';
- preferences.onclick=()=>{remember(denied()?'allow':'deny');location.reload();};
  function sync(){
-  if(!policy?.allowed||location.search||location.hash||navigator.globalPrivacyControl===true){slot.hidden=true;controls.hidden=true;if(zone){zone.dataset.adUnavailable='true';zone.hidden=true;}return;}
-  preferences.textContent=denied()?c.allow:c.withdraw;controls.hidden=!active();
+  if(!policy?.allowed||location.search||location.hash||navigator.globalPrivacyControl===true){slot.hidden=true;if(zone){zone.dataset.adUnavailable='true';zone.hidden=true;}return;}
   if(denied()||failed){slot.hidden=true;return;}
   slot.hidden=false;if(!active()||!visible||document.visibilityState!=='visible'||submitted)return;
   if(!loading){loading=true;loadSDK(slot.dataset.publisher).then(()=>{ready=true;sync();}).catch(()=>{failed=true;slot.hidden=true;});}

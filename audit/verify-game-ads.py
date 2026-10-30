@@ -1,7 +1,7 @@
 from pathlib import Path
 from playwright.sync_api import sync_playwright
 import json,os
-base=os.environ.get('SIMULATOR_BASE','http://127.0.0.1:4186');out=Path('audit/home-ads-expanded-20261030');out.mkdir(parents=True,exist_ok=True)
+base=os.environ.get('SIMULATOR_BASE','http://127.0.0.1:4186');out=Path('audit/no-ad-switches-20261030');out.mkdir(parents=True,exist_ok=True)
 with sync_playwright() as p:
  browser=p.chromium.launch(headless=True);page=browser.new_page(viewport={'width':390,'height':844},reduced_motion='reduce')
  errors=[];requests=[]
@@ -13,7 +13,7 @@ with sync_playwright() as p:
  page.route('https://pagead2.googlesyndication.com/**',mock)
  page.goto(base+'/zh-cn/',wait_until='networkidle');page.wait_for_function('document.documentElement.dataset.gameWorkspace==="ready"')
  top=page.locator('[data-placement="home-top"]');lower=page.locator('[data-placement="home-lower"]');game=page.locator('[data-placement="simulator"]')
- top.scroll_into_view_if_needed();page.wait_for_selector('[data-placement="home-top"] ins');assert page.locator('.ad-permission').count()==0
+ top.scroll_into_view_if_needed();page.wait_for_selector('[data-placement="home-top"] ins');assert page.locator('.ad-permission,.ad-controls').count()==0
  lower.scroll_into_view_if_needed();page.wait_for_selector('[data-placement="home-lower"] ins');assert len(requests)==1
  for name in ['home-world','home-stories']:
   extra=page.locator('[data-placement="'+name+'"]');extra.scroll_into_view_if_needed();page.wait_for_selector('[data-placement="'+name+'"] ins');assert len(requests)==1;page.screenshot(path=str(out/f'{name}-390.png'))
@@ -40,14 +40,15 @@ with sync_playwright() as p:
  page.set_viewport_size({'width':390,'height':844});page.locator('[data-simulator-panel="memories"]').click();page.wait_for_function("document.querySelector('[data-placement=simulator]').closest('[data-ad-view]').hidden");page.locator('[data-simulator-panel="story"]').click();game.scroll_into_view_if_needed();assert page.evaluate('window.adPushes')==before
  # Existing visitor opt-out remains effective without showing a new question.
  page.evaluate("localStorage.setItem('1in8billion:advertising-choice:v1',JSON.stringify({value:'deny',at:Date.now()}))")
- page.goto(base+'/zh-cn/guides/quick-play/',wait_until='networkidle');page.locator('[data-content-ad]').first.scroll_into_view_if_needed();page.wait_for_selector('.ad-controls button');assert page.locator('ins.adsbygoogle').count()==0 and page.locator('.ad-permission').count()==0
+ page.goto(base+'/zh-cn/guides/quick-play/',wait_until='networkidle');page.locator('[data-content-ad]').first.scroll_into_view_if_needed();page.wait_for_function("[...document.querySelectorAll('[data-content-ad]')].every(e=>e.hidden)");assert page.locator('ins.adsbygoogle').count()==0 and page.locator('.ad-controls,.ad-permission').count()==0
+ page.goto(base+'/zh-cn/privacy/',wait_until='networkidle');page.locator('#advertisingPrivacyChoice').click();assert page.evaluate("localStorage.getItem('1in8billion:advertising-choice:v1')===null")
  page.evaluate('localStorage.clear()')
  page.goto(base+'/zh-cn/guides/quick-play/',wait_until='networkidle')
  slots=page.locator('[data-content-ad]');assert 1<=slots.count()<=2
  for slot in slots.all():slot.scroll_into_view_if_needed();page.wait_for_function('e=>!!e.querySelector("ins")',arg=slot.element_handle())
- assert page.locator('.ad-permission').count()==0
+ assert page.locator('.ad-permission,.ad-controls').count()==0
  page.unroute('**/api/ads/config');page.route('**/api/ads/config',lambda r:r.fulfill(content_type='application/json',body='{"allowed":false}'))
  page.goto(base+'/zh-cn/',wait_until='networkidle');page.locator('[data-placement="home-top"]').scroll_into_view_if_needed();page.wait_for_function("[...document.querySelectorAll('[data-ad-view]')].every(e=>e.hidden)")
  assert not errors,errors
- result={'base':base,'homeSlots':4,'simulatorSlots':1,'simulatorGap':gap,'sharedSdk':True,'noPermissionPrompt':True,'noAutoRefresh':True,'privatePanelsExcluded':True,'priorOptOutHonored':True,'protectedRegionsBlocked':True,'realAdRequests':0,'errors':errors}
+ result={'base':base,'homeSlots':4,'simulatorSlots':1,'simulatorGap':gap,'sharedSdk':True,'noPermissionPrompt':True,'noPlayPageSwitches':True,'privacyPageControl':True,'noAutoRefresh':True,'privatePanelsExcluded':True,'priorOptOutHonored':True,'protectedRegionsBlocked':True,'realAdRequests':0,'errors':errors}
  (out/'verification.json').write_text(json.dumps(result,indent=2),encoding='utf8');print(json.dumps(result));browser.close()
